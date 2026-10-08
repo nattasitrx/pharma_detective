@@ -966,7 +966,7 @@ const UI = {
   freeHint:['💡 溫柔、同理、保證保密的話會提升信任度；指責會降低信任度。','💡 Empathy and promises of confidentiality raise trust; blaming lowers it.','💡 คำพูดที่เห็นใจและรับปากเก็บความลับช่วยเพิ่มความไว้ใจ คำตำหนิทำให้ลดลง'],
   sHint:['💡 超級放大鏡（−5 分）','💡 Super magnifier (−5 min)','💡 แว่นขยายพิเศษ (−5 นาที)'], sDone:['結束搜查 ▶','Finish search ▶','จบการค้น ▶'],
   zoomBack:['↩ 退後看整個房間','↩ Step back','↩ ถอยออกมาดูทั้งห้อง'], zoomHint:['點擊家具靠近調查','Click furniture to take a closer look','คลิกเฟอร์นิเจอร์เพื่อเข้าไปดูใกล้ๆ'],
-  zTV:['電視櫃','TV cabinet','ตู้ทีวี'], zAltar:['神明桌','Altar table','โต๊ะบูชา'], zKitchen:['冰箱・廚房角落','Fridge corner','มุมตู้เย็น'], zShelf:['置物架','Storage shelf','ชั้นวางของ'], zTable:['餐桌','Dining table','โต๊ะกินข้าว'],
+  zTV:['玄關','Entrance','ทางเข้าบ้าน'], zAltar:['孩子的書桌','Kids\' study desk','โต๊ะเขียนหนังสือของลูก'], zKitchen:['小廚房','Kitchenette','ครัวเล็ก'], zShelf:['沙發區','Sofa corner','มุมโซฟา'], zTable:['代工桌','Piecework table','โต๊ะงานรับจ้าง'],
   nothing:['什麼都沒有…','Nothing here…','ไม่มีอะไร…'], noCharge:['放大鏡用完了！','Out of magnifier charges!','แว่นขยายหมดแล้ว!'],
   get:['證物 GET！','EVIDENCE GET!','ได้หลักฐาน!'], keyEv:['★ 關鍵證物','★ KEY EVIDENCE','★ หลักฐานสำคัญ'], optEv:['＋ 額外線索','+ BONUS CLUE','+ เบาะแสเพิ่ม'],
   press:['🔍 追問','🔍 Press','🔍 ซักต่อ'], present:['📂 出示證物','📂 Present','📂 แสดงหลักฐาน'], trayTitle:['要出示哪一個證物？','Which evidence will you present?','จะแสดงหลักฐานชิ้นไหน?'],
@@ -1089,27 +1089,27 @@ const CHAR_INFO={
    cigs = candy wrappers & note · school = school-fee slips & bills
    ===================================================================== */
 const ITEMS = {
- calendar:{req:true, sfx:'paper', n:['畫滿紅圈的月曆','Calendar full of red circles','ปฏิทินที่วงแดงเต็มไปหมด'], loc:['客廳牆上','Living-room wall','ผนังห้องนั่งเล่น'],
+ calendar:{req:true, sfx:'paper', n:['畫滿紅圈的月曆','Calendar full of red circles','ปฏิทินที่วงแดงเต็มไปหมด'], loc:['書桌上方的牆上','Wall above the kids\' desk','ผนังเหนือโต๊ะเขียนหนังสือ'],
   d:['三月幾乎「每一天」都圈起來：「A院新陳代謝」「B院骨科」「耳鼻喉」「家醫」「內科」……下班後一天跑兩三家！月曆上還夾著一張耳鼻喉診所收據（111/03/20）：Keflex、Clarinase、Danzen。','Almost EVERY day of March is circled: "Hosp A endocrine", "Hosp B ortho", "ENT", "Family med", "Internal med"… two or three clinics a day after work! Clipped to it: an ENT clinic receipt (20 Mar 2022) for Keflex, Clarinase and Danzen.','มีนาคม "แทบทุกวัน" ถูกวงไว้: "รพ.A ต่อมไร้ท่อ" "รพ.B กระดูก" "หู คอ จมูก" "เวชฯ ครอบครัว" "อายุรกรรม"… เลิกงานแล้วไปวันละ 2–3 ที่! มีใบเสร็จคลินิกหู คอ จมูก (20 มี.ค. 2022) หนีบไว้ด้วย: Keflex, Clarinase, Danzen']},
- pilljar:{req:true, sfx:'paper', n:['舊的勞工健檢手冊','Old workplace health-check booklet','สมุดตรวจสุขภาพพนักงานเล่มเก่า'], loc:['神明桌抽屜','Altar-table drawer','ลิ้นชักโต๊ะบูชา'],
+ pilljar:{req:true, sfx:'paper', n:['舊的勞工健檢手冊','Old workplace health-check booklet','สมุดตรวจสุขภาพพนักงานเล่มเก่า'], loc:['沙發旁小櫃子的抽屜','Drawer of the little cabinet by the sofa','ลิ้นชักตู้เล็กข้างโซฟา'],
   d:['2018 年工廠健檢：身高 162.0 公分。今年 2 月 A 醫院量的是 158 公分——四年矮了 4 公分！','2018 factory health check: height 162.0 cm. Hospital A measured 158 cm this February — 4 cm shorter in four years!','ตรวจสุขภาพที่โรงงานปี 2018: ส่วนสูง 162.0 ซม. แต่ รพ.A วัดเมื่อ ก.พ. ปีนี้ได้ 158 ซม. — เตี้ยลง 4 ซม. ในสี่ปี!']},
- trash_bags:{req:true, sfx:'plastic', n:['沒拆封就丟掉的藥袋','Unopened med bags in the trash','ซองยาที่ยังไม่แกะถูกทิ้ง'], loc:['垃圾桶','Trash bin','ถังขยะ'],
+ trash_bags:{req:true, sfx:'plastic', n:['沒拆封就丟掉的藥袋','Unopened med bags in the trash','ซองยาที่ยังไม่แกะถูกทิ้ง'], loc:['門口待丟的垃圾袋','Rubbish bag by the front door','ถุงขยะรอทิ้งที่หน้าประตู'],
   d:['巷口家醫科、內科診所開的感冒藥和腰痛藥，好幾包都沒拆就丟進垃圾桶。','Cold medicine and back-pain medicine from the family- and internal-medicine clinics down the lane — several bags thrown away still sealed.','ยาแก้หวัดและยาแก้ปวดหลังจากคลินิกเวชฯ ครอบครัวและอายุรกรรมปากซอย หลายซองถูกทิ้งทั้งที่ยังไม่แกะ']},
  takeout:{req:true, sfx:'plastic', n:['幾乎空空的冰箱','A nearly empty fridge','ตู้เย็นที่แทบว่างเปล่า'], loc:['冰箱上層','Fridge, top shelf','ตู้เย็นชั้นบน'],
   d:['只有隔夜飯、醬菜和一疊泡麵；她帶去工廠的便當盒，原封不動又帶回來了。','Only leftover rice, pickles and a stack of instant noodles — and the lunchbox she took to the factory came home untouched.','มีแค่ข้าวค้างคืน ผักดอง และบะหมี่กึ่งสำเร็จรูปกองหนึ่ง กล่องข้าวที่ป้าเอาไปโรงงานก็ถูกถือกลับมาโดยไม่ได้แตะเลย']},
- beer:{req:true, sfx:'clink', n:['收在咖啡罐裡的骨鬆藥','Bone pills kept in the coffee tin','ยากระดูกพรุนที่เก็บในกระป๋องกาแฟ'], loc:['冰箱旁的廚房角落','Kitchen corner by the fridge','มุมครัวข้างตู้เย็น'],
+ beer:{req:true, sfx:'clink', n:['收在咖啡罐裡的骨鬆藥','Bone pills kept in the coffee tin','ยากระดูกพรุนที่เก็บในกระป๋องกาแฟ'], loc:['廚房牆上的層架','Kitchen wall shelf','ชั้นวางบนผนังครัว'],
   d:['福善美保骨錠就收在三合一咖啡罐裡，旁邊是一個還有咖啡漬的杯子和剛剝開的錠片空格——她每週配早上的咖啡吞藥。','The Fosamax Plus is kept inside the 3-in-1 coffee tin, next to a coffee-stained mug and a freshly emptied blister — she swallows the weekly pill with her morning coffee.','Fosamax Plus เก็บอยู่ในกระป๋องกาแฟทรีอินวัน ข้างๆ มีแก้วที่ยังมีคราบกาแฟกับแผงยาที่เพิ่งแกะ — ป้ากินยาสัปดาห์ละครั้งกับกาแฟตอนเช้า']},
- cigs:{req:true, sfx:'plastic', n:['工作包裡的糖果紙和紙條','Candy wrappers & a note in her work bag','เปลือกลูกอมกับโน้ตในกระเป๋าทำงาน'], loc:['置物架・「私人」箱','Shelf, "private" box','ชั้นวาง กล่อง "ส่วนตัว"'],
+ cigs:{req:true, sfx:'plastic', n:['工作包裡的糖果紙和紙條','Candy wrappers & a note in her work bag','เปลือกลูกอมกับโน้ตในกระเป๋าทำงาน'], loc:['門口掛勾上的工作包','Work bag on the hook by the door','กระเป๋าทำงานที่แขวนตะขอหน้าประตู'],
   d:['一大把硬糖紙，夾著同事的紙條：「妳早上十點又在發抖冒冷汗，先吃點東西啦！1 月跌倒那天也是這樣。」','A fistful of hard-candy wrappers and a coworker\'s note: "You were shaking and sweating at 10 a.m. again — eat something first! It was just like this the day you fell in January."','เปลือกลูกอมแข็งเต็มกำ พร้อมโน้ตจากเพื่อนร่วมงาน: "สิบโมงเช้าเธอมือสั่นเหงื่อแตกอีกแล้ว กินอะไรก่อนนะ! วันที่ล้มเดือนมกราฯ ก็เป็นแบบนี้"']},
- pillbox:{req:true, sfx:'rattle', n:['一週分裝藥盒（血壓・血糖藥）','Weekly pill box (BP & diabetes pills)','กล่องแบ่งยารายสัปดาห์ (ยาความดัน・เบาหวาน)'], loc:['電視櫃抽屜','TV-cabinet drawer','ลิ้นชักตู้ทีวี'],
+ pillbox:{req:true, sfx:'rattle', n:['一週分裝藥盒（血壓・血糖藥）','Weekly pill box (BP & diabetes pills)','กล่องแบ่งยารายสัปดาห์ (ยาความดัน・เบาหวาน)'], loc:['沙發坐墊底下','Under the sofa cushion','ใต้เบาะโซฟา'],
   d:['A 醫院的血壓、血糖藥分裝成週一到週日……但「週三、週四、週五」三格還是滿的！','Hospital A\'s blood-pressure and diabetes pills, sorted Monday–Sunday… but the Wednesday, Thursday and Friday slots are still full!','ยาความดันและเบาหวานของ รพ.A แบ่งใส่ช่องจันทร์–อาทิตย์… แต่ช่อง "พุธ พฤหัสฯ ศุกร์" ยังเต็มอยู่ทั้งสามช่อง!']},
- endo_bag:{sfx:'plastic', n:['A醫院新陳代謝科藥袋（5 包）','Hospital A endocrinology bags (×5)','ซองยาแผนกต่อมไร้ท่อ รพ.A (5 ซอง)'], loc:['電視櫃抽屜','TV-cabinet drawer','ลิ้นชักตู้ทีวี'],
+ endo_bag:{sfx:'plastic', n:['A醫院新陳代謝科藥袋（5 包）','Hospital A endocrinology bags (×5)','ซองยาแผนกต่อมไร้ท่อ รพ.A (5 ซอง)'], loc:['廚房塑膠抽屜櫃','Plastic drawer tower in the kitchen','ลิ้นชักพลาสติกในครัว'],
   d:['111/02/18 連續處方 28 天：好悅您 Hyzaar、醣祿 Glucobay、庫魯化 Glucophage、瑪爾胰 Amaryl、博疏痛 Ponstan。','Refill prescription of 18 Feb 2022 (28 days): Hyzaar, Glucobay, Glucophage, Amaryl, Ponstan.','ใบสั่งยาต่อเนื่อง 18 ก.พ. 2022 (28 วัน): Hyzaar, Glucobay, Glucophage, Amaryl, Ponstan']},
- hospB_bag:{sfx:'plastic', n:['B醫院骨科藥袋','Hospital B orthopaedics bag','ซองยาแผนกกระดูก รพ.B'], loc:['置物架上層','Shelf, top','ชั้นวางชั้นบน'],
+ hospB_bag:{sfx:'plastic', n:['B醫院骨科藥袋','Hospital B orthopaedics bag','ซองยาแผนกกระดูก รพ.B'], loc:['代工桌上','On the piecework table','บนโต๊ะงานรับจ้าง'],
   d:['111/03/01：福善美保骨錠 Fosamax Plus 70 mg，每週 1 次、1 錠，共 4 錠。注意事項：「空腹以白開水配服、服藥後保持上身直立 30 分鐘」。下次回診 111/04/05。','1 Mar 2022: Fosamax Plus 70 mg, one tablet once a week, 4 tablets. Instructions: "Take on an empty stomach with plain water; stay upright for 30 minutes afterwards." Next visit 5 Apr 2022.','1 มี.ค. 2022: Fosamax Plus 70 มก. สัปดาห์ละ 1 เม็ด รวม 4 เม็ด ข้อควรระวัง: "กินตอนท้องว่างกับน้ำเปล่า หลังกินต้องตัวตรง 30 นาที" นัดครั้งต่อไป 5 เม.ย. 2022']},
- report:{sfx:'paper', labs:true, n:['A醫院病患檢查紀錄表','Hospital A lab record','บันทึกผลตรวจ รพ.A'], loc:['置物架下層的文件盒','Document box, bottom shelf','กล่องเอกสาร ชั้นวางชั้นล่าง'],
+ report:{sfx:'paper', labs:true, n:['A醫院病患檢查紀錄表','Hospital A lab record','บันทึกผลตรวจ รพ.A'], loc:['書桌上方的文件盒','Document box above the kids\' desk','กล่องเอกสารเหนือโต๊ะเขียนหนังสือ'],
   d:['三次抽血：HbA1c 7.1→7.8→8.3 越來越高！肌酸酐 1.1–1.2（在參考值內），尿液微白蛋白 2.8 偏高，骨密度 T-score −2.6。（已存入案件檔案 → 檢驗數據）','Three blood tests: HbA1c rising 7.1→7.8→8.3! Creatinine 1.1–1.2 (inside the reference range), urine microalbumin 2.8 (high), bone density T-score −2.6. (Saved to Case file → Labs)','ตรวจเลือด 3 ครั้ง: HbA1c สูงขึ้น 7.1→7.8→8.3! ครีเอตินิน 1.1–1.2 (อยู่ในค่าอ้างอิง) ไมโครอัลบูมินในปัสสาวะ 2.8 (สูง) มวลกระดูก T-score −2.6 (บันทึกในแฟ้มคดี → ผลแล็บ)']},
- school:{sfx:'paper', n:['學費分期單與催繳單','School-fee instalment slips & overdue bills','ใบผ่อนค่าเทอมกับใบทวงค่าไฟ'], loc:['電視櫃門內','Inside the TV cabinet','ในตู้ทีวี'],
+ school:{sfx:'paper', n:['學費分期單與催繳單','School-fee instalment slips & overdue bills','ใบผ่อนค่าเทอมกับใบทวงค่าไฟ'], loc:['孩子書桌的抽屜','Kids\' desk drawer','ลิ้นชักโต๊ะเขียนหนังสือของลูก'],
   d:['兩個孩子的學費分期付款單，夾著電費催繳單和一疊家庭代工的工資單。','Instalment slips for two children\'s school fees, an overdue electricity bill and a stack of pay slips for piecework done at home.','ใบผ่อนค่าเทอมของลูกสองคน ใบทวงค่าไฟ และสลิปค่าจ้างงานรับมาทำที่บ้านปึกหนึ่ง']},
 };
 const KEY_ITEMS = Object.keys(ITEMS).filter(k=>ITEMS[k].req);
@@ -1238,7 +1238,7 @@ const PROFILE = [
   {k:'cc', l:['主訴／困擾','Concerns','ข้อกังวล'], v:['最近常疲倦、食慾差；覺得吃很多藥卻沒改善','Recent fatigue & poor appetite; feels "so many pills but nothing improves"','ช่วงนี้เหนื่อยง่าย เบื่ออาหาร รู้สึกว่ากินยาเยอะแต่ไม่ดีขึ้น']},
   {k:'secret', l:['（私下透露）','(Told privately)','(บอกเป็นการส่วนตัว)'], v:['最近常頭痛，懷疑是藥害的 → 一痛就自行停用所有藥物好幾天，沒告訴醫師','Frequent headaches she blames on her medicines → stops ALL of them for days whenever one starts; hasn\'t told her doctors','ช่วงนี้ปวดหัวบ่อย คิดว่าเป็นเพราะยา → ปวดเมื่อไรก็หยุดยาทุกตัวหลายวัน ไม่ได้บอกหมอ']},
   {k:'allergy', l:['藥物過敏','Drug allergy','การแพ้ยา'], v:['無已知藥物過敏；骨科醫師要她開始骨鬆藥前先看牙醫，還沒去','No known drug allergy; the orthopaedist asked her to see a dentist before starting the bone drug — she hasn\'t gone','ไม่มีประวัติแพ้ยา หมอกระดูกให้ไปหาหมอฟันก่อนเริ่มยากระดูกพรุน แต่ยังไม่ได้ไป']},
-  {k:'storage', l:['藥物存放','Medicine storage','การเก็บยา'], v:['血壓血糖藥在電視櫃的一週分裝盒；骨鬆藥放廚房咖啡罐；診所的藥常隨手丟','BP & diabetes pills in a weekly box in the TV cabinet; bone pill in the kitchen coffee tin; clinic medicines often tossed','ยาความดัน/เบาหวานอยู่ในกล่องรายสัปดาห์ในตู้ทีวี ยากระดูกอยู่ในกระป๋องกาแฟในครัว ยาจากคลินิกมักโยนทิ้ง']},
+  {k:'storage', l:['藥物存放','Medicine storage','การเก็บยา'], v:['血壓血糖藥的一週分裝盒塞在沙發坐墊下；醫院藥袋在廚房塑膠抽屜；骨鬆藥放廚房咖啡罐；診所的藥常隨手丟','Weekly box of BP & diabetes pills under the sofa cushion; hospital bags in the kitchen plastic drawers; bone pill in the kitchen coffee tin; clinic medicines often tossed','กล่องยาความดัน/เบาหวานรายสัปดาห์อยู่ใต้เบาะโซฟา ซองยาโรงพยาบาลอยู่ในลิ้นชักพลาสติกในครัว ยากระดูกอยู่ในกระป๋องกาแฟ ยาจากคลินิกมักโยนทิ้ง']},
   {k:'otc', l:['成藥／保健品','OTC & supplements','ยาซื้อเอง / อาหารเสริม'], v:['沒有吃鈣片；偶爾買同事推銷的「顧骨頭」粉，不知道有沒有用','No calcium tablets; sometimes buys a "bone tonic" powder a coworker sells — not sure it does anything','ไม่ได้กินแคลเซียม บางทีซื้อผง "บำรุงกระดูก" ที่เพื่อนร่วมงานขาย ไม่รู้ว่าได้ผลไหม']},
   {k:'renal', l:['腎功能','Kidney function','การทำงานของไต'], v:['Cr 1.1–1.2 mg/dL（看似正常）但 eGFR ≈ 52（G3a）、CrCl ≈ 41；尿微白蛋白 2.8（A2）','Cr 1.1–1.2 mg/dL (looks normal) but eGFR ≈ 52 (G3a), CrCl ≈ 41; urine microalbumin 2.8 (A2)','Cr 1.1–1.2 mg/dL (ดูปกติ) แต่ eGFR ≈ 52 (G3a), CrCl ≈ 41 · ไมโครอัลบูมิน 2.8 (A2)']},
 ];
@@ -1728,99 +1728,104 @@ function bgExterior(){
   </svg>`;
 }
 /* ---------- living room (also the search scene) ---------- */
+/* Case C living room: entrance · kids' study desk · sofa corner · kitchenette · piecework table.
+   Every hidden item sits somewhere different from Case A. */
 const HOTSPOTS = {
-  calendar:{item:'calendar'}, altar_d:{item:'pilljar'}, tv_d1:{item:'endo_bag'}, tv_d2:{item:'pillbox'}, tv_door:{item:'school'},
-  fridge_t:{item:'takeout'}, fridge_b:{item:'beer'}, shelf_t:{item:'hospB_bag'}, shelf_m:{item:'cigs'}, shelf_b:{item:'report'}, trash:{item:'trash_bags'},
-  ashtray:{item:'cigs', alias:true}, bag:{item:'takeout', alias:true},
-  crates:{t:['一箱箱家庭代工的塑膠零件，她每天下班後要組裝到半夜。','Boxes of plastic piecework parts — she assembles them after her shift until midnight.','กล่องชิ้นส่วนพลาสติกงานรับมาทำที่บ้าน ป้าประกอบหลังเลิกงานจนเที่ยงคืน']},
+  hook_bag:{item:'cigs'}, door_bag:{item:'trash_bags'}, calendar:{item:'calendar'}, desk_d:{item:'school'}, book_box:{item:'report'},
+  cushion:{item:'pillbox'}, side_d:{item:'pilljar'}, fridge:{item:'takeout'}, k_shelf:{item:'beer'}, k_drawer:{item:'endo_bag'}, tbl_bag:{item:'hospB_bag'},
+  noodles:{item:'takeout', alias:true},
+  window:{t:['門上的小窗：外面是窄窄的巷子，停滿了機車。','The little window in the door: a narrow lane packed with scooters.','หน้าต่างเล็กบนประตู: ข้างนอกเป็นซอยแคบๆ มีมอเตอร์ไซค์จอดเต็ม']},
+  umbrella:{t:['一把破了一根骨架的雨傘，還捨不得丟。','An umbrella with a broken rib — still too good to throw away.','ร่มที่ซี่หักไปซี่หนึ่ง ยังเสียดายไม่อยากทิ้ง']},
+  lamp:{t:['檯燈旁貼著孩子寫的「媽媽加油！」','Next to the desk lamp, a note in a child\'s handwriting: "Go Mum!"','ข้างโคมไฟตั้งโต๊ะมีโน้ตลายมือลูก: "แม่สู้ๆ!"']},
   tv:{t:['電視在播八點檔：主角又失憶了……','The TV is showing a soap opera. The hero lost his memory again…','ทีวีกำลังฉายละครหลังข่าว พระเอกความจำเสื่อมอีกแล้ว…']},
-  scroll:{t:['紅色的「福」字掛軸。','A red scroll with the character 福 (fortune).','ภาพแขวนสีแดงตัวอักษร 福 (โชคดี)']},
-  lamp:{t:['神明燈紅紅亮亮的。','The altar lamps glow red.','โคมไฟบูชาสีแดงส่องสว่าง']},
+  altar:{t:['小小的神明架，香爐裡的香還沒燒完。','A small wall altar; the incense in the burner is still smouldering.','หิ้งพระเล็กๆ ธูปในกระถางยังไหม้ไม่หมด']},
   clock:{t:['下午三點……四點要去接孩子，時間正在流逝！','3 PM… she has to fetch her son at four — time is ticking!','บ่ายสามโมง… สี่โมงต้องไปรับลูก เวลากำลังเดิน!']},
-  window:{t:['窗外是窄窄的巷子，停滿了機車。','Outside: a narrow lane packed with parked scooters.','นอกหน้าต่างเป็นซอยแคบๆ มีมอเตอร์ไซค์จอดเต็ม']},
-  teapot:{t:['烏龍茶還溫溫的，好香。','The oolong tea is still warm. Smells great.','ชาอูหลงยังอุ่นๆ หอมมาก']},
   cooker:{t:['電鍋裡只剩一點隔夜飯……','Just a little leftover rice in the rice cooker…','ในหม้อหุงข้าวเหลือข้าวค้างคืนนิดเดียว…']},
-  goods:{t:['孩子的課本，和一盒盒要組裝的塑膠零件（家庭代工）。','The kids\' textbooks and boxes of plastic parts to assemble — piecework.','หนังสือเรียนของลูก กับกล่องชิ้นส่วนพลาสติกที่ต้องประกอบ — งานรับมาทำที่บ้าน']},
-  plant:{t:['盆栽裡只有土。','Just soil in the pot.','ในกระถางมีแต่ดิน']},
+  teapot:{t:['烏龍茶還溫溫的，好香。','The oolong tea is still warm. Smells great.','ชาอูหลงยังอุ่นๆ หอมมาก']},
+  parts:{t:['一箱箱家庭代工的塑膠零件，她每天下班後要組裝到半夜。','Boxes of plastic piecework parts — she assembles them after her shift until midnight.','กล่องชิ้นส่วนพลาสติกงานรับมาทำที่บ้าน ป้าประกอบหลังเลิกงานจนเที่ยงคืน']},
+  plant:{t:['陽台拿進來的蔥，種在保麗龍箱裡。','Spring onions growing in a polystyrene box, brought in from the balcony.','ต้นหอมปลูกในกล่องโฟม ยกเข้ามาจากระเบียง']},
 };
 const ZONES = {
-  tv:{x:110,y:292,w:380,h:358,n:'zTV', hs:['tv','tv_d1','tv_d2','tv_door']},
-  altar:{x:600,y:244,w:400,h:404,n:'zAltar', hs:['altar_d','lamp']},
-  kitchen:{x:1006,y:222,w:284,h:428,n:'zKitchen', hs:['fridge_t','fridge_b','cooker']},
-  shelf:{x:1292,y:122,w:300,h:588,n:'zShelf', hs:['shelf_t','shelf_m','shelf_b','goods']},
-  table:{x:520,y:680,w:560,h:200,n:'zTable', hs:['teapot','ashtray','bag']},
+  tv:{x:30,y:140,w:320,h:530,n:'zTV', hs:['window','hook_bag','umbrella','door_bag']},
+  altar:{x:360,y:90,w:345,h:570,n:'zAltar', hs:['calendar','book_box','lamp','desk_d']},
+  shelf:{x:712,y:150,w:380,h:510,n:'zShelf', hs:['altar','tv','cushion','side_d']},
+  kitchen:{x:1100,y:100,w:490,h:560,n:'zKitchen', hs:['clock','fridge','k_shelf','cooker','k_drawer']},
+  table:{x:470,y:665,w:660,h:220,n:'zTable', hs:['teapot','parts','tbl_bag','noodles']},
 };
 function hs(id, inner){ return `<g class="hs" data-hs="${id}">${inner}</g>`; }
 function bgLiving(){
-  const O='#4a2a1a';
-  const floorV=[]; for(let x=-400;x<=2000;x+=120){ floorV.push(`<path d="M${x} 600 L${800+(x-800)*2.2} 900" stroke="#6f6c66" stroke-width="2" opacity=".35"/>`); }
-  const goods=[]; [[230,0],[370,1],[510,2],[650,3]].forEach(([y,r])=>{ for(let i=0;i<9;i++){ const x=1312+i*29; if((r===0&&x>1320&&x<1440)||(r===1&&x>1450&&x<1570)||(r===3&&x>1320&&x<1450)) continue;
-      const h=30+((i*7+r*3)%4)*10; goods.push(`<rect x="${x}" y="${y-h}" width="24" height="${h}" rx="4" fill="${['#ff6b6b','#ffd166','#5fd6b4','#5ab8ff','#b48cff','#ff9e5e','#f78fb3'][(i+r*2)%7]}" stroke="${O}" stroke-width="1.5"/>`); } });
+  const O='#2e3a40';
+  const books=[]; [[524,24,'#ff7043'],[550,30,'#3d7bbf'],[582,22,'#ffd166'],[606,28,'#2cb5a8']].forEach(([x,h,c])=>books.push(`<rect x="${x}" y="${300-h-30}" width="${h>25?22:18}" height="${h+30}" rx="2" fill="${c}" stroke="${O}" stroke-width="2"/>`));
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">${BGSTYLE}<defs>
-  <linearGradient id="lvWall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e2f0f0"/><stop offset="1" stop-color="#b6d4d8"/></linearGradient>
-  <linearGradient id="lvFloor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9b6ae"/><stop offset="1" stop-color="#8d8a83"/></linearGradient>
-  <linearGradient id="lvRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a8392a"/><stop offset="1" stop-color="#6e1d12"/></linearGradient>
-  <linearGradient id="lvWood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b9824a"/><stop offset="1" stop-color="#8c5a2c"/></linearGradient>
-  <linearGradient id="lvMint" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#c9f0e0"/><stop offset="1" stop-color="#9fdcc6"/></linearGradient>
-  <linearGradient id="lvSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc8ff"/><stop offset="1" stop-color="#e2f6ff"/></linearGradient>
-  <radialGradient id="lvLight" cx=".15" cy=".3" r=".7"><stop offset="0" stop-color="#fff6d8" stop-opacity=".55"/><stop offset="1" stop-color="#fff6d8" stop-opacity="0"/></radialGradient>
-  <radialGradient id="lvVig" cx=".5" cy=".55" r=".75"><stop offset=".6" stop-color="#3a1a10" stop-opacity="0"/><stop offset="1" stop-color="#3a1a10" stop-opacity=".35"/></radialGradient>
-  <pattern id="lvTile" width="24" height="24" patternUnits="userSpaceOnUse"><rect width="24" height="24" fill="#f5f2e6"/><rect x="1" y="1" width="10" height="10" fill="#8fd0e0"/><rect x="13" y="13" width="10" height="10" fill="#a8dcb9"/></pattern></defs>
-  <rect width="1600" height="600" fill="url(#lvWall)"/>${Array.from({length:26},(_,i)=>`<path d="M${i*64} 40 V470" stroke="#93b8bd" stroke-width="2" opacity=".5"/>`).join('')}
-  <rect y="470" width="1600" height="130" fill="url(#lvTile)"/><rect y="466" width="1600" height="8" fill="#8c5a2c"/>
-  <rect width="1600" height="42" fill="#6e4322"/><rect y="40" width="1600" height="8" fill="#4a2a14"/>
-  <path d="M0 600 H1600 V900 H0Z" fill="url(#lvFloor)"/>${[620,645,676,714,760,816,884].map(y=>`<path d="M0 ${y} H1600" stroke="#6f6c66" stroke-width="2" opacity=".4"/>`).join('')}${floorV.join('')}
-  ${hs('window',`<rect x="60" y="110" width="270" height="290" fill="url(#lvSky)" stroke="#6e4322" stroke-width="10"/><path d="M60 330 Q130 300 200 320 T330 310 V400 H60Z" fill="#7ccf6a"/><path d="M195 110 V400 M60 255 H330" stroke="#6e4322" stroke-width="7"/>
-    <g class="bgx-curtain"><path d="M50 96 h120 v290 q-30 10 -60 0 q-30 10 -60 0Z" fill="#3d7bbf" stroke="#1d3f6a" stroke-width="3"/>${[0,1,2].map(i=>`<circle cx="${80+i*35}" cy="${150+i*60}" r="12" fill="#ffd1dc"/><circle cx="${95+i*20}" cy="${230+i*40}" r="9" fill="#fff6a8"/>`).join('')}</g>
-    <g class="bgx-curtain b"><path d="M220 96 h120 v290 q-30 10 -60 0 q-30 10 -60 0Z" fill="#3d7bbf" stroke="#1d3f6a" stroke-width="3"/>${[0,1,2].map(i=>`<circle cx="${250+i*35}" cy="${170+i*55}" r="12" fill="#ffd1dc"/><circle cx="${300-i*20}" cy="${140+i*70}" r="9" fill="#fff6a8"/>`).join('')}</g>
-    <rect x="40" y="88" width="310" height="14" rx="6" fill="#6e4322"/>`)}
-  <path class="bgx-beam" d="M130 400 L330 400 L760 900 L330 900Z" fill="#fff6d0" opacity=".22" pointer-events="none"/>
-  <g class="bgx-gecko" pointer-events="none"><g transform="translate(560 330) rotate(-30)"><ellipse cx="0" cy="0" rx="16" ry="6" fill="#9fc46a" stroke="#5a7a2a" stroke-width="2"/><circle cx="16" cy="0" r="6" fill="#9fc46a" stroke="#5a7a2a" stroke-width="2"/><circle cx="19" cy="-2" r="1.5" fill="#222"/><path class="bgx-gtail" d="M-16 0 q-14 -2 -22 8" stroke="#9fc46a" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M-8 -5 l-5 -7 M8 -5 l5 -7 M-8 5 l-5 7 M8 5 l5 7" stroke="#5a7a2a" stroke-width="2.5" stroke-linecap="round"/></g></g>
-  ${hs('calendar',`<rect x="380" y="150" width="96" height="134" rx="4" fill="#fff" stroke="${O}" stroke-width="3"/><rect x="380" y="150" width="96" height="30" fill="#e53935"/><text x="428" y="172" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">3月</text>${Array.from({length:28},(_,i)=>`<circle cx="${392+(i%7)*12.5}" cy="${194+Math.floor(i/7)*22}" r="5" fill="none" stroke="#e53935" stroke-width="2"/>`).join('')}`)}
-  ${hs('scroll',`<rect x="730" y="66" width="140" height="210" fill="#c62828" stroke="#7a1010" stroke-width="4"/><rect x="722" y="58" width="156" height="12" rx="6" fill="#6e4322"/><text x="800" y="210" text-anchor="middle" font-size="110" font-weight="900" fill="#ffd54f" font-family="Noto Sans TC,serif">福</text>`)}
-  ${hs('clock',`<circle cx="1185" cy="140" r="44" fill="#fffaf0" stroke="#6e4322" stroke-width="8"/><path d="M1185 140 L1185 108 M1185 140 L1205 152" stroke="${O}" stroke-width="6" stroke-linecap="round"/>`)}
-  <ellipse cx="800" cy="640" rx="260" ry="20" fill="#000" opacity=".18"/>
-  <rect x="600" y="380" width="400" height="24" rx="4" fill="url(#lvRed)" stroke="${O}" stroke-width="3"/><rect x="612" y="404" width="376" height="50" fill="#8e2a1c" stroke="${O}" stroke-width="3"/>
-  ${[618,972].map(x=>`<rect x="${x}" y="454" width="16" height="160" fill="#6e1d12" stroke="${O}" stroke-width="2"/>`).join('')}
-  ${hs('altar_d',`<rect x="730" y="408" width="140" height="40" fill="#5a120a"/><g class="mv slide"><rect x="730" y="408" width="140" height="40" rx="3" fill="#b8432c" stroke="${O}" stroke-width="3"/><rect x="784" y="422" width="32" height="10" rx="5" fill="#ffd54f" stroke="${O}" stroke-width="2"/></g>`)}
-  <rect x="680" y="470" width="240" height="18" rx="3" fill="url(#lvRed)" stroke="${O}" stroke-width="3"/>${[690,900].map(x=>`<rect x="${x}" y="488" width="12" height="150" fill="#6e1d12"/>`).join('')}
-  ${hs('lamp',[628,972].map(x=>`<rect x="${x-12}" y="300" width="24" height="80" rx="10" fill="#d32f2f" stroke="#6e1010" stroke-width="3"/><ellipse class="bgx-glow" cx="${x}" cy="300" rx="22" ry="16" fill="#ffcc80" opacity=".9"/>`).join(''))}
-  <path d="M770 380 h60 l-8 -34 h-44Z" fill="#c9a227" stroke="#7a5a00" stroke-width="3"/>${[790,800,810].map(x=>`<path d="M${x} 346 V300" stroke="#c62828" stroke-width="3"/><circle cx="${x}" cy="300" r="3" fill="#ff7043"/>`).join('')}
-  <path class="bgx-steam" d="M800 296 q-10 -20 0 -40 q10 -20 0 -40" stroke="#ddd" stroke-width="5" fill="none" stroke-linecap="round"/>
-  <ellipse cx="900" cy="380" rx="40" ry="8" fill="#fff" stroke="${O}" stroke-width="2"/>${[[884,366],[904,360],[918,368]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="14" fill="#ff9800" stroke="#a85a00" stroke-width="2"/>`).join('')}
-  <ellipse cx="300" cy="645" rx="200" ry="16" fill="#000" opacity=".18"/>
-  ${hs('tv',`<rect x="190" y="300" width="220" height="172" rx="16" fill="#d8cfbd" stroke="${O}" stroke-width="4"/><rect x="208" y="316" width="164" height="132" rx="18" fill="#4aa3df"/><path d="M208 410 h164 v20 q0 18 -18 18 h-128 q-18 0 -18 -18Z" fill="#8bd450"/><circle cx="330" cy="350" r="14" fill="#fff59d"/><rect x="384" y="330" width="14" height="14" rx="7" fill="#777"/><path d="M270 300 l-40 -70 M330 300 l40 -70" stroke="#999" stroke-width="4"/>`)}
-  <rect x="120" y="472" width="360" height="168" rx="6" fill="url(#lvWood)" stroke="${O}" stroke-width="4"/>
-  ${hs('tv_d1',`<rect x="135" y="485" width="160" height="50" fill="#3a2010"/><g class="mv slide"><rect x="135" y="485" width="160" height="50" rx="4" fill="#c8894a" stroke="${O}" stroke-width="3"/><rect x="198" y="503" width="34" height="10" rx="5" fill="#ffd54f" stroke="${O}" stroke-width="2"/></g>`)}
-  ${hs('tv_d2',`<rect x="305" y="485" width="160" height="50" fill="#3a2010"/><g class="mv slide"><rect x="305" y="485" width="160" height="50" rx="4" fill="#c8894a" stroke="${O}" stroke-width="3"/><rect x="368" y="503" width="34" height="10" rx="5" fill="#ffd54f" stroke="${O}" stroke-width="2"/></g>`)}
-  ${hs('tv_door',`<rect x="135" y="545" width="330" height="84" fill="#3a2010"/><g class="mv doorL"><rect x="135" y="545" width="330" height="84" rx="4" fill="#b8793e" stroke="${O}" stroke-width="3"/><path d="M300 549 V625" stroke="${O}" stroke-width="3"/><circle cx="285" cy="587" r="6" fill="#ffd54f"/><circle cx="315" cy="587" r="6" fill="#ffd54f"/></g>`)}
-  ${hs('trash',`<ellipse cx="545" cy="652" rx="44" ry="8" fill="#000" opacity=".2"/><path d="M508 572 h74 l-8 80 h-58Z" fill="#42a5f5" stroke="#0d47a1" stroke-width="4"/><path d="M518 590 v50 M545 590 v54 M572 590 v50" stroke="#1e88e5" stroke-width="4"/><g class="mv lid"><rect x="502" y="560" width="86" height="16" rx="8" fill="#1e88e5" stroke="#0d47a1" stroke-width="4"/></g>`)}
-  ${hs('cooker',`<rect x="1022" y="560" width="72" height="80" fill="url(#lvWood)" stroke="${O}" stroke-width="3"/><rect x="1028" y="504" width="60" height="58" rx="14" fill="#7fcf8a" stroke="#2a6a3a" stroke-width="3"/><rect x="1036" y="496" width="44" height="12" rx="6" fill="#5fae6e" stroke="#2a6a3a" stroke-width="3"/>`)}
-  <ellipse cx="1185" cy="642" rx="100" ry="12" fill="#000" opacity=".2"/>
-  <rect x="1100" y="230" width="170" height="410" rx="16" fill="#ecf9f4" stroke="#2f6a5a" stroke-width="4"/><rect x="1110" y="244" width="150" height="160" fill="#f0fff9"/><rect x="1110" y="420" width="150" height="210" fill="#f0fff9"/>
-  ${hs('fridge_t',`<g class="mv doorR"><rect x="1100" y="230" width="170" height="180" rx="16" fill="url(#lvMint)" stroke="#2f6a5a" stroke-width="4"/><rect x="1118" y="340" width="12" height="54" rx="6" fill="#fff" stroke="#2f6a5a" stroke-width="2"/><circle cx="1220" cy="270" r="9" fill="#ff7043"/><rect x="1180" y="300" width="22" height="22" fill="#5ab8ff"/><circle cx="1240" cy="330" r="8" fill="#ffd54f"/></g>`)}
-  ${hs('fridge_b',`<g class="mv doorR"><rect x="1100" y="414" width="170" height="226" rx="16" fill="url(#lvMint)" stroke="#2f6a5a" stroke-width="4"/><rect x="1118" y="426" width="12" height="60" rx="6" fill="#fff" stroke="#2f6a5a" stroke-width="2"/></g>`)}
-  <rect x="1296" y="132" width="290" height="572" fill="#8c5a2c" stroke="${O}" stroke-width="4"/><rect x="1306" y="140" width="270" height="556" fill="#5a3418"/>
-  ${[230,370,510,650].map(y=>`<rect x="1300" y="${y}" width="282" height="14" fill="#c8894a" stroke="${O}" stroke-width="2"/>`).join('')}
-  ${hs('goods',goods.join(''))}
-  ${hs('shelf_t',`<g class="mv lift"><rect x="1328" y="168" width="108" height="62" rx="4" fill="#d9b071" stroke="${O}" stroke-width="3"/><path d="M1328 186 h108" stroke="#a87a3a" stroke-width="3"/><text x="1382" y="216" text-anchor="middle" font-size="16" font-weight="900" fill="#8a5a1a">雜物</text></g>`)}
-  ${hs('shelf_m',`<g class="mv lift"><rect x="1458" y="306" width="110" height="64" rx="4" fill="#d9b071" stroke="${O}" stroke-width="3"/><path d="M1458 324 h110" stroke="#a87a3a" stroke-width="3"/><text x="1513" y="356" text-anchor="middle" font-size="16" font-weight="900" fill="#8a5a1a">私人</text></g>`)}
-  ${hs('shelf_b',`<g class="mv lift"><rect x="1326" y="586" width="118" height="64" rx="4" fill="#d9b071" stroke="${O}" stroke-width="3"/><path d="M1326 604 h118" stroke="#a87a3a" stroke-width="3"/><text x="1385" y="636" text-anchor="middle" font-size="16" font-weight="900" fill="#8a5a1a">文件</text></g>`)}
-  <ellipse cx="800" cy="860" rx="300" ry="28" fill="#000" opacity=".2"/>
-  ${[[560,800],[1040,800]].map(([x,y])=>`<path d="M${x-40} ${y} h80 l-10 70 h-60Z" fill="#e53935" stroke="#7a1010" stroke-width="3"/><ellipse cx="${x}" cy="${y}" rx="42" ry="10" fill="#ef5350" stroke="#7a1010" stroke-width="3"/>`).join('')}
-  <path d="M640 790 L600 880 M960 790 L1000 880 M800 800 V880" stroke="#6e4322" stroke-width="12"/>
-  <ellipse cx="800" cy="770" rx="270" ry="64" fill="#8c5a2c"/><ellipse cx="800" cy="758" rx="270" ry="64" fill="#c58a4a" stroke="${O}" stroke-width="4"/>
-  ${hs('teapot',`<ellipse cx="700" cy="736" rx="40" ry="32" fill="#f1ece0" stroke="${O}" stroke-width="3"/><path d="M738 728 q26 -10 30 -26" stroke="#f1ece0" stroke-width="10" fill="none" stroke-linecap="round"/><path d="M664 724 q-26 6 -20 30" stroke="${O}" stroke-width="5" fill="none"/><ellipse cx="700" cy="706" rx="18" ry="6" fill="#2f5d9e"/>
-    ${[[760,754],[800,770],[640,770]].map(([x,y],i)=>`<rect x="${x-12}" y="${y-18}" width="24" height="20" rx="6" fill="#fff" stroke="${O}" stroke-width="2.5"/><path class="bgx-steam d${i}" d="M${x} ${y-24} q-8 -14 0 -28 q8 -14 0 -28" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/>`).join('')}`)}
-  ${hs('ashtray',`<ellipse cx="930" cy="758" rx="38" ry="13" fill="#e8f4ff" stroke="${O}" stroke-width="3"/><path d="M892 756 q38 24 76 0" fill="#cfe6ff" stroke="${O}" stroke-width="2.5"/>${[[912,748,'#ff5c8f'],[930,744,'#ffd166'],[948,749,'#5ab8ff'],[921,753,'#7fe0b0'],[940,753,'#ff9e5e']].map(([x,y,c])=>`<ellipse cx="${x}" cy="${y}" rx="6" ry="4.2" fill="${c}" stroke="${O}" stroke-width="1.4"/>`).join('')}`)}
-  ${hs('bag',`<path d="M820 724 q-10 -40 20 -44 q30 4 20 44Z" fill="#fff" stroke="#999" stroke-width="2" opacity=".9"/><rect x="806" y="716" width="68" height="34" rx="4" fill="#fffde7" stroke="${O}" stroke-width="2.5"/><path d="M806 728 h68" stroke="#ff7043" stroke-width="4"/>`)}
-  ${hs('crates',`${[[30,760],[150,760],[90,676]].map(([x,y])=>`<rect x="${x}" y="${y}" width="120" height="84" rx="4" fill="#d9a066" stroke="#7a4a1a" stroke-width="4"/><path d="M${x} ${y+18} h120 M${x+60} ${y} v18" stroke="#a8702e" stroke-width="3"/><rect x="${x+38}" y="${y+40}" width="44" height="22" rx="3" fill="#fff6e0" stroke="#a8702e" stroke-width="2"/><path d="M${x+45} ${y+48} h30 M${x+45} ${y+55} h22" stroke="#c9a06a" stroke-width="2"/>`).join('')}`)}
-  <g pointer-events="none"><path d="M1225 880 v-200" stroke="#ddd" stroke-width="12"/><ellipse cx="1225" cy="884" rx="60" ry="14" fill="#7ec8e3" stroke="#2a6a8a" stroke-width="3"/>
-    <g class="bgx-fanhead"><circle cx="1225" cy="610" r="78" fill="#e8f7ff" fill-opacity=".35" stroke="#fff" stroke-width="6"/>${[0,30,60,90,120,150].map(a=>`<path d="M1225 532 V688" stroke="#fff" stroke-width="2.5" transform="rotate(${a} 1225 610)"/>`).join('')}
-    <g class="bgx-blades">${[0,120,240].map(a=>`<ellipse cx="1225" cy="572" rx="22" ry="38" fill="#9be3ff" stroke="#2a6a8a" stroke-width="2.5" transform="rotate(${a} 1225 610)"/>`).join('')}<circle cx="1225" cy="610" r="14" fill="#2f5d9e"/></g></g></g>
-  ${hs('plant',`<path d="M1500 800 h80 l-10 74 h-60Z" fill="#c0643c" stroke="#5a2a10" stroke-width="3"/><circle cx="1520" cy="780" r="30" fill="#4caf50"/><circle cx="1560" cy="770" r="32" fill="#66bb6a"/><circle cx="1540" cy="740" r="26" fill="#43a047"/>`)}
+  <linearGradient id="lvWall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e4f1f1"/><stop offset="1" stop-color="#bcd7da"/></linearGradient>
+  <linearGradient id="lvFloor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cfcabf"/><stop offset="1" stop-color="#a59f93"/></linearGradient>
+  <linearGradient id="lvWood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d2ad83"/><stop offset="1" stop-color="#a47c52"/></linearGradient>
+  <linearGradient id="lvSofa" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6f9fc4"/><stop offset="1" stop-color="#4b7aa0"/></linearGradient>
+  <linearGradient id="lvMint" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#f4f6f8"/><stop offset="1" stop-color="#d9e0e6"/></linearGradient>
+  <linearGradient id="lvSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffb886"/><stop offset="1" stop-color="#ffe6c8"/></linearGradient>
+  <radialGradient id="lvLight" cx=".85" cy=".25" r=".7"><stop offset="0" stop-color="#fff1d8" stop-opacity=".5"/><stop offset="1" stop-color="#fff1d8" stop-opacity="0"/></radialGradient>
+  <radialGradient id="lvVig" cx=".5" cy=".55" r=".75"><stop offset=".6" stop-color="#10262c" stop-opacity="0"/><stop offset="1" stop-color="#10262c" stop-opacity=".35"/></radialGradient>
+  <pattern id="lvTerr" width="40" height="40" patternUnits="userSpaceOnUse"><rect width="40" height="40" fill="url(#lvFloor)"/><circle cx="8" cy="10" r="2" fill="#8d877c" opacity=".5"/><circle cx="27" cy="22" r="1.6" fill="#f2efe8" opacity=".7"/><circle cx="16" cy="32" r="1.3" fill="#7d776c" opacity=".5"/><circle cx="34" cy="6" r="1.2" fill="#fff" opacity=".5"/></pattern>
+  <pattern id="lvKTile" width="30" height="30" patternUnits="userSpaceOnUse"><rect width="30" height="30" fill="#f6fbfb"/><path d="M0 0 H30 M0 0 V30" stroke="#c5dadc" stroke-width="2"/></pattern></defs>
+  <rect width="1600" height="600" fill="url(#lvWall)"/>${Array.from({length:22},(_,i)=>`<path d="M${i*72} 40 V520" stroke="#a9c8cc" stroke-width="2" opacity=".35"/>`).join('')}
+  <rect y="520" width="1100" height="80" fill="#9fc3c8"/><rect y="516" width="1100" height="8" fill="#6f9aa0"/>
+  <rect x="1100" y="300" width="500" height="300" fill="url(#lvKTile)"/>
+  <rect width="1600" height="40" fill="#3f5a62"/><rect y="38" width="1600" height="8" fill="#2a4148"/>
+  <rect y="600" width="1600" height="300" fill="url(#lvTerr)"/><path d="M0 600 H1600" stroke="#7d776c" stroke-width="4"/>
+  <!-- ===== entrance ===== -->
+  <rect x="52" y="168" width="196" height="440" rx="6" fill="#4f7f9a" stroke="${O}" stroke-width="5"/><rect x="66" y="184" width="168" height="410" rx="4" fill="none" stroke="#3a6680" stroke-width="3"/>
+  ${hs('window',`<rect x="100" y="214" width="100" height="120" rx="6" fill="url(#lvSky)" stroke="${O}" stroke-width="4"/><path d="M150 214 V334 M100 274 H200" stroke="${O}" stroke-width="3"/><path d="M106 312 h88" stroke="#6a8a6a" stroke-width="10" opacity=".5"/>`)}
+  <circle cx="222" cy="410" r="9" fill="#ffd166" stroke="${O}" stroke-width="3"/><rect x="60" y="600" width="190" height="14" rx="4" fill="#8a7a6a"/>
+  <path d="M270 210 h70" stroke="#6f5a46" stroke-width="7" stroke-linecap="round"/>${[284,322].map(x=>`<path d="M${x} 210 v14 q0 6 6 6" stroke="#6f5a46" stroke-width="4" fill="none"/>`).join('')}
+  ${hs('hook_bag',`<g class="mv lift"><path d="M270 236 q20 -30 40 0" stroke="${O}" stroke-width="5" fill="none"/><path d="M256 236 h68 l-8 92 h-52Z" fill="#2cb5a8" stroke="${O}" stroke-width="4" stroke-linejoin="round"/><rect x="274" y="262" width="32" height="18" rx="3" fill="#fff" stroke="${O}" stroke-width="2"/><text x="290" y="276" text-anchor="middle" font-size="11" font-weight="900" fill="#1f6a62" font-family="Noto Sans TC,sans-serif">廠</text></g>`)}
+  ${hs('umbrella',`<path d="M328 250 L344 470" stroke="#1d3f6a" stroke-width="5"/><path d="M314 266 q14 -28 32 -12 l10 120 q-18 10 -34 -6Z" fill="#3d7bbf" stroke="${O}" stroke-width="3"/><path d="M344 470 q-10 14 -18 4" stroke="#1d3f6a" stroke-width="5" fill="none" stroke-linecap="round"/>`)}
+  ${hs('door_bag',`<ellipse cx="300" cy="652" rx="56" ry="9" fill="#000" opacity=".2"/><g class="mv lift"><path d="M256 650 C244 610 256 572 290 566 L300 548 L312 566 C346 572 356 612 344 650Z" fill="#eef1f3" stroke="${O}" stroke-width="4" stroke-linejoin="round"/><path d="M290 566 q10 -14 22 0" stroke="#e53935" stroke-width="5" fill="none"/><path d="M272 610 q28 10 56 0" stroke="#c9d0d6" stroke-width="3" fill="none"/></g>`)}
+  ${[[90,640,'#ff8a1e'],[150,646,'#3d7bbf']].map(([x,y,c])=>`<ellipse cx="${x}" cy="${y}" rx="24" ry="8" fill="${c}" stroke="${O}" stroke-width="2.5"/>`).join('')}
+  <!-- ===== kids' study desk ===== -->
+  ${hs('calendar',`<rect x="386" y="104" width="96" height="134" rx="4" fill="#fff" stroke="${O}" stroke-width="3"/><rect x="386" y="104" width="96" height="30" fill="#e53935"/><text x="434" y="126" text-anchor="middle" font-size="18" font-weight="900" fill="#fff">3月</text>${Array.from({length:28},(_,i)=>`<circle cx="${398+(i%7)*12.5}" cy="${148+Math.floor(i/7)*22}" r="5" fill="none" stroke="#e53935" stroke-width="2"/>`).join('')}`)}
+  <rect x="508" y="300" width="196" height="12" rx="3" fill="url(#lvWood)" stroke="${O}" stroke-width="3"/>${books.join('')}
+  ${hs('book_box',`<g class="mv lift"><rect x="636" y="226" width="62" height="74" rx="3" fill="#7b4fd6" stroke="${O}" stroke-width="3"/><rect x="646" y="240" width="42" height="18" rx="2" fill="#fff"/><text x="667" y="254" text-anchor="middle" font-size="11" font-weight="900" fill="#5a32b0" font-family="Noto Sans TC,sans-serif">文件</text></g>`)}
+  <ellipse cx="540" cy="652" rx="170" ry="12" fill="#000" opacity=".18"/>
+  <rect x="380" y="462" width="320" height="22" rx="4" fill="url(#lvWood)" stroke="${O}" stroke-width="4"/>${[392,676].map(x=>`<rect x="${x}" y="484" width="14" height="164" fill="#8c6640" stroke="${O}" stroke-width="2.5"/>`).join('')}
+  ${hs('desk_d',`<rect x="520" y="486" width="150" height="44" fill="#4a3424"/><g class="mv slide"><rect x="520" y="486" width="150" height="44" rx="3" fill="#c49a6c" stroke="${O}" stroke-width="3"/><rect x="578" y="502" width="34" height="10" rx="5" fill="#ffd54f" stroke="${O}" stroke-width="2"/></g>`)}
+  ${hs('lamp',`<path d="M420 462 v-60 l40 -40" stroke="#2cb5a8" stroke-width="7" fill="none" stroke-linecap="round"/><path d="M444 352 l44 -10 l6 30 l-40 10Z" fill="#2cb5a8" stroke="${O}" stroke-width="3"/><ellipse cx="420" cy="462" rx="22" ry="6" fill="#1f7a6a"/><rect x="452" y="420" width="40" height="30" rx="2" fill="#fff59d" stroke="${O}" stroke-width="2" transform="rotate(-6 472 435)"/>`)}
+  <rect x="410" y="540" width="80" height="12" rx="4" fill="#2cb5a8" stroke="${O}" stroke-width="3"/><path d="M420 552 v96 M480 552 v96" stroke="#1f6a62" stroke-width="6"/><rect x="414" y="470" width="72" height="72" rx="10" fill="#ff8a1e" stroke="${O}" stroke-width="3" opacity=".9"/>
+  <!-- ===== sofa corner ===== -->
+  ${hs('altar',`<rect x="760" y="132" width="150" height="16" rx="3" fill="#a8392a" stroke="${O}" stroke-width="3"/><rect x="800" y="86" width="70" height="46" rx="4" fill="#c62828" stroke="#7a1010" stroke-width="3"/><text x="835" y="120" text-anchor="middle" font-size="30" font-weight="900" fill="#ffd54f" font-family="Noto Sans TC,serif">福</text>${[778,892].map(x=>`<rect x="${x-6}" y="104" width="12" height="28" rx="5" fill="#d32f2f"/><ellipse class="bgx-glow" cx="${x}" cy="104" rx="10" ry="7" fill="#ffcc80"/>`).join('')}<path class="bgx-steam" d="M835 84 q-6 -14 0 -28 q6 -14 0 -28" stroke="#ddd" stroke-width="4" fill="none" stroke-linecap="round"/>`)}
+  ${hs('tv',`<rect x="900" y="210" width="170" height="110" rx="8" fill="#1d2a30" stroke="${O}" stroke-width="4"/><rect x="910" y="220" width="150" height="90" rx="4" fill="#4aa3df"/><path d="M910 286 h150 v24 h-150Z" fill="#8bd450"/><circle cx="1030" cy="244" r="12" fill="#fff59d"/><path d="M985 320 v18 M965 338 h40" stroke="${O}" stroke-width="5"/>`)}
+  <ellipse cx="930" cy="652" rx="190" ry="14" fill="#000" opacity=".2"/>
+  <path d="M790 600 V430 q0 -24 24 -24 h236 q24 0 24 24 V600Z" fill="url(#lvSofa)" stroke="${O}" stroke-width="4"/>
+  <rect x="772" y="470" width="40" height="150" rx="16" fill="#5f8fb4" stroke="${O}" stroke-width="4"/><rect x="1052" y="470" width="40" height="150" rx="16" fill="#5f8fb4" stroke="${O}" stroke-width="4"/>
+  <rect x="806" y="540" width="252" height="70" rx="12" fill="#6f9fc4" stroke="${O}" stroke-width="4"/>
+  <rect x="822" y="450" width="70" height="66" rx="14" fill="#ffd166" stroke="${O}" stroke-width="3" transform="rotate(-8 857 483)"/>
+  ${hs('cushion',`<rect x="900" y="510" width="96" height="40" rx="8" fill="#2a4148"/><g class="mv lift"><rect x="894" y="486" width="108" height="64" rx="16" fill="#ff9e5e" stroke="${O}" stroke-width="3"/><path d="M910 500 q40 14 76 0" stroke="#e07a3a" stroke-width="3" fill="none"/></g>`)}
+  <rect x="1010" y="452" width="62" height="62" rx="14" fill="#2cb5a8" stroke="${O}" stroke-width="3" transform="rotate(8 1041 483)"/>
+  <rect x="716" y="520" width="66" height="122" rx="4" fill="url(#lvWood)" stroke="${O}" stroke-width="3"/><rect x="726" y="496" width="16" height="26" rx="3" fill="#fff" stroke="${O}" stroke-width="2"/><circle cx="760" cy="508" r="12" fill="#ffd166" stroke="${O}" stroke-width="2"/>
+  ${hs('side_d',`<rect x="722" y="532" width="54" height="40" fill="#4a3424"/><g class="mv slide"><rect x="722" y="532" width="54" height="40" rx="3" fill="#c49a6c" stroke="${O}" stroke-width="3"/><rect x="740" y="546" width="18" height="9" rx="4" fill="#ffd54f" stroke="${O}" stroke-width="2"/></g>`)}
+  <!-- ===== kitchenette ===== -->
+  ${hs('clock',`<circle cx="1440" cy="146" r="40" fill="#fffaf0" stroke="#2a4148" stroke-width="7"/><path d="M1440 146 V118 M1440 146 L1458 152" stroke="${O}" stroke-width="5" stroke-linecap="round"/>`)}
+  <ellipse cx="1185" cy="646" rx="90" ry="10" fill="#000" opacity=".2"/>
+  <rect x="1112" y="250" width="148" height="392" rx="14" fill="#e8edf1" stroke="#4a5a66" stroke-width="4"/><rect x="1120" y="262" width="132" height="178" fill="#fbfdff"/>
+  ${hs('fridge',`<g class="mv doorR"><rect x="1112" y="250" width="148" height="196" rx="14" fill="url(#lvMint)" stroke="#4a5a66" stroke-width="4"/><rect x="1126" y="360" width="10" height="56" rx="5" fill="#fff" stroke="#4a5a66" stroke-width="2"/><rect x="1180" y="282" width="40" height="28" rx="2" fill="#fff59d" stroke="#b8a34a" stroke-width="2"/><circle cx="1236" cy="330" r="7" fill="#ff7043"/></g>`)}
+  <rect x="1112" y="452" width="148" height="190" rx="14" fill="url(#lvMint)" stroke="#4a5a66" stroke-width="4"/><rect x="1126" y="470" width="10" height="56" rx="5" fill="#fff" stroke="#4a5a66" stroke-width="2"/>
+  <rect x="1300" y="330" width="270" height="12" rx="3" fill="url(#lvWood)" stroke="${O}" stroke-width="3"/>
+  ${[[1316,'#ffd166'],[1352,'#ff8a1e']].map(([x,c])=>`<rect x="${x}" y="290" width="28" height="40" rx="6" fill="${c}" stroke="${O}" stroke-width="2.5"/>`).join('')}
+  ${hs('k_shelf',`<g class="mv lift"><rect x="1400" y="272" width="44" height="58" rx="5" fill="#8d5a3b" stroke="${O}" stroke-width="3"/><rect x="1400" y="286" width="44" height="18" fill="#ffd166"/><text x="1422" y="300" text-anchor="middle" font-size="10" font-weight="900" fill="#6a3a1a" font-family="sans-serif">3in1</text><ellipse cx="1422" cy="272" rx="22" ry="6" fill="#c9c9c9" stroke="${O}" stroke-width="2.5"/></g><path d="M1462 312 h22 v14 q0 6 -6 6 h-10 q-6 0 -6 -6Z" fill="#fff" stroke="${O}" stroke-width="2.5"/>`)}
+  <rect x="1272" y="470" width="196" height="172" fill="#d8e2e6" stroke="${O}" stroke-width="4"/><rect x="1266" y="458" width="310" height="18" rx="3" fill="#9fb2ba" stroke="${O}" stroke-width="3"/>
+  <rect x="1300" y="462" width="80" height="12" rx="4" fill="#7d9aa6"/><path d="M1340 458 v-40 q0 -10 10 -10 h14" stroke="#6f8792" stroke-width="6" fill="none" stroke-linecap="round"/>
+  ${hs('cooker',`<rect x="1392" y="404" width="60" height="54" rx="14" fill="#7fcf8a" stroke="#2a6a3a" stroke-width="3"/><rect x="1400" y="396" width="44" height="12" rx="6" fill="#5fae6e" stroke="#2a6a3a" stroke-width="3"/>`)}
+  ${hs('k_drawer',`<rect x="1478" y="482" width="92" height="160" rx="4" fill="#eef3f6" stroke="${O}" stroke-width="3"/>${[0,1].map(i=>`<rect x="1484" y="${540+i*50}" width="80" height="44" rx="3" fill="#cfe4ee" stroke="${O}" stroke-width="2"/>`).join('')}<rect x="1484" y="488" width="80" height="46" fill="#5a6a72"/><g class="mv slide"><rect x="1484" y="488" width="80" height="46" rx="3" fill="#bfe0ee" stroke="${O}" stroke-width="2.5"/><rect x="1510" y="504" width="28" height="8" rx="4" fill="#fff" stroke="${O}" stroke-width="1.6"/></g>`)}
+  <!-- ===== piecework table ===== -->
+  <ellipse cx="800" cy="860" rx="320" ry="26" fill="#000" opacity=".2"/>
+  <path d="M600 790 L570 878 M1000 790 L1030 878 M640 790 L660 878 M960 790 L940 878" stroke="#6b7d86" stroke-width="10"/>
+  <rect x="540" y="742" width="520" height="52" rx="8" fill="#e9eef0" stroke="${O}" stroke-width="4"/><rect x="540" y="742" width="520" height="14" rx="6" fill="#ffffff" opacity=".6"/>
+  ${hs('parts',`${[[486,730],[486,794],[1074,770]].map(([x,y])=>`<rect x="${x}" y="${y}" width="96" height="64" rx="4" fill="#d9a066" stroke="#7a4a1a" stroke-width="3"/><path d="M${x} ${y+14} h96" stroke="#a8702e" stroke-width="3"/>`).join('')}${[[600,722,'#ff5c8f'],[618,716,'#5ab8ff'],[636,724,'#ffd166'],[612,730,'#7fe0b0']].map(([x,y,c])=>`<circle cx="${x}" cy="${y}" r="7" fill="${c}" stroke="${O}" stroke-width="1.6"/>`).join('')}`)}
+  ${hs('teapot',`<ellipse cx="720" cy="722" rx="34" ry="26" fill="#f1ece0" stroke="${O}" stroke-width="3"/><path d="M752 714 q22 -8 26 -22" stroke="#f1ece0" stroke-width="9" fill="none" stroke-linecap="round"/><ellipse cx="720" cy="698" rx="15" ry="5" fill="#2f5d9e"/><rect x="776" y="716" width="22" height="20" rx="5" fill="#fff" stroke="${O}" stroke-width="2.5"/><path class="bgx-steam" d="M787 710 q-8 -14 0 -28 q8 -14 0 -28" stroke="#fff" stroke-width="5" fill="none" stroke-linecap="round"/>`)}
+  ${hs('tbl_bag',`<g class="mv lift"><g transform="rotate(-8 880 722)"><rect x="846" y="688" width="70" height="56" rx="3" fill="#fff" stroke="${O}" stroke-width="3"/><rect x="846" y="688" width="70" height="14" fill="#7b4fd6"/><text x="881" y="726" text-anchor="middle" font-size="13" font-weight="900" fill="#5a32b0" font-family="Noto Sans TC,sans-serif">B</text></g></g>`)}
+  ${hs('noodles',`<path d="M950 744 l8 -48 h40 l8 48Z" fill="#ff7043" stroke="${O}" stroke-width="3" stroke-linejoin="round"/><path d="M956 696 q22 -12 44 0" fill="#ffe0a0" stroke="${O}" stroke-width="2.5"/><path d="M962 716 h32" stroke="#fff" stroke-width="3"/>`)}
+  ${hs('plant',`<rect x="1490" y="782" width="96" height="60" rx="4" fill="#f4f6f8" stroke="#9aa6ae" stroke-width="3"/>${[1504,1522,1540,1558,1574].map((x,i)=>`<path d="M${x} 782 q${i%2?6:-6} -40 ${i%2?-2:2} -70" stroke="#4caf50" stroke-width="6" fill="none" stroke-linecap="round"/>`).join('')}`)}
   <rect width="1600" height="900" fill="url(#lvLight)" pointer-events="none"/><rect width="1600" height="900" fill="url(#lvVig)" pointer-events="none"/>
-  ${[[300,500],[420,560],[520,640],[360,700],[260,620],[470,480]].map(([x,y],i)=>`<circle class="bgx-dust" cx="${x}" cy="${y}" r="3" fill="#fff" style="animation-delay:${-i*1.6}s" pointer-events="none"/>`).join('')}
+  ${[[420,560],[640,620],[860,380],[1020,640],[300,520],[1200,560]].map(([x,y],i)=>`<circle class="bgx-dust" cx="${x}" cy="${y}" r="3" fill="#fff" style="animation-delay:${-i*1.6}s" pointer-events="none"/>`).join('')}
   ${Object.entries(ZONES).map(([k,z])=>`<rect class="zone" data-zone="${k}" x="${z.x}" y="${z.y}" width="${z.w}" height="${z.h}" rx="26"/>`).join('')}
   <g id="sparkLayer" pointer-events="none"></g>
   </svg>`;
@@ -2570,20 +2575,20 @@ ANSWERS.life2=async()=>{ await say('chen','sad',['……其實我很想。最近
   await coach('happy',['這就是「想改變的動機」！記住它——最後衛教時，從她自己的理由出發。','That\'s motivation to change! Remember it — in your final counselling, build on her own reasons.','นี่แหละ "แรงจูงใจที่จะเปลี่ยน"! จำไว้ ตอนให้คำแนะนำท้ายเกม ให้เริ่มจากเหตุผลของป้าเอง']); S.fl.ready=1; S.profile.add('exercise'); };
 ANSWERS.family2=async()=>{ if(!CH.wife) show('wife','R','sad'); else emo('wife','sad');
   await say('wife','sad',['沒有啦……家裡都是她在管，我看不懂藥袋上的字。','Nobody… she runs everything at home. I can\'t read what\'s on the bags.','ไม่มีหรอก… เรื่องในบ้านเขาจัดการหมด ลุงอ่านตัวหนังสือบนซองยาไม่ออก']);
-  await say('wife','neutral',['孩子的學費分期單、電費單，都塞在電視櫃裡，我也不知道怎麼辦……','The kids\' school-fee slips and the electricity bills are stuffed in the TV cabinet — I don\'t know what to do…','ใบผ่อนค่าเทอมลูก บิลค่าไฟ ยัดอยู่ในตู้ทีวีหมด ลุงก็ไม่รู้จะทำยังไง…']);
-  hide('wife'); await coach('think',['照顧家庭的負擔很重。除了藥，我們也可以幫他們連結社福資源。','The burden on this family is heavy. Beyond medicines, we can link them to social-welfare resources.','ภาระของครอบครัวนี้หนักมาก นอกจากเรื่องยา เรายังช่วยเชื่อมต่อแหล่งช่วยเหลือทางสังคมได้']); S.fl.support=1; addSpot('tv_door'); };
+  await say('wife','neutral',['孩子的學費分期單、電費單，都塞在孩子書桌的抽屜裡，我也不知道怎麼辦……','The kids\' school-fee slips and the electricity bills are stuffed in the kids\' desk drawer — I don\'t know what to do…','ใบผ่อนค่าเทอมลูก บิลค่าไฟ ยัดอยู่ในลิ้นชักโต๊ะเขียนหนังสือของลูกหมด ลุงก็ไม่รู้จะทำยังไง…']);
+  hide('wife'); await coach('think',['照顧家庭的負擔很重。除了藥，我們也可以幫他們連結社福資源。','The burden on this family is heavy. Beyond medicines, we can link them to social-welfare resources.','ภาระของครอบครัวนี้หนักมาก นอกจากเรื่องยา เรายังช่วยเชื่อมต่อแหล่งช่วยเหลือทางสังคมได้']); S.fl.support=1; addSpot('desk_d'); };
 ANSWERS.pain2=async()=>{ await say('chen','neutral',['2 月開始的，背中間痛，晚上翻身最痛。','It started in February — the middle of my back, worst when I turn over at night.','เริ่มเดือนกุมภาฯ ปวดกลางหลัง ตอนกลางคืนพลิกตัวเจ็บที่สุด']);
-  await say('chen','think',['身高喔？同事說我好像變矮了，哈哈。以前的健檢手冊，跟家裡的文件一起收在神明桌抽屜……','My height? A coworker said I look shorter, haha. My old health-check booklet is in the altar drawer with our papers…','ส่วนสูงเหรอ? เพื่อนที่โรงงานบอกว่าป้าดูเตี้ยลง ฮ่าๆ สมุดตรวจสุขภาพเล่มเก่าเก็บอยู่ในลิ้นชักโต๊ะบูชากับเอกสารอื่นๆ…']);
-  await coach('think',['骨鬆病人新出現背痛、又可能變矮——要想到脊椎壓迫性骨折。記下來！','New back pain and possible height loss in osteoporosis — think vertebral compression fracture. Note it!','ผู้ป่วยกระดูกพรุนที่ปวดหลังขึ้นใหม่และอาจเตี้ยลง — ต้องนึกถึงกระดูกสันหลังยุบ จดไว้!']); S.fl.back=1; addSpot('altar_d'); };
+  await say('chen','think',['身高喔？同事說我好像變矮了，哈哈。以前的健檢手冊，收在沙發旁邊小櫃子的抽屜……','My height? A coworker said I look shorter, haha. My old health-check booklet is in the drawer of the little cabinet by the sofa…','ส่วนสูงเหรอ? เพื่อนที่โรงงานบอกว่าป้าดูเตี้ยลง ฮ่าๆ สมุดตรวจสุขภาพเล่มเก่าเก็บอยู่ในลิ้นชักตู้เล็กข้างโซฟา…']);
+  await coach('think',['骨鬆病人新出現背痛、又可能變矮——要想到脊椎壓迫性骨折。記下來！','New back pain and possible height loss in osteoporosis — think vertebral compression fracture. Note it!','ผู้ป่วยกระดูกพรุนที่ปวดหลังขึ้นใหม่และอาจเตี้ยลง — ต้องนึกถึงกระดูกสันหลังยุบ จดไว้!']); S.fl.back=1; addSpot('side_d'); };
 ANSWERS.body2=async()=>{ await say('chen','neutral',['有啊，沒吃早餐的時候，上午十點左右在工廠會手抖、冒冷汗。','Yes — when I skip breakfast, around ten in the morning at the factory my hands shake and I break out in a cold sweat.','มีจ้ะ วันไหนไม่ได้กินข้าวเช้า สิบโมงในโรงงานมือจะสั่น เหงื่อเย็นแตก']);
-  await say('chen','embarrassed',['吃幾顆糖就好了啦！工作包裡都有放。（瞄了置物架一眼）','A few candies fix it! I keep some in my work bag. (glances at the shelf)','กินลูกอมสักสองสามเม็ดก็หาย! ในกระเป๋าทำงานมีอยู่ (เหลือบมองชั้นวาง)']);
-  await coach('think',['吃降血糖藥又不吃飯，發抖、冒冷汗——很像低血糖。記下來！','Diabetes pills, skipped meals, shaking and cold sweats — that sounds like hypoglycaemia. Note it!','กินยาเบาหวานแต่ไม่กินข้าว มือสั่น เหงื่อแตก — คล้ายน้ำตาลต่ำ จดไว้!']); S.fl.shaky=1; addSpot('shelf_m'); };
+  await say('chen','embarrassed',['吃幾顆糖就好了啦！工作包裡都有放。（瞄了門口掛著的包包一眼）','A few candies fix it! I keep some in my work bag. (glances at the bag hanging by the door)','กินลูกอมสักสองสามเม็ดก็หาย! ในกระเป๋าทำงานมีอยู่ (เหลือบมองกระเป๋าที่แขวนอยู่หน้าประตู)']);
+  await coach('think',['吃降血糖藥又不吃飯，發抖、冒冷汗——很像低血糖。記下來！','Diabetes pills, skipped meals, shaking and cold sweats — that sounds like hypoglycaemia. Note it!','กินยาเบาหวานแต่ไม่กินข้าว มือสั่น เหงื่อแตก — คล้ายน้ำตาลต่ำ จดไว้!']); S.fl.shaky=1; addSpot('hook_bag'); };
 ANSWERS.allergy=async()=>{ await say('chen','think',['過敏喔？吃藥是沒有過敏啦……','Allergies? No drug allergies, as far as I know…','แพ้ยาเหรอ? ไม่เคยแพ้ยานะ…']);
   await say('chen','neutral',['啊，不過 B 醫院的骨科醫生說，吃骨頭的藥之前要先去看牙醫。我沒去啦，沒時間。','Oh, but the orthopaedist at Hospital B said I should see a dentist before the bone pill. I didn\'t go — no time.','อ้อ แต่หมอกระดูก รพ.B บอกว่าก่อนกินยากระดูกให้ไปหาหมอฟันก่อน ป้าไม่ได้ไป ไม่มีเวลา']);
   await coach('think',['雙磷酸鹽類藥物極少數會造成顎骨壞死，所以建議先做牙科檢查、注意口腔衛生。好問題！','Bisphosphonates rarely cause osteonecrosis of the jaw, so a dental check and good oral hygiene are advised. Good question!','ยากลุ่ม bisphosphonate พบน้อยมากที่ทำให้กระดูกขากรรไกรตาย จึงแนะนำให้ตรวจฟันก่อนและดูแลช่องปาก ถามได้ดี!']); S.profile.add('allergy'); };
-ANSWERS.storage=async()=>{ await say('chen','happy',['藥喔？血壓血糖的分裝在電視櫃抽屜的一週藥盒；骨頭的那顆放在廚房，早上泡咖啡的時候才不會忘記。','My medicines? The BP and sugar ones are in a weekly box in the TV-cabinet drawer; the bone pill is in the kitchen — that way I don\'t forget it when I make my morning coffee.','ยาเหรอ? ยาความดันกับเบาหวานอยู่ในกล่องรายสัปดาห์ในลิ้นชักตู้ทีวี ยากระดูกอยู่ในครัว ตอนชงกาแฟเช้าจะได้ไม่ลืม']);
+ANSWERS.storage=async()=>{ await say('chen','happy',['藥喔？血壓血糖的一週藥盒，我塞在沙發坐墊底下，坐著做代工的時候才不會忘記；醫院的藥袋放廚房的塑膠抽屜；骨頭的那顆放在廚房，早上泡咖啡的時候一起吃。','My medicines? The weekly box of BP and sugar pills is tucked under the sofa cushion where I sit for piecework, so I don\'t forget; the hospital bags are in the plastic drawers in the kitchen; the bone pill is in the kitchen too, I take it when I make my morning coffee.','ยาเหรอ? กล่องยาความดันกับเบาหวานรายสัปดาห์ ป้าซุกไว้ใต้เบาะโซฟาที่นั่งทำงานรับจ้าง จะได้ไม่ลืม ซองยาโรงพยาบาลอยู่ในลิ้นชักพลาสติกในครัว ยากระดูกก็อยู่ในครัว กินตอนชงกาแฟเช้า']);
   if(!CH.wife) show('wife','R','neutral'); await say('wife','neutral',['……診所拿回來的，常常隨手就丟了。','…the clinic stuff often just gets tossed.','…ยาที่ได้จากคลินิก ส่วนใหญ่ก็โยนทิ้งไปเลย']); hide('wife');
-  S.profile.add('storage'); addSpot('tv_d1'); addSpot('tv_d2'); addSpot('fridge_b'); };
+  S.profile.add('storage'); addSpot('cushion'); addSpot('k_drawer'); addSpot('k_shelf'); };
 ANSWERS.otc=async()=>{ await say('chen','neutral',['成藥是沒有啦……鈣片也沒吃。同事有在賣「顧骨頭」的粉，我偶爾買來泡。','No over-the-counter stuff… no calcium tablets either. A coworker sells a "bone tonic" powder; I buy some now and then.','ยาซื้อเองไม่มีหรอก… แคลเซียมก็ไม่ได้กิน เพื่อนร่วมงานขายผง "บำรุงกระดูก" ป้าซื้อมาชงบ้างเป็นบางที']);
   await say('chen','sad',['也不知道有沒有用，還不便宜。','No idea if it works — and it isn\'t cheap.','ไม่รู้ว่าได้ผลไหม แถมไม่ถูกด้วย']);
   await coach('think',['骨鬆治療需要足夠的鈣和維生素 D；來路不明的保健品不一定有用，也要確認會不會影響藥物吸收。','Osteoporosis treatment needs enough calcium and vitamin D; mystery supplements may not help — and check they don\'t interfere with how her medicines are absorbed.','การรักษากระดูกพรุนต้องได้แคลเซียมและวิตามินดีเพียงพอ อาหารเสริมที่ไม่รู้ที่มาอาจไม่ช่วย และต้องเช็กว่าไม่รบกวนการดูดซึมยา']); S.profile.add('otc'); };
@@ -2646,13 +2651,13 @@ function confirmEndAsk(){ return new Promise(res=>{
 }); }
 /* ---- the first move inside the patient's home ---- */
 const FIRST_MOVES=[
- {k:'search', t:['走到電視櫃，拉開抽屜看看王太太到底都吃哪些藥','Go to the TV cabinet and open the drawers to see which pills she takes','เดินไปที่ตู้ทีวี เปิดลิ้นชักดูว่าป้ากินยาอะไรอยู่บ้าง']},
+ {k:'search', t:['走進廚房，拉開塑膠抽屜看看王太太到底都吃哪些藥','Walk into the kitchen and pull open the plastic drawers to see which pills she takes','เดินเข้าครัว เปิดลิ้นชักพลาสติกดูว่าป้ากินยาอะไรอยู่บ้าง']},
  {k:'wife', t:['先請王先生到廚房，問他太太平常是怎麼吃藥的','Take Mr. Wang aside to the kitchen and ask how his wife takes her pills','ขอคุยกับลุงหวังที่ครัวก่อน ถามว่าปกติป้ากินยายังไง']},
  {k:'intro', t:['向王太太問好、出示證件，說明來意與時間並請她同意','Greet Mrs. Wang, show your ID, say why and how long, ask her consent','ทักทายป้าหวัง แสดงบัตร บอกจุดประสงค์กับเวลา แล้วขออนุญาต']},
  {k:'ask', t:['在王太太旁邊坐下，直接問她：「您都吃哪些藥？」','Sit beside Mrs. Wang and ask at once: "Which medicines do you take?"','นั่งข้างป้าหวังแล้วถามทันที: "ป้ากินยาอะไรอยู่บ้าง?"']},
 ];
 const FIRST_WRONG={
- search:{trust:-2, act:['sys',['（你走到電視櫃前，伸手拉開了抽屜……）','(You walk to the TV cabinet and pull a drawer open…)','(คุณเดินไปที่ตู้ทีวีแล้วดึงลิ้นชักออก…)']], chen:['angry',['欸欸欸！誰准你開我的抽屜？！你們到底是誰啊？','Hey hey hey! Who said you could open my drawers?! Who ARE you people?','เอ๊ะๆๆ! ใครอนุญาตให้เปิดลิ้นชักป้า?! พวกนี้เป็นใครกันเนี่ย?']],
+ search:{trust:-2, act:['sys',['（你走進廚房，伸手拉開了塑膠抽屜……）','(You walk into the kitchen and pull a plastic drawer open…)','(คุณเดินเข้าครัวแล้วดึงลิ้นชักพลาสติกออก…)']], chen:['angry',['欸欸欸！誰准你開我的抽屜？！你們到底是誰啊？','Hey hey hey! Who said you could open my drawers?! Who ARE you people?','เอ๊ะๆๆ! ใครอนุญาตให้เปิดลิ้นชักป้า?! พวกนี้เป็นใครกันเนี่ย?']],
    yeh:['停。在病人家裡我們是「客人」——沒經過同意，什麼東西都不能翻。先打招呼、自我介紹、說明來意，取得同意。','Stop. In a patient\'s home we are GUESTS — never touch anything without permission. Greet, introduce yourself, explain why you\'re here, and get consent first.','หยุดก่อน ในบ้านผู้ป่วยเราเป็น "แขก" ห้ามค้นอะไรโดยไม่ได้รับอนุญาต ต้องทักทาย แนะนำตัว บอกจุดประสงค์ และขอความยินยอมก่อน']},
  wife:{trust:-1, act:['me',['王先生，可以借一步說話嗎？王太太平常都怎麼吃藥？','Mr. Wang, could I have a quick word? How does your wife usually take her medicines?','ลุงหวังคะ/ครับ ขอคุยแป๊บนึงได้ไหม ปกติป้ากินยายังไง?']], chen:['angry',['欸，我人就坐在這裡耶，怎麼都去問他？','Hey, I\'m sitting right here — why ask him instead of me?','เอ๊ะ ป้านั่งอยู่ตรงนี้นะ ทำไมไปถามลุงเขาล่ะ?']],
    yeh:['王太太才是主角。家屬的資訊很寶貴，但要先跟病人本人打招呼、取得她的同意，再邀請家屬一起參與。','Mrs. Wang is the patient. Family input is valuable — but greet the patient herself and get her consent first, then invite the family in.','ป้าหวังคือตัวผู้ป่วย ข้อมูลจากญาติมีค่า แต่ต้องทักทายและขออนุญาตตัวผู้ป่วยก่อน แล้วค่อยชวนญาติมาร่วมคุย']},
@@ -2668,7 +2673,7 @@ async function firstMove(){
     const c=await choose(left.map(o=>({t:o.t})),{timer:tries?0:25, shuffle:true, id:'firstMove', label:tries?['再想一次：進門該先做什麼？','Think again: what comes first?','คิดอีกที: เข้าบ้านแล้วควรทำอะไรก่อน?']:['進門第一步！','Your first move!','ก้าวแรกในบ้าน!']});
     tries++; const mv=c<0?{k:'timeout'}:left[c]; picks.push(mv.k);
     if(mv.k==='intro') break;
-    const w=FIRST_WRONG[mv.k]; if(w.act) await say(w.act[0],'neutral',w.act[1]); if(mv.k==='search'){ act('me','hop'); fpReach(330,520); sfx.drawer(); } if(mv.k==='wife'&&CH.wife) emo('wife','shock');
+    const w=FIRST_WRONG[mv.k]; if(w.act) await say(w.act[0],'neutral',w.act[1]); if(mv.k==='search'){ act('me','hop'); fpReach(1520,510); sfx.drawer(); } if(mv.k==='wife'&&CH.wife) emo('wife','shock');
     await say('chen',w.chen[0],w.chen[1]); addTrust(w.trust); spend(1); hud();
     await yehSays('think',w.yeh); if(mv.k!=='timeout') left=left.filter(o=>o!==mv);
   }
@@ -2686,7 +2691,7 @@ async function chapter1(){
   show('wife','R','happy'); await introCard('wife');
   await say('wife','happy',['請進請進！今天工地沒開工，我剛好在家。她在客廳。','Come in, come in! The building site\'s closed today, so I\'m home. She\'s in the living room.','เชิญเข้ามาเลย! วันนี้ไซต์ก่อสร้างหยุด ลุงเลยอยู่บ้านพอดี เขาอยู่ในห้องนั่งเล่น']);
   show('chen','C','think'); await introCard('chen'); show('me','L','neutral'); emo('chen','think');
-  await say('sys','neutral',['王太太坐在小板凳上，一邊看電視一邊組裝一盒塑膠零件（家庭代工），還沒注意到你們。電視櫃和餐桌上散著好幾包藥袋……','Mrs. Wang sits on a low stool, assembling a box of plastic parts (piecework) with the TV on — she hasn\'t noticed you yet. Med bags lie scattered on the TV cabinet and the table…','ป้าหวังนั่งบนเก้าอี้เตี้ย ประกอบชิ้นส่วนพลาสติก (งานรับมาทำที่บ้าน) ไปพลางดูทีวีไปพลาง ยังไม่ทันเห็นพวกคุณ ซองยาวางกระจายอยู่บนตู้ทีวีและโต๊ะกินข้าว…']);
+  await say('sys','neutral',['王太太坐在小板凳上，一邊看電視一邊組裝一盒塑膠零件（家庭代工），還沒注意到你們。代工桌和廚房流理台上散著好幾包藥袋……','Mrs. Wang sits on a low stool, assembling a box of plastic parts (piecework) with the TV on — she hasn\'t noticed you yet. Med bags lie scattered on the piecework table and the kitchen counter…','ป้าหวังนั่งบนเก้าอี้เตี้ย ประกอบชิ้นส่วนพลาสติก (งานรับมาทำที่บ้าน) ไปพลางดูทีวีไปพลาง ยังไม่ทันเห็นพวกคุณ ซองยาวางกระจายอยู่บนโต๊ะงานรับจ้างและเคาน์เตอร์ครัว…']);
   await say('pilly','think',['進到病人家裡的第一步很重要！你會先做什麼？','Your first move inside a patient\'s home matters! What do you do first?','ก้าวแรกในบ้านผู้ป่วยสำคัญมาก! คุณจะทำอะไรก่อน?']);
   await firstMove();
   await say('chen','happy',['政府有這款服務，給藥師來厝裡看我們，我真歡喜啦！','The government sending pharmacists right to our home — I\'m really happy about that!','รัฐบาลมีบริการให้เภสัชกรมาเยี่ยมถึงบ้าน ป้าดีใจมากเลย!']);

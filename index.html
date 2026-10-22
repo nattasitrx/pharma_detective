@@ -68,9 +68,6 @@ input,textarea{font-family:var(--font);-webkit-user-select:text;user-select:text
 .fpId .bc{position:absolute;left:96px;top:144px;width:90px;height:24px;background:repeating-linear-gradient(90deg,#3a2232 0 3px,transparent 3px 6px,#3a2232 6px 7px,transparent 7px 11px,#3a2232 11px 15px,transparent 15px 17px)}
 .fpId .ph{position:absolute;right:14px;top:66px;width:84px;height:104px;border:3px solid #3a2232;border-radius:8px;background:#ffeef3;overflow:hidden}
 .fpId .ph svg{width:100%;height:100%;display:block}
-#syncNote{font-size:13px;font-weight:700;color:#2f7d6b;margin:-4px 0 6px}
-.syncSt{margin-top:10px;text-align:center;font-weight:800;font-size:16px;color:#2f7d6b}
-.syncSt.err{color:#c4572a}
 #chars{transform:translate(calc(var(--px)*10px),calc(var(--py)*4px));transition:transform .6s cubic-bezier(.2,.8,.3,1)}
 .char{position:absolute;bottom:-14px;width:520px;height:728px;transition:left .6s cubic-bezier(.3,1.15,.5,1),filter .35s,transform .35s cubic-bezier(.3,1.3,.5,1);pointer-events:none;filter:drop-shadow(0 10px 18px rgba(40,20,60,.25))}
 .char .frwrap{position:absolute;inset:0}
@@ -901,7 +898,6 @@ html[lang=en] #logo h1{font-size:76px;letter-spacing:2px}
       <div class="row" style="justify-content:space-between"><div class="langs"><button class="lbtn" data-lang="zh">中文</button><button class="lbtn" data-lang="en">English</button><button class="lbtn" data-lang="th">ไทย</button></div>
         <span><button class="sbtn" id="viewBtn"></button><button class="sbtn" id="gfxBtn"></button><button class="sbtn" id="btnTeacher" data-i18n="teacherBtn"></button></span></div>
       <div class="grid"><label><span data-i18n="stuName"></span><input id="inName" maxlength="40" autocomplete="off"></label><label><span data-i18n="stuId"></span><input id="inSid" maxlength="30" autocomplete="off"></label></div>
-      <div id="syncNote" class="hidden"></div>
       <div class="avrow"><span class="lbl" data-i18n="chooseAv"></span><button class="gsel on" data-av="me" data-g="f"><span class="av"></span><span class="gl">♀ <span data-i18n="female"></span></span></button><button class="gsel" data-av="me2" data-g="m"><span class="av"></span><span class="gl">♂ <span data-i18n="male"></span></span></button>
         <span class="spacer"></span><label class="qtel"><input type="checkbox" id="qteToggle" checked> <span data-i18n="qteOpt"></span></label></div>
       <div class="moderow"><span class="lbl" data-i18n="modeLbl"></span><button class="msel" data-mode="practice"></button><button class="msel" data-mode="exam"></button><span id="modeHelp"></span></div>
@@ -936,8 +932,6 @@ let GAME_CFG=(()=>{ try{ if(sessionStorage.getItem('phd_usedraft')==='1'){ const
 const CONFIG = {
   TEACHER_PIN:'1234',              // รหัสหน้าอาจารย์ / instructor PIN
   STORAGE_KEY:'phd_chen_sessions_v3', MEDIA_KEY:'phd_chen_media_v2',
-  SERVER_URL:'https://pharma-detective-api.netlify.app',   // results server (Netlify function); '' = off
-  GAME_URL:'https://nattasitrx.github.io/pharma_detective/', // public link students open
   VISIT_MIN:60,                     // in-game visit time (minutes) — spent by actions, not real time
   COST_ASK:2, COST_SEARCH:1, COST_WRONG:3, COST_HINT:5,
   SEARCH_CHARGES:16, HEARTS:5, QTE_SEC:12, BOSS_SEC:25, TRUST_START:3,
@@ -1041,22 +1035,6 @@ const UI = {
   cqAnsPh:['在這裡輸入答案…','Type your answer…','พิมพ์คำตอบที่นี่…'], cqYour:['你的答案','Your answer','คำตอบของคุณ'], cqUse:['↓ 用這個結果','↓ Use this result','↓ ใช้ผลนี้'], cqAgain:['還不對，再試一次','Not yet — try again','ยังไม่ถูก ลองอีกครั้ง'],
   cqAnswerIs:['正確答案：','Correct answer: ','คำตอบที่ถูก: '], cqStat:['老師的加分題','Instructor questions','คำถามจากอาจารย์'], cqPick:['請先作答','Answer first','กรุณาตอบก่อน'], cqTimeUp:['時間到！','Time\'s up!','หมดเวลา!'],
   draftBadge:['👩‍🏫 試玩中：尚未發布的修改版','👩‍🏫 Preview: unpublished changes','👩‍🏫 ทดลองเล่น: ฉบับแก้ไขที่ยังไม่เผยแพร่'],
-  syncNote:['遊玩結果會自動傳給老師（需要網路）','Your results go to your instructor automatically (needs internet)','ผลการเล่นจะส่งให้อาจารย์อัตโนมัติ (ต้องมีอินเทอร์เน็ต)'], syncClass:['班級','Class','ห้อง'],
-  syncSending:['☁️ 正在把結果傳給老師…','☁️ Sending your results to your instructor…','☁️ กำลังส่งผลให้อาจารย์…'], syncOk:['☁️ 結果已傳給老師 ✓','☁️ Results sent to your instructor ✓','☁️ ส่งผลให้อาจารย์แล้ว ✓'],
-  syncErr:['⚠️ 還沒傳出去，有網路時會自動重試；也可以按「下載我的報告」自己繳交','⚠️ Not sent yet — it retries automatically when you are online. You can also download your report and hand it in.','⚠️ ยังส่งไม่ได้ จะลองใหม่อัตโนมัติเมื่อมีอินเทอร์เน็ต หรือกดดาวน์โหลดรายงานส่งเองก็ได้'],
-  syncOff:['這個檔案沒有設定結果伺服器，請下載報告繳交','No results server is set for this file — please download your report and hand it in','ไฟล์นี้ไม่ได้ตั้งเซิร์ฟเวอร์รับผล กรุณาดาวน์โหลดรายงานส่งเอง'], syncNow:['立即傳送','Send now','ส่งตอนนี้'], syncH:['自動繳交','Automatic hand-in','การส่งผลอัตโนมัติ'],
-  tOnline:['☁️ 線上結果','☁️ Online results','☁️ ผลออนไลน์'],
-  onIntro:['學生玩的時候，結果會自動傳到伺服器，不用再交檔案。在這裡載入後，「學生紀錄」「全班概況」「Debrief 指引」都會一起更新。','While students play, their results go to the server by themselves — nobody hands in files. Load them here and Sessions, Class overview and the Debrief guide all update.','ระหว่างที่นักศึกษาเล่น ผลจะส่งเข้าเซิร์ฟเวอร์เอง ไม่ต้องส่งไฟล์ โหลดผลที่นี่แล้วแท็บบันทึกนักศึกษา ภาพรวมชั้นเรียน และคู่มือ Debrief จะอัปเดตตาม'],
-  onServer:['結果伺服器','Results server','เซิร์ฟเวอร์รับผล'], onTest:['測試連線','Test connection','ทดสอบการเชื่อมต่อ'], onUp:['連線正常 ✓','Connected ✓','เชื่อมต่อได้ ✓'], onDown:['連不上伺服器','Cannot reach the server','เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'],
-  onKey:['教師金鑰','Instructor key','รหัสอาจารย์สำหรับเซิร์ฟเวอร์'], onSave:['儲存','Save','บันทึก'],
-  onKeyNote:['每台裝置輸入一次就好，會記在這台裝置上。金鑰和後台密碼不一樣，請不要給學生。','Enter it once per device; it is remembered on this device. It is not the dashboard PIN — never give it to students.','ใส่ครั้งเดียวต่อเครื่อง ระบบจะจำไว้ในเครื่องนี้ รหัสนี้ไม่ใช่รหัสเข้าหน้าอาจารย์ และห้ามให้นักศึกษา'],
-  onPull:['⬇️ 載入最新結果','⬇️ Load latest results','⬇️ โหลดผลล่าสุด'], onPulled:['已載入 {n} 筆紀錄','Loaded {n} records','โหลดแล้ว {n} รายการ'], onBadKey:['教師金鑰不正確','Wrong instructor key','รหัสอาจารย์ไม่ถูกต้อง'], onNoKey:['請先輸入教師金鑰','Enter the instructor key first','กรุณาใส่รหัสอาจารย์ก่อน'],
-  onLast:['上次載入','Last loaded','โหลดล่าสุด'], onAuto:['之後打開教師後台時會自動載入','After this it loads by itself whenever you open the dashboard','ครั้งต่อไปจะโหลดให้อัตโนมัติเมื่อเปิดหน้าอาจารย์'], onClasses:['班級','Class','ห้อง'], onRecords:['筆','records','รายการ'],
-  onLinkH:['給學生的連結','Link for students','ลิงก์สำหรับนักศึกษา'], onCopy:['複製','Copy','คัดลอก'], onCopied:['已複製','Copied','คัดลอกแล้ว'],
-  onLinkNote:['輸入班級代碼（英文或數字，例如 ph2026a）就能把各班分開。學生打開連結就能玩，結果會自動歸到這個班。','Type a class code (letters or numbers, e.g. ph2026a) to keep classes apart. Students just open the link and their results are filed under that class.','ใส่รหัสห้อง (ตัวอักษรหรือตัวเลข เช่น ph2026a) เพื่อแยกแต่ละห้อง นักศึกษาเปิดลิงก์แล้วเล่นได้เลย ผลจะเข้าห้องนั้นเอง'],
-  onDelCls:['🗑️ 刪除','🗑️ Delete','🗑️ ลบ'], onDelQ:['確定要刪除伺服器上「{c}」班的 {n} 筆結果？刪除後無法復原。','Delete {n} records of class "{c}" from the server? This cannot be undone.','ลบผล {n} รายการของห้อง "{c}" บนเซิร์ฟเวอร์? ลบแล้วกู้คืนไม่ได้'],
-  onLocalNote:['伺服器上的紀錄只在這個畫面開著時顯示，不會存進這台裝置；想留一份請到「工具」匯出 JSON。','Server records are shown while this page is open; they are not saved on this device. To keep a copy, export JSON under Tools.','ผลจากเซิร์ฟเวอร์แสดงเฉพาะตอนเปิดหน้านี้ ไม่ได้บันทึกลงเครื่อง ถ้าต้องการเก็บสำเนาให้ส่งออก JSON ที่แท็บเครื่องมือ'],
-  onDelOne:['也從伺服器刪除了','Also deleted from the server','ลบจากเซิร์ฟเวอร์ด้วยแล้ว'], clAllCls:['全部班級','All classes','ทุกห้อง'],
   view:['視角','View','มุมมอง'], view_tp:['第三人稱','3rd person','บุคคลที่ 3'], view_fp:['第一人稱','1st person','บุคคลที่ 1'],
   view_tpL:['第三人稱（看得到自己的角色）','3rd person (see your character)','บุคคลที่ 3 (เห็นตัวละครของเรา)'], view_fpL:['第一人稱（用自己的眼睛看）','1st person (through your own eyes)','บุคคลที่ 1 (มองผ่านสายตาเรา)'],
   viewHelp:['第一人稱：畫面上不會出現你的角色，就像自己和病人面對面；出示證件、證物和搜查時會看到你的手。隨時可以切換。','1st person: your own character is not drawn — you face the patient yourself, and you see your hands when you show your ID, present evidence or search. You can switch any time.','บุคคลที่ 1: จะไม่เห็นตัวละครของเราบนจอ เหมือนนั่งคุยกับผู้ป่วยเอง และจะเห็นมือเราตอนยื่นบัตร ยื่นหลักฐาน และค้นของ สลับได้ตลอดเวลา'],
@@ -1916,13 +1894,13 @@ const realSec=()=>S.t0?(Date.now()-S.t0)/1000:0;
 const foundCount=()=>Object.keys(S.found).length;
 const store={ mem:{}, get(k){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):null; }catch(e){ return this.mem[k]||null; } }, set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){ this.mem[k]=v; } } };
 function snapshot(){
-  return { id:S.sessionId, student:S.student, avatar:S.avatar, view:(typeof VIEW!=='undefined'&&VIEW.fp)?'fp':'tp', classCode:(typeof classCode==='function'?classCode():'main'), gender:S.gender, lang:S.lang, created:S.created, updated:new Date().toISOString(), realTime:Math.round(realSec()), chT:S.chT, chapter:S.chapter,
+  return { id:S.sessionId, student:S.student, avatar:S.avatar, view:(typeof VIEW!=='undefined'&&VIEW.fp)?'fp':'tp', gender:S.gender, lang:S.lang, created:S.created, updated:new Date().toISOString(), realTime:Math.round(realSec()), chT:S.chT, chapter:S.chapter,
     done:S.done, score:S.score, rank:S.rank, visitLeft:S.visit, trust:S.trust, hearts:S.hearts, hints:S.hints, resets:S.resets, wrong:S.wrong, questions:S.questions,
     progress:Math.round(foundCount()/PROBLEMS.length*100), found:S.found, evidence:S.evidence, boss:S.boss, mr:S.mr, finalText:S.finalText, finalCov:S.finalCov, calc:S.calc, first:S.first, custom:S.custom, mode:S.mode, pat:S.pat, fl:S.fl, hiddenQ:S.hiddenQ, pp:S.pp, refl:S.refl, ending:S.ending, timeout:S.timeout, refused:S.refused, badges:S.badges, gate:S.gate, cfgRev:(GAME_CFG.meta&&GAME_CFG.meta.rev)||'', log:S.log, notes:S.notes };
 }
 let saveTimer=null;
 function saveSession(now){ if(!S.sessionId) return; clearTimeout(saveTimer);
-  const f=()=>{ const all=store.get(CONFIG.STORAGE_KEY)||[]; const s=snapshot(); const i=all.findIndex(x=>x.id===s.id); if(i>=0) all[i]=s; else all.push(s); store.set(CONFIG.STORAGE_KEY,all); if(typeof syncQueue==='function') syncQueue(s, now); };
+  const f=()=>{ const all=store.get(CONFIG.STORAGE_KEY)||[]; const s=snapshot(); const i=all.findIndex(x=>x.id===s.id); if(i>=0) all[i]=s; else all.push(s); store.set(CONFIG.STORAGE_KEY,all); };
   if(now) f(); else saveTimer=setTimeout(f,500); }
 function logEvent(o){ S.log.push(Object.assign({t:Math.round(realSec()), ch:S.chapter},o)); saveSession(); }
 function download(name,text,type){ const b=new Blob([text],{type:type||'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},500); }
@@ -2441,128 +2419,6 @@ async function fpShow(kind, id, fn, o){
   if(!VIEW.fp) return fn();
   fpHold(kind, id, o); if(FP_ANIM()) await sleep(260);
   try{ return await fn(); } finally { fpHide(); }
-}
-
-/* =====================================================================
-   ONLINE RESULTS
-   Every saved game is also sent to the results server, so students never have to download
-   and hand in a file (this matters on iPads and phones). If the device is offline or the
-   server is down, snapshots wait in an outbox and are retried; the manual report stays.
-   The instructor dashboard pulls everything back with an instructor key (not the PIN).
-   Server records are held in memory only — they are never written into this device's storage.
-   ===================================================================== */
-const SYNC={busy:false, state:'idle', last:0, lastTry:0, timer:null, fail:0, OUTBOX:'phd_outbox_v1', KEY:'phd_tkey', remote:[], classes:{}, pulled:0, pulling:false};
-function serverURL(){ const s=GAME_CFG.settings||{}; const u=(s.server!=null?s.server:CONFIG.SERVER_URL)||''; return String(u).trim().replace(/\/+$/,''); }
-const normClass=c=>String(c||'').trim().toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,40);
-function classCode(){ let c=''; try{ c=new URLSearchParams(location.search).get('class')||''; }catch(e){} if(!normClass(c)) c=(GAME_CFG.settings||{}).classCode||''; return normClass(c)||'main'; }
-function gameLink(cls){ let base=CONFIG.GAME_URL; try{ if(/^https?:/.test(location.protocol)) base=location.origin+location.pathname; }catch(e){}
-  const c=normClass(cls); return base+(c&&c!=='main'?'?class='+encodeURIComponent(c):''); }
-const outbox=()=>store.get(SYNC.OUTBOX)||{};
-const setOutbox=o=>store.set(SYNC.OUTBOX,o);
-/* called by saveSession(): queue the newest snapshot; send now (chapter ends) or at most every ~45 s */
-function syncQueue(snap, now){
-  if(!serverURL()||!snap||!snap.id) return;
-  const o=outbox(); o[snap.id]=snap; setOutbox(o);
-  if(SYNC.state==='idle'||SYNC.state==='ok') SYNC.state='pending';
-  clearTimeout(SYNC.timer); SYNC.timer=setTimeout(syncFlush, now?50:Math.max(1500, 45000-(Date.now()-SYNC.lastTry)));
-  syncBadge();
-}
-async function syncFlush(){
-  const url=serverURL(); if(!url||SYNC.busy) return;
-  const o=outbox(), ids=Object.keys(o); if(!ids.length){ if(SYNC.state!=='ok') SYNC.state='idle'; syncBadge(); return; }
-  SYNC.busy=true; SYNC.lastTry=Date.now(); SYNC.state='sending'; syncBadge(); let bad=false;
-  for(const id of ids){
-    const body=JSON.stringify(o[id]);
-    try{
-      const r=await fetch(url+'/api/submit',{method:'POST', headers:{'Content-Type':'text/plain;charset=UTF-8'}, body, keepalive:body.length<60000, cache:'no-store'});
-      const j=await r.json().catch(()=>({}));
-      if(r.ok&&j.ok){ const cur=outbox(); if(cur[id]&&cur[id].updated===o[id].updated){ delete cur[id]; setOutbox(cur); } }
-      else bad=true;
-    }catch(e){ bad=true; }
-  }
-  SYNC.busy=false; clearTimeout(SYNC.timer);
-  if(bad){ SYNC.state='error'; SYNC.fail++; SYNC.timer=setTimeout(syncFlush, Math.min(120000, 8000*SYNC.fail)); }
-  else { SYNC.fail=0; SYNC.last=Date.now(); SYNC.state='ok'; if(Object.keys(outbox()).length){ SYNC.state='pending'; SYNC.timer=setTimeout(syncFlush, 800); } }
-  syncBadge();
-}
-/* leaving the page: hand anything still queued to the browser so it can finish sending */
-function syncBeacon(){ const url=serverURL(); if(!url||!navigator.sendBeacon) return; const o=outbox();
-  Object.keys(o).forEach(id=>{ const body=JSON.stringify(o[id]); if(body.length<60000){ try{ navigator.sendBeacon(url+'/api/submit', new Blob([body],{type:'text/plain;charset=UTF-8'})); }catch(e){} } }); }
-function syncText(){
-  if(!serverURL()) return T('syncOff');
-  const hm=t=>new Date(t).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-  if(SYNC.state==='sending'||SYNC.state==='pending') return T('syncSending');
-  if(SYNC.state==='error') return T('syncErr');
-  if(SYNC.state==='ok') return T('syncOk')+(SYNC.last?' · '+hm(SYNC.last):'');
-  return '';
-}
-function syncBadge(){ const t=syncText(); $$('.syncSt').forEach(el=>{ el.textContent=t; el.classList.toggle('hidden',!t); el.classList.toggle('err',SYNC.state==='error'||!serverURL()); el.classList.toggle('ok',SYNC.state==='ok'); }); }
-function syncNoteTitle(){ const el=$('#syncNote'); if(!el) return; const c=classCode();
-  el.textContent=serverURL()?'☁️ '+T('syncNote')+(c!=='main'?' · '+T('syncClass')+': '+c:''):''; el.classList.toggle('hidden',!serverURL()); }
-function initSync(){
-  addEventListener('online', ()=>{ SYNC.fail=0; syncFlush(); });
-  addEventListener('pagehide', syncBeacon);
-  document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') syncBeacon(); else if(Object.keys(outbox()).length) syncFlush(); });
-  if(Object.keys(outbox()).length){ SYNC.state='pending'; setTimeout(syncFlush, 2500); }
-  syncNoteTitle();
-}
-/* ---------- instructor side ---------- */
-const teacherKey=()=>{ try{ return localStorage.getItem(SYNC.KEY)||''; }catch(e){ return SYNC.memKey||''; } };
-function setTeacherKey(k){ k=String(k||'').trim(); SYNC.memKey=k; try{ if(k) localStorage.setItem(SYNC.KEY,k); else localStorage.removeItem(SYNC.KEY); }catch(e){} }
-async function serverPull(){
-  const url=serverURL(), key=teacherKey();
-  if(!url) return {ok:false, error:'nourl'}; if(!key) return {ok:false, error:'nokey'};
-  SYNC.pulling=true;
-  try{
-    let offset=0, got=[], classes={};
-    while(offset!=null){
-      const r=await fetch(`${url}/api/sessions?offset=${offset}`,{headers:{'X-Teacher-Key':key}, cache:'no-store'});
-      if(r.status===401) return {ok:false, error:'badkey'};
-      if(!r.ok) return {ok:false, error:'http'};
-      const j=await r.json(); got=got.concat(j.sessions||[]); classes=j.classes||classes; offset=j.next;
-    }
-    got.forEach(s=>{ s.fromServer=true; });
-    SYNC.remote=got; SYNC.classes=classes; SYNC.pulled=Date.now();
-    return {ok:true, n:got.length, classes};
-  }catch(e){ return {ok:false, error:'net'}; }
-  finally{ SYNC.pulling=false; }
-}
-async function serverDelete(cls, id){
-  const url=serverURL(), key=teacherKey(); if(!url||!key) return {ok:false};
-  try{ const r=await fetch(`${url}/api/sessions?class=${encodeURIComponent(cls)}${id?'&id='+encodeURIComponent(id):''}`,{method:'DELETE', headers:{'X-Teacher-Key':key}});
-    const j=await r.json().catch(()=>({})); if(r.ok&&j.ok){ SYNC.remote=SYNC.remote.filter(s=>!((s.classCode||'main')===cls&&(!id||s.id===id))); return {ok:true, n:j.deleted}; } return {ok:false}; }
-  catch(e){ return {ok:false}; }
-}
-async function serverHealth(){ const url=serverURL(); if(!url) return false; try{ const r=await fetch(url+'/api/health',{cache:'no-store'}); const j=await r.json(); return !!(r.ok&&j.ok); }catch(e){ return false; } }
-/* opening the dashboard with a saved key quietly refreshes the server results */
-async function serverAutoPull(){
-  if(!serverURL()||!teacherKey()||SYNC.pulling||Date.now()-SYNC.pulled<60000) return;
-  const r=await serverPull();
-  if(r.ok){ toast('☁️ '+T('onPulled').replace('{n}',r.n)); if(P.cur==='teacher'&&['tOnline','tSessions','tClass','tDebrief'].includes(P.tab)) renderPage(); }
-  else if(r.error==='badkey') toast('⚠️ '+T('onBadKey'));
-}
-function renderOnline(b){
-  const url=serverURL(), key=teacherKey(), cls=Object.entries(SYNC.classes||{}).sort((a,c)=>a[0].localeCompare(c[0]));
-  const hm=t=>new Date(t).toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
-  b.innerHTML=`<p class="edintro">${T('onIntro')}</p>
-   <div class="box"><b>${T('onServer')}</b><div class="row" style="margin-top:6px;align-items:center"><code style="font-size:13px">${esc(url||'—')}</code><button class="sbtn" id="onTest">${T('onTest')}</button><span id="onTestR" class="muted"></span></div></div>
-   <div class="box"><b>${T('onKey')}</b><div class="row" style="margin-top:6px"><input class="ein" id="onKeyIn" type="password" autocomplete="off" value="${esc(key)}" placeholder="PD-XXXX-XXXX-XXXX-XXXX" style="max-width:300px"><button class="sbtn" id="onKeySave">${T('onSave')}</button></div><p class="muted" style="margin-top:4px">🔑 ${T('onKeyNote')}</p></div>
-   <div class="box"><div class="row" style="align-items:center"><button class="sbtn g" id="onPull">${T('onPull')}</button><span class="muted">${SYNC.pulled?T('onLast')+': '+hm(SYNC.pulled)+' · '+SYNC.remote.length+' '+T('onRecords'):T('onAuto')}</span></div>
-     ${cls.length?`<table class="tbl" style="margin-top:8px"><tr><th>${T('onClasses')}</th><th>${T('onRecords')}</th><th>${T('onLinkH')}</th><th></th></tr>${cls.map(([c,n])=>`<tr><td><b>${esc(c)}</b></td><td>${n}</td><td><code style="font-size:12px">${esc(gameLink(c))}</code></td><td><button class="sbtn" data-cp="${esc(gameLink(c))}">${T('onCopy')}</button><button class="sbtn r" data-dc="${esc(c)}" data-dn="${n}">${T('onDelCls')}</button></td></tr>`).join('')}</table>`:''}
-     <p class="muted" style="margin-top:6px">${T('onLocalNote')}</p></div>
-   <div class="box"><b>${T('onLinkH')}</b><p class="muted" style="margin:4px 0">${T('onLinkNote')}</p><div class="row" style="align-items:center"><input class="ein" id="onCls" placeholder="ph2026a" style="max-width:180px"><code id="onLink" style="font-size:13px">${esc(gameLink(''))}</code><button class="sbtn" id="onCopyLink">${T('onCopy')}</button></div></div>`;
-  const copy=t=>{ const done=()=>toast('📋 '+T('onCopied')); try{ navigator.clipboard.writeText(t).then(done,()=>prompt('',t)); }catch(e){ prompt('',t); } };
-  $('#onTest').onclick=async()=>{ $('#onTestR').textContent='…'; const ok=await serverHealth(); $('#onTestR').textContent=ok?T('onUp'):T('onDown'); };
-  $('#onKeySave').onclick=()=>{ setTeacherKey($('#onKeyIn').value); sfx.click(); toast('🔑 '+T('saved')); };
-  $('#onPull').onclick=async()=>{ setTeacherKey($('#onKeyIn').value); if(!teacherKey()){ toast('⚠️ '+T('onNoKey')); return; }
-    $('#onPull').disabled=true; $('#onPull').textContent='…'; const r=await serverPull();
-    if(r.ok){ sfx.get(); toast('☁️ '+T('onPulled').replace('{n}',r.n)); } else toast('⚠️ '+T(r.error==='badkey'?'onBadKey':r.error==='nokey'?'onNoKey':'onDown'));
-    if(P.cur==='teacher'&&P.tab==='tOnline') renderPage(); };
-  $('#onCls').oninput=e=>{ $('#onLink').textContent=gameLink(e.target.value); };
-  $('#onCopyLink').onclick=()=>copy($('#onLink').textContent);
-  b.querySelectorAll('[data-cp]').forEach(x=>x.onclick=()=>copy(x.dataset.cp));
-  b.querySelectorAll('[data-dc]').forEach(x=>x.onclick=()=>{ const c=x.dataset.dc;
-    showModal(`<h3>${T('onDelCls')}</h3><p>${esc(T('onDelQ').replace('{c}',c).replace('{n}',x.dataset.dn))}</p>`,[{t:T('onDelCls'),cls:'r',fn:async()=>{ const r=await serverDelete(c); if(r.ok){ toast('🗑️ '+r.n); delete SYNC.classes[c]; } else toast('⚠️ '+T('onDown')); renderPage(); }},{t:T('cancel'),cls:''}]); });
 }
 /* =====================================================================
    STORY — Prologue · Chapter 1 (interview) · Chapter 2 (search)
@@ -3505,11 +3361,11 @@ async function results(){
     <div class="rpane hidden" data-rp="prob"><div class="plist">${PROBLEMS.map(p=>`<div>${S.found[p.id]?'✅':'⬜'} ${p.icon} <b>${esc(L(p.t))}</b><div class="muted" style="font-size:13px;line-height:1.35">${esc(L(p.d))}</div></div>`).join('')}</div></div>
     <div class="rpane hidden" data-rp="bdg">${S.ending?`<div class="rbadges">${(S.ending.items||[]).map(it=>{ const o=epiOutcomes().find(x=>x.k===it.k); const x=o?(it.ok?o.g:o.b):null; return x?`<span class="pill ${it.ok?'ok':'no'}" style="font-size:15px">${x[0]} ${esc(L(x[1]))}</span>`:''; }).join('')}</div>`:''}
       <div class="rbadges">${bd.earned.length?BADGES.filter(b=>bd.earned.includes(b.id)).map(b=>badgeChip(b,newSet.has(b.id))).join(''):`<span class="muted">—</span>`}</div><div style="margin-top:10px">${badgeGridHTML()}</div></div>
-    <div class="row" style="margin-top:14px;justify-content:center"><button class="gbtn blue" id="rRep">${T('report')}</button><button class="gbtn green" id="rCase">📁 ${T('caseFile')}</button><button class="gbtn" id="rAgain">${T('again')}</button></div><div class="syncSt hidden"></div></div>`;
+    <div class="row" style="margin-top:14px;justify-content:center"><button class="gbtn blue" id="rRep">${T('report')}</button><button class="gbtn green" id="rCase">📁 ${T('caseFile')}</button><button class="gbtn" id="rAgain">${T('again')}</button></div></div>`;
   $('#results').classList.remove('hidden'); sfx.fanfare();
   $$('#results [data-rt]').forEach(b=>b.onclick=()=>{ sfx.click(); $$('#results [data-rt]').forEach(x=>x.classList.toggle('on',x===b)); $$('#results [data-rp]').forEach(p=>p.classList.toggle('hidden',p.dataset.rp!==b.dataset.rt)); });
   if(bd.fresh.length) setTimeout(()=>toast('🏅 '+T('badgeNew')+' '+BADGES.filter(b=>newSet.has(b.id)).map(b=>b.ic).join(' ')),900);
-  syncBadge(); $('#rRep').onclick=downloadReport; $('#rCase').onclick=()=>openPage('case'); $('#rAgain').onclick=()=>{ saveSession(true); location.reload(); };
+  $('#rRep').onclick=downloadReport; $('#rCase').onclick=()=>openPage('case'); $('#rAgain').onclick=()=>{ saveSession(true); location.reload(); };
 }
 /* =====================================================================
    INSTRUCTOR GAME EDITOR — extra questions · text edits · settings · publish
@@ -3553,8 +3409,6 @@ const ED={
  cat_ch5:['最終章 大魔王','Ch.5 Myth Overlord','บท 5 จอมมาร'], cat_epi:['後記・結局・徽章','Epilogue, endings & badges','บทส่งท้าย ตอนจบ และเหรียญ'], cat_results:['結算畫面','Results screen','หน้าสรุปผล'], cat_pages:['案件檔案・後台','Case file & dashboard','แฟ้มคดีและหน้าอาจารย์'],
  stIntro:['這些設定在「開始新遊戲」時生效。','These take effect when a new game starts.','การตั้งค่าเหล่านี้มีผลเมื่อเริ่มเกมใหม่'], stVisit:['拜訪時間（分鐘）','Visit time (minutes)','เวลาเยี่ยมบ้าน (นาที)'], stHearts:['矛盾對決的愛心數','Hearts in the contradiction duel','จำนวนหัวใจตอนจับโกหก'],
  stCharges:['搜查時的放大鏡次數','Magnifier uses in the search','จำนวนครั้งที่ใช้แว่นขยายตอนค้นบ้าน'], stQte:['限時選項預設開啟','Timed choices on by default','เปิดตัวเลือกจับเวลาเป็นค่าเริ่มต้น'], stLang:['預設語言','Default language','ภาษาเริ่มต้น'],
- stServer:['結果伺服器網址','Results server address','ที่อยู่เซิร์ฟเวอร์รับผล'], stServerNote:['留空＝不自動上傳（學生要自己下載報告繳交）。預設：','Leave blank to switch automatic hand-in off (students then download their report). Default: ','เว้นว่าง = ปิดการส่งอัตโนมัติ (นักศึกษาต้องดาวน์โหลดรายงานส่งเอง) ค่าเริ่มต้น: '],
- stClass:['預設班級代碼','Default class code','รหัสห้องเริ่มต้น'], stClassNote:['連結裡有 ?class=… 時以連結為準','A ?class=… in the link takes priority','ถ้าลิงก์มี ?class=… จะใช้ค่าจากลิงก์'],
  stPin:['教師後台密碼','Instructor PIN','รหัสเข้าหน้าอาจารย์'], stPinWarn:['密碼只能防止學生不小心進來，不是真正的保密。','The PIN only keeps students out casually — it is not real security.','รหัสนี้กันนักศึกษาเข้ามาโดยไม่ตั้งใจเท่านั้น ไม่ใช่ระบบความปลอดภัยจริง'],
  stNote:['版本說明（顯示在標題畫面，讓學生確認拿到的是新版）','Version note (shown on the title screen so students know they have the new file)','หมายเหตุเวอร์ชัน (แสดงที่หน้าแรก ให้นศ.รู้ว่าได้ไฟล์ใหม่)'], stNotePh:['例如：2026 下學期・王老師','e.g. Spring 2026 · Dr. Wang','เช่น ภาค 2/2569 · อ.สมศรี'], stDefault:['預設','Default','ค่าเดิม'],
  pbSteps:['① 修改 → ② 試玩 → ③ 下載新版 → ④ 把新檔案傳給學生','① Edit → ② Try it → ③ Download the new version → ④ Send the new file to students','① แก้ไข → ② ทดลองเล่น → ③ ดาวน์โหลดเวอร์ชันใหม่ → ④ ส่งไฟล์ใหม่ให้นักศึกษา'],
@@ -3859,8 +3713,6 @@ function edSettings(b){
       <label class="srow"><span>${TE('stLang')}</span><select class="ein" id="stLang">${LANGS.map((l,i)=>`<option value="${l}"${(s.lang||'zh')===l?' selected':''}>${['中文','English','ไทย'][i]}</option>`).join('')}</select></label>
       <label class="srow"><span>${TE('stMode')}</span><select class="ein" id="stMode">${['choose','practice','exam'].map(m=>`<option value="${m}"${(s.mode||'choose')===m?' selected':''}>${m==='choose'?TE('stModeChoose'):T('mode_'+m)}</option>`).join('')}</select></label><p class="muted">${TE('stModeNote')}</p></div>
     <div class="box"><label class="srow"><span>${TE('stNote')}</span><input class="ein" id="stNote" value="${esc(s.note||'')}" placeholder="${esc(TE('stNotePh'))}"></label></div>
-    <div class="box"><label class="srow"><span>${TE('stServer')}</span><input class="ein" id="stServer" value="${esc(s.server!=null?s.server:CONFIG.SERVER_URL)}"></label><p class="muted">${TE('stServerNote')}${esc(CONFIG.SERVER_URL)}</p>
-      <label class="srow"><span>${TE('stClass')}</span><input class="ein" id="stClass" value="${esc(s.classCode||'')}" placeholder="main"></label><p class="muted">${TE('stClassNote')}</p></div>
     <div class="box"><label class="srow"><span>${TE('stPin')}</span><input class="ein enum" id="stPin" value="${esc(s.TEACHER_PIN||'')}" placeholder="${CONFIG_DEF.TEACHER_PIN}"></label><p class="muted">🔒 ${TE('stPinWarn')}</p></div>`;
   const save=()=>{ edSave(); toast(T('saved')); };
   b.querySelectorAll('[data-st]').forEach(x=>x.onchange=()=>{ const v=Math.round(+x.value); if(v>0) s[x.dataset.st]=v; else delete s[x.dataset.st]; save(); });
@@ -3868,8 +3720,6 @@ function edSettings(b){
   $('#stLang').onchange=e=>{ s.lang=e.target.value; save(); };
   $('#stMode').onchange=e=>{ if(e.target.value==='choose') delete s.mode; else s.mode=e.target.value; save(); };
   $('#stNote').onchange=e=>{ s.note=e.target.value.trim(); if(!s.note) delete s.note; save(); };
-  $('#stServer').onchange=e=>{ const v=e.target.value.trim(); if(v===CONFIG.SERVER_URL) delete s.server; else s.server=v; save(); };
-  $('#stClass').onchange=e=>{ const v=normClass(e.target.value); if(v&&v!=='main') s.classCode=v; else delete s.classCode; e.target.value=v; save(); };
   $('#stPin').onchange=e=>{ const v=e.target.value.trim(); if(v) s.TEACHER_PIN=v; else delete s.TEACHER_PIN; save(); };
 }
 /* ---------- publish ---------- */
@@ -3926,7 +3776,7 @@ const CL={
  clBmiClass:['BMI 分類（台灣標準）','BMI category (Taiwan)','จัดกลุ่ม BMI (เกณฑ์ไต้หวัน)'], clCkd:['CKD 分期','CKD staging','ระยะ CKD'], clObese:['肥胖時 CrCl 會高估','CrCl overestimates in obesity','CrCl ประเมินสูงเกินในคนอ้วน'],
 };
 const TC=k=>CL[k]?(CL[k][LI()]||CL[k][0]):UI[k]?T(k):TE(k);
-const CLS={fin:false, ver:'__all', mode:'all', cls:'__all'};
+const CLS={fin:false, ver:'__all', mode:'all'};
 const pct=(n,d)=>d?Math.round(n/d*100):0;
 function clBar(label,n,d,note){ const v=pct(n,d); return `<div class="cbar" title="${esc(label)} — ${n}/${d}"><div class="cbl">${label}</div><div class="cbt"><i style="width:${v}%"></i></div><div class="cbv">${v}%<span>${n}/${d}</span></div>${note?`<div class="cbn">${note}</div>`:''}</div>`; }
 function clStack(label,parts,d){ return `<div class="cbar" title="${esc(label)}"><div class="cbl">${label}</div><div class="cbt st">${parts.map(([n,cls])=>n?`<i class="${cls}" style="width:${pct(n,d)}%"></i>`:'').join('')}</div><div class="cbv">${pct(parts[0][0],d)}%<span>${parts[0][0]}/${d}</span></div></div>`; }
@@ -3972,12 +3822,11 @@ function classStats(list){
   return R;
 }
 function renderClass(b){
-  const all=allSessions(), vers=[...new Set(all.map(s=>s.cfgRev||''))], clss=[...new Set(all.map(s=>s.classCode||'main'))].sort();
-  const list=all.filter(s=>(!CLS.fin||s.done)&&(CLS.ver==='__all'||(s.cfgRev||'')===CLS.ver)&&(CLS.mode==='all'||(s.mode||'practice')===CLS.mode)&&(CLS.cls==='__all'||(s.classCode||'main')===CLS.cls));
+  const all=allSessions(), vers=[...new Set(all.map(s=>s.cfgRev||''))];
+  const list=all.filter(s=>(!CLS.fin||s.done)&&(CLS.ver==='__all'||(s.cfgRev||'')===CLS.ver)&&(CLS.mode==='all'||(s.mode||'practice')===CLS.mode));
   const head=`<p class="edintro">${TC('clIntro')}</p><div class="clf"><label><input type="checkbox" id="clFin" ${CLS.fin?'checked':''}> ${TC('clFinished')}</label>
     <select class="ein" id="clVer" style="max-width:260px"><option value="__all">${TC('clAllVer')}</option>${vers.map(v=>`<option value="${esc(v)}"${CLS.ver===v?' selected':''}>${v?esc(v.replace('T',' ').slice(0,16)):TC('clOrig')}</option>`).join('')}</select>
     <select class="ein" id="clMode" style="max-width:180px"><option value="all">${TC('clAllModes')}</option>${['practice','exam'].map(m=>`<option value="${m}"${CLS.mode===m?' selected':''}>${T('mode_'+m)}</option>`).join('')}</select>
-    ${clss.length>1||CLS.cls!=='__all'?`<select class="ein" id="clCls" style="max-width:180px"><option value="__all">${T('clAllCls')}</option>${clss.map(c=>`<option value="${esc(c)}"${CLS.cls===c?' selected':''}>🏫 ${esc(c)}</option>`).join('')}</select>`:''}
     <button class="sbtn b" id="clCsv">${TC('clCsv')}</button></div>`;
   if(!list.length){ b.innerHTML=head+`<p class="edempty">${TC('clNone')}</p>`; bindClass(b,null); return; }
   const R=classStats(list), sec=(t,h)=>`<div class="clsec"><h4>${t}</h4>${h}</div>`, rk=['S','A','B','C','D'];
@@ -4007,7 +3856,7 @@ function renderClass(b){
   bindClass(b,R);
 }
 function bindClass(b,R){
-  $('#clFin').onchange=e=>{ CLS.fin=e.target.checked; renderPage(); }; $('#clVer').onchange=e=>{ CLS.ver=e.target.value; renderPage(); }; $('#clMode').onchange=e=>{ CLS.mode=e.target.value; renderPage(); }; if($('#clCls')) $('#clCls').onchange=e=>{ CLS.cls=e.target.value; renderPage(); };
+  $('#clFin').onchange=e=>{ CLS.fin=e.target.checked; renderPage(); }; $('#clVer').onchange=e=>{ CLS.ver=e.target.value; renderPage(); }; $('#clMode').onchange=e=>{ CLS.mode=e.target.value; renderPage(); };
   $('#clCsv').onclick=()=>{ if(!R){ sfx.error(); return; } const rows=[['section','item','percent','n','total']].concat(R.rows.map(r=>[r.sec,KP(String(r.label)).replace(/<[^>]+>/g,''),r.p,r.n,r.d]));
     download('PharmaDetective_class_summary.csv','﻿'+rows.map(r=>r.map(c=>'"'+String(c==null?'':c).replace(/"/g,'""')+'"').join(',')).join('\n'),'text/csv'); };
 }
@@ -4015,8 +3864,8 @@ function bindClass(b,R){
    PAGES (outside the stage): case file · settings · instructor dashboard
    ===================================================================== */
 const P={cur:null, tab:null};
-const PAGES={ case:{title:'caseFile', tabs:['tProfile','tProblems','tEvidence','tMeds','tLabs','tMemo']}, menu:{title:'menu'}, teacher:{title:'tTitle', tabs:['tOnline','tSessions','tClass','tDebrief','tQ','tTexts','tSet','tPub','tMedia','tTools']} };
-function openPage(name, tab){ if(name==='teacher'&&!P.teacherOK) return teacherLogin(); P.cur=name; P.tab=tab||(PAGES[name].tabs?PAGES[name].tabs[0]:null); $('#page').classList.remove('hidden'); sfx.paper(); renderPage(); if(name==='teacher') serverAutoPull(); }
+const PAGES={ case:{title:'caseFile', tabs:['tProfile','tProblems','tEvidence','tMeds','tLabs','tMemo']}, menu:{title:'menu'}, teacher:{title:'tTitle', tabs:['tSessions','tClass','tDebrief','tQ','tTexts','tSet','tPub','tMedia','tTools']} };
+function openPage(name, tab){ if(name==='teacher'&&!P.teacherOK) return teacherLogin(); P.cur=name; P.tab=tab||(PAGES[name].tabs?PAGES[name].tabs[0]:null); $('#page').classList.remove('hidden'); sfx.paper(); renderPage(); }
 function closePage(){ P.cur=null; $('#page').classList.add('hidden'); sfx.click(); saveSession(); applyI18n(); showVerNote(); }
 function renderPage(){
   const pg=PAGES[P.cur]; if(!pg) return;
@@ -4045,7 +3894,6 @@ function renderCase(b){
 function renderMenu(b){
   const tg=(k,v)=>`<button class="sbtn ${v?'g':''}" data-tg="${k}">${T(k)}: ${v?T('on'):T('off')}</button>`;
   b.innerHTML=`<div class="box"><b>${T('language')}</b><div class="row" style="margin-top:6px">${LANGS.map((l,i)=>`<button class="sbtn ${S.lang===l?'on':''}" data-l="${l}">${['中文','English','ไทย'][i]}</button>`).join('')}</div></div>
-   <div class="box"><b>☁️ ${T('syncH')}</b><div class="row" style="margin-top:6px;align-items:center"><span class="syncSt hidden" style="margin:0;text-align:left;font-size:14px"></span>${serverURL()&&S.sessionId?`<button class="sbtn" id="mSync">${T('syncNow')}</button>`:''}</div>${serverURL()?'':`<p class="muted">${T('syncOff')}</p>`}</div>
    <div class="box"><b>👁 ${T('view')}</b><div class="row" style="margin-top:6px"><button class="sbtn ${VIEW.fp?'':'on'}" data-view="tp">${T('view_tpL')}</button><button class="sbtn ${VIEW.fp?'on':''}" data-view="fp">${T('view_fpL')}</button></div><p class="muted" style="margin-top:4px">${T('viewHelp')}</p></div>
    <div class="box"><b>🎨 ${T('gfx')}</b><div class="row" style="margin-top:6px">${['auto','high','low'].map(k=>`<button class="sbtn ${GFX.pref===k?'on':''}" data-gfx="${k}">${T('gfx_'+k)}${k==='auto'?` (${T('gfxNow')}: ${T(GFX.low?'gfx_low':'gfx_high')})`:''}</button>`).join('')}</div><p class="muted" style="margin-top:4px">${T('gfxHelp')}</p></div>
    <div class="box"><b>${T('textSpeed')}</b><div class="row" style="margin-top:6px">${['slow','normal','fast'].map(k=>`<button class="sbtn ${S.textSpeed===k?'on':''}" data-spd="${k}">${T('spd_'+k)}</button>`).join('')}</div></div>
@@ -4056,7 +3904,6 @@ function renderMenu(b){
   b.querySelectorAll('[data-gfx]').forEach(x=>x.onclick=()=>{ setGfx(x.dataset.gfx); sfx.click(); renderPage(); });
   b.querySelectorAll('[data-spd]').forEach(x=>x.onclick=()=>{ S.textSpeed=x.dataset.spd; sfx.click(); renderPage(); });
   b.querySelectorAll('[data-tg]').forEach(x=>x.onclick=()=>{ const k=x.dataset.tg; S[k]=!S[k]; applyAudio(); applyMotion(); sfx.click(); renderPage(); });
-  syncBadge(); if($('#mSync')) $('#mSync').onclick=()=>{ sfx.click(); saveSession(true); SYNC.fail=0; syncFlush(); };
   $('#mRep').onclick=downloadReport; $('#mT').onclick=()=>openPage('teacher');
   $('#mRe').onclick=()=>showModal(`<h3>${T('restart')}</h3><p>${T('confirmRestart')}</p>`,[{t:T('restart'),cls:'r',fn:()=>{ saveSession(true); location.reload(); }},{t:T('cancel'),cls:''}]);
 }
@@ -4081,14 +3928,12 @@ function teacherLogin(){
    [{t:T('ok'), keep:true, fn:(c)=>{ if(c.querySelector('#pinIn').value===CONFIG.TEACHER_PIN){ P.teacherOK=true; MQ.length=0; nextModal(); openPage('teacher'); } else { sfx.error(); toast(T('tWrong')); } }},{t:T('cancel'),cls:''}]);
   setTimeout(()=>{ const i=$('#pinIn'); if(i){ i.focus(); i.onkeydown=e=>{ if(e.key==='Enter') $('#mCard [data-mb="0"]').click(); }; } },60);
 }
-function allSessions(){ if(S.sessionId) saveSession(true); const m=new Map(); (store.get(CONFIG.STORAGE_KEY)||[]).forEach(s=>{ if(s&&s.id) m.set(s.id,s); });
-  (SYNC.remote||[]).forEach(s=>{ if(!s||!s.id) return; const o=m.get(s.id); if(!o||(o.updated||'')<=(s.updated||'')) m.set(s.id,s); });
-  return [...m.values()].sort((a,b)=>(b.updated||'').localeCompare(a.updated||'')); }
+function allSessions(){ if(S.sessionId) saveSession(true); return (store.get(CONFIG.STORAGE_KEY)||[]).slice().sort((a,b)=>(b.updated||'').localeCompare(a.updated||'')); }
 function sessHTML(s){
   const log=s.log||[]; const free=log.filter(e=>(e.type==='ask'&&e.mode==='free')||e.type==='lockText'||e.type==='final');
   const pres=log.filter(e=>e.type==='present'||e.type==='choice'||e.type==='calc'); const B=s.boss||{answers:[]}; const qn=['❌','🔸','✅'];
   return `<details class="sess"><summary>👤 ${esc(s.student&&s.student.name||'?')} <span class="muted">${esc(s.student&&s.student.sid||'')}</span>
-   <span class="pill">${s.rank?('🏅 '+s.rank+' · '+s.score):(s.progress+'%')}</span><span class="pill">⏱ ${fmt(s.realTime)}</span><span class="pill">⏰ ${s.visitLeft}</span><span class="pill">💗 ${s.trust}</span><span class="pill">💡 ${s.hints}</span><span class="pill">${s.gender==='m'?'♂':'♀'}</span><span class="pill">🚪 ${s.first?(s.first.ok?'✅':'×'+s.first.tries):'—'}</span><span class="pill">🧮 ${['bmi','egfr','crcl'].map(k=>s.calc&&s.calc[k]?(s.calc[k].ok?'✓':'✗'):'·').join('')}</span><span class="pill">✖ ${s.wrong||0}</span><span class="pill">${s.mode==='exam'?'📝':'📘'}</span>${s.classCode&&s.classCode!=='main'?`<span class="pill">🏫 ${esc(s.classCode)}</span>`:''}${s.fromServer?'<span class="pill" title="server">☁️</span>':''}${s.view==='fp'?`<span class="pill" title="${esc(T('view_fpL'))}">👁 1</span>`:''}${s.pat!=null?`<span class="pill">☕ ${s.pat}</span>`:''}${s.hiddenQ?`<span class="pill">🗝️ ${s.hiddenQ.length}</span>`:''}${s.refused?'<span class="pill no">🔒</span>':''}${s.timeout?'<span class="pill no">⏰</span>':''}${s.ending?`<span class="pill">${{best:'🌟',good:'😊',mixed:'😐',bad:'🚑'}[s.ending.tier]||''}</span>`:''}${s.badges&&s.badges.length?`<span class="pill">🏅 ${s.badges.length}</span>`:''}<span class="muted">${esc((s.updated||'').replace('T',' ').slice(0,16))}</span></summary><div class="in">
+   <span class="pill">${s.rank?('🏅 '+s.rank+' · '+s.score):(s.progress+'%')}</span><span class="pill">⏱ ${fmt(s.realTime)}</span><span class="pill">⏰ ${s.visitLeft}</span><span class="pill">💗 ${s.trust}</span><span class="pill">💡 ${s.hints}</span><span class="pill">${s.gender==='m'?'♂':'♀'}</span><span class="pill">🚪 ${s.first?(s.first.ok?'✅':'×'+s.first.tries):'—'}</span><span class="pill">🧮 ${['bmi','egfr','crcl'].map(k=>s.calc&&s.calc[k]?(s.calc[k].ok?'✓':'✗'):'·').join('')}</span><span class="pill">✖ ${s.wrong||0}</span><span class="pill">${s.mode==='exam'?'📝':'📘'}</span>${s.view==='fp'?`<span class="pill" title="${esc(T('view_fpL'))}">👁 1</span>`:''}${s.pat!=null?`<span class="pill">☕ ${s.pat}</span>`:''}${s.hiddenQ?`<span class="pill">🗝️ ${s.hiddenQ.length}</span>`:''}${s.refused?'<span class="pill no">🔒</span>':''}${s.timeout?'<span class="pill no">⏰</span>':''}${s.ending?`<span class="pill">${{best:'🌟',good:'😊',mixed:'😐',bad:'🚑'}[s.ending.tier]||''}</span>`:''}${s.badges&&s.badges.length?`<span class="pill">🏅 ${s.badges.length}</span>`:''}<span class="muted">${esc((s.updated||'').replace('T',' ').slice(0,16))}</span></summary><div class="in">
    <b>${T('tFound')}</b><div>${PROBLEMS.map(p=>`<span class="pill ${s.found&&s.found[p.id]?'ok':'no'}">${p.id} ${s.found&&s.found[p.id]?fmt(s.found[p.id].t):'—'}</span>`).join('')}</div>
    <b>${T('chapterTimes')}</b> <span class="muted">${[0,1,2,3,4,5].map(c=>'Ch'+c+' '+fmt((s.chT||{})[c]||0)).join(' · ')}</span>
    <h4 style="margin-top:8px">${T('tFree')} (${free.length})</h4>${free.map(e=>`<div class="ll free">[${fmt(e.t)}] ${e.type==='final'?'🏁 '+(e.cov||[]).filter(Boolean).length+'/'+RUBRIC_SUM.length:e.type==='lockText'?'💗 '+(e.ok?'✅':'❌'):'✍️ → '+esc(e.intent||'-')+(e.emp?' 💗':'')+(e.blame?' ⚠️':'')+(e.priv?' 🔒':'')} — “${esc(e.text)}”</div>`).join('')||'<p class="muted">—</p>'}
@@ -4106,13 +3951,11 @@ function sessHTML(s){
 function resizeImage(file,max){ return new Promise(res=>{ const fr=new FileReader(); fr.onload=()=>{ const im=new Image(); im.onload=()=>{ const k=Math.min(1,max/Math.max(im.width,im.height)); const c=document.createElement('canvas'); c.width=im.width*k; c.height=im.height*k; c.getContext('2d').drawImage(im,0,0,c.width,c.height); res(c.toDataURL('image/jpeg',.82)); }; im.onerror=()=>res(null); im.src=fr.result; }; fr.readAsDataURL(file); }); }
 function pickFiles(multi,accept,cb){ const f=$('#fileIn'); f.value=''; f.multiple=!!multi; f.accept=accept||''; f.onchange=()=>cb(Array.from(f.files)); f.click(); }
 function renderTeacher(b){
-  if(P.tab==='tOnline') return renderOnline(b);
   if(P.tab==='tClass') return renderClass(b);
   if(P.tab==='tDebrief') return renderDebrief(b);
   if(['tQ','tTexts','tSet','tPub'].includes(P.tab)) return renderEditor(P.tab,b);
   if(P.tab==='tSessions'){ const all=allSessions(); b.innerHTML=all.length?all.map(sessHTML).join(''):`<p class="muted" style="padding:20px">${T('tNone')}</p>`;
-    b.querySelectorAll('[data-del]').forEach(x=>x.onclick=async()=>{ const id=x.dataset.del, rs=(SYNC.remote||[]).find(s=>s.id===id); store.set(CONFIG.STORAGE_KEY,(store.get(CONFIG.STORAGE_KEY)||[]).filter(s=>s.id!==id));
-      if(rs){ const r=await serverDelete(rs.classCode||'main', id); toast(r.ok?'🗑️ '+T('onDelOne'):'⚠️ '+T('onDown')); } renderPage(); }); }
+    b.querySelectorAll('[data-del]').forEach(x=>x.onclick=()=>{ store.set(CONFIG.STORAGE_KEY,(store.get(CONFIG.STORAGE_KEY)||[]).filter(s=>s.id!==x.dataset.del)); renderPage(); }); }
   else if(P.tab==='tMedia'){ const m=mediaStore();
     b.innerHTML=`<div class="box"><b>${T('tLabUp')}</b><div class="row" style="margin:6px 0"><button class="sbtn b" id="upLab">⬆️</button></div><div class="egrid">${(m.labImages||[]).map((s,i)=>`<div class="ev"><img src="${s}" style="width:100%"><button class="sbtn r" data-dl="${i}">${T('tDel')}</button></div>`).join('')}</div></div>
      <div class="box"><b>${T('tBagUp')}</b><div class="egrid" style="margin-top:6px">${Object.keys(ITEMS).map(id=>`<div class="ev"><div class="ic">${itemIcon(id,44)}</div><b>${esc(L(ITEMS[id].n))}</b><div class="row">${itemImages(id).map(s=>`<img src="${s}" data-zs="1" style="height:48px;border-radius:6px">`).join('')}</div><div class="row"><button class="sbtn b" data-ub="${id}">⬆️</button>${m.medBagImages&&m.medBagImages[id]?`<button class="sbtn r" data-db="${id}">${T('tDel')}</button>`:''}</div></div>`).join('')}</div></div>`;
@@ -4122,8 +3965,8 @@ function renderTeacher(b){
     b.querySelectorAll('[data-db]').forEach(x=>x.onclick=()=>{ const mm=mediaStore(); delete mm.medBagImages[x.dataset.db]; store.set(CONFIG.MEDIA_KEY,mm); renderPage(); }); }
   else { b.innerHTML=`<div class="box"><div class="row"><button class="sbtn b" id="eJ">${T('tExportJ')}</button><button class="sbtn b" id="eC">${T('tExportC')}</button><button class="sbtn g" id="iJ">${T('tImport')}</button><button class="sbtn r" id="cA">${T('tClear')}</button></div></div>`;
     $('#eJ').onclick=()=>download('PharmaDetective_all.json', JSON.stringify(allSessions(),null,2));
-    $('#eC').onclick=()=>{ const rows=[['session','name','student_id','class','rank','score','time_s','chapter','type','text','detail']];
-      allSessions().forEach(s=>(s.log||[]).filter(e=>(e.type==='ask'&&e.mode==='free')||['lockText','final','present','medrev','calc','firstMove','custom','pp','refl','hidden','ending','refused','timeout','patienceOut'].includes(e.type)).forEach(e=>rows.push([s.id,s.student&&s.student.name,s.student&&s.student.sid,s.classCode||'main',s.rank,s.score,e.t,e.ch,e.type,(e.type==='custom'||e.type==='pp'||e.type==='refl'?e.ans:e.text)||e.item||(e.sel||[]).join(' | ')||e.tier||e.why||e.id||'',e.type==='pp'?(e.phase+' · '+e.q+' · '+(e.ok?'OK':'WRONG')):e.type==='refl'?e.q:e.type==='ending'?(e.items||[]).map(x=>x.k+(x.ok?'+':'-')).join(' '):e.type==='medrev'?(e.m+' '+(e.perfect?'PERFECT':e.partial?'PARTIAL':'WRONG')):e.type==='present'?(e.st+' '+(e.ok?'OK':e.near?'NEAR':'WRONG')):e.type==='calc'?(e.id+' try'+e.attempt+' '+JSON.stringify(e.vals)+' = '+e.result+' '+(e.ok?'OK':'WRONG')):e.type==='firstMove'?('tries '+e.tries+' '+(e.picks||[]).join('>')):e.type==='custom'?(e.cp+' · '+e.q+' · '+e.pts+'/'+e.max+(e.ok?' OK':e.partial?' PARTIAL':e.kind==='text'&&!e.auto?' REVIEW':' WRONG')):e.type==='final'?(e.cov||[]).filter(Boolean).length+'/'+RUBRIC_SUM.length:(e.intent||String(e.ok==null?'':e.ok))])));
+    $('#eC').onclick=()=>{ const rows=[['session','name','student_id','rank','score','time_s','chapter','type','text','detail']];
+      allSessions().forEach(s=>(s.log||[]).filter(e=>(e.type==='ask'&&e.mode==='free')||['lockText','final','present','medrev','calc','firstMove','custom','pp','refl','hidden','ending','refused','timeout','patienceOut'].includes(e.type)).forEach(e=>rows.push([s.id,s.student&&s.student.name,s.student&&s.student.sid,s.rank,s.score,e.t,e.ch,e.type,(e.type==='custom'||e.type==='pp'||e.type==='refl'?e.ans:e.text)||e.item||(e.sel||[]).join(' | ')||e.tier||e.why||e.id||'',e.type==='pp'?(e.phase+' · '+e.q+' · '+(e.ok?'OK':'WRONG')):e.type==='refl'?e.q:e.type==='ending'?(e.items||[]).map(x=>x.k+(x.ok?'+':'-')).join(' '):e.type==='medrev'?(e.m+' '+(e.perfect?'PERFECT':e.partial?'PARTIAL':'WRONG')):e.type==='present'?(e.st+' '+(e.ok?'OK':e.near?'NEAR':'WRONG')):e.type==='calc'?(e.id+' try'+e.attempt+' '+JSON.stringify(e.vals)+' = '+e.result+' '+(e.ok?'OK':'WRONG')):e.type==='firstMove'?('tries '+e.tries+' '+(e.picks||[]).join('>')):e.type==='custom'?(e.cp+' · '+e.q+' · '+e.pts+'/'+e.max+(e.ok?' OK':e.partial?' PARTIAL':e.kind==='text'&&!e.auto?' REVIEW':' WRONG')):e.type==='final'?(e.cov||[]).filter(Boolean).length+'/'+RUBRIC_SUM.length:(e.intent||String(e.ok==null?'':e.ok))])));
       download('PharmaDetective_text_answers.csv','﻿'+rows.map(r=>r.map(c=>'"'+String(c==null?'':c).replace(/"/g,'""')+'"').join(',')).join('\n'),'text/csv'); };
     $('#iJ').onclick=()=>pickFiles(true,'.json,application/json',async fs=>{ const all=store.get(CONFIG.STORAGE_KEY)||[]; let n=0; for(const f of fs){ try{ [].concat(JSON.parse(await f.text())).forEach(s=>{ if(s&&s.id){ const i=all.findIndex(x=>x.id===s.id); if(i>=0) all[i]=s; else all.push(s); n++; } }); }catch(e){ toast('⚠️ '+f.name); } } store.set(CONFIG.STORAGE_KEY,all); toast(T('imported')+': '+n); P.tab='tSessions'; renderPage(); });
     $('#cA').onclick=()=>showModal(`<h3>${T('tClear')}</h3><p>${T('tConfirmClear')}</p>`,[{t:T('tClear'),cls:'r',fn:()=>{ store.set(CONFIG.STORAGE_KEY,[]); if(P.cur) renderPage(); }},{t:T('cancel'),cls:''}]); }
@@ -4190,7 +4033,7 @@ function applyI18n(){
   if(!$('#searchHud').classList.contains('hidden')) updSearchHud();
   if(D.zoomed){ $('#zoomBack').textContent=T('zoomBack'); $('#zoomLbl').textContent='🔍 '+T(ZONES[D.zoomed].n); }
   if(!$('#testiBanner').classList.contains('hidden')){ $('#tPress').textContent=T('press'); $('#tPresent').textContent=T('present'); }
-  applyGfx(); applyView(); syncNoteTitle(); syncBadge(); if(!$('#title').classList.contains('hidden')){ renderResume(); renderModeRow(); renderTitleBtns(); } if(P.cur) renderPage();
+  applyGfx(); applyView(); if(!$('#title').classList.contains('hidden')){ renderResume(); renderModeRow(); renderTitleBtns(); } if(P.cur) renderPage();
 }
 function setLang(l){ S.lang=l; sfx.click(); applyI18n(); saveSession(); }
 function renderTitleChars(){
@@ -4294,7 +4137,7 @@ function bindUI(){
   addEventListener('beforeunload', ()=>saveSession(true));
 }
 (async function main(){
-  bindUI(); applyView(); initSync(); showTitle(); gfxWatch();
+  bindUI(); applyView(); showTitle(); gfxWatch();
   window.__PD__={S, D, CH, ED_ST, edWork, askCustom, MISSIONS, DRUGS, ZONES, reveal, addEvidence, openPage, startGame, advance, HOTSPOTS, onHotspot, zoomTo, camReset, computeScore, FOLLOW1, BADGES, DEFAULT_QUESTIONS, practiceChapter, epiOutcomes};
 })();
 </script>

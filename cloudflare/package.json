@@ -1,0 +1,23 @@
+{
+  "name": "pharma-detective-api",
+  "private": true,
+  "type": "module",
+  "description": "Results and published settings for the Pharma Detective game (Cloudflare Worker + D1).",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4.45.0"
+  },
+  "cloudflare": {
+    "bindings": {
+      "TEACHER_KEY": {
+        "description": "The instructor key. Instructors type it in the game's dashboard to publish settings and read results. Use a long random value, e.g. `PD-XXXX-XXXX-XXXX-XXXX`, and do not give it to students."
+      },
+      "DB": {
+        "description": "Stores students' game results and the instructor's published settings. Created for you."
+      }
+    }
+  }
+}

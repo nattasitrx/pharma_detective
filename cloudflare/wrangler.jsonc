@@ -1,0 +1,11 @@
+{
+  // Pharma Detective results & settings server
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pharma-detective-api",
+  "main": "src/index.js",
+  "compatibility_date": "2025-09-01",
+  "workers_dev": true,
+  "observability": { "enabled": true },
+  // The database is created automatically on the first deploy (no id needed here).
+  "d1_databases": [{ "binding": "DB", "database_name": "pharma-detective" }]
+}

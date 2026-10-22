@@ -68,6 +68,9 @@ input,textarea{font-family:var(--font);-webkit-user-select:text;user-select:text
 .fpId .bc{position:absolute;left:96px;top:144px;width:90px;height:24px;background:repeating-linear-gradient(90deg,#3a2232 0 3px,transparent 3px 6px,#3a2232 6px 7px,transparent 7px 11px,#3a2232 11px 15px,transparent 15px 17px)}
 .fpId .ph{position:absolute;right:14px;top:66px;width:84px;height:104px;border:3px solid #3a2232;border-radius:8px;background:#ffeef3;overflow:hidden}
 .fpId .ph svg{width:100%;height:100%;display:block}
+#syncNote{font-size:13px;font-weight:700;color:#2f7d6b;margin:-4px 0 6px}
+.syncSt{margin-top:10px;text-align:center;font-weight:800;font-size:16px;color:#2f7d6b}
+.syncSt.err{color:#c4572a}
 #chars{transform:translate(calc(var(--px)*10px),calc(var(--py)*4px));transition:transform .6s cubic-bezier(.2,.8,.3,1)}
 .char{position:absolute;bottom:-14px;width:520px;height:728px;transition:left .6s cubic-bezier(.3,1.15,.5,1),filter .35s,transform .35s cubic-bezier(.3,1.3,.5,1);pointer-events:none;filter:drop-shadow(0 10px 18px rgba(40,20,60,.25))}
 .char .frwrap{position:absolute;inset:0}
@@ -607,6 +610,9 @@ svg.ico{display:inline-block;vertical-align:middle;overflow:visible}
 .pubsteps{font-size:18px;font-weight:900;color:#13866a;background:#eafff3;border-radius:14px;padding:12px 16px;margin-bottom:10px;text-align:center}
 .pubgrid{display:grid;grid-template-columns:1fr 1.4fr;gap:12px;margin:10px 0}
 .warnp{color:#b35a00;font-weight:800;margin-top:6px}.okp{color:#11734d;font-weight:800;margin-top:6px}
+.pubbar{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#fff4e0;color:#8a4b00;border-radius:14px;padding:8px 12px;margin-bottom:10px;font-weight:800}
+.onpub{box-shadow:inset 0 0 0 3px #a8dcff}
+details.box>summary{cursor:pointer;list-style:none}details.box>summary::-webkit-details-marker{display:none}details.box>summary::before{content:'▸ ';color:#7a6a9a}details.box[open]>summary::before{content:'▾ '}
 .lmodal{display:flex;flex-direction:column;gap:8px;text-align:left}.lmodal label{display:flex;flex-direction:column;gap:2px;font-weight:800;font-size:13px;color:#6a4a7a}
 .lmodal textarea{border:none;border-radius:10px;padding:8px;font-size:15px;font-family:inherit;box-shadow:inset 0 0 0 2px #e6dcef;resize:vertical}
 /* in-game edit pencils & version note */
@@ -900,6 +906,7 @@ html[lang=en] #logo h1{font-size:76px;letter-spacing:2px}
       <div class="row" style="justify-content:space-between"><div class="langs"><button class="lbtn" data-lang="zh">中文</button><button class="lbtn" data-lang="en">English</button><button class="lbtn" data-lang="th">ไทย</button></div>
         <span><button class="sbtn" id="viewBtn"></button><button class="sbtn" id="gfxBtn"></button><button class="sbtn" id="btnTeacher" data-i18n="teacherBtn"></button></span></div>
       <div class="grid"><label><span data-i18n="stuName"></span><input id="inName" maxlength="40" autocomplete="off"></label><label><span data-i18n="stuId"></span><input id="inSid" maxlength="30" autocomplete="off"></label></div>
+      <div id="syncNote" class="hidden"></div>
       <div class="avrow"><span class="lbl" data-i18n="chooseAv"></span><button class="gsel on" data-av="me" data-g="f"><span class="av"></span><span class="gl">♀ <span data-i18n="female"></span></span></button><button class="gsel" data-av="me2" data-g="m"><span class="av"></span><span class="gl">♂ <span data-i18n="male"></span></span></button>
         <span class="spacer"></span><label class="qtel"><input type="checkbox" id="qteToggle" checked> <span data-i18n="qteOpt"></span></label></div>
       <div class="moderow"><span class="lbl" data-i18n="modeLbl"></span><button class="msel" data-mode="practice"></button><button class="msel" data-mode="exam"></button><span id="modeHelp"></span></div>
@@ -930,10 +937,20 @@ html[lang=en] #logo h1{font-size:76px;letter-spacing:2px}
 const __SELF_HTML='<!DOCTYPE html>\n'+document.documentElement.outerHTML;   // snapshot of this file, before anything changes the page
 const GAME_CFG_BAKED=(()=>{ try{ return JSON.parse((document.getElementById('gameConfig')||{}).textContent||'{}')||{}; }catch(e){ return {}; } })();
 const CFG_DRAFT_KEY='phd_cfg_draft_'+((GAME_CFG_BAKED.meta&&GAME_CFG_BAKED.meta.rev)||'orig');
-let GAME_CFG=(()=>{ try{ if(sessionStorage.getItem('phd_usedraft')==='1'){ const dr=JSON.parse(localStorage.getItem(CFG_DRAFT_KEY)||'null'); if(dr) return dr; } }catch(e){} return GAME_CFG_BAKED; })();
+/* the version the instructor published online for this link (cached from the last visit, refreshed by cfgRefresh) */
+const CFG_ONLINE_KEY='phd_cfg_online_v1';
+const CFG_REQ_CLASS=(()=>{ try{ return String(new URLSearchParams(location.search).get('class')||'').trim().toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,40)||'main'; }catch(e){ return 'main'; } })();
+function cfgFromOnline(o){ if(!o||!o.config||typeof o.config!=='object') return null; const c=Object.assign({}, o.config), bm=GAME_CFG_BAKED.media||{}, om=c.media||{};
+  c.media={labImages:[...new Set([].concat(bm.labImages||[], om.labImages||[]))], medBagImages:Object.assign({}, bm.medBagImages||{}, om.medBagImages||{})};
+  c.meta={rev:o.rev, note:o.note||'', online:o.cls}; return c; }
+let GAME_CFG_BASE=(()=>{ try{ const all=JSON.parse(localStorage.getItem(CFG_ONLINE_KEY)||'{}'); return cfgFromOnline(all[CFG_REQ_CLASS])||GAME_CFG_BAKED; }catch(e){ return GAME_CFG_BAKED; } })();
+const CFG_DRAFTMODE=(()=>{ try{ return sessionStorage.getItem('phd_usedraft')==='1'; }catch(e){ return false; } })();
+let GAME_CFG=(()=>{ try{ if(CFG_DRAFTMODE){ const dr=JSON.parse(localStorage.getItem(CFG_DRAFT_KEY)||'null'); if(dr) return Object.assign({}, dr, {media:GAME_CFG_BASE.media, meta:GAME_CFG_BASE.meta}); } }catch(e){} return GAME_CFG_BASE; })();
 const CONFIG = {
   TEACHER_PIN:'1234',              // รหัสหน้าอาจารย์ / instructor PIN
   STORAGE_KEY:'phd_chen_sessions_v3', MEDIA_KEY:'phd_chen_media_v2',
+  SERVER_URL:'',   // results & settings server (Cloudflare Worker), e.g. https://pharma-detective-api.NAME.workers.dev; '' = off
+  GAME_URL:'https://nattasitrx.github.io/pharma_detective/', // public link students open
   VISIT_MIN:60,                     // in-game visit time (minutes) — spent by actions, not real time
   COST_ASK:2, COST_SEARCH:1, COST_WRONG:3, COST_HINT:5,
   SEARCH_CHARGES:16, HEARTS:5, QTE_SEC:12, BOSS_SEC:25, TRUST_START:3,
@@ -1037,6 +1054,23 @@ const UI = {
   cqAnsPh:['在這裡輸入答案…','Type your answer…','พิมพ์คำตอบที่นี่…'], cqYour:['你的答案','Your answer','คำตอบของคุณ'], cqUse:['↓ 用這個結果','↓ Use this result','↓ ใช้ผลนี้'], cqAgain:['還不對，再試一次','Not yet — try again','ยังไม่ถูก ลองอีกครั้ง'],
   cqAnswerIs:['正確答案：','Correct answer: ','คำตอบที่ถูก: '], cqStat:['老師的加分題','Instructor questions','คำถามจากอาจารย์'], cqPick:['請先作答','Answer first','กรุณาตอบก่อน'], cqTimeUp:['時間到！','Time\'s up!','หมดเวลา!'],
   draftBadge:['👩‍🏫 試玩中：尚未發布的修改版','👩‍🏫 Preview: unpublished changes','👩‍🏫 ทดลองเล่น: ฉบับแก้ไขที่ยังไม่เผยแพร่'],
+  syncNote:['遊玩結果會自動傳給老師（需要網路）','Your results go to your instructor automatically (needs internet)','ผลการเล่นจะส่งให้อาจารย์อัตโนมัติ (ต้องมีอินเทอร์เน็ต)'], syncClass:['班級','Class','ห้อง'],
+  cfgWait:['⏳ 正在載入老師設定的版本…','⏳ Loading your instructor\'s version…','⏳ กำลังโหลดเวอร์ชันของอาจารย์…'], cfgNew:['📥 已更新為老師最新發布的版本','📥 Updated to your instructor\'s latest version','📥 อัปเดตเป็นเวอร์ชันล่าสุดของอาจารย์แล้ว'],
+  syncSending:['☁️ 正在把結果傳給老師…','☁️ Sending your results to your instructor…','☁️ กำลังส่งผลให้อาจารย์…'], syncOk:['☁️ 結果已傳給老師 ✓','☁️ Results sent to your instructor ✓','☁️ ส่งผลให้อาจารย์แล้ว ✓'],
+  syncErr:['⚠️ 還沒傳出去，有網路時會自動重試；也可以按「下載我的報告」自己繳交','⚠️ Not sent yet — it retries automatically when you are online. You can also download your report and hand it in.','⚠️ ยังส่งไม่ได้ จะลองใหม่อัตโนมัติเมื่อมีอินเทอร์เน็ต หรือกดดาวน์โหลดรายงานส่งเองก็ได้'],
+  syncOff:['這個檔案沒有設定結果伺服器，請下載報告繳交','No results server is set for this file — please download your report and hand it in','ไฟล์นี้ไม่ได้ตั้งเซิร์ฟเวอร์รับผล กรุณาดาวน์โหลดรายงานส่งเอง'], syncNow:['立即傳送','Send now','ส่งตอนนี้'], syncH:['自動繳交','Automatic hand-in','การส่งผลอัตโนมัติ'],
+  tOnline:['☁️ 線上結果','☁️ Online results','☁️ ผลออนไลน์'],
+  onIntro:['學生玩的時候，結果會自動傳到伺服器，不用再交檔案。在這裡載入後，「學生紀錄」「全班概況」「Debrief 指引」都會一起更新。','While students play, their results go to the server by themselves — nobody hands in files. Load them here and Sessions, Class overview and the Debrief guide all update.','ระหว่างที่นักศึกษาเล่น ผลจะส่งเข้าเซิร์ฟเวอร์เอง ไม่ต้องส่งไฟล์ โหลดผลที่นี่แล้วแท็บบันทึกนักศึกษา ภาพรวมชั้นเรียน และคู่มือ Debrief จะอัปเดตตาม'],
+  onServer:['結果伺服器','Results server','เซิร์ฟเวอร์รับผล'], onTest:['測試連線','Test connection','ทดสอบการเชื่อมต่อ'], onUp:['連線正常 ✓','Connected ✓','เชื่อมต่อได้ ✓'], onDown:['連不上伺服器','Cannot reach the server','เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'],
+  onKey:['教師金鑰','Instructor key','รหัสอาจารย์สำหรับเซิร์ฟเวอร์'], onSave:['儲存','Save','บันทึก'],
+  onKeyNote:['每台裝置輸入一次就好，會記在這台裝置上。金鑰和後台密碼不一樣，請不要給學生。','Enter it once per device; it is remembered on this device. It is not the dashboard PIN — never give it to students.','ใส่ครั้งเดียวต่อเครื่อง ระบบจะจำไว้ในเครื่องนี้ รหัสนี้ไม่ใช่รหัสเข้าหน้าอาจารย์ และห้ามให้นักศึกษา'],
+  onPull:['⬇️ 載入最新結果','⬇️ Load latest results','⬇️ โหลดผลล่าสุด'], onPulled:['已載入 {n} 筆紀錄','Loaded {n} records','โหลดแล้ว {n} รายการ'], onBadKey:['教師金鑰不正確','Wrong instructor key','รหัสอาจารย์ไม่ถูกต้อง'], onNoKey:['請先輸入教師金鑰','Enter the instructor key first','กรุณาใส่รหัสอาจารย์ก่อน'],
+  onLast:['上次載入','Last loaded','โหลดล่าสุด'], onAuto:['之後打開教師後台時會自動載入','After this it loads by itself whenever you open the dashboard','ครั้งต่อไปจะโหลดให้อัตโนมัติเมื่อเปิดหน้าอาจารย์'], onClasses:['班級','Class','ห้อง'], onRecords:['筆','records','รายการ'],
+  onLinkH:['給學生的連結','Link for students','ลิงก์สำหรับนักศึกษา'], onCopy:['複製','Copy','คัดลอก'], onCopied:['已複製','Copied','คัดลอกแล้ว'],
+  onLinkNote:['輸入班級代碼（英文或數字，例如 ph2026a）就能把各班分開。學生打開連結就能玩，結果會自動歸到這個班。','Type a class code (letters or numbers, e.g. ph2026a) to keep classes apart. Students just open the link and their results are filed under that class.','ใส่รหัสห้อง (ตัวอักษรหรือตัวเลข เช่น ph2026a) เพื่อแยกแต่ละห้อง นักศึกษาเปิดลิงก์แล้วเล่นได้เลย ผลจะเข้าห้องนั้นเอง'],
+  onDelCls:['🗑️ 刪除','🗑️ Delete','🗑️ ลบ'], onDelQ:['確定要刪除伺服器上「{c}」班的 {n} 筆結果？刪除後無法復原。','Delete {n} records of class "{c}" from the server? This cannot be undone.','ลบผล {n} รายการของห้อง "{c}" บนเซิร์ฟเวอร์? ลบแล้วกู้คืนไม่ได้'],
+  onLocalNote:['伺服器上的紀錄只在這個畫面開著時顯示，不會存進這台裝置；想留一份請到「工具」匯出 JSON。','Server records are shown while this page is open; they are not saved on this device. To keep a copy, export JSON under Tools.','ผลจากเซิร์ฟเวอร์แสดงเฉพาะตอนเปิดหน้านี้ ไม่ได้บันทึกลงเครื่อง ถ้าต้องการเก็บสำเนาให้ส่งออก JSON ที่แท็บเครื่องมือ'],
+  onDelOne:['也從伺服器刪除了','Also deleted from the server','ลบจากเซิร์ฟเวอร์ด้วยแล้ว'], clAllCls:['全部班級','All classes','ทุกห้อง'],
   view:['視角','View','มุมมอง'], view_tp:['第三人稱','3rd person','บุคคลที่ 3'], view_fp:['第一人稱','1st person','บุคคลที่ 1'],
   view_tpL:['第三人稱（看得到自己的角色）','3rd person (see your character)','บุคคลที่ 3 (เห็นตัวละครของเรา)'], view_fpL:['第一人稱（用自己的眼睛看）','1st person (through your own eyes)','บุคคลที่ 1 (มองผ่านสายตาเรา)'],
   viewHelp:['第一人稱：畫面上不會出現你的角色，就像自己和病人面對面；出示證件、證物和搜查時會看到你的手。隨時可以切換。','1st person: your own character is not drawn — you face the patient yourself, and you see your hands when you show your ID, present evidence or search. You can switch any time.','บุคคลที่ 1: จะไม่เห็นตัวละครของเราบนจอ เหมือนนั่งคุยกับผู้ป่วยเอง และจะเห็นมือเราตอนยื่นบัตร ยื่นหลักฐาน และค้นของ สลับได้ตลอดเวลา'],
@@ -1869,7 +1903,8 @@ const S = {
 };
 const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
 /* play mode: 'practice' (hints + explanations) or 'exam' (no hints, near = wrong, explanations at the end) */
-const MODE_FORCED=(()=>{ const m=(GAME_CFG.settings||{}).mode; return m==='practice'||m==='exam'?m:null; })();
+const modeForced=()=>{ const m=(GAME_CFG.settings||{}).mode; return m==='practice'||m==='exam'?m:null; };
+let MODE_FORCED=modeForced();
 S.mode=MODE_FORCED||(()=>{ try{ return localStorage.getItem('phd_mode')==='exam'?'exam':'practice'; }catch(e){ return 'practice'; } })();
 const EXAM=()=>S.mode==='exam';
 const LI=()=>Math.max(0,LANGS.indexOf(S.lang));
@@ -1896,13 +1931,13 @@ const realSec=()=>S.t0?(Date.now()-S.t0)/1000:0;
 const foundCount=()=>Object.keys(S.found).length;
 const store={ mem:{}, get(k){ try{ const v=localStorage.getItem(k); return v?JSON.parse(v):null; }catch(e){ return this.mem[k]||null; } }, set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){ this.mem[k]=v; } } };
 function snapshot(){
-  return { id:S.sessionId, student:S.student, avatar:S.avatar, view:(typeof VIEW!=='undefined'&&VIEW.fp)?'fp':'tp', gender:S.gender, lang:S.lang, created:S.created, updated:new Date().toISOString(), realTime:Math.round(realSec()), chT:S.chT, chapter:S.chapter,
+  return { id:S.sessionId, student:S.student, avatar:S.avatar, view:(typeof VIEW!=='undefined'&&VIEW.fp)?'fp':'tp', classCode:(typeof classCode==='function'?classCode():'main'), cfgRev:(GAME_CFG.meta&&GAME_CFG.meta.rev)||'', cfgOnline:(GAME_CFG.meta&&GAME_CFG.meta.online)||'', gender:S.gender, lang:S.lang, created:S.created, updated:new Date().toISOString(), realTime:Math.round(realSec()), chT:S.chT, chapter:S.chapter,
     done:S.done, score:S.score, rank:S.rank, visitLeft:S.visit, trust:S.trust, hearts:S.hearts, hints:S.hints, resets:S.resets, wrong:S.wrong, questions:S.questions,
     progress:Math.round(foundCount()/PROBLEMS.length*100), found:S.found, evidence:S.evidence, boss:S.boss, mr:S.mr, finalText:S.finalText, finalCov:S.finalCov, calc:S.calc, first:S.first, custom:S.custom, mode:S.mode, pat:S.pat, fl:S.fl, hiddenQ:S.hiddenQ, pp:S.pp, refl:S.refl, ending:S.ending, timeout:S.timeout, refused:S.refused, badges:S.badges, gate:S.gate, cfgRev:(GAME_CFG.meta&&GAME_CFG.meta.rev)||'', log:S.log, notes:S.notes };
 }
 let saveTimer=null;
 function saveSession(now){ if(!S.sessionId) return; clearTimeout(saveTimer);
-  const f=()=>{ const all=store.get(CONFIG.STORAGE_KEY)||[]; const s=snapshot(); const i=all.findIndex(x=>x.id===s.id); if(i>=0) all[i]=s; else all.push(s); store.set(CONFIG.STORAGE_KEY,all); };
+  const f=()=>{ const all=store.get(CONFIG.STORAGE_KEY)||[]; const s=snapshot(); const i=all.findIndex(x=>x.id===s.id); if(i>=0) all[i]=s; else all.push(s); store.set(CONFIG.STORAGE_KEY,all); if(typeof syncQueue==='function') syncQueue(s, now); };
   if(now) f(); else saveTimer=setTimeout(f,500); }
 function logEvent(o){ S.log.push(Object.assign({t:Math.round(realSec()), ch:S.chapter},o)); saveSession(); }
 function download(name,text,type){ const b=new Blob([text],{type:type||'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(b); a.download=name; document.body.appendChild(a); a.click(); setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},500); }
@@ -2440,6 +2475,170 @@ async function fpShow(kind, id, fn, o){
   fpHold(kind, id, o); if(FP_ANIM()) await sleep(260);
   try{ return await fn(); } finally { fpHide(); }
 }
+
+/* =====================================================================
+   ONLINE RESULTS
+   Every saved game is also sent to the results server, so students never have to download
+   and hand in a file (this matters on iPads and phones). If the device is offline or the
+   server is down, snapshots wait in an outbox and are retried; the manual report stays.
+   The instructor dashboard pulls everything back with an instructor key (not the PIN).
+   Server records are held in memory only — they are never written into this device's storage.
+   The same server also hands out the version of the game the instructor published (below).
+   ===================================================================== */
+const SYNC={busy:false, state:'idle', last:0, lastTry:0, timer:null, fail:0, OUTBOX:'phd_outbox_v1', KEY:'phd_tkey', remote:[], classes:{}, pulled:0, pulling:false};
+function serverURL(){ const s=GAME_CFG.settings||{}; const u=(s.server!=null?s.server:CONFIG.SERVER_URL)||''; return String(u).trim().replace(/\/+$/,''); }
+const normClass=c=>String(c||'').trim().toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,40);
+function classCode(){ let c=''; try{ c=new URLSearchParams(location.search).get('class')||''; }catch(e){} if(!normClass(c)) c=(GAME_CFG.settings||{}).classCode||''; return normClass(c)||'main'; }
+function gameLink(cls){ let base=CONFIG.GAME_URL; try{ if(/^https?:/.test(location.protocol)) base=location.origin+location.pathname; }catch(e){}
+  const c=normClass(cls); return base+(c&&c!=='main'?'?class='+encodeURIComponent(c):''); }
+const outbox=()=>store.get(SYNC.OUTBOX)||{};
+const setOutbox=o=>store.set(SYNC.OUTBOX,o);
+/* called by saveSession(): queue the newest snapshot; send now (chapter ends) or at most every ~45 s */
+function syncQueue(snap, now){
+  if(!serverURL()||!snap||!snap.id) return;
+  const o=outbox(); o[snap.id]=snap; setOutbox(o);
+  if(SYNC.state==='idle'||SYNC.state==='ok') SYNC.state='pending';
+  clearTimeout(SYNC.timer); SYNC.timer=setTimeout(syncFlush, now?50:Math.max(1500, 45000-(Date.now()-SYNC.lastTry)));
+  syncBadge();
+}
+async function syncFlush(){
+  const url=serverURL(); if(!url||SYNC.busy) return;
+  const o=outbox(), ids=Object.keys(o); if(!ids.length){ if(SYNC.state!=='ok') SYNC.state='idle'; syncBadge(); return; }
+  SYNC.busy=true; SYNC.lastTry=Date.now(); SYNC.state='sending'; syncBadge(); let bad=false;
+  for(const id of ids){
+    const body=JSON.stringify(o[id]);
+    try{
+      const r=await fetch(url+'/api/submit',{method:'POST', headers:{'Content-Type':'text/plain;charset=UTF-8'}, body, keepalive:body.length<60000, cache:'no-store'});
+      const j=await r.json().catch(()=>({}));
+      if(r.ok&&j.ok){ const cur=outbox(); if(cur[id]&&cur[id].updated===o[id].updated){ delete cur[id]; setOutbox(cur); } }
+      else bad=true;
+    }catch(e){ bad=true; }
+  }
+  SYNC.busy=false; clearTimeout(SYNC.timer);
+  if(bad){ SYNC.state='error'; SYNC.fail++; SYNC.timer=setTimeout(syncFlush, Math.min(120000, 8000*SYNC.fail)); }
+  else { SYNC.fail=0; SYNC.last=Date.now(); SYNC.state='ok'; if(Object.keys(outbox()).length){ SYNC.state='pending'; SYNC.timer=setTimeout(syncFlush, 800); } }
+  syncBadge();
+}
+/* leaving the page: hand anything still queued to the browser so it can finish sending */
+function syncBeacon(){ const url=serverURL(); if(!url||!navigator.sendBeacon) return; const o=outbox();
+  Object.keys(o).forEach(id=>{ const body=JSON.stringify(o[id]); if(body.length<60000){ try{ navigator.sendBeacon(url+'/api/submit', new Blob([body],{type:'text/plain;charset=UTF-8'})); }catch(e){} } }); }
+function syncText(){
+  if(!serverURL()) return T('syncOff');
+  const hm=t=>new Date(t).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+  if(SYNC.state==='sending'||SYNC.state==='pending') return T('syncSending');
+  if(SYNC.state==='error') return T('syncErr');
+  if(SYNC.state==='ok') return T('syncOk')+(SYNC.last?' · '+hm(SYNC.last):'');
+  return '';
+}
+function syncBadge(){ const t=syncText(); $$('.syncSt').forEach(el=>{ el.textContent=t; el.classList.toggle('hidden',!t); el.classList.toggle('err',SYNC.state==='error'||!serverURL()); el.classList.toggle('ok',SYNC.state==='ok'); }); }
+function syncNoteTitle(){ const el=$('#syncNote'); if(!el) return; const c=classCode();
+  el.textContent=serverURL()?'☁️ '+T('syncNote')+(c!=='main'?' · '+T('syncClass')+': '+c:''):''; el.classList.toggle('hidden',!serverURL()); }
+function initSync(){
+  addEventListener('online', ()=>{ SYNC.fail=0; syncFlush(); });
+  addEventListener('pagehide', syncBeacon);
+  document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='hidden') syncBeacon(); else if(Object.keys(outbox()).length) syncFlush(); });
+  if(Object.keys(outbox()).length){ SYNC.state='pending'; setTimeout(syncFlush, 2500); }
+  syncNoteTitle();
+}
+/* ---------- instructor side ---------- */
+const teacherKey=()=>{ try{ return localStorage.getItem(SYNC.KEY)||''; }catch(e){ return SYNC.memKey||''; } };
+function setTeacherKey(k){ k=String(k||'').trim(); SYNC.memKey=k; try{ if(k) localStorage.setItem(SYNC.KEY,k); else localStorage.removeItem(SYNC.KEY); }catch(e){} }
+async function serverPull(){
+  const url=serverURL(), key=teacherKey();
+  if(!url) return {ok:false, error:'nourl'}; if(!key) return {ok:false, error:'nokey'};
+  SYNC.pulling=true;
+  try{
+    let offset=0, got=[], classes={};
+    while(offset!=null){
+      const r=await fetch(`${url}/api/sessions?after=${encodeURIComponent(offset)}`,{headers:{'X-Teacher-Key':key}, cache:'no-store'});
+      if(r.status===401) return {ok:false, error:'badkey'};
+      if(!r.ok) return {ok:false, error:'http'};
+      const j=await r.json(); got=got.concat(j.sessions||[]); classes=j.classes||classes; offset=j.next;
+    }
+    got.forEach(s=>{ s.fromServer=true; });
+    SYNC.remote=got; SYNC.classes=classes; SYNC.pulled=Date.now();
+    return {ok:true, n:got.length, classes};
+  }catch(e){ return {ok:false, error:'net'}; }
+  finally{ SYNC.pulling=false; }
+}
+async function serverDelete(cls, id){
+  const url=serverURL(), key=teacherKey(); if(!url||!key) return {ok:false};
+  try{ const r=await fetch(`${url}/api/sessions?class=${encodeURIComponent(cls)}${id?'&id='+encodeURIComponent(id):''}`,{method:'DELETE', headers:{'X-Teacher-Key':key}});
+    const j=await r.json().catch(()=>({})); if(r.ok&&j.ok){ SYNC.remote=SYNC.remote.filter(s=>!((s.classCode||'main')===cls&&(!id||s.id===id))); return {ok:true, n:j.deleted}; } return {ok:false}; }
+  catch(e){ return {ok:false}; }
+}
+async function serverHealth(){ const url=serverURL(); if(!url) return false; try{ const r=await fetch(url+'/api/health',{cache:'no-store'}); const j=await r.json(); return !!(r.ok&&j.ok); }catch(e){ return false; } }
+/* opening the dashboard with a saved key quietly refreshes the server results */
+async function serverAutoPull(){
+  if(!serverURL()||!teacherKey()||SYNC.pulling||Date.now()-SYNC.pulled<60000) return;
+  const r=await serverPull();
+  if(r.ok){ toast('☁️ '+T('onPulled').replace('{n}',r.n)); if(P.cur==='teacher'&&['tOnline','tSessions','tClass','tDebrief'].includes(P.tab)) renderPage(); }
+  else if(r.error==='badkey') toast('⚠️ '+T('onBadKey'));
+}
+function renderOnline(b){
+  const url=serverURL(), key=teacherKey(), cls=Object.entries(SYNC.classes||{}).sort((a,c)=>a[0].localeCompare(c[0]));
+  const hm=t=>new Date(t).toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+  b.innerHTML=`<p class="edintro">${T('onIntro')}</p>
+   <div class="box"><b>${T('onServer')}</b><div class="row" style="margin-top:6px;align-items:center"><code style="font-size:13px">${esc(url||'—')}</code><button class="sbtn" id="onTest">${T('onTest')}</button><span id="onTestR" class="muted"></span></div></div>
+   <div class="box"><b>${T('onKey')}</b><div class="row" style="margin-top:6px"><input class="ein" id="onKeyIn" type="password" autocomplete="off" value="${esc(key)}" placeholder="PD-XXXX-XXXX-XXXX-XXXX" style="max-width:300px"><button class="sbtn" id="onKeySave">${T('onSave')}</button></div><p class="muted" style="margin-top:4px">🔑 ${T('onKeyNote')}</p></div>
+   <div class="box"><div class="row" style="align-items:center"><button class="sbtn g" id="onPull">${T('onPull')}</button><span class="muted">${SYNC.pulled?T('onLast')+': '+hm(SYNC.pulled)+' · '+SYNC.remote.length+' '+T('onRecords'):T('onAuto')}</span></div>
+     ${cls.length?`<table class="tbl" style="margin-top:8px"><tr><th>${T('onClasses')}</th><th>${T('onRecords')}</th><th>${T('onLinkH')}</th><th></th></tr>${cls.map(([c,n])=>`<tr><td><b>${esc(c)}</b></td><td>${n}</td><td><code style="font-size:12px">${esc(gameLink(c))}</code></td><td><button class="sbtn" data-cp="${esc(gameLink(c))}">${T('onCopy')}</button><button class="sbtn r" data-dc="${esc(c)}" data-dn="${n}">${T('onDelCls')}</button></td></tr>`).join('')}</table>`:''}
+     <p class="muted" style="margin-top:6px">${T('onLocalNote')}</p></div>
+   <div class="box"><b>${T('onLinkH')}</b><p class="muted" style="margin:4px 0">${T('onLinkNote')}</p><div class="row" style="align-items:center"><input class="ein" id="onCls" placeholder="ph2026a" style="max-width:180px"><code id="onLink" style="font-size:13px">${esc(gameLink(''))}</code><button class="sbtn" id="onCopyLink">${T('onCopy')}</button></div></div>`;
+  const copy=t=>{ const done=()=>toast('📋 '+T('onCopied')); try{ navigator.clipboard.writeText(t).then(done,()=>prompt('',t)); }catch(e){ prompt('',t); } };
+  $('#onTest').onclick=async()=>{ $('#onTestR').textContent='…'; const ok=await serverHealth(); $('#onTestR').textContent=ok?T('onUp'):T('onDown'); };
+  $('#onKeySave').onclick=()=>{ setTeacherKey($('#onKeyIn').value); sfx.click(); toast('🔑 '+T('saved')); };
+  $('#onPull').onclick=async()=>{ setTeacherKey($('#onKeyIn').value); if(!teacherKey()){ toast('⚠️ '+T('onNoKey')); return; }
+    $('#onPull').disabled=true; $('#onPull').textContent='…'; const r=await serverPull();
+    if(r.ok){ sfx.get(); toast('☁️ '+T('onPulled').replace('{n}',r.n)); } else toast('⚠️ '+T(r.error==='badkey'?'onBadKey':r.error==='nokey'?'onNoKey':'onDown'));
+    if(P.cur==='teacher'&&P.tab==='tOnline') renderPage(); };
+  $('#onCls').oninput=e=>{ $('#onLink').textContent=gameLink(e.target.value); };
+  $('#onCopyLink').onclick=()=>copy($('#onLink').textContent);
+  b.querySelectorAll('[data-cp]').forEach(x=>x.onclick=()=>copy(x.dataset.cp));
+  b.querySelectorAll('[data-dc]').forEach(x=>x.onclick=()=>{ const c=x.dataset.dc;
+    showModal(`<h3>${T('onDelCls')}</h3><p>${esc(T('onDelQ').replace('{c}',c).replace('{n}',x.dataset.dn))}</p>`,[{t:T('onDelCls'),cls:'r',fn:async()=>{ const r=await serverDelete(c); if(r.ok){ toast('🗑️ '+r.n); delete SYNC.classes[c]; } else toast('⚠️ '+T('onDown')); renderPage(); }},{t:T('cancel'),cls:''}]); });
+}
+/* ---------- the instructor's published version of the game ----------
+   Every game asks the server which version the instructor published for its class link
+   (or for every link). It is cached, so the next visit starts with it straight away; if it
+   arrives while the student is still on the title screen it is applied there and then. */
+const CFGS={state:'idle', promise:null, at:0, langPicked:false};
+const cfgOnlineRev=c=>(c&&c.meta&&c.meta.online)?(c.meta.rev||null):null;
+function cfgCacheSave(o){ try{ const all=JSON.parse(localStorage.getItem(CFG_ONLINE_KEY)||'{}'); if(o) all[CFG_REQ_CLASS]=o; else delete all[CFG_REQ_CLASS]; localStorage.setItem(CFG_ONLINE_KEY, JSON.stringify(all)); }
+  catch(e){ try{ localStorage.removeItem(CFG_ONLINE_KEY); }catch(_){} } }
+function applyGameCfg(c){ GAME_CFG=c; loadOverrides(); applyCfgSettings(); S.visit=CONFIG.VISIT_MIN; S.hearts=CONFIG.HEARTS; S.charges=CONFIG.SEARCH_CHARGES; MODE_FORCED=modeForced(); if(MODE_FORCED) S.mode=MODE_FORCED;
+  if(!CFGS.langPicked){ const l=(c.settings||{}).lang; S.lang=LANGS.includes(l)?l:'zh'; } }
+function refreshTitle(){ if($('#title').classList.contains('hidden')) return; $('#qteToggle').checked=(GAME_CFG.settings||{}).qte!==false; showVerNote(); applyI18n(); }
+function cfgRefresh(){
+  const url=serverURL(); if(!url) return Promise.resolve(false); if(CFGS.promise) return CFGS.promise;
+  CFGS.state='loading'; const ac=typeof AbortController!=='undefined'?new AbortController():null, tm=setTimeout(()=>{ try{ ac&&ac.abort(); }catch(e){} },20000);
+  CFGS.promise=(async()=>{ try{
+      const r=await fetch(`${url}/api/config?class=${encodeURIComponent(CFG_REQ_CLASS)}`,{cache:'no-store', signal:ac?ac.signal:undefined});
+      const j=await r.json(); if(!r.ok||!j||!j.ok) throw new Error('http');
+      CFGS.state='ok'; CFGS.at=Date.now();
+      if((j.rev||null)===cfgOnlineRev(GAME_CFG_BASE)) return false;
+      const next=j.config?cfgFromOnline(j):GAME_CFG_BAKED; if(!next) return false;
+      cfgCacheSave(j.config?{cls:j.cls, rev:j.rev, note:j.note||'', config:j.config}:null);
+      GAME_CFG_BASE=next;
+      const idle=!CFG_DRAFTMODE&&!(typeof ED_ST!=='undefined'&&ED_ST.work)&&!S.sessionId&&!$('#title').classList.contains('hidden');
+      if(idle){ applyGameCfg(next); refreshTitle(); if(j.config) toast(T('cfgNew')); }
+      return true;
+    }catch(e){ CFGS.state='error'; return false; }
+    finally{ clearTimeout(tm); CFGS.promise=null; } })();
+  return CFGS.promise;
+}
+/* starting a game waits (briefly) for the instructor's version, so a first-time visitor plays the right one */
+async function cfgReady(){ if(!CFGS.promise) return; const t=setTimeout(()=>toast(T('cfgWait')),350); try{ await Promise.race([CFGS.promise, sleep(6000)]); } finally{ clearTimeout(t); } }
+/* uploaded pictures that students do not have yet */
+function mediaPending(){ const lm=mediaStore(), bm=GAME_CFG_BASE.media||{}, flat=m=>[].concat(m.labImages||[], ...Object.values(m.medBagImages||{}).map(v=>[].concat(v)));
+  const have=new Set(flat(bm)); return flat(lm).some(x=>!have.has(x)); }
+async function teacherFetch(path, opt){ const url=serverURL(), key=teacherKey(); if(!url) return {ok:false, error:'nourl'}; if(!key) return {ok:false, error:'nokey'};
+  try{ const o=Object.assign({cache:'no-store'}, opt||{}); o.headers=Object.assign({'X-Teacher-Key':key}, (opt&&opt.headers)||{});
+    const r=await fetch(url+path, o); if(r.status===401) return {ok:false, error:'badkey'}; if(r.status===413) return {ok:false, error:'big'};
+    const j=await r.json().catch(()=>({})); return r.ok&&j.ok?j:{ok:false, error:'http'}; }catch(e){ return {ok:false, error:'net'}; } }
+const serverConfigs=()=>teacherFetch('/api/configs');
+const serverPublish=(target,cfg)=>teacherFetch(`/api/config?class=${encodeURIComponent(target)}&note=${encodeURIComponent((cfg.meta&&cfg.meta.note)||'')}`,{method:'PUT', headers:{'Content-Type':'text/plain;charset=UTF-8'}, body:JSON.stringify(cfg)});
+const serverUnpublish=target=>teacherFetch(`/api/config?class=${encodeURIComponent(target)}`,{method:'DELETE'});
 /* =====================================================================
    STORY — Prologue · Chapter 1 (interview) · Chapter 2 (search)
    ===================================================================== */
@@ -3381,11 +3580,11 @@ async function results(){
     <div class="rpane hidden" data-rp="prob"><div class="plist">${PROBLEMS.map(p=>`<div>${S.found[p.id]?'✅':'⬜'} ${p.icon} <b>${esc(L(p.t))}</b><div class="muted" style="font-size:13px;line-height:1.35">${esc(L(p.d))}</div></div>`).join('')}</div></div>
     <div class="rpane hidden" data-rp="bdg">${S.ending?`<div class="rbadges">${(S.ending.items||[]).map(it=>{ const o=epiOutcomes().find(x=>x.k===it.k); const x=o?(it.ok?o.g:o.b):null; return x?`<span class="pill ${it.ok?'ok':'no'}" style="font-size:15px">${x[0]} ${esc(L(x[1]))}</span>`:''; }).join('')}</div>`:''}
       <div class="rbadges">${bd.earned.length?BADGES.filter(b=>bd.earned.includes(b.id)).map(b=>badgeChip(b,newSet.has(b.id))).join(''):`<span class="muted">—</span>`}</div><div style="margin-top:10px">${badgeGridHTML()}</div></div>
-    <div class="row" style="margin-top:14px;justify-content:center"><button class="gbtn blue" id="rRep">${T('report')}</button><button class="gbtn green" id="rCase">📁 ${T('caseFile')}</button><button class="gbtn" id="rAgain">${T('again')}</button></div></div>`;
+    <div class="row" style="margin-top:14px;justify-content:center"><button class="gbtn blue" id="rRep">${T('report')}</button><button class="gbtn green" id="rCase">📁 ${T('caseFile')}</button><button class="gbtn" id="rAgain">${T('again')}</button></div><div class="syncSt hidden"></div></div>`;
   $('#results').classList.remove('hidden'); sfx.fanfare();
   $$('#results [data-rt]').forEach(b=>b.onclick=()=>{ sfx.click(); $$('#results [data-rt]').forEach(x=>x.classList.toggle('on',x===b)); $$('#results [data-rp]').forEach(p=>p.classList.toggle('hidden',p.dataset.rp!==b.dataset.rt)); });
   if(bd.fresh.length) setTimeout(()=>toast('🏅 '+T('badgeNew')+' '+BADGES.filter(b=>newSet.has(b.id)).map(b=>b.ic).join(' ')),900);
-  $('#rRep').onclick=downloadReport; $('#rCase').onclick=()=>openPage('case'); $('#rAgain').onclick=()=>{ saveSession(true); location.reload(); };
+  syncBadge(); $('#rRep').onclick=downloadReport; $('#rCase').onclick=()=>openPage('case'); $('#rAgain').onclick=()=>{ saveSession(true); location.reload(); };
 }
 /* =====================================================================
    INSTRUCTOR GAME EDITOR — extra questions · text edits · settings · publish
@@ -3429,6 +3628,8 @@ const ED={
  cat_ch5:['最終章 大魔王','Ch.5 Myth Overlord','บท 5 จอมมาร'], cat_epi:['後記・結局・徽章','Epilogue, endings & badges','บทส่งท้าย ตอนจบ และเหรียญ'], cat_results:['結算畫面','Results screen','หน้าสรุปผล'], cat_pages:['案件檔案・後台','Case file & dashboard','แฟ้มคดีและหน้าอาจารย์'],
  stIntro:['這些設定在「開始新遊戲」時生效。','These take effect when a new game starts.','การตั้งค่าเหล่านี้มีผลเมื่อเริ่มเกมใหม่'], stVisit:['拜訪時間（分鐘）','Visit time (minutes)','เวลาเยี่ยมบ้าน (นาที)'], stHearts:['矛盾對決的愛心數','Hearts in the contradiction duel','จำนวนหัวใจตอนจับโกหก'],
  stCharges:['搜查時的放大鏡次數','Magnifier uses in the search','จำนวนครั้งที่ใช้แว่นขยายตอนค้นบ้าน'], stQte:['限時選項預設開啟','Timed choices on by default','เปิดตัวเลือกจับเวลาเป็นค่าเริ่มต้น'], stLang:['預設語言','Default language','ภาษาเริ่มต้น'],
+ stServer:['結果伺服器網址','Results server address','ที่อยู่เซิร์ฟเวอร์รับผล'], stServerNote:['留空＝不自動上傳（學生要自己下載報告繳交）。預設：','Leave blank to switch automatic hand-in off (students then download their report). Default: ','เว้นว่าง = ปิดการส่งอัตโนมัติ (นักศึกษาต้องดาวน์โหลดรายงานส่งเอง) ค่าเริ่มต้น: '],
+ stClass:['預設班級代碼','Default class code','รหัสห้องเริ่มต้น'], stClassNote:['連結裡有 ?class=… 時以連結為準','A ?class=… in the link takes priority','ถ้าลิงก์มี ?class=… จะใช้ค่าจากลิงก์'],
  stPin:['教師後台密碼','Instructor PIN','รหัสเข้าหน้าอาจารย์'], stPinWarn:['密碼只能防止學生不小心進來，不是真正的保密。','The PIN only keeps students out casually — it is not real security.','รหัสนี้กันนักศึกษาเข้ามาโดยไม่ตั้งใจเท่านั้น ไม่ใช่ระบบความปลอดภัยจริง'],
  stNote:['版本說明（顯示在標題畫面，讓學生確認拿到的是新版）','Version note (shown on the title screen so students know they have the new file)','หมายเหตุเวอร์ชัน (แสดงที่หน้าแรก ให้นศ.รู้ว่าได้ไฟล์ใหม่)'], stNotePh:['例如：2026 下學期・王老師','e.g. Spring 2026 · Dr. Wang','เช่น ภาค 2/2569 · อ.สมศรี'], stDefault:['預設','Default','ค่าเดิม'],
  pbSteps:['① 修改 → ② 試玩 → ③ 下載新版 → ④ 把新檔案傳給學生','① Edit → ② Try it → ③ Download the new version → ④ Send the new file to students','① แก้ไข → ② ทดลองเล่น → ③ ดาวน์โหลดเวอร์ชันใหม่ → ④ ส่งไฟล์ใหม่ให้นักศึกษา'],
@@ -3441,6 +3642,21 @@ const ED={
  pbDirty:['⚠️ 有修改還沒下載成新版','⚠️ Some changes are not in a downloaded file yet','⚠️ มีการแก้ไขที่ยังไม่ได้ดาวน์โหลดเป็นไฟล์ใหม่'], pbClean:['✅ 目前和這個檔案一樣，沒有新的修改','✅ No changes compared with this file','✅ ยังไม่มีการแก้ไขใหม่จากไฟล์นี้'],
  pbDone:['已下載新版！把這個檔案傳給學生就可以了。舊檔案請不要再發。','New version downloaded! Send this file to your students and stop sharing the old one.','ดาวน์โหลดเวอร์ชันใหม่แล้ว! ส่งไฟล์นี้ให้นักศึกษา และเลิกแจกไฟล์เก่า'],
  pbImported:['已匯入修改包','Changes imported','นำเข้าชุดการแก้ไขแล้ว'], pbBad:['這個檔案不是修改包','This file is not a changes file','ไฟล์นี้ไม่ใช่ชุดการแก้ไข'], pbThisFile:['這個檔案的版本','This file\'s version','เวอร์ชันของไฟล์นี้'], pbOrig:['原版','Original','ต้นฉบับ'],
+ pbStepsOn:['① 修改 → ② 試玩 → ③ 發布給學生 → 學生的連結自動更新','① Edit → ② Try it → ③ Publish to students → their link updates by itself','① แก้ไข → ② ทดลองเล่น → ③ เผยแพร่ให้นักศึกษา → ลิงก์ของนักศึกษาอัปเดตเอง'],
+ pbOnH:['☁️ 發布給學生（用原本的連結）','☁️ Publish to students (same link as before)','☁️ เผยแพร่ให้นักศึกษา (ใช้ลิงก์เดิม)'],
+ pbOnIntro:['按下發布，學生打開原本的遊戲連結就是這個版本，不用再傳檔案。已經開著遊戲的學生，重新整理頁面就會更新。','Press Publish and students who open the usual game link get this version — no new file to send. Students who already have the game open just reload the page.','กดเผยแพร่แล้ว นักศึกษาที่เปิดลิงก์เกมเดิมจะได้เวอร์ชันนี้ ไม่ต้องส่งไฟล์ใหม่ ใครเปิดเกมค้างไว้ให้โหลดหน้าใหม่'],
+ pbTarget:['發布給','Publish for','เผยแพร่ให้'], pbAll:['所有連結','Every link','ทุกลิงก์'], pbOneCls:['只給班級','Only class','เฉพาะห้อง'], pbOtherCls:['其他班級代碼…','Another class code…','รหัสห้องอื่น…'],
+ pbOnline:['☁️ 發布給學生','☁️ Publish to students','☁️ เผยแพร่ให้นักศึกษา'], pbOnDone:['已發布！學生打開連結就是新版本。','Published! Students get this version when they open the link.','เผยแพร่แล้ว! นักศึกษาเปิดลิงก์ก็ได้เวอร์ชันนี้เลย'],
+ pbLinkCls:['學生用的連結','The link students use','ลิงก์ที่นักศึกษาใช้'], pbOnNow:['目前線上的版本','Published now','เวอร์ชันที่เผยแพร่อยู่ตอนนี้'], pbOnNone:['還沒有發布過，學生看到的是原版遊戲。','Nothing published yet — students see the original game.','ยังไม่เคยเผยแพร่ นักศึกษาเห็นเกมต้นฉบับ'],
+ pbOnNeedKey:['輸入教師金鑰後，這裡會列出已發布的版本。','Enter the instructor key to see what is published.','ใส่รหัสอาจารย์แล้วจะเห็นรายการเวอร์ชันที่เผยแพร่'],
+ pbOnWithdraw:['撤回','Withdraw','ถอนออก'], pbOnWithdrawn:['已撤回','Withdrawn','ถอนออกแล้ว'], pbOnWithdrawQ:['撤回「{c}」的線上版本？學生會改為看到{f}。','Withdraw the online version for "{c}"? Students will see {f} instead.','ถอนเวอร์ชันออนไลน์ของ "{c}"? นักศึกษาจะกลับไปเห็น{f}'],
+ pbFAll:['「所有連結」的版本','the every-link version','เวอร์ชันของทุกลิงก์'], pbFOrig:['原版遊戲','the original game','เกมต้นฉบับ'],
+ pbOnErr:['發布失敗：','Could not publish: ','เผยแพร่ไม่สำเร็จ: '], pbTooBig:['太大了（圖片太多），請刪掉一些圖片','too large (too many pictures) — remove some pictures','ใหญ่เกินไป (รูปเยอะเกิน) ลองลบรูปออกบ้าง'],
+ pbKeyNeed:['發布需要教師金鑰','Publishing needs the instructor key','การเผยแพร่ต้องใช้รหัสอาจารย์'],
+ pbDirtyOn:['⚠️ 有修改還沒發布，學生還看不到','⚠️ Some changes are not published yet — students cannot see them','⚠️ มีการแก้ไขที่ยังไม่เผยแพร่ นักศึกษายังไม่เห็น'], pbCleanOn:['✅ 學生看到的就是這個版本','✅ Students see exactly this version','✅ นักศึกษาเห็นเวอร์ชันนี้อยู่แล้ว'],
+ pbOnStudents:['學生目前的版本','What students have now','เวอร์ชันที่นักศึกษาใช้อยู่'], pbBar:['有修改還沒發布給學生','Changes not published to students yet','มีการแก้ไขที่ยังไม่ได้เผยแพร่ให้นักศึกษา'],
+ pbFileH:['或：下載成檔案（離線也能玩）','Or: download as a file (plays offline too)','หรือ: ดาวน์โหลดเป็นไฟล์ (เล่นแบบออฟไลน์ได้)'],
+ pbResetOn:['↺ 清除還沒發布的修改','↺ Discard unpublished changes','↺ ล้างการแก้ไขที่ยังไม่เผยแพร่'], pbResetOnQ:['清除還沒發布的修改，回到學生目前看到的版本？','Discard the changes you have not published and go back to the version students see now?','ล้างการแก้ไขที่ยังไม่เผยแพร่ กลับไปเป็นเวอร์ชันที่นักศึกษาเห็นอยู่ตอนนี้?'],
  tCustom:['老師的加分題','Instructor questions','คำถามจากอาจารย์'],
  cp_pp:['📊 前測＋後測（序章後、最後各問一次）','📊 Pre- & post-test (after the prologue AND at the end)','📊 ก่อน+หลังเรียน (ถามหลังบทนำ และอีกครั้งตอนจบ)'], cp_refl:['💭 反思題（遊戲最後）','💭 Reflection (end of the game)','💭 คำถามสะท้อนคิด (ท้ายเกม)'],
  ppNote:['同一題會問兩次：前測不顯示對錯、不計分；後測顯示解答。到「全班概況」比較前後測。','Each question is asked twice: the pre-test shows no answers and isn\'t scored; the post-test shows answers. Compare them in Class overview.','ถามข้อเดียวกันสองครั้ง: ก่อนเรียนไม่เฉลยและไม่นับคะแนน หลังเรียนมีเฉลย เปรียบเทียบได้ในแท็บภาพรวมชั้นเรียน'],
@@ -3504,14 +3720,14 @@ const clone=o=>JSON.parse(JSON.stringify(o));
 function cfgNorm(c){ c=c||{}; const s={}; Object.entries(c.settings||{}).forEach(([k,v])=>{ if(v!==''&&v!=null) s[k]=v; }); return JSON.stringify({t:c.texts||{}, s, q:Array.isArray(c.questions)?c.questions:DEFAULT_QUESTIONS}); }
 function edWork(){
   if(!ED_ST.work){ let d=null; try{ d=JSON.parse(localStorage.getItem(CFG_DRAFT_KEY)||'null'); }catch(e){}
-    const w=d||clone(GAME_CFG_BAKED); delete w.media; w.texts=w.texts||{}; w.settings=w.settings||{}; if(!Array.isArray(w.questions)) w.questions=clone(DEFAULT_QUESTIONS);
+    const w=d||clone(GAME_CFG_BASE); delete w.media; delete w.meta; w.texts=w.texts||{}; w.settings=w.settings||{}; if(!Array.isArray(w.questions)) w.questions=clone(DEFAULT_QUESTIONS);
     ED_ST.work=w; ED_ST.lang=LI(); try{ sessionStorage.setItem('phd_usedraft','1'); }catch(e){}
-    GAME_CFG=Object.assign({}, w, {media:GAME_CFG_BAKED.media, meta:GAME_CFG_BAKED.meta}); loadOverrides(); }
+    GAME_CFG=Object.assign({}, w, {media:GAME_CFG_BASE.media, meta:GAME_CFG_BASE.meta}); loadOverrides(); }
   return ED_ST.work;
 }
 function edSave(){ const w=ED_ST.work; try{ localStorage.setItem(CFG_DRAFT_KEY, JSON.stringify(w)); }catch(e){ toast('⚠️ '+e.name); }
-  GAME_CFG=Object.assign({}, w, {media:GAME_CFG_BAKED.media, meta:GAME_CFG_BAKED.meta}); loadOverrides(); applyCfgSettings(); }
-const edDirty=()=>cfgNorm(edWork())!==cfgNorm(GAME_CFG_BAKED);
+  GAME_CFG=Object.assign({}, w, {media:GAME_CFG_BASE.media, meta:GAME_CFG_BASE.meta}); loadOverrides(); applyCfgSettings(); }
+const edDirty=()=>cfgNorm(edWork())!==cfgNorm(GAME_CFG_BASE);
 /* ---------- text catalog: every [中文, English, ไทย] line in this file ---------- */
 let TEXT_CAT=null;
 function buildTextCatalog(){
@@ -3627,7 +3843,9 @@ function askCustom(q, i, n, opt){ opt=opt||{}; return new Promise(res=>{
 /* =====================================================================
    TEACHER PAGE — editor tabs
    ===================================================================== */
-function renderEditor(tab, b){ edWork(); ({tQ:edQuestions, tTexts:edTexts, tSet:edSettings, tPub:edPublish})[tab](b); }
+function renderEditor(tab, b){ edWork(); ({tQ:edQuestions, tTexts:edTexts, tSet:edSettings, tPub:edPublish})[tab](b);
+  if(tab!=='tPub'&&serverURL()&&(edDirty()||mediaPending())){ const bar=document.createElement('div'); bar.className='pubbar';
+    bar.innerHTML=`<span>⚠️ ${TE('pbBar')}</span><button class="sbtn g">${TE('pbOnline')}</button>`; b.prepend(bar); bar.querySelector('button').onclick=()=>{ P.tab='tPub'; sfx.click(); renderPage(); }; } }
 /* ---------- extra questions: list ---------- */
 function newQ(){ return {id:'q'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), kind:'single', cp:'c4', who:'yeh', q:['','',''], img:'', opts:[{t:['','',''],ok:true},{t:['','',''],ok:false},{t:['','',''],ok:false}], ex:['','',''], pts:100, timer:0, kw:'', kwMin:1, ans:'', tol:'', unit:'', clues:[], formula:['','',''], off:false}; }
 function edQuestions(b){ if(ED_ST.editQ) return edQForm(b);
@@ -3733,6 +3951,8 @@ function edSettings(b){
       <label class="srow"><span>${TE('stLang')}</span><select class="ein" id="stLang">${LANGS.map((l,i)=>`<option value="${l}"${(s.lang||'zh')===l?' selected':''}>${['中文','English','ไทย'][i]}</option>`).join('')}</select></label>
       <label class="srow"><span>${TE('stMode')}</span><select class="ein" id="stMode">${['choose','practice','exam'].map(m=>`<option value="${m}"${(s.mode||'choose')===m?' selected':''}>${m==='choose'?TE('stModeChoose'):T('mode_'+m)}</option>`).join('')}</select></label><p class="muted">${TE('stModeNote')}</p></div>
     <div class="box"><label class="srow"><span>${TE('stNote')}</span><input class="ein" id="stNote" value="${esc(s.note||'')}" placeholder="${esc(TE('stNotePh'))}"></label></div>
+    <div class="box"><label class="srow"><span>${TE('stServer')}</span><input class="ein" id="stServer" value="${esc(s.server!=null?s.server:CONFIG.SERVER_URL)}"></label><p class="muted">${TE('stServerNote')}${esc(CONFIG.SERVER_URL)}</p>
+      <label class="srow"><span>${TE('stClass')}</span><input class="ein" id="stClass" value="${esc(s.classCode||'')}" placeholder="main"></label><p class="muted">${TE('stClassNote')}</p></div>
     <div class="box"><label class="srow"><span>${TE('stPin')}</span><input class="ein enum" id="stPin" value="${esc(s.TEACHER_PIN||'')}" placeholder="${CONFIG_DEF.TEACHER_PIN}"></label><p class="muted">🔒 ${TE('stPinWarn')}</p></div>`;
   const save=()=>{ edSave(); toast(T('saved')); };
   b.querySelectorAll('[data-st]').forEach(x=>x.onchange=()=>{ const v=Math.round(+x.value); if(v>0) s[x.dataset.st]=v; else delete s[x.dataset.st]; save(); });
@@ -3740,11 +3960,13 @@ function edSettings(b){
   $('#stLang').onchange=e=>{ s.lang=e.target.value; save(); };
   $('#stMode').onchange=e=>{ if(e.target.value==='choose') delete s.mode; else s.mode=e.target.value; save(); };
   $('#stNote').onchange=e=>{ s.note=e.target.value.trim(); if(!s.note) delete s.note; save(); };
+  $('#stServer').onchange=e=>{ const v=e.target.value.trim(); if(v===CONFIG.SERVER_URL) delete s.server; else s.server=v; save(); };
+  $('#stClass').onchange=e=>{ const v=normClass(e.target.value); if(v&&v!=='main') s.classCode=v; else delete s.classCode; e.target.value=v; save(); };
   $('#stPin').onchange=e=>{ const v=e.target.value.trim(); if(v) s.TEACHER_PIN=v; else delete s.TEACHER_PIN; save(); };
 }
 /* ---------- publish ---------- */
 function buildPublishedHTML(){
-  const w=edWork(), cfg=clone(w), lm=mediaStore(), bm=GAME_CFG_BAKED.media||{};
+  const w=edWork(), cfg=clone(w), lm=mediaStore(), bm=GAME_CFG_BASE.media||{};
   cfg.v=1; cfg.meta={rev:new Date().toISOString(), note:(w.settings&&w.settings.note)||''};
   const labs=[...new Set([].concat(bm.labImages||[], lm.labImages||[]))], bags=Object.assign({}, bm.medBagImages||{}, lm.medBagImages||{});
   if(labs.length||Object.keys(bags).length) cfg.media={labImages:labs, medBagImages:bags};
@@ -3752,24 +3974,58 @@ function buildPublishedHTML(){
   const rx=new RegExp('(<scr'+'ipt id="gameConfig" type="application/json">)[\\s\\S]*?(<\\/scr'+'ipt>)');
   return {html:__SELF_HTML.replace(rx,(m,a,z)=>a+json+z), cfg};
 }
+/* what goes online: the draft without the server address, plus pictures students do not have yet */
+function onlinePayload(){ const w=edWork(), cfg=clone(w); delete cfg.media; delete cfg.meta; delete cfg._base; if(cfg.settings) delete cfg.settings.server;
+  const bm=GAME_CFG_BAKED.media||{}, cur=GAME_CFG_BASE.media||{}, lm=mediaStore(), baked=new Set([].concat(bm.labImages||[]));
+  const labs=[...new Set([].concat(cur.labImages||[], lm.labImages||[]))].filter(x=>!baked.has(x));
+  const bags=Object.assign({}, cur.medBagImages||{}, lm.medBagImages||{}); Object.keys(bags).forEach(k=>{ if(JSON.stringify(bags[k])===JSON.stringify((bm.medBagImages||{})[k])) delete bags[k]; });
+  if(labs.length||Object.keys(bags).length) cfg.media={labImages:labs, medBagImages:bags};
+  cfg.v=1; cfg.meta={note:(w.settings&&w.settings.note)||''}; return cfg; }
+async function edLoadPubList(){ const el=$('#pbOnList'); if(!el) return; if(!teacherKey()){ el.textContent=TE('pbOnNeedKey'); return; }
+  const r=await serverConfigs(), box=$('#pbOnList'); if(!box) return;
+  if(!r.ok){ box.textContent='⚠️ '+T(r.error==='badkey'?'onBadKey':'onDown'); return; }
+  ED_ST.pubList=r.configs; const hm=t=>new Date(t).toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+  box.innerHTML=r.configs.length?`<b>${TE('pbOnNow')}</b><table class="tbl" style="margin-top:6px">${r.configs.map(c=>`<tr><td><b>${c.cls==='*'?TE('pbAll'):esc(c.cls)}</b></td><td>${hm(c.rev)}</td><td>${esc(c.note||'')}</td><td>${Math.max(1,Math.round((c.size||0)/1024))} KB</td><td><button class="sbtn r" data-wd="${esc(c.cls)}">${TE('pbOnWithdraw')}</button></td></tr>`).join('')}</table>`:TE('pbOnNone');
+  box.querySelectorAll('[data-wd]').forEach(x=>x.onclick=()=>{ const c=x.dataset.wd;
+    showModal(`<h3>${TE('pbOnWithdraw')}</h3><p>${esc(TE('pbOnWithdrawQ').replace('{c}',c==='*'?TE('pbAll'):c).replace('{f}',TE(c==='*'?'pbFOrig':'pbFAll')))}</p>`,[{t:TE('pbOnWithdraw'),cls:'r',fn:async()=>{
+      const r2=await serverUnpublish(c); if(r2.ok){ toast('↩️ '+TE('pbOnWithdrawn')); await cfgRefresh(); } else toast('⚠️ '+T(r2.error==='badkey'?'onBadKey':'onDown')); if(P.cur==='teacher'&&P.tab==='tPub') renderPage(); }},{t:T('cancel'),cls:''}]); });
+}
 function edPublish(b){
   const w=edWork(), dirty=edDirty(), sN=Object.keys(w.settings).filter(k=>w.settings[k]!==''&&w.settings[k]!=null).length;
-  const rev=GAME_CFG_BAKED.meta&&GAME_CFG_BAKED.meta.rev;
-  b.innerHTML=`<div class="pubsteps">${TE('pbSteps')}</div>
+  const on=!!serverURL(), pend=on&&(dirty||mediaPending()), m=GAME_CFG_BASE.meta||{};
+  const ver=m.rev?esc(m.rev.replace('T',' ').slice(0,16))+(m.online?' ☁️':''):TE('pbOrig');
+  const known=[...new Set([].concat(Object.keys(SYNC.classes||{}), (ED_ST.pubList||[]).map(c=>c.cls), CFG_REQ_CLASS!=='main'?[CFG_REQ_CLASS]:[]))].filter(c=>c&&c!=='*').sort();
+  const dl=`<div class="pubgrid"><button class="ebtn alt" id="pbPlay">${TE('pbPlay')}</button><button class="ebtn big" id="pbDl">${TE('pbDl')}</button></div><p class="ednote">📤 ${TE('pbDlNote')}</p>`;
+  b.innerHTML=`<div class="pubsteps">${TE(on?'pbStepsOn':'pbSteps')}</div>
     <div class="box"><b>${TE('pbSummary').replace('{q}',w.questions.length).replace('{t}',Object.keys(w.texts).length).replace('{s}',sN)}</b>
-      <p class="${dirty?'warnp':'okp'}">${dirty?TE('pbDirty'):TE('pbClean')}</p><p class="muted">${TE('pbThisFile')}: ${rev?esc(rev.replace('T',' ').slice(0,16)):TE('pbOrig')}${GAME_CFG_BAKED.meta&&GAME_CFG_BAKED.meta.note?' · '+esc(GAME_CFG_BAKED.meta.note):''}</p></div>
-    <div class="pubgrid"><button class="ebtn alt" id="pbPlay">${TE('pbPlay')}</button><button class="ebtn big" id="pbDl">${TE('pbDl')}</button></div>
-    <p class="ednote">📤 ${TE('pbDlNote')}</p>
+      <p class="${(on?pend:dirty)?'warnp':'okp'}">${on?(pend?TE('pbDirtyOn'):TE('pbCleanOn')):(dirty?TE('pbDirty'):TE('pbClean'))}</p><p class="muted">${TE(on?'pbOnStudents':'pbThisFile')}: ${ver}${m.note?' · '+esc(m.note):''}</p></div>
+    ${on?`<div class="box onpub"><b>${TE('pbOnH')}</b><p class="muted" style="margin:4px 0 8px">${TE('pbOnIntro')}</p>
+      <div class="row" style="align-items:center;gap:8px;flex-wrap:wrap"><span>${TE('pbTarget')}</span><select class="ein" id="pbTarget" style="max-width:280px"><option value="*">${TE('pbAll')}</option>${known.map(c=>`<option value="${esc(c)}">${TE('pbOneCls')}: ${esc(c)}</option>`).join('')}<option value="+">${TE('pbOtherCls')}</option></select><input class="ein hidden" id="pbCls" placeholder="ph2026a" style="max-width:170px"></div>
+      ${teacherKey()?'':`<div class="row" style="margin-top:8px;align-items:center;gap:8px"><span>🔑 ${TE('pbKeyNeed')}</span><input class="ein" id="pbKey" type="password" autocomplete="off" placeholder="PD-XXXX-XXXX-XXXX-XXXX" style="max-width:280px"></div>`}
+      <div class="pubgrid"><button class="ebtn alt" id="pbPlay">${TE('pbPlay')}</button><button class="ebtn big" id="pbOnline">${TE('pbOnline')}</button></div>
+      <div id="pbOnList" class="muted">…</div></div>
+      <details class="box"><summary><b>${TE('pbFileH')}</b></summary><div class="row" style="margin-top:8px"><button class="ebtn" id="pbDl">${TE('pbDl')}</button></div><p class="ednote">📤 ${TE('pbDlNote')}</p></details>`:dl}
     <div class="box"><div class="row"><button class="sbtn b" id="pbExp">${TE('pbExp')}</button><button class="sbtn g" id="pbImp">${TE('pbImp')}</button></div><p class="muted" style="margin-top:6px">${TE('pbShare')}</p></div>
-    <div class="box"><button class="sbtn r" id="pbReset">${TE('pbReset')}</button></div>`;
+    <div class="box"><button class="sbtn r" id="pbReset">${TE(on?'pbResetOn':'pbReset')}</button></div>`;
   $('#pbPlay').onclick=()=>{ edSave(); try{ sessionStorage.setItem('phd_usedraft','1'); }catch(e){} saveSession(true); location.reload(); };
   $('#pbDl').onclick=()=>{ const {html,cfg}=buildPublishedHTML(); const t=cfg.meta.rev.replace(/[-:]/g,'').replace('T','_').slice(0,13);
     download(`PharmaDetective_Chen_${t}.html`, html, 'text/html'); sfx.fanfare(); showModal(`<div style="font-size:48px">📦</div><h3>${TE('pbDl')}</h3><p>${TE('pbDone')}</p><p class="muted">${TE('pbDlNote')}</p>`); };
+  if(on){ const tSel=$('#pbTarget'), tIn=$('#pbCls');
+    tSel.onchange=()=>{ tIn.classList.toggle('hidden',tSel.value!=='+'); if(tSel.value==='+') tIn.focus(); };
+    tIn.onchange=()=>{ tIn.value=normClass(tIn.value); };
+    $('#pbOnline').onclick=async()=>{ const k=$('#pbKey'); if(k&&k.value.trim()) setTeacherKey(k.value);
+      if(!teacherKey()){ toast('⚠️ '+T('onNoKey')); if(k) k.focus(); return; }
+      const target=tSel.value==='+'?normClass(tIn.value):tSel.value; if(!target){ tIn.classList.remove('hidden'); tIn.focus(); return; }
+      edSave(); const btn=$('#pbOnline'); btn.disabled=true; btn.textContent='…';
+      const r=await serverPublish(target, onlinePayload());
+      if(r.ok){ sfx.fanfare(); await cfgRefresh(); renderPage(); showModal(`<div style="font-size:48px">☁️</div><h3>${TE('pbOnDone')}</h3><p>${TE('pbLinkCls')}:</p><p><code style="font-size:14px">${esc(gameLink(target==='*'?'':target))}</code></p>`); }
+      else { btn.disabled=false; btn.textContent=TE('pbOnline'); sfx.error(); toast('⚠️ '+TE('pbOnErr')+(r.error==='big'?TE('pbTooBig'):T(r.error==='badkey'?'onBadKey':r.error==='nokey'?'onNoKey':'onDown'))); } };
+    edLoadPubList(); }
   $('#pbExp').onclick=()=>{ const w2=clone(edWork()); w2.kind='pharma-detective-changes'; download('PharmaDetective_changes.json', JSON.stringify(w2,null,1)); };
   $('#pbImp').onclick=()=>pickFiles(false,'.json,application/json',async fs=>{ if(!fs[0]) return; try{ const d=JSON.parse(await fs[0].text()); if(!d||(!d.questions&&!d.texts&&!d.settings)) throw 0;
       const w2=edWork(); const ids=new Set(w2.questions.map(q=>q.id)); (d.questions||[]).forEach(q=>{ if(ids.has(q.id)) q.id=newQ().id; w2.questions.push(q); });
       Object.assign(w2.texts, d.texts||{}); Object.assign(w2.settings, d.settings||{}); edSave(); toast(TE('pbImported')); renderPage(); }catch(e){ sfx.error(); toast('⚠️ '+TE('pbBad')); } });
-  $('#pbReset').onclick=()=>showModal(`<h3>${TE('pbReset')}</h3><p>${TE('pbResetQ')}</p>`,[{t:TE('pbReset'),cls:'r',fn:()=>{ const w2=edWork(), bk=clone(GAME_CFG_BAKED); w2.texts=bk.texts||{}; w2.settings=bk.settings||{}; w2.questions=Array.isArray(bk.questions)?bk.questions:clone(DEFAULT_QUESTIONS); edSave(); renderPage(); }},{t:T('cancel'),cls:''}]);
+  $('#pbReset').onclick=()=>showModal(`<h3>${TE(on?'pbResetOn':'pbReset')}</h3><p>${TE(on?'pbResetOnQ':'pbResetQ')}</p>`,[{t:TE(on?'pbResetOn':'pbReset'),cls:'r',fn:()=>{ const w2=edWork(), bk=clone(GAME_CFG_BASE); w2.texts=bk.texts||{}; w2.settings=bk.settings||{}; w2.questions=Array.isArray(bk.questions)?bk.questions:clone(DEFAULT_QUESTIONS); edSave(); renderPage(); }},{t:T('cancel'),cls:''}]);
 }
 /* =====================================================================
    CLASS OVERVIEW — aggregates every saved/imported session for debriefing
@@ -3796,7 +4052,7 @@ const CL={
  clBmiClass:['BMI 分類（台灣標準）','BMI category (Taiwan)','จัดกลุ่ม BMI (เกณฑ์ไต้หวัน)'], clCkd:['CKD 分期','CKD staging','ระยะ CKD'], clObese:['肥胖時 CrCl 會高估','CrCl overestimates in obesity','CrCl ประเมินสูงเกินในคนอ้วน'],
 };
 const TC=k=>CL[k]?(CL[k][LI()]||CL[k][0]):UI[k]?T(k):TE(k);
-const CLS={fin:false, ver:'__all', mode:'all'};
+const CLS={fin:false, ver:'__all', mode:'all', cls:'__all'};
 const pct=(n,d)=>d?Math.round(n/d*100):0;
 function clBar(label,n,d,note){ const v=pct(n,d); return `<div class="cbar" title="${esc(label)} — ${n}/${d}"><div class="cbl">${label}</div><div class="cbt"><i style="width:${v}%"></i></div><div class="cbv">${v}%<span>${n}/${d}</span></div>${note?`<div class="cbn">${note}</div>`:''}</div>`; }
 function clStack(label,parts,d){ return `<div class="cbar" title="${esc(label)}"><div class="cbl">${label}</div><div class="cbt st">${parts.map(([n,cls])=>n?`<i class="${cls}" style="width:${pct(n,d)}%"></i>`:'').join('')}</div><div class="cbv">${pct(parts[0][0],d)}%<span>${parts[0][0]}/${d}</span></div></div>`; }
@@ -3842,11 +4098,12 @@ function classStats(list){
   return R;
 }
 function renderClass(b){
-  const all=allSessions(), vers=[...new Set(all.map(s=>s.cfgRev||''))];
-  const list=all.filter(s=>(!CLS.fin||s.done)&&(CLS.ver==='__all'||(s.cfgRev||'')===CLS.ver)&&(CLS.mode==='all'||(s.mode||'practice')===CLS.mode));
+  const all=allSessions(), vers=[...new Set(all.map(s=>s.cfgRev||''))], clss=[...new Set(all.map(s=>s.classCode||'main'))].sort();
+  const list=all.filter(s=>(!CLS.fin||s.done)&&(CLS.ver==='__all'||(s.cfgRev||'')===CLS.ver)&&(CLS.mode==='all'||(s.mode||'practice')===CLS.mode)&&(CLS.cls==='__all'||(s.classCode||'main')===CLS.cls));
   const head=`<p class="edintro">${TC('clIntro')}</p><div class="clf"><label><input type="checkbox" id="clFin" ${CLS.fin?'checked':''}> ${TC('clFinished')}</label>
     <select class="ein" id="clVer" style="max-width:260px"><option value="__all">${TC('clAllVer')}</option>${vers.map(v=>`<option value="${esc(v)}"${CLS.ver===v?' selected':''}>${v?esc(v.replace('T',' ').slice(0,16)):TC('clOrig')}</option>`).join('')}</select>
     <select class="ein" id="clMode" style="max-width:180px"><option value="all">${TC('clAllModes')}</option>${['practice','exam'].map(m=>`<option value="${m}"${CLS.mode===m?' selected':''}>${T('mode_'+m)}</option>`).join('')}</select>
+    ${clss.length>1||CLS.cls!=='__all'?`<select class="ein" id="clCls" style="max-width:180px"><option value="__all">${T('clAllCls')}</option>${clss.map(c=>`<option value="${esc(c)}"${CLS.cls===c?' selected':''}>🏫 ${esc(c)}</option>`).join('')}</select>`:''}
     <button class="sbtn b" id="clCsv">${TC('clCsv')}</button></div>`;
   if(!list.length){ b.innerHTML=head+`<p class="edempty">${TC('clNone')}</p>`; bindClass(b,null); return; }
   const R=classStats(list), sec=(t,h)=>`<div class="clsec"><h4>${t}</h4>${h}</div>`, rk=['S','A','B','C','D'];
@@ -3876,7 +4133,7 @@ function renderClass(b){
   bindClass(b,R);
 }
 function bindClass(b,R){
-  $('#clFin').onchange=e=>{ CLS.fin=e.target.checked; renderPage(); }; $('#clVer').onchange=e=>{ CLS.ver=e.target.value; renderPage(); }; $('#clMode').onchange=e=>{ CLS.mode=e.target.value; renderPage(); };
+  $('#clFin').onchange=e=>{ CLS.fin=e.target.checked; renderPage(); }; $('#clVer').onchange=e=>{ CLS.ver=e.target.value; renderPage(); }; $('#clMode').onchange=e=>{ CLS.mode=e.target.value; renderPage(); }; if($('#clCls')) $('#clCls').onchange=e=>{ CLS.cls=e.target.value; renderPage(); };
   $('#clCsv').onclick=()=>{ if(!R){ sfx.error(); return; } const rows=[['section','item','percent','n','total']].concat(R.rows.map(r=>[r.sec,KP(String(r.label)).replace(/<[^>]+>/g,''),r.p,r.n,r.d]));
     download('PharmaDetective_class_summary.csv','﻿'+rows.map(r=>r.map(c=>'"'+String(c==null?'':c).replace(/"/g,'""')+'"').join(',')).join('\n'),'text/csv'); };
 }
@@ -3884,8 +4141,8 @@ function bindClass(b,R){
    PAGES (outside the stage): case file · settings · instructor dashboard
    ===================================================================== */
 const P={cur:null, tab:null};
-const PAGES={ case:{title:'caseFile', tabs:['tProfile','tProblems','tEvidence','tMeds','tLabs','tMemo']}, menu:{title:'menu'}, teacher:{title:'tTitle', tabs:['tSessions','tClass','tDebrief','tQ','tTexts','tSet','tPub','tMedia','tTools']} };
-function openPage(name, tab){ if(name==='teacher'&&!P.teacherOK) return teacherLogin(); P.cur=name; P.tab=tab||(PAGES[name].tabs?PAGES[name].tabs[0]:null); $('#page').classList.remove('hidden'); sfx.paper(); renderPage(); }
+const PAGES={ case:{title:'caseFile', tabs:['tProfile','tProblems','tEvidence','tMeds','tLabs','tMemo']}, menu:{title:'menu'}, teacher:{title:'tTitle', tabs:['tOnline','tSessions','tClass','tDebrief','tQ','tTexts','tSet','tPub','tMedia','tTools']} };
+function openPage(name, tab){ if(name==='teacher'&&!P.teacherOK) return teacherLogin(); P.cur=name; P.tab=tab||(PAGES[name].tabs?PAGES[name].tabs[0]:null); $('#page').classList.remove('hidden'); sfx.paper(); renderPage(); if(name==='teacher') serverAutoPull(); }
 function closePage(){ P.cur=null; $('#page').classList.add('hidden'); sfx.click(); saveSession(); applyI18n(); showVerNote(); }
 function renderPage(){
   const pg=PAGES[P.cur]; if(!pg) return;
@@ -3914,6 +4171,7 @@ function renderCase(b){
 function renderMenu(b){
   const tg=(k,v)=>`<button class="sbtn ${v?'g':''}" data-tg="${k}">${T(k)}: ${v?T('on'):T('off')}</button>`;
   b.innerHTML=`<div class="box"><b>${T('language')}</b><div class="row" style="margin-top:6px">${LANGS.map((l,i)=>`<button class="sbtn ${S.lang===l?'on':''}" data-l="${l}">${['中文','English','ไทย'][i]}</button>`).join('')}</div></div>
+   <div class="box"><b>☁️ ${T('syncH')}</b><div class="row" style="margin-top:6px;align-items:center"><span class="syncSt hidden" style="margin:0;text-align:left;font-size:14px"></span>${serverURL()&&S.sessionId?`<button class="sbtn" id="mSync">${T('syncNow')}</button>`:''}</div>${serverURL()?'':`<p class="muted">${T('syncOff')}</p>`}</div>
    <div class="box"><b>👁 ${T('view')}</b><div class="row" style="margin-top:6px"><button class="sbtn ${VIEW.fp?'':'on'}" data-view="tp">${T('view_tpL')}</button><button class="sbtn ${VIEW.fp?'on':''}" data-view="fp">${T('view_fpL')}</button></div><p class="muted" style="margin-top:4px">${T('viewHelp')}</p></div>
    <div class="box"><b>🎨 ${T('gfx')}</b><div class="row" style="margin-top:6px">${['auto','high','low'].map(k=>`<button class="sbtn ${GFX.pref===k?'on':''}" data-gfx="${k}">${T('gfx_'+k)}${k==='auto'?` (${T('gfxNow')}: ${T(GFX.low?'gfx_low':'gfx_high')})`:''}</button>`).join('')}</div><p class="muted" style="margin-top:4px">${T('gfxHelp')}</p></div>
    <div class="box"><b>${T('textSpeed')}</b><div class="row" style="margin-top:6px">${['slow','normal','fast'].map(k=>`<button class="sbtn ${S.textSpeed===k?'on':''}" data-spd="${k}">${T('spd_'+k)}</button>`).join('')}</div></div>
@@ -3924,6 +4182,7 @@ function renderMenu(b){
   b.querySelectorAll('[data-gfx]').forEach(x=>x.onclick=()=>{ setGfx(x.dataset.gfx); sfx.click(); renderPage(); });
   b.querySelectorAll('[data-spd]').forEach(x=>x.onclick=()=>{ S.textSpeed=x.dataset.spd; sfx.click(); renderPage(); });
   b.querySelectorAll('[data-tg]').forEach(x=>x.onclick=()=>{ const k=x.dataset.tg; S[k]=!S[k]; applyAudio(); applyMotion(); sfx.click(); renderPage(); });
+  syncBadge(); if($('#mSync')) $('#mSync').onclick=()=>{ sfx.click(); saveSession(true); SYNC.fail=0; syncFlush(); };
   $('#mRep').onclick=downloadReport; $('#mT').onclick=()=>openPage('teacher');
   $('#mRe').onclick=()=>showModal(`<h3>${T('restart')}</h3><p>${T('confirmRestart')}</p>`,[{t:T('restart'),cls:'r',fn:()=>{ saveSession(true); location.reload(); }},{t:T('cancel'),cls:''}]);
 }
@@ -3948,12 +4207,14 @@ function teacherLogin(){
    [{t:T('ok'), keep:true, fn:(c)=>{ if(c.querySelector('#pinIn').value===CONFIG.TEACHER_PIN){ P.teacherOK=true; MQ.length=0; nextModal(); openPage('teacher'); } else { sfx.error(); toast(T('tWrong')); } }},{t:T('cancel'),cls:''}]);
   setTimeout(()=>{ const i=$('#pinIn'); if(i){ i.focus(); i.onkeydown=e=>{ if(e.key==='Enter') $('#mCard [data-mb="0"]').click(); }; } },60);
 }
-function allSessions(){ if(S.sessionId) saveSession(true); return (store.get(CONFIG.STORAGE_KEY)||[]).slice().sort((a,b)=>(b.updated||'').localeCompare(a.updated||'')); }
+function allSessions(){ if(S.sessionId) saveSession(true); const m=new Map(); (store.get(CONFIG.STORAGE_KEY)||[]).forEach(s=>{ if(s&&s.id) m.set(s.id,s); });
+  (SYNC.remote||[]).forEach(s=>{ if(!s||!s.id) return; const o=m.get(s.id); if(!o||(o.updated||'')<=(s.updated||'')) m.set(s.id,s); });
+  return [...m.values()].sort((a,b)=>(b.updated||'').localeCompare(a.updated||'')); }
 function sessHTML(s){
   const log=s.log||[]; const free=log.filter(e=>(e.type==='ask'&&e.mode==='free')||e.type==='lockText'||e.type==='final');
   const pres=log.filter(e=>e.type==='present'||e.type==='choice'||e.type==='calc'); const B=s.boss||{answers:[]}; const qn=['❌','🔸','✅'];
   return `<details class="sess"><summary>👤 ${esc(s.student&&s.student.name||'?')} <span class="muted">${esc(s.student&&s.student.sid||'')}</span>
-   <span class="pill">${s.rank?('🏅 '+s.rank+' · '+s.score):(s.progress+'%')}</span><span class="pill">⏱ ${fmt(s.realTime)}</span><span class="pill">⏰ ${s.visitLeft}</span><span class="pill">💗 ${s.trust}</span><span class="pill">💡 ${s.hints}</span><span class="pill">${s.gender==='m'?'♂':'♀'}</span><span class="pill">🚪 ${s.first?(s.first.ok?'✅':'×'+s.first.tries):'—'}</span><span class="pill">🧮 ${['bmi','egfr','crcl'].map(k=>s.calc&&s.calc[k]?(s.calc[k].ok?'✓':'✗'):'·').join('')}</span><span class="pill">✖ ${s.wrong||0}</span><span class="pill">${s.mode==='exam'?'📝':'📘'}</span>${s.view==='fp'?`<span class="pill" title="${esc(T('view_fpL'))}">👁 1</span>`:''}${s.pat!=null?`<span class="pill">☕ ${s.pat}</span>`:''}${s.hiddenQ?`<span class="pill">🗝️ ${s.hiddenQ.length}</span>`:''}${s.refused?'<span class="pill no">🔒</span>':''}${s.timeout?'<span class="pill no">⏰</span>':''}${s.ending?`<span class="pill">${{best:'🌟',good:'😊',mixed:'😐',bad:'🚑'}[s.ending.tier]||''}</span>`:''}${s.badges&&s.badges.length?`<span class="pill">🏅 ${s.badges.length}</span>`:''}<span class="muted">${esc((s.updated||'').replace('T',' ').slice(0,16))}</span></summary><div class="in">
+   <span class="pill">${s.rank?('🏅 '+s.rank+' · '+s.score):(s.progress+'%')}</span><span class="pill">⏱ ${fmt(s.realTime)}</span><span class="pill">⏰ ${s.visitLeft}</span><span class="pill">💗 ${s.trust}</span><span class="pill">💡 ${s.hints}</span><span class="pill">${s.gender==='m'?'♂':'♀'}</span><span class="pill">🚪 ${s.first?(s.first.ok?'✅':'×'+s.first.tries):'—'}</span><span class="pill">🧮 ${['bmi','egfr','crcl'].map(k=>s.calc&&s.calc[k]?(s.calc[k].ok?'✓':'✗'):'·').join('')}</span><span class="pill">✖ ${s.wrong||0}</span><span class="pill">${s.mode==='exam'?'📝':'📘'}</span>${s.classCode&&s.classCode!=='main'?`<span class="pill">🏫 ${esc(s.classCode)}</span>`:''}${s.fromServer?'<span class="pill" title="server">☁️</span>':''}${s.view==='fp'?`<span class="pill" title="${esc(T('view_fpL'))}">👁 1</span>`:''}${s.pat!=null?`<span class="pill">☕ ${s.pat}</span>`:''}${s.hiddenQ?`<span class="pill">🗝️ ${s.hiddenQ.length}</span>`:''}${s.refused?'<span class="pill no">🔒</span>':''}${s.timeout?'<span class="pill no">⏰</span>':''}${s.ending?`<span class="pill">${{best:'🌟',good:'😊',mixed:'😐',bad:'🚑'}[s.ending.tier]||''}</span>`:''}${s.badges&&s.badges.length?`<span class="pill">🏅 ${s.badges.length}</span>`:''}<span class="muted">${esc((s.updated||'').replace('T',' ').slice(0,16))}</span></summary><div class="in">
    <b>${T('tFound')}</b><div>${PROBLEMS.map(p=>`<span class="pill ${s.found&&s.found[p.id]?'ok':'no'}">${p.id} ${s.found&&s.found[p.id]?fmt(s.found[p.id].t):'—'}</span>`).join('')}</div>
    <b>${T('chapterTimes')}</b> <span class="muted">${[0,1,2,3,4,5].map(c=>'Ch'+c+' '+fmt((s.chT||{})[c]||0)).join(' · ')}</span>
    <h4 style="margin-top:8px">${T('tFree')} (${free.length})</h4>${free.map(e=>`<div class="ll free">[${fmt(e.t)}] ${e.type==='final'?'🏁 '+(e.cov||[]).filter(Boolean).length+'/'+RUBRIC_SUM.length:e.type==='lockText'?'💗 '+(e.ok?'✅':'❌'):'✍️ → '+esc(e.intent||'-')+(e.emp?' 💗':'')+(e.blame?' ⚠️':'')+(e.priv?' 🔒':'')} — “${esc(e.text)}”</div>`).join('')||'<p class="muted">—</p>'}
@@ -3971,11 +4232,13 @@ function sessHTML(s){
 function resizeImage(file,max){ return new Promise(res=>{ const fr=new FileReader(); fr.onload=()=>{ const im=new Image(); im.onload=()=>{ const k=Math.min(1,max/Math.max(im.width,im.height)); const c=document.createElement('canvas'); c.width=im.width*k; c.height=im.height*k; c.getContext('2d').drawImage(im,0,0,c.width,c.height); res(c.toDataURL('image/jpeg',.82)); }; im.onerror=()=>res(null); im.src=fr.result; }; fr.readAsDataURL(file); }); }
 function pickFiles(multi,accept,cb){ const f=$('#fileIn'); f.value=''; f.multiple=!!multi; f.accept=accept||''; f.onchange=()=>cb(Array.from(f.files)); f.click(); }
 function renderTeacher(b){
+  if(P.tab==='tOnline') return renderOnline(b);
   if(P.tab==='tClass') return renderClass(b);
   if(P.tab==='tDebrief') return renderDebrief(b);
   if(['tQ','tTexts','tSet','tPub'].includes(P.tab)) return renderEditor(P.tab,b);
   if(P.tab==='tSessions'){ const all=allSessions(); b.innerHTML=all.length?all.map(sessHTML).join(''):`<p class="muted" style="padding:20px">${T('tNone')}</p>`;
-    b.querySelectorAll('[data-del]').forEach(x=>x.onclick=()=>{ store.set(CONFIG.STORAGE_KEY,(store.get(CONFIG.STORAGE_KEY)||[]).filter(s=>s.id!==x.dataset.del)); renderPage(); }); }
+    b.querySelectorAll('[data-del]').forEach(x=>x.onclick=async()=>{ const id=x.dataset.del, rs=(SYNC.remote||[]).find(s=>s.id===id); store.set(CONFIG.STORAGE_KEY,(store.get(CONFIG.STORAGE_KEY)||[]).filter(s=>s.id!==id));
+      if(rs){ const r=await serverDelete(rs.classCode||'main', id); toast(r.ok?'🗑️ '+T('onDelOne'):'⚠️ '+T('onDown')); } renderPage(); }); }
   else if(P.tab==='tMedia'){ const m=mediaStore();
     b.innerHTML=`<div class="box"><b>${T('tLabUp')}</b><div class="row" style="margin:6px 0"><button class="sbtn b" id="upLab">⬆️</button></div><div class="egrid">${(m.labImages||[]).map((s,i)=>`<div class="ev"><img src="${s}" style="width:100%"><button class="sbtn r" data-dl="${i}">${T('tDel')}</button></div>`).join('')}</div></div>
      <div class="box"><b>${T('tBagUp')}</b><div class="egrid" style="margin-top:6px">${Object.keys(ITEMS).map(id=>`<div class="ev"><div class="ic">${itemIcon(id,44)}</div><b>${esc(L(ITEMS[id].n))}</b><div class="row">${itemImages(id).map(s=>`<img src="${s}" data-zs="1" style="height:48px;border-radius:6px">`).join('')}</div><div class="row"><button class="sbtn b" data-ub="${id}">⬆️</button>${m.medBagImages&&m.medBagImages[id]?`<button class="sbtn r" data-db="${id}">${T('tDel')}</button>`:''}</div></div>`).join('')}</div></div>`;
@@ -3985,8 +4248,8 @@ function renderTeacher(b){
     b.querySelectorAll('[data-db]').forEach(x=>x.onclick=()=>{ const mm=mediaStore(); delete mm.medBagImages[x.dataset.db]; store.set(CONFIG.MEDIA_KEY,mm); renderPage(); }); }
   else { b.innerHTML=`<div class="box"><div class="row"><button class="sbtn b" id="eJ">${T('tExportJ')}</button><button class="sbtn b" id="eC">${T('tExportC')}</button><button class="sbtn g" id="iJ">${T('tImport')}</button><button class="sbtn r" id="cA">${T('tClear')}</button></div></div>`;
     $('#eJ').onclick=()=>download('PharmaDetective_all.json', JSON.stringify(allSessions(),null,2));
-    $('#eC').onclick=()=>{ const rows=[['session','name','student_id','rank','score','time_s','chapter','type','text','detail']];
-      allSessions().forEach(s=>(s.log||[]).filter(e=>(e.type==='ask'&&e.mode==='free')||['lockText','final','present','medrev','calc','firstMove','custom','pp','refl','hidden','ending','refused','timeout','patienceOut'].includes(e.type)).forEach(e=>rows.push([s.id,s.student&&s.student.name,s.student&&s.student.sid,s.rank,s.score,e.t,e.ch,e.type,(e.type==='custom'||e.type==='pp'||e.type==='refl'?e.ans:e.text)||e.item||(e.sel||[]).join(' | ')||e.tier||e.why||e.id||'',e.type==='pp'?(e.phase+' · '+e.q+' · '+(e.ok?'OK':'WRONG')):e.type==='refl'?e.q:e.type==='ending'?(e.items||[]).map(x=>x.k+(x.ok?'+':'-')).join(' '):e.type==='medrev'?(e.m+' '+(e.perfect?'PERFECT':e.partial?'PARTIAL':'WRONG')):e.type==='present'?(e.st+' '+(e.ok?'OK':e.near?'NEAR':'WRONG')):e.type==='calc'?(e.id+' try'+e.attempt+' '+JSON.stringify(e.vals)+' = '+e.result+' '+(e.ok?'OK':'WRONG')):e.type==='firstMove'?('tries '+e.tries+' '+(e.picks||[]).join('>')):e.type==='custom'?(e.cp+' · '+e.q+' · '+e.pts+'/'+e.max+(e.ok?' OK':e.partial?' PARTIAL':e.kind==='text'&&!e.auto?' REVIEW':' WRONG')):e.type==='final'?(e.cov||[]).filter(Boolean).length+'/'+RUBRIC_SUM.length:(e.intent||String(e.ok==null?'':e.ok))])));
+    $('#eC').onclick=()=>{ const rows=[['session','name','student_id','class','rank','score','time_s','chapter','type','text','detail']];
+      allSessions().forEach(s=>(s.log||[]).filter(e=>(e.type==='ask'&&e.mode==='free')||['lockText','final','present','medrev','calc','firstMove','custom','pp','refl','hidden','ending','refused','timeout','patienceOut'].includes(e.type)).forEach(e=>rows.push([s.id,s.student&&s.student.name,s.student&&s.student.sid,s.classCode||'main',s.rank,s.score,e.t,e.ch,e.type,(e.type==='custom'||e.type==='pp'||e.type==='refl'?e.ans:e.text)||e.item||(e.sel||[]).join(' | ')||e.tier||e.why||e.id||'',e.type==='pp'?(e.phase+' · '+e.q+' · '+(e.ok?'OK':'WRONG')):e.type==='refl'?e.q:e.type==='ending'?(e.items||[]).map(x=>x.k+(x.ok?'+':'-')).join(' '):e.type==='medrev'?(e.m+' '+(e.perfect?'PERFECT':e.partial?'PARTIAL':'WRONG')):e.type==='present'?(e.st+' '+(e.ok?'OK':e.near?'NEAR':'WRONG')):e.type==='calc'?(e.id+' try'+e.attempt+' '+JSON.stringify(e.vals)+' = '+e.result+' '+(e.ok?'OK':'WRONG')):e.type==='firstMove'?('tries '+e.tries+' '+(e.picks||[]).join('>')):e.type==='custom'?(e.cp+' · '+e.q+' · '+e.pts+'/'+e.max+(e.ok?' OK':e.partial?' PARTIAL':e.kind==='text'&&!e.auto?' REVIEW':' WRONG')):e.type==='final'?(e.cov||[]).filter(Boolean).length+'/'+RUBRIC_SUM.length:(e.intent||String(e.ok==null?'':e.ok))])));
       download('PharmaDetective_text_answers.csv','﻿'+rows.map(r=>r.map(c=>'"'+String(c==null?'':c).replace(/"/g,'""')+'"').join(',')).join('\n'),'text/csv'); };
     $('#iJ').onclick=()=>pickFiles(true,'.json,application/json',async fs=>{ const all=store.get(CONFIG.STORAGE_KEY)||[]; let n=0; for(const f of fs){ try{ [].concat(JSON.parse(await f.text())).forEach(s=>{ if(s&&s.id){ const i=all.findIndex(x=>x.id===s.id); if(i>=0) all[i]=s; else all.push(s); n++; } }); }catch(e){ toast('⚠️ '+f.name); } } store.set(CONFIG.STORAGE_KEY,all); toast(T('imported')+': '+n); P.tab='tSessions'; renderPage(); });
     $('#cA').onclick=()=>showModal(`<h3>${T('tClear')}</h3><p>${T('tConfirmClear')}</p>`,[{t:T('tClear'),cls:'r',fn:()=>{ store.set(CONFIG.STORAGE_KEY,[]); if(P.cur) renderPage(); }},{t:T('cancel'),cls:''}]); }
@@ -4047,15 +4310,15 @@ function renderDebrief(b){
    ===================================================================== */
 function applyI18n(){
   document.documentElement.lang=S.lang==='zh'?'zh-Hant':S.lang;
-  $$('[data-i18n]').forEach(e=>e.textContent=T(e.dataset.i18n)); $$('[data-i18n-html]').forEach(e=>e.innerHTML=T(e.dataset.i18nHtml));
+  $$('[data-i18n]').forEach(e=>e.textContent=T(e.dataset.i18n)); $$('[data-i18n-html]').forEach(e=>e.innerHTML=T(e.dataset.i18nHtml).replace(/<b>60(?=\s*(分鐘|minutes|นาที))/,'<b>'+CONFIG.VISIT_MIN));
   $$('.lbtn').forEach(b=>b.classList.toggle('on',b.dataset.lang===S.lang));
   if(S.sessionId) hud(); if(D.cur) renderLine(false); if(!$('#board').classList.contains('hidden')) renderBoard();
   if(!$('#searchHud').classList.contains('hidden')) updSearchHud();
   if(D.zoomed){ $('#zoomBack').textContent=T('zoomBack'); $('#zoomLbl').textContent='🔍 '+T(ZONES[D.zoomed].n); }
   if(!$('#testiBanner').classList.contains('hidden')){ $('#tPress').textContent=T('press'); $('#tPresent').textContent=T('present'); }
-  applyGfx(); applyView(); if(!$('#title').classList.contains('hidden')){ renderResume(); renderModeRow(); renderTitleBtns(); } if(P.cur) renderPage();
+  applyGfx(); applyView(); syncNoteTitle(); syncBadge(); if(!$('#title').classList.contains('hidden')){ renderResume(); renderModeRow(); renderTitleBtns(); } if(P.cur) renderPage();
 }
-function setLang(l){ S.lang=l; sfx.click(); applyI18n(); saveSession(); }
+function setLang(l){ S.lang=l; CFGS.langPicked=true; sfx.click(); applyI18n(); saveSession(); }
 function renderTitleChars(){
   $('#titleChars').innerHTML=`<div class="char enterR" style="left:300px;width:560px;height:784px">${charSVG('me','happy')}</div><div class="char enterR" style="left:-10px;width:470px;height:658px;bottom:-20px">${charSVG('yeh','smug')}</div><div style="position:absolute;right:30px;top:120px;width:190px;height:230px;animation:float 2.4s ease-in-out infinite">${pillySVG('happy')}</div>`;
 }
@@ -4075,7 +4338,7 @@ function buildPracticeState(ch){
   if(ch>=5){ F(['P13','P14','P15','P16','P17','P18','P19'],4); prof(['renal']); S.medsSeen=true; MISSIONS.forEach(m=>{ S.mr.ans.push({id:m.id, sel:m.ans, perfect:true, partial:false}); m.ans.forEach(id=>(S.mr.tags[id]=S.mr.tags[id]||[]).push(L(m.tag))); }); S.mr.perfect=MISSIONS.length; S.mr.egfr=true; S.visit=20; }
 }
 async function practiceChapter(ch){
-  await audioStart(); buildPracticeState(ch); const before=new Set(Object.keys(S.found));
+  const au=audioStart(); await cfgReady(); await au; buildPracticeState(ch); const before=new Set(Object.keys(S.found));
   $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden'); hud(); logEvent({type:'practice', ch, mode:S.mode});
   if(ch>1) await wipe(()=>{ setBg('liv'); hideAll(); hideText(); });
   try{ await [null,chapter1,chapter2,chapter3,chapter4,chapter5][ch](); }catch(e){ console.error(e); }
@@ -4088,8 +4351,8 @@ function showChapterSelect(){
   showModal(`<h3>${T('chSel')}</h3><p class="muted">${T('chSelIntro')}</p><p>${T('modeLbl')}: <b>${T('mode_'+S.mode)}</b></p><div class="chgrid">${[1,2,3,4,5].map(c=>`<button data-pch="${c}"><span>${['','🗂️','🔦','⚖️','💊','👿'][c]}</span>${T('ch'+c)}<small>${T('ch'+c+'t')}</small></button>`).join('')}</div>`,[{t:T('cancel'),cls:''}],null,'wide');
   setTimeout(()=>$$('#mCard [data-pch]').forEach(x=>x.onclick=()=>{ const c=+x.dataset.pch; MQ.length=0; nextModal(); practiceChapter(c); }),30);
 }
-function showVerNote(){ const el=$('#verNote'); if(!el) return; const m=GAME_CFG_BAKED.meta||{}, parts=[];
-  if(m.note) parts.push('📌 '+esc(m.note)); if(m.rev) parts.push(esc(m.rev.slice(0,10))); if(cfgNorm(GAME_CFG)!==cfgNorm(GAME_CFG_BAKED)) parts.push(`<b class="dr">${T('draftBadge')}</b>`);
+function showVerNote(){ const el=$('#verNote'); if(!el) return; const m=GAME_CFG_BASE.meta||{}, parts=[];
+  if(m.note) parts.push('📌 '+esc(m.note)); if(m.rev) parts.push(esc(m.rev.slice(0,10))); if(cfgNorm(GAME_CFG)!==cfgNorm(GAME_CFG_BASE)) parts.push(`<b class="dr">${T('draftBadge')}</b>`);
   el.innerHTML=parts.join(' · '); el.classList.toggle('hidden',!parts.length); }
 function showTitle(){
   setBg('ext'); $('#title').classList.remove('hidden'); renderTitleChars(); $('#qteToggle').checked=(GAME_CFG.settings||{}).qte!==false; showVerNote(); renderModeRow(); renderTitleBtns();
@@ -4126,7 +4389,7 @@ async function startGame(){
   const name=$('#inName').value.trim(), sid=$('#inSid').value.trim();
   if(!name||!sid){ toast(T('nameNeeded')); (name?$('#inSid'):$('#inName')).focus(); return; }
   if(loadResume()&&!startGame.ok){ showModal(`<h3>${T('startNew')}</h3><p>${T('resumeNewQ')}</p>`,[{t:T('startNew'),cls:'r',fn:()=>{ clearResume(); startGame.ok=true; startGame(); }},{t:T('cancel'),cls:''}]); return; }
-  await audioStart(); S.qte=$('#qteToggle').checked;
+  const au=audioStart(); await cfgReady(); await au; S.qte=$('#qteToggle').checked;
   S.student={name,sid}; S.sessionId='PD'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); S.created=new Date().toISOString(); S.t0=Date.now();
   $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden'); hud(); logEvent({type:'start', qte:S.qte, avatar:S.avatar, gender:S.gender, mode:S.mode, view:VIEW.fp?'fp':'tp'}); saveSession(true);
   clearResume(); await runSteps(0);
@@ -4157,7 +4420,7 @@ function bindUI(){
   addEventListener('beforeunload', ()=>saveSession(true));
 }
 (async function main(){
-  bindUI(); applyView(); showTitle(); gfxWatch();
+  bindUI(); applyView(); initSync(); showTitle(); gfxWatch(); cfgRefresh();
   window.__PD__={S, D, CH, ED_ST, edWork, askCustom, MISSIONS, DRUGS, ZONES, reveal, addEvidence, openPage, startGame, advance, HOTSPOTS, onHotspot, zoomTo, camReset, computeScore, FOLLOW1, BADGES, DEFAULT_QUESTIONS, practiceChapter, epiOutcomes};
 })();
 </script>

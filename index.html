@@ -949,7 +949,7 @@ let GAME_CFG=(()=>{ try{ if(CFG_DRAFTMODE){ const dr=JSON.parse(localStorage.get
 const CONFIG = {
   TEACHER_PIN:'1234',              // รหัสหน้าอาจารย์ / instructor PIN
   STORAGE_KEY:'phd_chen_sessions_v3', MEDIA_KEY:'phd_chen_media_v2',
-  SERVER_URL:'',   // results & settings server (Cloudflare Worker), e.g. https://pharma-detective-api.NAME.workers.dev; '' = off
+  SERVER_URL:'https://pharma-detective-api.nattasitrx.workers.dev',   // results & settings server (Cloudflare Worker + D1); '' = off
   GAME_URL:'https://nattasitrx.github.io/pharma_detective/', // public link students open
   VISIT_MIN:60,                     // in-game visit time (minutes) — spent by actions, not real time
   COST_ASK:2, COST_SEARCH:1, COST_WRONG:3, COST_HINT:5,

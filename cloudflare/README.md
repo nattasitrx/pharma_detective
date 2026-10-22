@@ -5,6 +5,8 @@ This server does two jobs for the game at https://nattasitrx.github.io/pharma_de
 - **Collects results.** Students' games send their progress here, so nobody has to download and hand in a report file (handy on iPads and phones). The instructor reads everything back in the game's dashboard (☁️ Online results tab).
 - **Publishes the instructor's version.** When the instructor edits the game (extra questions, text, settings, pictures) and presses **☁️ Publish to students**, the students' usual link loads that version. It can be published for every link, or for one class link such as `?class=ph2026a`.
 
+Live address: https://pharma-detective-api.nattasitrx.workers.dev (check it at `/api/health`).
+
 It runs on the Cloudflare Workers free plan (no credit card). One class of about 60 students uses a few percent of the daily free limits.
 
 ## Deploy (once)

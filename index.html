@@ -710,6 +710,8 @@ svg.ico{display:inline-block;vertical-align:middle;overflow:visible}
 #logo h1{white-space:nowrap}
 html[lang=en] #logo h1{font-size:76px;letter-spacing:2px}
 #tPanel{top:318px}
+#logo,#tPanel{transform-origin:0 0}
+#tPanel.fitScroll{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
 .moderow{display:flex;align-items:center;gap:8px;margin-top:8px}
 .moderow .lbl{font-weight:700;font-size:18px;color:#8a4a6a}
 .msel{padding:7px 16px;border-radius:99px;font-weight:900;font-size:18px;background:#f3f0ff;color:#5a4a8a;box-shadow:inset 0 0 0 3px #d9d0ff}
@@ -2014,6 +2016,24 @@ const D={cur:null, typing:false, shown:0, iv:null, waiting:false, res:null, last
 const CH={};
 const SLOTX={L:30, C:540, R:1050, LC:280, RC:800};
 const SPEED={slow:80, normal:50, fast:22};
+/* keep the title panel inside the 1600x900 stage whatever the screen, language or font:
+   move the panel up and shrink the logo first, then scale the panel a little, and only as a last resort let it scroll */
+const FIT={scale:!!(window.CSS&&CSS.supports&&CSS.supports('scale','1'))};
+function fitScale(el,s){ s=Math.round(s*1000)/1000; if(FIT.scale){ el.style.scale=s===1?'':String(s); } else { el.style.transform=s===1?'':`scale(${s})`; } }
+function fitTitle(){
+  const t=$('#title'), lg=$('#logo'), p=$('#tPanel'); if(!t||!lg||!p||t.classList.contains('hidden')) return;
+  p.style.maxHeight=''; p.classList.remove('fitScroll');
+  const BOT=886, TOP0=318, GAP=22, LT=lg.offsetTop, L=lg.offsetHeight||1, h=p.offsetHeight; if(!h) return;
+  let top=Math.min(TOP0, BOT-h), sl=Math.min(1,(top-GAP-LT)/L), sp=1;
+  if(sl<.62){ sl=.62; top=Math.round(LT+L*sl+GAP); sp=Math.max(.8,(BOT-top)/h);
+    if(h*sp>BOT-top+1){ p.style.maxHeight=Math.floor((BOT-top)/sp)+'px'; p.classList.add('fitScroll'); } }
+  fitScale(lg,sl); fitScale(p,sp); p.style.top=Math.round(top)+'px';
+}
+function initFitTitle(){
+  if(window.ResizeObserver){ const ro=new ResizeObserver(()=>requestAnimationFrame(fitTitle)); ro.observe($('#tPanel')); ro.observe($('#logo')); }
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fitTitle);
+  addEventListener('load', fitTitle); fitTitle();
+}
 function scaleStage(){ const k=Math.min(innerWidth/1600, innerHeight/900); $('#stage').style.transform=`translate(${(innerWidth-1600*k)/2}px,${(innerHeight-900*k)/2}px) scale(${k})`; D.k=k; }
 function stagePt(ev){ const r=$('#stage').getBoundingClientRect(), k=r.width/1600; return {x:(ev.clientX-r.left)/k, y:(ev.clientY-r.top)/k}; }
 /* ---------- backgrounds: crossfade + Ken Burns + motes ---------- */
@@ -4112,7 +4132,7 @@ async function startGame(){
   clearResume(); await runSteps(0);
 }
 function bindUI(){
-  addEventListener('resize', scaleStage); scaleStage(); bindParallax();
+  addEventListener('resize', scaleStage); scaleStage(); bindParallax(); initFitTitle();
   const st=$('#stage'); st.addEventListener('scroll',()=>{ st.scrollTop=0; st.scrollLeft=0; }); addEventListener('scroll',()=>{ if(scrollX||scrollY) scrollTo(0,0); });
   $$('.lbtn').forEach(b=>b.onclick=()=>{ audioStart(); setLang(b.dataset.lang); });
   $$('.gsel').forEach(b=>b.onclick=()=>{ S.avatar=b.dataset.av; S.gender=b.dataset.g; $$('.gsel').forEach(x=>x.classList.toggle('on',x===b)); renderTitleChars(); sfx.select(); });

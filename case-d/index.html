@@ -1065,7 +1065,7 @@ const UI = {
   tLabUp:['上傳檢驗報告影像','Upload lab images','อัปโหลดภาพแล็บ'], tBagUp:['上傳證物照片（藥袋等）','Upload evidence photos (med bags…)','อัปโหลดภาพหลักฐาน (ซองยา…)'],
   calcClues:['📋 線索（不一定全部用得到）','📋 Clues (not all are needed)','📋 เบาะแส (ไม่จำเป็นต้องใช้ทุกตัว)'], calcGo:['＝ 計算並確認','＝ Calculate & check','＝ คำนวณและตรวจ'],
   calcHow:['點空格 → 點線索或用按鍵輸入','Tap a box → tap a clue or use the keypad','แตะช่อง → แตะเบาะแสหรือกดปุ่มตัวเลข'], calcFill:['每個空格都要填數字','Fill every box with a number','ต้องใส่ตัวเลขให้ครบทุกช่อง'],
-  calcTry:['嘗試','Try','ครั้งที่'], calcOk:['算對了！','Correct!','ถูกต้อง!'], calcCont:['看懂了，繼續 ▶','Got it, continue ▶','เข้าใจแล้ว ไปต่อ ▶'], calcStat:['計算題（eGFR／CrCl）','Calculations (eGFR / CrCl)','โจทย์คำนวณ (BMI / eGFR / CrCl)'],
+  calcTry:['嘗試','Try','ครั้งที่'], calcOk:['算對了！','Correct!','ถูกต้อง!'], calcCont:['看懂了，繼續 ▶','Got it, continue ▶','เข้าใจแล้ว ไปต่อ ▶'], calcStat:['計算題（eGFR／CrCl）','Calculations (eGFR / CrCl)','โจทย์คำนวณ (eGFR / CrCl)'],
   tCalc:['計算題','Calculations','โจทย์คำนวณ'], firstMoveT:['進門第一步','First move at the door','ก้าวแรกในบ้าน'],
   cqTitle:['老師的加分題','Instructor\'s question','คำถามจากอาจารย์'], cqIntro:['老師出的加分題來了！認真作答喔～','Bonus questions from your instructor! Do your best~','คำถามพิเศษจากอาจารย์มาแล้ว! ตั้งใจตอบนะ~'],
   cqSubmit:['送出答案','Submit','ส่งคำตอบ'], cqNext:['繼續 ▶','Continue ▶','ไปต่อ ▶'], cqPickOne:['選一個答案','Pick one answer','เลือก 1 คำตอบ'], cqPickMany:['可以選好幾個','You may pick several','เลือกได้หลายข้อ'],
@@ -4053,7 +4053,7 @@ function acbSortUI(m, i, n){
     const fin=()=>{ if(done) return; done=true; clearInterval(iv); D.choiceFinish=null; $('#mrTimer').innerHTML='';
       const strong=ids.filter(id=>at[id]==='strong'), ans=new Set(m.ans), hit=strong.filter(x=>ans.has(x)), extra=strong.filter(x=>!ans.has(x)), missed=m.ans.filter(x=>at[x]!=='strong');
       const wrong=ids.filter(id=>!(ACB_KEY[id]||[]).includes(at[id]||'—'));
-      host.querySelectorAll('.acard').forEach(c=>{ const id=c.dataset.d; if(ex){ return; } c.classList.add(wrong.includes(id)?'bad':'ok'); });
+      host.querySelectorAll('.acard').forEach(c=>{ const id=c.dataset.d; if(ex){ c.style.opacity='.6'; return; } c.classList.add(wrong.includes(id)?'bad':'ok'); });
       const perfect=!extra.length&&!missed.length&&!wrong.length, partial=!perfect&&hit.length>0;
       S.calc.acb={ok:perfect, wrong:wrong.length}; res({sel:strong, hit, extra, missed, perfect, partial, bins:Object.assign({},at), wrong}); };
     $('#mrOk').onclick=()=>{ const left=ids.filter(id=>!at[id]); if(left.length){ sfx.error(); toast('🧠 '+L(['每個藥都要放進籃子','Put every medicine in a basket','ใส่ยาทุกตัวลงตะกร้า'])+` (${left.length})`); return; } fin(); };

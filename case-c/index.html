@@ -1065,7 +1065,7 @@ const UI = {
   tLabUp:['上傳檢驗報告影像','Upload lab images','อัปโหลดภาพแล็บ'], tBagUp:['上傳證物照片（藥袋等）','Upload evidence photos (med bags…)','อัปโหลดภาพหลักฐาน (ซองยา…)'],
   calcClues:['📋 線索（不一定全部用得到）','📋 Clues (not all are needed)','📋 เบาะแส (ไม่จำเป็นต้องใช้ทุกตัว)'], calcGo:['＝ 計算並確認','＝ Calculate & check','＝ คำนวณและตรวจ'],
   calcHow:['點空格 → 點線索或用按鍵輸入','Tap a box → tap a clue or use the keypad','แตะช่อง → แตะเบาะแสหรือกดปุ่มตัวเลข'], calcFill:['每個空格都要填數字','Fill every box with a number','ต้องใส่ตัวเลขให้ครบทุกช่อง'],
-  calcTry:['嘗試','Try','ครั้งที่'], calcOk:['算對了！','Correct!','ถูกต้อง!'], calcCont:['看懂了，繼續 ▶','Got it, continue ▶','เข้าใจแล้ว ไปต่อ ▶'], calcStat:['計算題（BMI／eGFR／CrCl）','Calculations (BMI / eGFR / CrCl)','โจทย์คำนวณ (BMI / eGFR / CrCl)'],
+  calcTry:['嘗試','Try','ครั้งที่'], calcOk:['算對了！','Correct!','ถูกต้อง!'], calcCont:['看懂了，繼續 ▶','Got it, continue ▶','เข้าใจแล้ว ไปต่อ ▶'], calcStat:['計算題（eGFR／CrCl）','Calculations (eGFR / CrCl)','โจทย์คำนวณ (BMI / eGFR / CrCl)'],
   tCalc:['計算題','Calculations','โจทย์คำนวณ'], firstMoveT:['進門第一步','First move at the door','ก้าวแรกในบ้าน'],
   cqTitle:['老師的加分題','Instructor\'s question','คำถามจากอาจารย์'], cqIntro:['老師出的加分題來了！認真作答喔～','Bonus questions from your instructor! Do your best~','คำถามพิเศษจากอาจารย์มาแล้ว! ตั้งใจตอบนะ~'],
   cqSubmit:['送出答案','Submit','ส่งคำตอบ'], cqNext:['繼續 ▶','Continue ▶','ไปต่อ ▶'], cqPickOne:['選一個答案','Pick one answer','เลือก 1 คำตอบ'], cqPickMany:['可以選好幾個','You may pick several','เลือกได้หลายข้อ'],
@@ -1302,7 +1302,7 @@ const PROFILE = [
   {k:'renal', l:['腎功能','Kidney function','การทำงานของไต'], v:['Cr 1.1–1.2 mg/dL（看似正常）但 eGFR ≈ 52（G3a）、CrCl ≈ 41；尿微白蛋白 2.8（A2）','Cr 1.1–1.2 mg/dL (looks normal) but eGFR ≈ 52 (G3a), CrCl ≈ 41; urine microalbumin 2.8 (A2)','Cr 1.1–1.2 mg/dL (ดูปกติ) แต่ eGFR ≈ 52 (G3a), CrCl ≈ 41 · ไมโครอัลบูมิน 2.8 (A2)']},
 ];
 const PROBLEMS = [
- {id:'P1', icon:'🏥', t:['多重就醫（一個月就醫 >40 次）','Doctor-shopping (>40 visits in a month)','ไปหาหมอหลายที่ (>40 ครั้ง/เดือน)'], d:['A 院新陳代謝科、B 院骨科、耳鼻喉、家醫、內科……藥物來源分散，沒有人掌握整體用藥，也耗掉家裡有限的錢和時間。','Hospital A endocrinology, Hospital B orthopaedics, ENT, family and internal medicine… medicines come from everywhere, nobody sees the whole picture, and it drains the family\'s scarce money and time.','ต่อมไร้ท่อ รพ.A, กระดูก รพ.B, หู คอ จมูก, เวชฯ ครอบครัว, อายุรกรรม… ยามาจากหลายแหล่ง ไม่มีใครเห็นภาพรวม และสิ้นเปลืองเงินกับเวลาที่ครอบครัวมีจำกัด']},
+ {id:'P1', icon:'🏥', t:['多重就醫：新陳代謝科、骨科、耳鼻喉……一個月 >40 次','Doctor-shopping: endocrine, orthopaedics, ENT… >40 visits a month','ไปหาหมอหลายที่: ต่อมไร้ท่อ กระดูก ENT… >40 ครั้ง/เดือน'], d:['A 院新陳代謝科、B 院骨科、耳鼻喉、家醫、內科……藥物來源分散，沒有人掌握整體用藥，也耗掉家裡有限的錢和時間。','Hospital A endocrinology, Hospital B orthopaedics, ENT, family and internal medicine… medicines come from everywhere, nobody sees the whole picture, and it drains the family\'s scarce money and time.','ต่อมไร้ท่อ รพ.A, กระดูก รพ.B, หู คอ จมูก, เวชฯ ครอบครัว, อายุรกรรม… ยามาจากหลายแหล่ง ไม่มีใครเห็นภาพรวม และสิ้นเปลืองเงินกับเวลาที่ครอบครัวมีจำกัด']},
  {id:'P2', icon:'🍬', t:['反覆低血糖（發抖冒冷汗）→ 1 月跌倒骨折','Repeated hypoglycaemia (shaky, sweaty) → the January fall','น้ำตาลต่ำซ้ำๆ (มือสั่น เหงื่อแตก) → หกล้มเดือน ม.ค.'], d:['沒吃早餐又吃了降血糖藥，上午就發抖冒冷汗；她靠硬糖撐過去，從沒告訴醫師。1 月的跌倒骨折很可能就是低血糖造成的。','Skipping breakfast while on diabetes pills leaves her shaky and sweaty by mid-morning; she gets by on hard candy and has never told her doctor. The January fall and fracture was probably a hypo.','ไม่กินมื้อเช้าแต่กินยาเบาหวาน สายๆ จึงมือสั่นเหงื่อแตก ป้าอาศัยลูกอมแข็งประทัง ไม่เคยบอกหมอ การหกล้มกระดูกหักเดือน ม.ค. น่าจะเกิดจากน้ำตาลต่ำ']},
  {id:'P3', icon:'🦴', t:['腰背痛＋變矮 4 cm：疑似脊椎壓迫性骨折','Back pain + 4 cm height loss: suspected vertebral fracture','ปวดหลัง + เตี้ยลง 4 ซม.: สงสัยกระดูกสันหลังยุบ'], d:['骨鬆病人新出現的背痛，加上身高減少 ≥ 4 cm，要懷疑脊椎壓迫性骨折，需要請醫師安排 X 光；這不只是「做工累」。','New back pain plus ≥ 4 cm height loss in someone with osteoporosis suggests a vertebral compression fracture — she needs her doctor to arrange an X-ray. It isn\'t just "tired from work".','ผู้ป่วยกระดูกพรุนที่ปวดหลังขึ้นใหม่ร่วมกับเตี้ยลง ≥ 4 ซม. ต้องสงสัยกระดูกสันหลังยุบ ควรให้แพทย์ส่งเอกซเรย์ ไม่ใช่แค่ "เหนื่อยจากงาน"']},
  {id:'P4', icon:'🍜', t:['三餐不規律、常不吃早餐和午餐','Irregular meals — often skips breakfast and lunch','กินไม่เป็นเวลา มักอดมื้อเช้าและกลางวัน'], d:['忙到沒時間吃飯，靠泡麵和隔夜飯；吃降血糖藥卻不吃飯，最容易低血糖，蛋白質和鈣也不夠骨頭用。','Too busy to eat — instant noodles and leftover rice; diabetes pills without meals invite hypos, and there\'s too little protein and calcium for her bones.','ยุ่งจนไม่มีเวลากิน อาศัยบะหมี่กึ่งสำเร็จรูปกับข้าวค้างคืน กินยาเบาหวานแต่ไม่กินข้าวจึงเสี่ยงน้ำตาลต่ำ และโปรตีน แคลเซียม ไม่พอสำหรับกระดูก']},
@@ -1311,7 +1311,7 @@ const PROBLEMS = [
  {id:'P7', icon:'🦴', t:['停經後骨質疏鬆＋脆弱性骨折（T −2.6）','Postmenopausal osteoporosis + fragility fracture (T −2.6)','กระดูกพรุนหลังหมดประจำเดือน + กระดูกหักจากความเปราะ (T −2.6)'], d:['約 52 歲停經，今年 1 月跌倒手腕骨折，骨密度 T-score −2.6。B 醫院骨科已開 Fosamax Plus；還需要足夠的鈣（每天約 1000–1200 mg）、維生素 D、運動與防跌。','Menopause at ~52, a wrist fracture from a fall this January, T-score −2.6. Hospital B started Fosamax Plus; she also needs enough calcium (≈1000–1200 mg/day), vitamin D, exercise and fall prevention.','หมดประจำเดือนราว 52 ปี หกล้มข้อมือหักเมื่อ ม.ค. ปีนี้ T-score −2.6 · รพ.B ให้ Fosamax Plus แล้ว แต่ยังต้องได้แคลเซียมพอ (~1000–1200 มก./วัน) วิตามินดี ออกกำลังกาย และป้องกันการหกล้ม']},
  {id:'P8', icon:'🤕', t:['常頭痛 → 自行停用所有藥物','Headaches → stops ALL her medicines','ปวดหัวบ่อย → หยุดยาทั้งหมดเอง'], d:['以為頭痛是吃藥害的，一痛就把所有藥停好幾天，也不敢告訴醫師。突然停降壓藥會讓血壓反彈、頭更痛；頭痛的真正原因（血壓、低血糖、鼻塞藥、止痛藥）需要評估。','Thinks the pills cause her headaches and stops everything for days whenever one starts — and dares not tell her doctor. Suddenly stopping BP pills makes BP rebound and the headache worse; the real cause (BP, hypos, the decongestant, the painkiller) needs working up.','คิดว่ายาทำให้ปวดหัว พอปวดก็หยุดยาทุกตัวหลายวัน และไม่กล้าบอกหมอ การหยุดยาความดันกะทันหันทำให้ความดันดีดกลับและปวดหัวยิ่งขึ้น ต้องประเมินสาเหตุจริง (ความดัน น้ำตาลต่ำ ยาลดน้ำมูก ยาแก้ปวด)']},
  {id:'P9', icon:'🗑️', t:['感冒、腰痛拿了藥卻丟掉','Cold & back-pain medicines collected, then thrown away','รับยาแก้หวัด/ปวดหลังมาแล้วทิ้ง'], d:['覺得不嚴重就丟，浪費醫療資源和家裡的錢；醫師以為她有吃，背痛的原因也沒人追查。','Throws them out because "it\'s not serious" — wasting resources and family money; doctors assume she takes them, and nobody investigates the back pain.','ทิ้งเพราะคิดว่า "ไม่หนัก" สิ้นเปลืองทรัพยากรและเงินของครอบครัว หมอเข้าใจว่าป้ากินอยู่ และไม่มีใครตามหาสาเหตุของอาการปวดหลัง']},
- {id:'P10', icon:'😮‍💨', t:['疲倦、食慾差','Fatigue & poor appetite','อ่อนเพลีย เบื่ออาหาร'], d:['她最希望解決的困擾；可能和低血糖、metformin／acarbose 的腸胃副作用、不吃飯、自行停藥有關，也可檢查維生素 B12。','Her top concern — think hypos, GI side effects of metformin/acarbose, skipped meals and stopping medicines; vitamin B12 is worth checking too.','ปัญหาที่ป้าอยากให้ช่วยที่สุด อาจเกี่ยวกับน้ำตาลต่ำ ผลข้างเคียงทางเดินอาหารของ metformin/acarbose การอดอาหาร และการหยุดยาเอง ควรตรวจวิตามินบี 12 ด้วย']},
+ {id:'P10', icon:'😮‍💨', t:['疲倦、食慾差（她最想解決的困擾）','Fatigue & poor appetite — her top worry','อ่อนเพลีย เบื่ออาหาร (เรื่องที่ป้ากังวลที่สุด)'], d:['她最希望解決的困擾；可能和低血糖、metformin／acarbose 的腸胃副作用、不吃飯、自行停藥有關，也可檢查維生素 B12。','Her top concern — think hypos, GI side effects of metformin/acarbose, skipped meals and stopping medicines; vitamin B12 is worth checking too.','ปัญหาที่ป้าอยากให้ช่วยที่สุด อาจเกี่ยวกับน้ำตาลต่ำ ผลข้างเคียงทางเดินอาหารของ metformin/acarbose การอดอาหาร และการหยุดยาเอง ควรตรวจวิตามินบี 12 ด้วย']},
  {id:'P11', icon:'👨‍👩‍👧‍👦', t:['家庭經濟負擔重（5 個孩子、收入不穩）','Heavy financial burden (5 children, unstable income)','ภาระการเงินหนัก (ลูก 5 คน รายได้ไม่แน่นอน)'], d:['兩個孩子還在讀書，先生打零工；掛號、交通和丟掉的藥都是錢。可以幫忙連結社福資源、減少不必要的就醫。','Two children still in school and a husband doing day labour; registration fees, travel and wasted medicines all cost money. Link the family to social-welfare support and cut unnecessary visits.','ลูกยังเรียนอยู่สองคน สามีรับจ้างรายวัน ค่าลงทะเบียน ค่าเดินทาง และยาที่ทิ้งล้วนเป็นเงิน ควรเชื่อมต่อแหล่งช่วยเหลือทางสังคมและลดการไปหาหมอที่ไม่จำเป็น']},
  {id:'P12', icon:'🛋️', t:['多年沒有運動習慣','No exercise habit for years','ไม่ได้ออกกำลังกายมาหลายปี'], d:['BMI 21.2 屬正常，但「站著工作」不等於運動。負重、肌力和平衡運動能保護骨頭、預防跌倒，也幫助血糖控制。','BMI 21.2 is normal, but standing at work isn\'t exercise. Weight-bearing, strength and balance training protect bone, prevent falls and help glucose control.','BMI 21.2 อยู่ในเกณฑ์ปกติ แต่ "ยืนทำงาน" ไม่ใช่การออกกำลังกาย การออกกำลังแบบลงน้ำหนัก เสริมกล้ามเนื้อ และฝึกการทรงตัว ช่วยปกป้องกระดูก ป้องกันการหกล้ม และช่วยคุมน้ำตาล']},
  {id:'P13', icon:'🫘', t:['隱藏的腎功能下降：Cr「正常」但 eGFR ≈ 52','Hidden kidney decline: "normal" Cr but eGFR ≈ 52','ไตเสื่อมที่ซ่อนอยู่: Cr "ปกติ" แต่ eGFR ≈ 52'], d:['個子小、肌肉少的 61 歲女性，Cr 1.2 已代表 eGFR ≈ 52（G3a）、CrCl ≈ 41，還有微量白蛋白尿（A2）。沒有醫師依腎功能檢視過她的用藥。','In a petite 61-year-old woman with little muscle, Cr 1.2 already means eGFR ≈ 52 (G3a) and CrCl ≈ 41, with albuminuria (A2). No prescriber has reviewed her drugs against kidney function.','หญิงอายุ 61 ตัวเล็ก กล้ามเนื้อน้อย Cr 1.2 ก็แปลว่า eGFR ≈ 52 (G3a) และ CrCl ≈ 41 แล้ว แถมมีอัลบูมินในปัสสาวะ (A2) ยังไม่มีแพทย์คนไหนทบทวนยาตามการทำงานของไต']},
@@ -2856,7 +2856,8 @@ const ANSWERS={
    await say('chen','neutral',['還有常常感冒、腰也在痛，不過那個不嚴重啦。','I catch colds a lot too, and my back hurts — but that\'s nothing serious.','แล้วก็เป็นหวัดบ่อย ปวดหลังด้วย แต่ไม่หนักหรอก']); },
  async checkup(){ await say('chen','neutral',['今年 1 月我在工廠跌倒，右手腕骨折，打了一個多月的石膏。','In January I fell at the factory and broke my right wrist — over a month in a cast.','เดือนมกราฯ ป้าหกล้มในโรงงาน ข้อมือขวาหัก ใส่เฝือกอยู่เดือนกว่า']);
    await say('chen','sad',['後來跟我先生去 A 醫院健檢，說我骨質疏鬆，叫我去 B 教學醫院看骨科，現在每個禮拜吃一顆骨頭的藥。','Then my husband and I had check-ups at Hospital A — they said I have osteoporosis and sent me to Teaching Hospital B\'s orthopaedics. Now I take a bone pill once a week.','หลังจากนั้นไปตรวจสุขภาพกับสามีที่ รพ.A เขาบอกว่าป้ากระดูกพรุน ให้ไปหาหมอกระดูกที่ รพ.มหาวิทยาลัย B ตอนนี้กินยากระดูกสัปดาห์ละเม็ด']); reveal('P7');
-   await say('pilly','think',['又多一家醫院、又多一種藥……檢查報告說不定收在家裡哪個盒子？','Another hospital, another drug… maybe the lab report is in a box somewhere in the house?','อีกโรงพยาบาล อีกยาหนึ่ง… ผลตรวจอาจเก็บอยู่ในกล่องสักใบในบ้าน?']); },
+   await say('pilly','think',['又多一家醫院、又多一種藥……檢查報告說不定收在家裡哪個盒子？','Another hospital, another drug… maybe the lab report is in a box somewhere in the house?','อีกโรงพยาบาล อีกยาหนึ่ง… ผลตรวจอาจเก็บอยู่ในกล่องสักใบในบ้าน?']);
+   await calciumTask(); },
  async family(){ show('wife','R','sad'); await introCard('wife');
    await say('wife','sad',['我來說吧……我們有五個孩子，兩個還在讀書。我打零工，工地沒開工就沒錢。','Let me… we have five kids, two still in school. I do day labour — when the site\'s closed, there\'s no pay.','ให้ลุงเล่าเถอะ… เรามีลูกห้าคน ยังเรียนอยู่สองคน ลุงรับจ้างรายวัน ไซต์ไม่เปิดก็ไม่มีเงิน']);
    await say('wife','sad',['她下班還接家庭代工，又一直跑醫院，掛號費、車錢都是錢啊……','She does piecework at home after her shift, and she\'s always running to clinics — registration fees and bus fares add up…','เลิกงานแล้วเขายังรับงานมาทำที่บ้านอีก แล้วก็วิ่งไปหาหมอตลอด ค่าลงทะเบียน ค่ารถก็เงินทั้งนั้น…']); reveal('P11'); },
@@ -2916,15 +2917,16 @@ ANSWERS.otc=async()=>{ await say('chen','neutral',['成藥是沒有啦……鈣�
   await say('chen','sad',['也不知道有沒有用，還不便宜。','No idea if it works — and it isn\'t cheap.','ไม่รู้ว่าได้ผลไหม แถมไม่ถูกด้วย']);
   await coach('think',['骨鬆治療需要足夠的鈣和維生素 D；來路不明的保健品不一定有用，也要確認會不會影響藥物吸收。','Osteoporosis treatment needs enough calcium and vitamin D; mystery supplements may not help — and check they don\'t interfere with how her medicines are absorbed.','การรักษากระดูกพรุนต้องได้แคลเซียมและวิตามินดีเพียงพอ อาหารเสริมที่ไม่รู้ที่มาอาจไม่ช่วย และต้องเช็กว่าไม่รบกวนการดูดซึมยา']); S.profile.add('otc'); };
 async function bmiTask(){
-  if(S.calc.bmi){ reveal('P12'); return; }
-  await say('pilly','happy',['拿出計算機！🧮 用王太太剛剛說的數字，自己算算她的 BMI。','Calculator time! 🧮 Use the numbers Mrs. Wang just told you to work out her BMI.','หยิบเครื่องคิดเลข! 🧮 ใช้ตัวเลขที่ป้าหวังเพิ่งบอก คำนวณ BMI ด้วยตัวเอง']); hideText();
-  const r=await calcPanel(CALC_BMI); S.calc.bmi={ok:r.ok, tries:r.tries, value:+r.r.toFixed(1)};
-  const c=await choose([{t:['過輕（< 18.5）','Underweight (< 18.5)','น้ำหนักน้อย (< 18.5)']},{t:['正常（18.5–24）','Normal (18.5–24)','ปกติ (18.5–23.9)']},{t:['過重（24–27）','Overweight (24–27)','น้ำหนักเกิน (24–26.9)']},{t:['肥胖（≥ 27）','Obese (≥ 27)','อ้วน (≥ 27)']}],
-    {id:'bmiClass', label:['依台灣國健署標準，BMI 21.2 屬於？','By Taiwan\'s (HPA) cut-offs, BMI 21.2 is…','ตามเกณฑ์ของไต้หวัน (HPA) BMI 21.2 อยู่กลุ่มใด?']});
-  S.calc.bmiClass=c===1; if(c===1) sfx.get(); else sfx.error();
-  await yehSays(c===1?'happy':'think',[(c===1?'沒錯！':'是正常喔。')+'台灣標準 BMI 18.5–24 是正常體重。不過「體重正常」不代表沒有風險：她個子小、肌肉少——等一下看腎功能時要記得這一點！',(c===1?'Right! ':'It\'s normal. ')+'Taiwan counts BMI 18.5–24 as normal weight (WHO: 18.5–24.9). But a normal weight isn\'t "no risk": she\'s petite with little muscle — remember that when we look at her kidneys!',(c===1?'ถูกต้อง! ':'อยู่ในกลุ่มปกตินะ ')+'เกณฑ์ไต้หวัน BMI 18.5–24 = ปกติ · 🇹🇭 ถ้าใช้เกณฑ์คนเอเชียแบบที่ไทยใช้: 18.5–22.9 = ปกติ ป้าก็ยังปกติ แต่ "น้ำหนักปกติ" ไม่ได้แปลว่าไม่มีความเสี่ยง ป้าตัวเล็ก กล้ามเนื้อน้อย — จำไว้ตอนดูการทำงานของไตนะ!']);
+  if(S.fl.exAsked){ reveal('P12'); return; } S.fl.exAsked=1;
+  await coach('think',['158 公分、53 公斤——個子小、肌肉少。等一下看腎功能時要記得這一點！','158 cm and 53 kg — petite, with little muscle. Remember that when we look at her kidneys!','158 ซม. 53 กก. — ตัวเล็ก กล้ามเนื้อน้อย จำไว้ตอนดูการทำงานของไตนะ!']);
   await say('chen','neutral',['運動喔？好多年沒運動了啦。每天在工廠站一整天，這樣就算運動了吧？','Exercise? Not for years. I stand at the factory all day — that counts, right?','ออกกำลังกายเหรอ? ไม่ได้ทำมาหลายปีแล้ว ยืนทำงานในโรงงานทั้งวัน แบบนี้ก็นับว่าออกกำลังแล้วมั้ง?']);
   reveal('P12');
+}
+async function calciumTask(){ if(S.calc.ca) return;
+  await coach('think',['骨鬆又骨折過，光吃藥不夠——鈣要吃夠。她平常吃得夠嗎？來算算看！','Osteoporosis plus a fracture — pills alone aren\'t enough; she needs enough calcium. Does she get it? Let\'s count!','กระดูกพรุนแถมเคยหัก กินยาอย่างเดียวไม่พอ ต้องได้แคลเซียมพอด้วย ป้าได้พอไหม? มานับกัน!']);
+  hideText(); const r=await calciumGame(); S.calc.ca={ok:r.ok, errs:r.errs, mg:r.mg, cost:r.cost}; logEvent({type:'calcium', ok:r.ok, errs:r.errs, mg:r.mg, cost:r.cost, plan:r.plan});
+  if(EXAM()){ sfx.select(); toast(T('examNoted')); }
+  await say('chen','think',['我都不知道一天要吃這麼多鈣……小魚乾和豆腐，我們家買得起。','I had no idea I needed that much calcium… dried fish and tofu we can afford.','ไม่รู้เลยว่าต้องได้แคลเซียมเยอะขนาดนี้… ปลาแห้งกับเต้าหู้บ้านเราซื้อไหว']);
 }
 ANSWERS.empathy=async()=>{ await say('chen','happy',['謝謝你喔，你人真好，跟你講話很舒服。','Thank you — you\'re very kind. It\'s nice talking with you.','ขอบใจนะ หนูใจดีจัง คุยแล้วสบายใจ']); };
 ANSWERS.blame=async()=>{ await say('chen','angry',['欸……你這樣講我就難過了。我已經很努力在顧這個家了！','Hey… that hurts. I\'m already working so hard to look after this family!','เอ๊ะ… พูดแบบนี้ป้าเสียใจนะ ป้าก็พยายามดูแลบ้านนี้เต็มที่แล้ว!']); addTrust(-1); };
@@ -2944,12 +2946,453 @@ async function dizzyEvent(){
     {t:['先暫停訪談，打開窗戶讓她坐著休息，等她舒服一點再繼續','Pause the interview, open a window and let her rest until she feels better','พักการสัมภาษณ์ไว้ก่อน เปิดหน้าต่างให้ป้านั่งพักจนรู้สึกดีขึ้น']},
     {t:['趁機追問：「您今天早上的降血糖藥吃了幾顆？」','Seize the moment: "How many diabetes pills did you take this morning?"','ถือโอกาสถาม: "เช้านี้ป้ากินยาเบาหวานไปกี่เม็ด?"']},
   ],{timer:8, shuffle:true, id:'dizzy_event', label:['王太太看起來不太對勁！','Mrs. Wang doesn\'t look right!','ป้าหวังดูไม่ค่อยดี!']});
-  if(c===0){ addTrust(1); patGain(1); S.fl.dizzyAte=1;
-    await say('chen','happy',['呼……吃了兩顆就好多了。今天中午太忙，忘了吃飯……謝謝你。','Phew… two of those and I feel better already. I was so busy at lunch that I forgot to eat… thank you.','เฮ้อ… กินไปสองเม็ดก็ดีขึ้นแล้ว เที่ยงนี้ยุ่งจนลืมกินข้าว… ขอบใจนะ']);
-    if(!EXAM()) await say('pilly','think',['沒吃飯＋發抖、冒冷汗……記住這一幕！','No lunch + shaking and cold sweat… remember this moment!','ไม่ได้กินข้าว + มือสั่น เหงื่อแตก… จำเหตุการณ์นี้ไว้!']); }
-  else if(c===1){ addTrust(1); patGain(1); await say('chen','happy',['呼……休息一下好多了。你真貼心。','Phew… a little rest helps. You\'re so thoughtful.','เฮ้อ… พักหน่อยก็ดีขึ้น หนูใส่ใจจริงๆ']); }
-  else if(c===2){ addTrust(-1); patSpend(1); await say('chen','angry',['我都暈成這樣了，你還在問藥……','I\'m this dizzy and you\'re still asking about pills…','ป้าเวียนหัวขนาดนี้ ยังมาถามเรื่องยาอีก…']); }
-  else await say('chen','neutral',['……沒事，我坐一下就好。','…It\'s fine, I\'ll just sit for a bit.','…ไม่เป็นไร นั่งพักสักครู่ก็หาย']);
+  const HYPO_Y=['發抖、冒冷汗、午餐沒吃——這是低血糖！休息不會好，要馬上處理。','Shaky, sweaty, no lunch — that\'s a hypo! Rest won\'t fix it; treat it now.','มือสั่น เหงื่อแตก ไม่ได้กินข้าวเที่ยง นี่คือน้ำตาลต่ำ! พักเฉยๆ ไม่หาย ต้องแก้ทันที'];
+  if(c===0){ addTrust(1); patGain(1); await coach('happy',['反應很快！不過她有吃 acarbose——照正確的方法處理，直到她安全為止。','Quick thinking! But she takes acarbose — do it properly, right until she\'s safe.','ไวมาก! แต่ป้ากิน acarbose อยู่ ดูแลให้ถูกวิธีจนป้าปลอดภัย']); }
+  else if(c===1){ addTrust(1); await say('chen','sad',['……還是好暈，手一直抖……','…Still so dizzy, my hands won\'t stop shaking…','…ยังเวียนหัวอยู่เลย มือสั่นไม่หยุด…']); await coach('think',HYPO_Y); }
+  else if(c===2){ addTrust(-1); patSpend(1); await say('chen','angry',['我都暈成這樣了，你還在問藥……','I\'m this dizzy and you\'re still asking about pills…','ป้าเวียนหัวขนาดนี้ ยังมาถามเรื่องยาอีก…']); await coach('think',['先救人，再問藥！她看起來是低血糖。','Treat her first, ask later — this looks like a hypo.','ช่วยป้าก่อน ค่อยถามทีหลัง ดูเหมือนน้ำตาลต่ำ']); }
+  else { await say('chen','sad',['……我、我坐一下就好……','…I-I\'ll just sit for a bit…','…ขะ…ขอนั่งพักแป๊บนึง…']); await coach('think',HYPO_Y); }
+  hideText(); const hr=await hypoGame(); S.calc.hypo={ok:hr.ok, errs:hr.errs, g:hr.g}; S.fl.dizzyAte=1; logEvent({type:'hypoGame', ok:hr.ok, errs:hr.errs, g:hr.g, checks:hr.checks});
+  if(EXAM()){ sfx.select(); toast(T('examNoted')); }
+  await say('chen','happy',['呼……好多了。今天中午太忙，忘了吃飯……謝謝你。','Phew… much better. I was so busy at lunch that I forgot to eat… thank you.','เฮ้อ… ดีขึ้นเยอะ เที่ยงนี้ยุ่งจนลืมกินข้าว… ขอบใจนะ']);
+  if(!EXAM()) await say('pilly','think',['沒吃飯＋發抖、冒冷汗……記住這一幕！','No lunch + shaking and cold sweat… remember this moment!','ไม่ได้กินข้าว + มือสั่น เหงื่อแตก… จำเหตุการณ์นี้ไว้!']);
+}
+/* ===== Case C hands-on games: shared panel · Fosamax Wednesday morning · hypo rescue · calcium & height · med-bag board ===== */
+const CGX={
+  done:['✅ 完成','✅ Done','✅ เสร็จแล้ว'], again:['↺ 再做一次','↺ Try again','↺ ลองอีกครั้ง'], cont:['繼續','Continue','ไปต่อ'],
+  perfect:['完美！','Perfect!','สมบูรณ์แบบ!'], fixes:['要修正的地方','What to fix','สิ่งที่ต้องแก้'], steps:['步驟','Steps','ขั้นตอน'],
+  examNote:['照你在現場會做的方式完成。','Do it the way you would on a real visit.','ทำให้ครบเหมือนตอนเยี่ยมบ้านจริง'],
+  drag:['拖到目標上（或點一下再點目標）','drag onto the target (or tap, then tap the target)','ลากไปวางที่เป้าหมาย (หรือแตะ แล้วแตะเป้าหมาย)'],
+};
+function cgCss(){ if($('#cgCss')) return; const st=document.createElement('style'); st.id='cgCss'; st.textContent=`
+#cgame{position:absolute;left:34px;right:34px;top:94px;bottom:16px;z-index:24;display:flex;flex-direction:column;background:rgba(255,255,255,.98);border-radius:28px;padding:12px 16px;box-shadow:0 0 0 5px #fff,0 0 0 10px #c47a2c,0 16px 40px rgba(0,0,0,.35);animation:enterC .4s cubic-bezier(.2,1.2,.4,1);touch-action:none;-webkit-user-select:none;user-select:none}
+#cgame .cg-head{display:flex;gap:14px;align-items:center;background:linear-gradient(90deg,#fff1dc,#fff8ec);border-radius:18px;padding:8px 14px;min-height:58px}
+#cgame .cg-head .no{flex:0 0 auto;background:#b4621a;color:#fff;font-weight:900;border-radius:14px;padding:6px 12px;font-size:19px}
+#cgame .cg-head .tx{flex:1;font-family:var(--tc);font-weight:900;font-size:23px;line-height:1.3;color:#4a2a0c}
+#cgame .cg-head .pf:empty{display:none}
+#cgame .cg-head .pf{flex:0 0 auto;font-weight:900;font-size:20px;color:#2d7a3d;background:#e7f8ec;border-radius:12px;padding:4px 12px}
+#cgame .cg-body{flex:1;display:flex;gap:12px;min-height:0;margin-top:10px}
+#cgame .cg-steps{width:286px;flex:0 0 auto;display:flex;flex-direction:column;gap:6px;overflow:auto}
+#cgame .cg-steps h4{margin:2px 4px 4px;font-size:18px;color:#b4621a}
+#cgame .st{display:flex;gap:8px;align-items:center;padding:7px 10px;border-radius:12px;background:#f8f5f0;font-weight:800;font-size:17px;line-height:1.25;color:#55524a}
+#cgame .st i{font-style:normal;flex:0 0 26px;text-align:center;font-size:20px}
+#cgame .st.nx{background:#fff3cf;box-shadow:inset 0 0 0 3px #ffb21f;color:#3b3a12}
+#cgame .st.ok{background:#e6f8ee;color:#1f7a4a}
+#cgame .st.bad{background:#ffeaee;color:#b4203c}
+#cgame .cg-scene{flex:1;position:relative;border-radius:20px;background:linear-gradient(180deg,#fff8ee 0,#fff3e2 58%,#e9d3b3 58%,#dfc29a 100%);overflow:hidden;min-width:0}
+#cgame .cg-side{width:250px;flex:0 0 auto;display:flex;flex-direction:column;gap:10px}
+#cgame .cg-side>.box{background:#f8f4ee;border-radius:18px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px}
+#cgame .cg-hint{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);background:rgba(74,42,12,.82);color:#fff;font-weight:800;font-size:17px;border-radius:99px;padding:6px 16px;white-space:nowrap;pointer-events:none;z-index:4}
+#cgame .cg-hint:empty{display:none}
+#cgame .tile{position:absolute;display:flex;flex-direction:column;align-items:center;gap:2px;width:118px;padding:8px 6px 6px;border-radius:18px;background:#fff;box-shadow:0 0 0 3px #ead9c2,0 6px 14px rgba(0,0,0,.12);font-weight:800;font-size:14.5px;line-height:1.2;text-align:center;color:#3a2a1c;cursor:grab;touch-action:none;transition:box-shadow .15s,transform .15s,opacity .3s}
+#cgame .tile svg{width:76px;height:76px;display:block;pointer-events:none}
+#cgame #cgGlass svg{width:132px;height:188px}
+#cgame .tile.sel{box-shadow:0 0 0 5px #13a39a,0 8px 18px rgba(0,0,0,.18);transform:scale(1.05)}
+#cgame .tile.want{animation:cgWant .5s infinite alternate;box-shadow:0 0 0 6px #ff3d5c,0 0 22px #ff3d5c}
+#cgame .tile.gone{opacity:.25;pointer-events:none}
+#cgame .tile.used{opacity:.4}
+#cgame .cg-src{opacity:.45}
+.cg-ghost{opacity:.92;filter:drop-shadow(0 12px 18px rgba(0,0,0,.3))}
+#cgame [data-drop].cg-over{box-shadow:0 0 0 6px #13a39a,0 0 24px rgba(19,163,154,.6)!important}
+#cgame .zone{position:absolute;border-radius:22px;border:4px dashed #c9a77a;background:rgba(255,255,255,.55);display:flex;align-items:flex-start;justify-content:center;font-weight:900;font-size:16px;color:#8a6a40;padding-top:6px;text-align:center}
+#cgame .who{position:absolute;border-radius:24px;background:radial-gradient(circle at 50% 40%,#fff,#f6e6d2);box-shadow:0 0 0 4px #ead9c2;overflow:hidden;transition:transform .8s cubic-bezier(.4,1.4,.5,1)}
+#cgame .who .art{position:absolute;left:50%;bottom:-6px;width:260px;transform:translateX(-50%)}
+#cgame .who .art svg{width:100%;height:auto;display:block}
+#cgame .who.tilt{transform:rotate(-58deg) translate(-40px,70px)}
+#cgame .bub{position:absolute;left:12px;right:12px;top:10px;background:#fff;border-radius:16px;padding:6px 10px;font-weight:800;font-size:16px;line-height:1.3;box-shadow:0 0 0 3px #ffb21f;z-index:2}
+#cgame .bub:empty{display:none}
+#cgame .cg-sum{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.88);border-radius:20px}
+#cgame .cg-sum .card{width:min(760px,92%);background:#fff;border-radius:22px;padding:18px 24px;box-shadow:0 0 0 4px #c47a2c,0 12px 30px rgba(0,0,0,.2)}
+#cgame .cg-sum h3{margin:0 0 10px;font-family:var(--tc);font-size:28px}
+#cgame .cg-sum li{font-size:19px;line-height:1.45;margin:4px 0;font-weight:700}
+#cgame .cg-sum .act{display:flex;gap:12px;justify-content:flex-end;margin-top:12px}
+#cgame .meter{width:100%;height:26px;border-radius:99px;background:#f0e6da;overflow:hidden;position:relative;box-shadow:inset 0 0 0 3px #e2d2bd}
+#cgame .meter b{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,#ffd166,#18b07f);transition:width .3s}
+#cgame .meter i{position:absolute;top:-4px;bottom:-4px;width:4px;background:#b4203c}
+@keyframes cgWant{from{transform:translateY(0) rotate(-2deg)}to{transform:translateY(-6px) rotate(2deg)}}`; document.head.appendChild(st); }
+/* panel + checklist + summary; o: {title, task, steps:[[k,t,ic]], errs:{k:[zh,en,th]}, err2step:{}, scene, side} */
+function cgPanel(o){
+  cgCss(); const ex=EXAM();
+  let h=$('#cgame'); if(!h){ h=document.createElement('div'); h.id='cgame'; $('#stage').appendChild(h); }
+  h.innerHTML=`<div class="cg-head"><span class="no">${esc(L(o.title))}</span><span class="tx" id="cgTx"></span><span class="pf" id="cgPf"></span></div>
+    <div class="cg-body">${ex||!o.steps?'':'<div class="cg-steps" id="cgSteps"></div>'}<div class="cg-scene" id="cgScene">${o.scene}<div class="cg-hint" id="cgHint"></div></div>
+    <div class="cg-side">${o.side||''}<button class="gbtn green" id="cgDone" style="font-size:20px;padding:12px 10px;margin-top:auto">${esc(L(CGX.done))}</button></div></div>`;
+  h.classList.remove('hidden');
+  const C={ex, errs:new Set(), done:new Set(), finished:false, sel:null, timers:[]};
+  C.paint=()=>{ const box=$('#cgSteps'); if(!box||!o.steps) return; const nx=o.steps.find(x=>!C.done.has(x[0])), bad=new Set(); C.errs.forEach(k=>o.err2step&&o.err2step[k]&&bad.add(o.err2step[k]));
+    box.innerHTML=`<h4>${esc(L(CGX.steps))}</h4>`+o.steps.map(([k,t,ic])=>`<div class="st ${C.done.has(k)?'ok':bad.has(k)?'bad':nx&&nx[0]===k?'nx':''}"><i>${C.done.has(k)?'✔️':bad.has(k)?'❗':ic}</i><span>${esc(L(t))}</span></div>`).join(''); };
+  C.text=()=>{ const nx=o.steps&&o.steps.find(x=>!C.done.has(x[0])); $('#cgTx').textContent=ex?L(o.task)+' '+L(CGX.examNote):(nx?nx[2]+' '+L(nx[1]):L(o.task)); };
+  C.hint=t=>{ $('#cgHint').textContent=t||''; };
+  C.err=k=>{ if(!C.errs.has(k)){ C.errs.add(k); if(!ex) toast('⚠️ '+L(o.errs[k])); } sfx.error(); C.paint(); };
+  C.mark=k=>{ if(!C.done.has(k)){ C.done.add(k); if(!ex) sfx.select(); C.paint(); C.text(); } };
+  C.later=(fn,ms)=>{ const t=setTimeout(()=>{ if(!C.finished) fn(); },ms); C.timers.push(t); return t; };
+  C.result=new Promise(res=>{ C._res=res; });
+  C.finish=(extra)=>{ if(C.finished) return; C.finished=true; C.timers.forEach(clearTimeout); if(C.raf) cancelAnimationFrame(C.raf);
+    const errs=[...C.errs], ok=!errs.length; const out=Object.assign({ok, errs}, extra||{});
+    if(ex){ sfx.select(); setTimeout(()=>{ h.classList.add('hidden'); h.innerHTML=''; C._res(out); },500); return; }
+    if(ok) sfx.get(); else sfx.error();
+    const sum=document.createElement('div'); sum.className='cg-sum';
+    sum.innerHTML=`<div class="card"><h3>${ok?'🎉 '+esc(L(CGX.perfect)):'🔧 '+esc(L(CGX.fixes))}</h3>${ok?'':`<ul>${errs.map(k=>`<li>${esc(L(o.errs[k]))}</li>`).join('')}</ul>`}${o.sumExtra?o.sumExtra(out):''}
+      <div class="act"><button class="gbtn green" id="cgCont">${esc(L(CGX.cont))}</button></div></div>`;
+    $('#cgScene').appendChild(sum);
+    $('#cgCont').onclick=()=>{ sfx.click(); h.classList.add('hidden'); h.innerHTML=''; C._res(out); }; };
+  $('#cgDone').onclick=()=>{ if(C.finished) return; sfx.click(); o.onDone?o.onDone():C.finish(); };
+  /* drag (or tap-then-tap) any [data-item] onto any [data-drop]; o.drop(item, zone) decides */
+  C.drag=(el, opt)=>{ opt=opt||{};
+    el.addEventListener('pointerdown',e=>{ if(C.finished||(opt.can&&!opt.can())) return; e.preventDefault();
+      const st=$('#stage').getBoundingClientRect(), k=st.width/1600, r=el.getBoundingClientRect();
+      const g=el.cloneNode(true); g.classList.add('cg-ghost'); g.classList.remove('sel','want');
+      g.style.cssText+=`;position:absolute;left:${(r.left-st.left)/k}px;top:${(r.top-st.top)/k}px;width:${r.width/k}px;margin:0;pointer-events:none;z-index:80;transition:none`;
+      $('#stage').appendChild(g); el.classList.add('cg-src'); try{ el.setPointerCapture(e.pointerId); }catch(_){}
+      const x0=e.clientX, y0=e.clientY; let moved=0, over=null;
+      const mv=ev=>{ const dx=(ev.clientX-x0)/k, dy=(ev.clientY-y0)/k; moved=Math.max(moved,Math.hypot(dx,dy)); g.style.transform=`translate(${dx}px,${dy}px)`;
+        const t=document.elementsFromPoint(ev.clientX,ev.clientY).find(n=>n!==el&&n.dataset&&n.dataset.drop&&$('#cgame').contains(n));
+        if(t!==over){ over&&over.classList.remove('cg-over'); over=t; over&&over.classList.add('cg-over'); } opt.move&&opt.move(over); };
+      const up=()=>{ el.removeEventListener('pointermove',mv); el.removeEventListener('pointerup',up); el.removeEventListener('pointercancel',up);
+        g.remove(); el.classList.remove('cg-src'); over&&over.classList.remove('cg-over'); opt.move&&opt.move(null);
+        if(C.finished) return;
+        if(moved<8){ if(opt.tap&&opt.tap()) return; C.select(el); return; }
+        if(over) o.drop(el, over); };
+      el.addEventListener('pointermove',mv); el.addEventListener('pointerup',up); el.addEventListener('pointercancel',up); }); };
+  C.select=el=>{ if(C.sel) C.sel.classList.remove('sel'); C.sel=C.sel===el?null:el; if(C.sel){ C.sel.classList.add('sel'); sfx.select(); } };
+  C.zone=z=>z.addEventListener('click',()=>{ if(C.finished||!C.sel||z===C.sel) return; const it=C.sel; C.sel.classList.remove('sel'); C.sel=null; o.drop(it, z); });
+  return C;
+}
+const CG_O='#3a2e22';
+const CG_ICON={
+  water:`<svg viewBox="0 0 80 80"><path d="M30 8 h20 v10 q12 6 12 20 v34 q0 4 -4 4 h-36 q-4 0 -4 -4 v-34 q0 -14 12 -20Z" fill="#d9f0ff" stroke="${CG_O}" stroke-width="3.5"/><rect x="28" y="4" width="24" height="9" rx="3" fill="#3d7bff" stroke="${CG_O}" stroke-width="3"/><path d="M22 44 h36 v28 h-36Z" fill="#9fd6ff" opacity=".7"/></svg>`,
+  coffee:`<svg viewBox="0 0 80 80"><path d="M16 26 h40 v30 q0 14 -14 14 h-12 q-14 0 -14 -14Z" fill="#fff" stroke="${CG_O}" stroke-width="3.5"/><path d="M56 32 q14 0 14 10 q0 10 -14 10" fill="none" stroke="${CG_O}" stroke-width="3.5"/><ellipse cx="36" cy="28" rx="18" ry="4" fill="#6b3e1e"/><path d="M28 8 q6 6 0 12 M40 6 q6 6 0 12" stroke="#b9a08a" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`,
+  milk:`<svg viewBox="0 0 80 80"><path d="M22 22 l8 -14 h20 l8 14 v50 h-36Z" fill="#fff" stroke="${CG_O}" stroke-width="3.5" stroke-linejoin="round"/><path d="M22 22 h36" stroke="${CG_O}" stroke-width="3"/><rect x="26" y="36" width="28" height="22" rx="4" fill="#4fa3ff"/><text x="40" y="52" text-anchor="middle" font-size="11" font-weight="900" fill="#fff" font-family="sans-serif">MILK</text></svg>`,
+  juice:`<svg viewBox="0 0 80 80"><rect x="20" y="16" width="40" height="56" rx="5" fill="#ffb21f" stroke="${CG_O}" stroke-width="3.5"/><path d="M48 16 l6 -10" stroke="${CG_O}" stroke-width="4" stroke-linecap="round"/><circle cx="40" cy="44" r="12" fill="#ff7a00" stroke="${CG_O}" stroke-width="2.5"/><path d="M40 32 v24 M28 44 h24" stroke="#ffd08a" stroke-width="2"/></svg>`,
+  fosa:`<svg viewBox="0 0 80 80"><rect x="8" y="18" width="64" height="44" rx="8" fill="#e8edf3" stroke="${CG_O}" stroke-width="3.5"/><ellipse cx="40" cy="40" rx="20" ry="13" fill="#fff" stroke="${CG_O}" stroke-width="3"/><text x="40" y="44" text-anchor="middle" font-size="9" font-weight="900" fill="#7a6a5a" font-family="sans-serif">70 mg</text><text x="40" y="74" text-anchor="middle" font-size="10" font-weight="900" fill="#18b07f" font-family="sans-serif">WED</text></svg>`,
+  food:`<svg viewBox="0 0 80 80"><ellipse cx="40" cy="62" rx="32" ry="8" fill="#fff" stroke="${CG_O}" stroke-width="3"/><path d="M14 56 q2 -26 26 -28 q24 2 26 28Z" fill="#fff6e6" stroke="${CG_O}" stroke-width="3.5"/><path d="M30 34 q10 -8 20 0" stroke="#e9d3b3" stroke-width="3" fill="none"/><rect x="56" y="18" width="18" height="30" rx="3" fill="#fff9e8" stroke="${CG_O}" stroke-width="3"/></svg>`,
+  pills:`<svg viewBox="0 0 80 80"><rect x="12" y="14" width="56" height="52" rx="8" fill="#fff" stroke="${CG_O}" stroke-width="3.5"/><circle cx="30" cy="34" r="7" fill="#ff8aa8" stroke="${CG_O}" stroke-width="2.5"/><rect x="42" y="27" width="16" height="14" rx="7" fill="#7fb1e3" stroke="${CG_O}" stroke-width="2.5"/><circle cx="34" cy="52" r="6" fill="#ffd166" stroke="${CG_O}" stroke-width="2.5"/><text x="52" y="58" text-anchor="middle" font-size="9" font-weight="900" fill="#7a6a5a" font-family="sans-serif">AM</text></svg>`,
+  meter:`<svg viewBox="0 0 80 80"><rect x="18" y="8" width="44" height="64" rx="12" fill="#5b6b7d" stroke="${CG_O}" stroke-width="3.5"/><rect x="25" y="16" width="30" height="22" rx="4" fill="#d9f5e6" stroke="${CG_O}" stroke-width="2.5"/><text x="40" y="32" text-anchor="middle" font-size="12" font-weight="900" fill="#1f5a3a" font-family="sans-serif">mg/dL</text><circle cx="40" cy="52" r="7" fill="#9fb0c2" stroke="${CG_O}" stroke-width="2.5"/><rect x="36" y="70" width="8" height="10" fill="#fff" stroke="${CG_O}" stroke-width="2"/></svg>`,
+  gluc:`<svg viewBox="0 0 80 80"><rect x="18" y="16" width="44" height="58" rx="10" fill="#fff" stroke="${CG_O}" stroke-width="3.5"/><rect x="16" y="6" width="48" height="14" rx="5" fill="#ff6b81" stroke="${CG_O}" stroke-width="3"/><rect x="24" y="30" width="32" height="20" rx="4" fill="#ffe6ea"/><text x="40" y="44" text-anchor="middle" font-size="10" font-weight="900" fill="#c0172f" font-family="sans-serif">GLUCOSE</text><text x="40" y="66" text-anchor="middle" font-size="10" font-weight="900" fill="#7a6a5a" font-family="sans-serif">4 g / tab</text></svg>`,
+  candy:`<svg viewBox="0 0 80 80"><path d="M14 32 l-8 -10 v36 l8 -10 M66 32 l8 -10 v36 l-8 -10" fill="#ff8aa8" stroke="${CG_O}" stroke-width="3"/><ellipse cx="40" cy="40" rx="27" ry="18" fill="#ff5d8f" stroke="${CG_O}" stroke-width="3.5"/><path d="M26 34 q14 -10 28 0" stroke="#ffd0dd" stroke-width="4" fill="none" stroke-linecap="round"/></svg>`,
+  bread:`<svg viewBox="0 0 80 80"><path d="M12 36 q0 -20 28 -20 q28 0 28 20 q0 6 -6 8 v22 q0 4 -4 4 h-36 q-4 0 -4 -4 v-22 q-6 -2 -6 -8Z" fill="#f2c27a" stroke="${CG_O}" stroke-width="3.5"/><path d="M24 30 q16 -8 32 0" stroke="#ffe2ad" stroke-width="4" fill="none" stroke-linecap="round"/></svg>`,
+};
+/* the empty glass with a fill level; kind: water | bad */
+function cgGlassSVG(ml,kind){ const h=Math.min(1,ml/300)*150, col=kind==='bad'?'#b97a46':'#9fd6ff';
+  return `<svg viewBox="0 0 140 200"><path d="M22 18 h96 l-10 170 q-1 6 -7 6 h-62 q-6 0 -7 -6Z" fill="rgba(235,247,255,.6)" stroke="${CG_O}" stroke-width="4"/>
+    <clipPath id="cgGl"><path d="M22 18 h96 l-10 170 q-1 6 -7 6 h-62 q-6 0 -7 -6Z"/></clipPath>
+    <rect x="0" y="${194-h}" width="140" height="${h}" fill="${col}" clip-path="url(#cgGl)"/>
+    ${[100,200,300].map(v=>`<path d="M104 ${194-v/2} h12" stroke="${CG_O}" stroke-width="3"/><text x="98" y="${199-v/2}" text-anchor="end" font-size="13" font-weight="900" fill="#5a4a3a" font-family="sans-serif">${v}</text>`).join('')}
+    <rect x="26" y="${194-240/2}" width="78" height="${(240-180)/2}" fill="#18b07f" opacity=".14"/></svg>`; }
+function cgClockSVG(min){ const a=min/60*360, ha=(6+min/60)*30;   // min = minutes after 6:00
+  return `<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" fill="#fff" stroke="${CG_O}" stroke-width="5"/>${[...Array(12)].map((_,i)=>`<path d="M60 12 v8" stroke="${CG_O}" stroke-width="3" transform="rotate(${i*30} 60 60)"/>`).join('')}
+    <path d="M60 60 V34" stroke="${CG_O}" stroke-width="6" stroke-linecap="round" transform="rotate(${ha} 60 60)"/><path d="M60 60 V18" stroke="#c0172f" stroke-width="4" stroke-linecap="round" transform="rotate(${a} 60 60)"/><circle cx="60" cy="60" r="5" fill="${CG_O}"/></svg>`; }
+function cgTile(k, name, x, y, extra){ return `<div class="tile" data-item="${k}" style="left:${x}px;top:${y}px" ${extra||''}>${CG_ICON[k]||''}<span>${esc(L(name))}</span></div>`; }
+
+/* ---------- 1) Fosamax Plus, Wednesday morning ---------- */
+const FOSA_ERR={
+  wrongDrink:['不能配咖啡、牛奶或果汁：藥幾乎吸收不到','Not with coffee, milk or juice — the drug is barely absorbed','ห้ามกินกับกาแฟ นม หรือน้ำผลไม้ ยาแทบไม่ถูกดูดซึม'],
+  littleWater:['水太少：要一大杯（約 200 mL），藥才不會卡在食道','Too little water — a full glass (≈200 mL) keeps the tablet from sticking in the oesophagus','น้ำน้อยไป ต้องเต็มแก้ว (ราว 200 มล.) ยาจะได้ไม่ติดหลอดอาหาร'],
+  dry:['藥要配著那一大杯水一起吞，不是先把水喝完','The tablet goes down WITH the full glass — not after the water is gone','ต้องกลืนยาพร้อมน้ำแก้วนั้น ไม่ใช่ดื่มน้ำหมดก่อน'],
+  notEmpty:['要空腹：吃藥前不能先吃早餐、喝飲料或吃其他藥','Empty stomach: no food, drinks or other pills before it','ต้องท้องว่าง ห้ามกินอาหาร เครื่องดื่ม หรือยาอื่นก่อน'],
+  lieDown:['吃完又躺下：藥會逆流傷食道，30 分鐘內要保持直立','Lying down lets it reflux and burn the oesophagus — stay upright for 30 min','นอนลงหลังกินยา ยาย้อนขึ้นมาทำร้ายหลอดอาหาร ต้องตัวตรง 30 นาที'],
+  early:['30 分鐘還沒到就吃喝東西：藥吸收不好','Ate or drank before the 30 minutes were up — poor absorption','กินหรือดื่มก่อนครบ 30 นาที ยาดูดซึมได้ไม่ดี'],
+  earlyPills:['30 分鐘內吃了其他藥：鈣片、制酸劑會擋住吸收','Other pills within 30 minutes — calcium or antacids block absorption','กินยาอื่นภายใน 30 นาที แคลเซียมหรือยาลดกรดขัดขวางการดูดซึม'],
+  noAfter:['30 分鐘後別忘了吃早餐和其他藥（她有吃降血糖藥！）','After 30 minutes: breakfast and her other pills (she\'s on diabetes pills!)','ครบ 30 นาทีแล้วต้องกินมื้อเช้าและยาอื่น (ป้ากินยาเบาหวานอยู่!)'],
+  noDose:['還沒有把藥吃下去','The tablet was never taken','ยังไม่ได้กินยา'],
+};
+function fosaGame(){
+  const steps=[['pour',['倒一大杯白開水（約 200 mL）','Pour a full glass of plain water (≈200 mL)','รินน้ำเปล่าเต็มแก้ว (ราว 200 มล.)'],'💧'],['swallow',['配那杯水吞下藥錠','Swallow the tablet with that water','กลืนยาพร้อมน้ำแก้วนั้น'],'💊'],
+    ['upright',['30 分鐘內保持直立','Stay upright for 30 minutes','ตัวตรง 30 นาที'],'🧍‍♀️'],['nothing',['30 分鐘內不吃不喝','Nothing to eat or drink for 30 min','ไม่กินไม่ดื่มอะไร 30 นาที'],'🚫'],
+    ['others',['30 分鐘內不吃其他藥','No other pills for 30 min','ไม่กินยาอื่น 30 นาที'],'⏳'],['after',['之後再吃早餐和其他藥','Then breakfast and her other pills','จากนั้นกินมื้อเช้าและยาอื่น'],'🥟']];
+  const scene=`<div class="zone" data-drop="later" style="left:16px;top:300px;width:396px;height:150px">⏳ ${esc(L(['等 30 分鐘後','After 30 minutes','หลัง 30 นาที']))}</div>
+    <div class="tile" data-item="glass" data-drop="glass" style="left:420px;top:24px;width:176px;cursor:grab"><div id="cgGlass">${cgGlassSVG(0,'water')}</div><span id="cgMl" style="font-size:18px">0 mL</span></div>
+    <button class="gbtn gray" id="cgEmpty" style="position:absolute;left:448px;top:300px;font-size:15px;padding:6px 12px">🫗 ${esc(L(['倒掉','Empty','เทออก']))}</button>
+    <div class="who" data-drop="wang" id="cgWho" style="right:16px;top:16px;width:270px;height:430px"><div class="bub" id="cgBub"></div><div class="art">${charSVG('chen','neutral')}</div></div>
+    <div style="position:absolute;left:20px;top:16px;width:120px" id="cgClock">${cgClockSVG(30)}</div><div style="position:absolute;left:150px;top:40px;font-weight:900;font-size:22px;color:#b4621a;line-height:1.3">🗓️ ${esc(L(['週三早上','Wednesday','เช้าวันพุธ']))}<br><span id="cgTime" style="font-size:30px;color:#3a2a1c">6:30</span></div>
+    ${cgTile('water',['白開水','Plain water','น้ำเปล่า'],16,476)}${cgTile('coffee',['咖啡','Coffee','กาแฟ'],146,476)}${cgTile('milk',['牛奶','Milk','นม'],276,476)}${cgTile('juice',['柳橙汁','Orange juice','น้ำส้ม'],406,476)}
+    ${cgTile('fosa',['Fosamax Plus 70 mg','Fosamax Plus 70 mg','Fosamax Plus 70 มก.'],536,476)}${cgTile('food',['早餐','Breakfast','มื้อเช้า'],666,476)}${cgTile('pills',['早上的其他藥','Other AM pills','ยาเช้าอื่นๆ'],796,476)}`;
+  const fd=DRUGS.find(d=>d.id==='fosamax'), side=`<div class="box" style="align-items:stretch;text-align:left"><div style="font-weight:900;color:#18b07f;font-size:15px">🏷️ ${esc(L(['藥袋標示','Bag label','ฉลากซองยา']))}</div><b style="font-size:17px;line-height:1.25">${esc(fd.n)}</b><span style="font-size:14px;color:#6a6585">${esc(fd.g)}</span><span style="font-weight:800;font-size:16px;line-height:1.35">${esc(L(fd.sig))}</span></div>`;
+  const C=cgPanel({title:['💊 實作：週三早上的骨鬆藥','💊 Hands-on: Wednesday\'s bone pill','💊 ลงมือ: ยากระดูกเช้าวันพุธ'], task:['陪王太太完成這週的 Fosamax：從起床到吃早餐。','Walk Mrs. Wang through this week\'s Fosamax — from waking up to breakfast.','พาป้าหวังกิน Fosamax ของสัปดาห์นี้ ตั้งแต่ตื่นนอนจนถึงมื้อเช้า'],
+    steps, errs:FOSA_ERR, err2step:{wrongDrink:'pour',littleWater:'pour',dry:'swallow',notEmpty:'swallow',lieDown:'upright',early:'nothing',earlyPills:'others',noAfter:'after',noDose:'swallow'}, scene, side,
+    drop:(it,z)=>drop(it,z), onDone:()=>done()});
+  const G={ml:0, kind:'water', tablet:false, swallowed:false, drankFirst:false, wait:false, after:false, min:30, gone:new Set(), later:new Set(), want:null, pour:null};
+  const bub=(t,ms)=>{ $('#cgBub').textContent=t; if(ms) C.later(()=>{ if($('#cgBub').textContent===t) $('#cgBub').textContent=''; },ms); };
+  const glass=()=>{ $('#cgGlass').innerHTML=cgGlassSVG(G.ml,G.kind); $('#cgMl').textContent=Math.round(G.ml)+' mL'; };
+  const tile=k=>$(`#cgScene .tile[data-item="${k}"]`);
+  const art=e=>{ $('#cgWho .art').innerHTML=charSVG('chen',e); };
+  // pouring: hold a drink over the glass
+  ['water','coffee','milk','juice'].forEach(k=>C.drag(tile(k),{move:over=>{ G.pour=over&&over.dataset.drop==='glass'?k:null; }, tap:()=>{ if(G.swallowed) return false; pourStep(k); return true; }}));
+  const pourStep=k=>{ if(G.ml>=300) return; G.ml=Math.min(320,G.ml+50); if(k!=='water') G.kind='bad'; sfx.whoosh(); glass(); };
+  let lastT=performance.now();
+  const loop=now=>{ if(C.finished) return; const dt=Math.min(.1,(now-lastT)/1000); lastT=now;
+    if(G.pour&&!G.swallowed){ if(G.ml<320){ G.ml=Math.min(320,G.ml+dt*90); if(G.pour!=='water') G.kind='bad'; glass(); } }
+    C.raf=requestAnimationFrame(loop); };
+  C.raf=requestAnimationFrame(loop);
+  $('#cgEmpty').onclick=()=>{ if(C.finished||G.swallowed) return; G.ml=0; G.kind='water'; sfx.click(); glass(); };
+  C.drag(tile('glass'),{can:()=>G.ml>0&&!G.swallowed}); ['fosa','food','pills'].forEach(k=>C.drag(tile(k),{can:()=>!G.gone.has(k)}));
+  ['coffee','milk','juice','water'].forEach(k=>{});   // drinks stay on the shelf
+  C.zone($('#cgWho')); C.zone($('#cgScene .zone')); C.zone(tile('glass'));
+  function drop(it,z){ const k=it.dataset.item, zk=z.dataset.drop;
+    if(zk==='glass'&&['water','coffee','milk','juice'].includes(k)){ pourStep(k); return; }
+    if(zk==='later'){ if(['food','pills','coffee','milk','juice'].includes(k)){ G.later.add(k); if(G.want===k) resolveWant(true); else { sfx.click(); it.style.left=(26+(G.later.size-1)*126)+'px'; it.style.top='326px'; } } return; }
+    if(zk!=='wang') return;
+    if(k==='fosa'){ if(G.tablet||G.swallowed) return; G.tablet=true; G.gone.add('fosa'); tile('fosa').classList.add('gone'); sfx.pop(); bub(L(['（藥在嘴裡）水呢？','(Tablet in mouth) Water?','(ยาอยู่ในปาก) น้ำล่ะ?']));
+      if(G.drankFirst) { C.err('dry'); } return; }
+    if(k==='glass'){ if(G.swallowed) return;
+      if(!G.tablet){ G.drankFirst=true; G.ml=0; G.kind='water'; glass(); sfx.whoosh(); bub(L(['咕嚕咕嚕……藥呢？','Gulp gulp… and the pill?','อึกๆ… แล้วยาล่ะ?']),1800); return; }
+      if(G.kind==='bad') C.err('wrongDrink'); else if(G.ml<170) C.err('littleWater'); else C.mark('pour');
+      if(!G.drankFirst||G.ml>=170) {} G.swallowed=true; G.ml=0; glass(); sfx.whoosh(); C.mark('swallow'); bub(L(['好，吞下去了！','Done — swallowed!','กลืนแล้ว!']),1500); startWait(); return; }
+    if(['food','pills','coffee','milk','juice','water'].includes(k)){
+      if(!G.swallowed){ if(k!=='water'){ C.err('notEmpty'); consume(k); } return; }
+      if(G.wait){ if(k==='water') return; C.err(k==='pills'?'earlyPills':'early'); consume(k); if(G.want===k) resolveWant(false,true); return; }
+      if(G.after&&(k==='food'||k==='pills')){ consume(k); sfx.get(); checkAfter(); } } }
+  const consume=k=>{ if(['food','pills'].includes(k)){ G.gone.add(k); tile(k).classList.add('gone'); } else tile(k).classList.add('used'); };
+  function startWait(){ G.wait=true; C.text(); if(!C.ex) C.hint(L(['她想做的事，在她做之前擋下來！','Stop whatever she reaches for — before she does it!','หยุดสิ่งที่ป้าจะทำ ก่อนที่ป้าจะทำ!']));
+    const evs=['lie','coffee','food','pills'].sort(()=>Math.random()-.5).slice(0,3), span=16000, t0=performance.now();
+    const clk=setInterval(()=>{ if(C.finished){ clearInterval(clk); return; } const m=Math.min(60,30+Math.floor((performance.now()-t0)/span*30)); if(m!==G.min){ G.min=m; $('#cgClock').innerHTML=cgClockSVG(m); $('#cgTime').textContent='6:'+String(m).padStart(2,'0').replace('60','00'); if(m===60) $('#cgTime').textContent='7:00'; }
+      if(m>=60){ clearInterval(clk); endWait(); } },200);
+    evs.forEach((ev,i)=>C.later(()=>want(ev),2400+i*4200)); }
+  function want(ev){ if(!G.wait) return; if(ev!=='lie'&&(G.gone.has(ev)||G.later.has(ev))) return;
+    G.want=ev; const T={lie:['好睏喔……我再躺 10 分鐘就好。','So sleepy… just ten more minutes in bed.','ง่วงจัง… ขอนอนต่ออีกสิบนาทีนะ'], coffee:['先喝口咖啡提神……','Just a sip of coffee to wake up…','ขอจิบกาแฟให้ตื่นหน่อย…'], food:['肚子好餓，先吃一口饅頭……','I\'m starving — one bite of my bun…','หิวจัง ขอกินซาลาเปาสักคำ…'], pills:['順便把其他藥一起吃一吃……','I\'ll take my other pills while I\'m at it…','กินยาอื่นไปพร้อมกันเลยดีกว่า…']};
+    bub(L(T[ev])); sfx.blip('chen');
+    if(ev==='lie'){ $('#cgWho').classList.add('tilt'); art('think'); } else tile(ev).classList.add('want');
+    G.wantT=C.later(()=>resolveWant(false),C.ex?3200:4200); }
+  function resolveWant(ok,already){ const ev=G.want; if(!ev) return; G.want=null; clearTimeout(G.wantT);
+    if(ev==='lie'){ if(ok){ $('#cgWho').classList.remove('tilt'); art('happy'); bub(L(['好啦好啦，我坐著。','Fine, fine — I\'ll sit up.','ก็ได้ๆ นั่งก็ได้']),1500); sfx.select(); } else { C.err('lieDown'); bub(L(['呼……（躺下了）','Zzz… (lies down)','ครอก… (นอนลงแล้ว)']),1500); C.later(()=>{ $('#cgWho').classList.remove('tilt'); art('neutral'); },1600); } return; }
+    tile(ev).classList.remove('want');
+    if(ok){ sfx.select(); bub(L(['好，等 7 點再說。','Okay, after seven then.','โอเค รอเจ็ดโมงก่อน']),1500); const it=tile(ev); it.style.left=(26+([...G.later].indexOf(ev))*126)+'px'; it.style.top='326px'; }
+    else if(!already){ C.err(ev==='pills'?'earlyPills':'early'); consume(ev); bub(L(['（她吃下去了）','(she has it)','(ป้ากินไปแล้ว)']),1500); } }
+  $('#cgWho').addEventListener('pointerdown',()=>{ if(G.want==='lie') resolveWant(true); });
+  function endWait(){ G.wait=false; G.after=true; if(G.want) resolveWant(false);
+    if(!C.errs.has('lieDown')) C.mark('upright'); if(!C.errs.has('early')) C.mark('nothing'); if(!C.errs.has('earlyPills')) C.mark('others');
+    bub(L(['7 點了！可以吃早餐了嗎？','Seven o\'clock! Can I have breakfast now?','เจ็ดโมงแล้ว! กินข้าวเช้าได้หรือยัง?'])); C.hint(C.ex?'':L(['把早餐和早上的藥拿給她','give her breakfast and her morning pills','ให้มื้อเช้าและยาเช้าแก่ป้า'])); checkAfter(); }
+  function checkAfter(){ if(!G.after) return; if(G.gone.has('food')&&G.gone.has('pills')){ C.mark('after'); C.later(()=>C.finish({min:G.min}),900); } }
+  function done(){ if(!G.swallowed) C.errs.add('noDose'); else if(!(G.gone.has('food')&&G.gone.has('pills'))) C.errs.add('noAfter'); C.finish({min:G.min}); }
+  C.paint(); C.text(); if(!C.ex) C.hint(L(['先把水倒進杯子：把水瓶拖到杯子上按住','First fill the glass: drag a bottle onto the glass and hold','รินน้ำก่อน: ลากขวดไปค้างไว้บนแก้ว']));
+  return C.result;
+}
+
+/* ---------- 2) hypoglycaemia rescue on acarbose ---------- */
+const HYPO_ERR={
+  sucrose:['吃 acarbose 時，糖果（蔗糖）升血糖太慢——要用葡萄糖錠','On acarbose, candy (sucrose) is too slow — use glucose tablets','กิน acarbose อยู่ ลูกอม (ซูโครส) ช่วยช้าเกินไป ต้องใช้เม็ดกลูโคส'],
+  slowCarb:['低血糖時先不要給麵包：澱粉太慢，先給葡萄糖','Not bread first — starch is too slow; give glucose first','อย่าเพิ่งให้ขนมปังตอนน้ำตาลต่ำ แป้งช้าไป ต้องให้กลูโคสก่อน'],
+  under:['葡萄糖不夠：一次要給 15–20 g（4 錠）','Not enough glucose — give 15–20 g (4 tablets) at a time','กลูโคสไม่พอ ต้องให้ครั้งละ 15–20 ก. (4 เม็ด)'],
+  tooMuch:['一次給太多：15–20 g 就好，給太多會讓血糖反彈太高','Too much at once — 15–20 g is enough; more overshoots','ให้มากไปในครั้งเดียว 15–20 ก. ก็พอ มากไปน้ำตาลจะพุ่งสูง'],
+  tooSoon:['還沒等 15 分鐘就重測：數值還沒反應出來','Rechecked before 15 minutes — the reading hasn\'t caught up yet','วัดซ้ำก่อนครบ 15 นาที ค่ายังไม่ขึ้น'],
+  noRecheck:['處理後要再測一次，確定回到 70 以上','Recheck after treating to make sure she\'s back above 70','หลังแก้ไขต้องวัดซ้ำให้แน่ใจว่ากลับมาเกิน 70'],
+  noSnack:['回到 70 以上後，她還沒吃午餐：要吃點東西，避免再掉','Back above 70 — but she skipped lunch: she needs a snack or meal so it doesn\'t drop again','กลับมาเกิน 70 แล้ว แต่ป้ายังไม่ได้กินข้าวเที่ยง ต้องกินอะไรรองท้อง ไม่ให้ตกอีก'],
+};
+function hypoGame(){
+  const steps=[['check',['先測血糖（有血糖機就測）','Check her sugar (meter at hand)','วัดน้ำตาลก่อน (ถ้ามีเครื่อง)'],'🩸'],['treat',['給 15–20 g 葡萄糖','Give 15–20 g of glucose','ให้กลูโคส 15–20 ก.'],'🍬'],
+    ['wait',['等 15 分鐘','Wait 15 minutes','รอ 15 นาที'],'⏱️'],['recheck',['再測一次','Recheck','วัดซ้ำ'],'🔁'],['snack',['回到 70 以上後吃點東西','Above 70 → a snack or meal','เกิน 70 แล้ว → กินอาหารรองท้อง'],'🍞']];
+  const scene=`<div class="who" data-drop="wang" id="cgWho" style="right:16px;top:16px;width:290px;height:440px"><div class="bub" id="cgBub"></div><div class="art">${charSVG('chen','sad')}</div></div>
+    <div style="position:absolute;left:24px;top:20px;display:flex;gap:16px;align-items:center"><div style="width:150px;touch-action:none;cursor:grab" id="cgClock" data-drop="clock">${cgClockSVG(0)}</div>
+      <div style="font-weight:900;font-size:19px;color:#b4621a;line-height:1.4">${esc(L(['轉動紅色分針讓時間過去','Turn the red minute hand to let time pass','หมุนเข็มนาทีสีแดงให้เวลาผ่านไป']))}<br><span id="cgWait" style="font-size:30px;color:#3a2a1c">+0 min</span><br><button class="gbtn gray" id="cgPlus5" style="font-size:16px;padding:6px 14px;margin-top:4px">⏩ +5 min</button></div></div>
+    <div style="position:absolute;left:24px;top:206px;width:260px;text-align:center;background:#fff;border-radius:18px;padding:10px;box-shadow:0 0 0 3px #ead9c2"><div style="font-weight:900;color:#5a4a3a">🩸 ${esc(L(['血糖','Blood sugar','น้ำตาลในเลือด']))}</div><div id="cgBg" style="font-size:44px;font-weight:900;color:#3a2a1c">— —</div><div style="font-weight:900;color:#5a4a3a">🍬 ${esc(L(['葡萄糖','Glucose','กลูโคส']))}: <b id="cgG">0</b> g</div></div>
+    ${cgTile('meter',['血糖機','Glucose meter','เครื่องวัดน้ำตาล'],24,476)}${cgTile('gluc',['葡萄糖錠','Glucose tablets','เม็ดกลูโคส'],154,476)}${cgTile('candy',['硬糖','Hard candy','ลูกอมแข็ง'],284,476)}${cgTile('juice',['柳橙汁','Orange juice','น้ำส้ม'],414,476)}${cgTile('bread',['蘇打餅乾','Crackers','ขนมปังกรอบ'],544,476)}`;
+  const C=cgPanel({title:['🩸 實作：低血糖急救','🩸 Hands-on: hypo rescue','🩸 ลงมือ: แก้น้ำตาลต่ำ'], task:['王太太在發抖冒冷汗，她有吃 acarbose。處理到她安全為止。','Mrs. Wang is shaky and sweaty — and she takes acarbose. Handle it until she\'s safe.','ป้าหวังมือสั่นเหงื่อแตก และกิน acarbose อยู่ ดูแลจนป้าปลอดภัย'],
+    steps, errs:HYPO_ERR, err2step:{sucrose:'treat',slowCarb:'treat',under:'treat',tooMuch:'treat',tooSoon:'wait',noRecheck:'recheck',noSnack:'snack'}, scene, drop:(it,z)=>drop(it,z), onDone:()=>done()});
+  const G={bg:58, g:0, roundG:0, waited:0, treated:false, rechecked:false, ok:false, snack:false, checks:0, sinceTreat:-1};
+  const bub=(t,ms)=>{ $('#cgBub').textContent=t; if(ms) C.later(()=>{ if($('#cgBub').textContent===t) $('#cgBub').textContent=''; },ms); };
+  const tile=k=>$(`#cgScene .tile[data-item="${k}"]`);
+  bub(L(['手好抖……頭暈……','My hands are shaking… so dizzy…','มือสั่นจัง… เวียนหัว…']));
+  ['meter','gluc','candy','juice','bread'].forEach(k=>C.drag(tile(k))); C.zone($('#cgWho'));
+  function drop(it,z){ const k=it.dataset.item; if(z.dataset.drop!=='wang') return;
+    if(k==='meter'){ G.checks++;
+      if(G.sinceTreat>=0&&G.waited<15){ C.err('tooSoon'); show(G.bg); return; }
+      if(G.sinceTreat>=0){ if(G.roundG<15) C.err('under'); G.bg=G.roundG>=15?(G.roundG>24?168:94):G.roundG>=8?66:60; G.rechecked=true; G.sinceTreat=-1; G.roundG=0;
+        if(G.bg>=70){ G.ok=true; C.mark('recheck'); bub(L(['好多了……手不抖了。','Much better… the shaking\'s gone.','ดีขึ้นเยอะ… มือหายสั่นแล้ว']),2200); $('#cgWho .art').innerHTML=charSVG('chen','happy'); }
+        else { bub(L(['還是有點暈……','Still a bit dizzy…','ยังเวียนหัวอยู่นิด…']),2000); C.done.delete('treat'); C.done.delete('wait'); C.paint(); C.text(); } }
+      else C.mark('check');
+      show(G.bg); return; }
+    if(k==='gluc'){ if(G.ok) return; if(G.sinceTreat>=0&&G.waited>=15&&G.roundG>=15){ sfx.error(); bub(L(['先再測一次血糖吧？','Check my sugar again first?','วัดน้ำตาลอีกทีก่อนไหม?']),1500); return; } G.g+=4; G.roundG+=4; if(G.sinceTreat<0){ G.sinceTreat=0; setWait(0); } $('#cgG').textContent=G.g; sfx.pop(); bub(L(['（嚼一顆葡萄糖錠）','(chews a glucose tablet)','(เคี้ยวเม็ดกลูโคส)']),900);
+      if(G.roundG>=15) C.mark('treat'); if(G.roundG>24) C.err('tooMuch'); return; }
+    if(k==='candy'||k==='juice'){ if(G.ok) return; C.err('sucrose'); sfx.pop(); return; }
+    if(k==='bread'){ if(!G.ok){ C.err('slowCarb'); return; } G.snack=true; C.mark('snack'); sfx.get(); bub(L(['謝謝你，我中午都忘了吃飯……','Thank you — I forgot to eat lunch…','ขอบใจนะ เที่ยงนี้ลืมกินข้าวเลย…']),2000); C.later(()=>C.finish({g:G.g, bg:G.bg, checks:G.checks}),1200); } }
+  const show=v=>{ const e=$('#cgBg'); e.textContent=v+' mg/dL'; e.style.color=v<70?'#c0172f':'#18b07f'; sfx.select(); };
+  const setWait=(m,keepF)=>{ G.waited=m; if(!keepF) G.wf=m; $('#cgWait').textContent='+'+m+' min'; $('#cgClock').innerHTML=cgClockSVG(m); if(m>=15&&G.sinceTreat>=0) C.mark('wait'); };
+  $('#cgPlus5').onclick=()=>{ if(C.finished) return; if(G.sinceTreat<0){ sfx.error(); bub(L(['先處理我，再等時間啦……','Treat me first, then wait…','ช่วยป้าก่อนแล้วค่อยรอ…']),1600); return; } G.wf=Math.min(30,G.waited+5); setWait(Math.floor(G.wf),true); sfx.tick(); };
+  // drag the minute hand clockwise to let time pass (only after glucose was given)
+  const ck=$('#cgClock'); let drag=null;
+  ck.addEventListener('pointerdown',e=>{ if(C.finished) return; e.preventDefault(); const r=ck.getBoundingClientRect(); drag={cx:r.left+r.width/2, cy:r.top+r.height/2, a:null}; try{ ck.setPointerCapture(e.pointerId); }catch(_){} });
+  ck.addEventListener('pointermove',e=>{ if(!drag) return; let a=Math.atan2(e.clientX-drag.cx, drag.cy-e.clientY)*180/Math.PI; if(a<0) a+=360;
+    if(drag.a!=null){ let d=a-drag.a; if(d<-180) d+=360; if(d>180) d-=360; if(d>0&&G.sinceTreat>=0){ G.wf=Math.min(30,(G.wf||0)+d/6); const m=Math.floor(G.wf); if(m!==G.waited){ setWait(m,true); if(m%5===0) sfx.tick(); } } } drag.a=a; });
+  const ckUp=()=>{ drag=null; };
+  ck.addEventListener('pointerup',ckUp); ck.addEventListener('pointercancel',ckUp);
+  function done(){ if(G.g>0&&!G.rechecked) C.errs.add('noRecheck'); else if(G.ok&&!G.snack) C.errs.add('noSnack'); if(!G.g) C.errs.add('under'); C.finish({g:G.g, bg:G.bg, checks:G.checks}); }
+  C.paint(); C.text(); if(!C.ex) C.hint(L(CGX.drag));
+  return C.result;
+}
+
+/* ---------- 3) measuring her height properly, then comparing with the 2018 health booklet ---------- */
+const HT_ERR={
+  shoes:['穿著拖鞋量：多了約 2 公分','Measured in her slippers — about 2 cm too tall','วัดทั้งที่ใส่รองเท้าแตะ สูงเกินไปราว 2 ซม.'],
+  level:['頭低著量：要平視前方（耳朵和眼角連線水平）','Head tipped down — she must look straight ahead (ear–eye line level)','ก้มหน้าตอนวัด ต้องมองตรงไปข้างหน้า (แนวหู–หางตาขนานพื้น)'],
+  compare:['和 2018 年的身高相減算錯了','The subtraction from the 2018 height is off','คำนวณส่วนต่างกับส่วนสูงปี 2018 ผิด'],
+  noRead:['還沒有讀出身高','The height was never read','ยังไม่ได้อ่านค่าส่วนสูง'],
+};
+function heightGame(){
+  const steps=[['shoes',['脫掉拖鞋','Slippers off','ถอดรองเท้าแตะ'],'🩴'],['wall',['腳跟、臀部、背貼牆站直','Heels, hips and back against the wall','ส้นเท้า สะโพก หลัง ชิดผนัง'],'🧍‍♀️'],
+    ['level',['平視前方','Look straight ahead','มองตรงไปข้างหน้า'],'👀'],['board',['頭板輕放到頭頂','Lower the headboard onto her head','เลื่อนแผ่นวัดลงแตะศีรษะ'],'📏'],
+    ['read',['視線和刻度同高讀數','Read at eye level','อ่านค่าในระดับสายตา'],'🔎'],['compare',['和 2018 年健檢比較','Compare with the 2018 check-up','เทียบกับผลตรวจปี 2018'],'📒']];
+  const K=3.4, FLOOR=650, POLE=640, X0=230, XW=POLE-62;   // px per cm; figure's back x at the wall
+  const scale=[...Array(41)].map((_,i)=>{ const cm=140+i, y=FLOOR-cm*K, big=cm%10===0, mid=cm%5===0;
+    return `<path d="M${POLE} ${y.toFixed(1)} h${big?-26:mid?-18:-10}" stroke="#3a2e22" stroke-width="${big?3:2}"/>${mid?`<text x="${POLE+24}" y="${(y+6).toFixed(1)}" font-size="${big?18:14}" font-weight="900" fill="#3a2e22" font-family="sans-serif">${cm}</text>`:''}`; }).join('');
+  const scene=`<svg id="htSvg" viewBox="0 0 940 690" preserveAspectRatio="xMinYMin meet" style="position:absolute;inset:0;width:100%;height:100%;touch-action:none">
+    <rect x="${POLE}" y="0" width="300" height="${FLOOR}" fill="#f1e2c9"/><rect x="0" y="${FLOOR}" width="940" height="40" fill="#d8bf98"/>
+    <rect x="${POLE}" y="16" width="16" height="${FLOOR-16}" fill="#fff" stroke="#3a2e22" stroke-width="3"/>${scale}
+    <g id="htBoard" style="cursor:grab"><rect x="${POLE-150}" y="-7" width="170" height="14" rx="4" fill="#5b8fd6" stroke="#3a2e22" stroke-width="3"/><rect x="${POLE-6}" y="-16" width="28" height="32" rx="5" fill="#3d6fb8" stroke="#3a2e22" stroke-width="3"/></g>
+    <g id="htFig" style="cursor:grab"></g>
+    <g id="htSlip" style="cursor:pointer"></g>
+    <g id="htRead" style="display:none"><rect x="${POLE+70}" y="0" width="190" height="84" rx="16" fill="#fff" stroke="#18b07f" stroke-width="5"/><text id="htVal" x="${POLE+165}" y="56" text-anchor="middle" font-size="38" font-weight="900" fill="#1f5a3a" font-family="sans-serif"></text></g>
+  </svg><div class="bub" id="cgBub" style="left:auto;right:12px;top:auto;bottom:56px;width:260px"></div>`;
+  const side=`<div class="box" style="align-items:stretch;text-align:left"><div style="font-weight:900;color:#b4621a">📒 ${esc(L(['2018 工廠健檢手冊','2018 factory check-up','สมุดตรวจสุขภาพโรงงาน 2018']))}</div><div style="font-size:30px;font-weight:900">162.0 cm</div>
+      <div style="font-weight:900;color:#3d7bff;margin-top:6px">📏 ${esc(L(['今天量到','Today','วันนี้วัดได้']))}</div><div id="htToday" style="font-size:30px;font-weight:900">— —</div>
+      <div style="font-weight:900;margin-top:6px">${esc(L(['矮了幾公分？','How many cm shorter?','เตี้ยลงกี่ ซม.?']))}</div>
+      <div style="display:flex;gap:6px;align-items:center"><input id="htDiff" type="number" step="0.1" inputmode="decimal" style="width:96px;font-size:22px;font-weight:900;padding:6px;border-radius:10px;border:3px solid #ead9c2" disabled> cm</div>
+      <button class="gbtn blue" id="htCheck" style="font-size:17px;padding:8px 10px" disabled>${esc(L(['確認','Check','ตรวจ']))}</button></div>`;
+  const C=cgPanel({title:['📏 實作：量身高','📏 Hands-on: measure her height','📏 ลงมือ: วัดส่วนสูง'], task:['用正確的方法量王太太的身高，再和 2018 年的紀錄比較。','Measure Mrs. Wang properly, then compare with her 2018 record.','วัดส่วนสูงป้าหวังให้ถูกวิธี แล้วเทียบกับบันทึกปี 2018'],
+    steps, errs:HT_ERR, err2step:{shoes:'shoes',level:'level',compare:'compare',noRead:'read'}, scene, side, drop:()=>{}, onDone:()=>done(),
+    sumExtra:out=>`<p style="font-size:18px;font-weight:800;line-height:1.45;margin:8px 0 0;color:#5a1030">🦴 ${esc(L(['骨鬆病人身高減少 ≥ 4 公分（或一年 ≥ 2 公分）、又有背痛：要懷疑脊椎壓迫性骨折，請醫師安排 X 光。','Height loss of ≥ 4 cm (or ≥ 2 cm in a year) plus back pain in osteoporosis: suspect a vertebral compression fracture — ask the doctor for an X-ray.','ผู้ป่วยกระดูกพรุนที่ส่วนสูงลดลง ≥ 4 ซม. (หรือ ≥ 2 ซม. ใน 1 ปี) ร่วมกับปวดหลัง: สงสัยกระดูกสันหลังยุบ ควรให้แพทย์ส่งเอกซเรย์']))}</p>`});
+  const G={x:X0, slip:true, level:false, wall:false, boardY:30, touch:false, read:null};
+  const svg=$('#htSvg'), fig=$('#htFig'), slip=$('#htSlip'), board=$('#htBoard');
+  const pt=e=>{ const p=svg.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; return p.matrixTransform(svg.getScreenCTM().inverse()); };
+  const bub=(t,ms)=>{ $('#cgBub').textContent=t; if(ms) C.later(()=>{ if($('#cgBub').textContent===t) $('#cgBub').textContent=''; },ms); };
+  const hCm=()=>158+(G.slip?2:0)-(G.level?0:1.5), top=()=>FLOOR-hCm()*K;
+  function drawFig(){ const H=158*K, lift=G.slip?2*K:0, tilt=G.level?0:-17;
+    fig.setAttribute('transform',`translate(${G.x},${FLOOR-lift})`);
+    fig.innerHTML=`<path d="M10 0 v-${H*.47} h44 v${H*.47} Z" fill="#3b4a7a" stroke="#3a2e22" stroke-width="4"/><path d="M6 -${H*.47} q-6 -${H*.18} 6 -${H*.33} h44 q10 ${H*.15} 6 ${H*.33}Z" fill="#3a6fb5" stroke="#3a2e22" stroke-width="4"/>
+      <path d="M14 -${H*.75} q-24 ${H*.12} -14 ${H*.26}" stroke="#f6c9a8" stroke-width="16" fill="none" stroke-linecap="round"/><path d="M14 -${H*.75} q-24 ${H*.12} -14 ${H*.26}" stroke="#3a2e22" stroke-width="3" fill="none" opacity=".25"/>
+      <rect x="22" y="-${H*.86}" width="20" height="${H*.07}" fill="#f6c9a8" stroke="#3a2e22" stroke-width="3"/>
+      <g transform="rotate(${tilt} 32 -${H*.86})" id="htHead" style="cursor:pointer"><ellipse cx="30" cy="-${H*.93}" rx="40" ry="${H*.072}" fill="#f6c9a8" stroke="#3a2e22" stroke-width="4"/>
+        <path d="M66 -${H*.97} q2 -${H*.06} -36 -${H*.035} q-30 0 -38 ${H*.05} q4 ${H*.04} 28 ${H*.02} q18 -${H*.025} 46 -${H*.035}Z" fill="#2b2233" stroke="#3a2e22" stroke-width="3"/><circle cx="62" cy="-${H*.955}" r="12" fill="#2b2233" stroke="#3a2e22" stroke-width="3"/>
+        <circle cx="4" cy="-${H*.935}" r="5" fill="#3a2e22"/><path d="M-10 -${H*.92} l-8 6 l9 2" stroke="#3a2e22" stroke-width="3" fill="none" stroke-linejoin="round"/><path d="M-2 -${H*.895} q6 3 10 0" stroke="#b03a48" stroke-width="3" fill="none"/>
+        <circle cx="40" cy="-${H*.925}" r="9" fill="#f2b394" stroke="#3a2e22" stroke-width="3"/>${G.level?`<path d="M40 -${H*.925} H-30" stroke="#18b07f" stroke-width="3" stroke-dasharray="6 5"/>`:''}</g>
+      <path d="M8 0 h-26 q-6 0 -4 -8 l4 -6 h26Z" fill="#3a2e22"/>`;
+    slip.innerHTML=G.slip?`<path transform="translate(${G.x},${FLOOR})" d="M-24 0 h70 q6 0 6 -4 v-4 h-80 v4 q0 4 4 4Z" fill="#ff8aa8" stroke="#3a2e22" stroke-width="3"/>`:`<path transform="translate(70,${FLOOR})" d="M0 0 h70 q6 0 6 -4 v-4 h-80 v4 q0 4 4 4Z" fill="#ff8aa8" stroke="#3a2e22" stroke-width="3" opacity=".8"/>`;
+    $('#htHead').addEventListener('pointerdown',e=>{ e.stopPropagation(); if(C.finished||G.read) return; G.level=!G.level; sfx.select(); if(G.level){ C.mark('level'); bub(L(['眼睛看前面……這樣嗎？','Eyes straight ahead… like this?','มองตรงไปข้างหน้า… แบบนี้ใช่ไหม?']),1600); } else C.done.delete('level'), C.paint(); drawFig(); dropBoard(); }); }
+  function drawBoard(){ board.setAttribute('transform',`translate(0,${G.boardY})`); }
+  function dropBoard(){ if(G.touch&&!G.read){ G.boardY=top(); drawBoard(); } }
+  slip.addEventListener('pointerdown',e=>{ if(C.finished||G.read||!G.slip) return; e.stopPropagation(); G.slip=false; sfx.pop(); C.mark('shoes'); drawFig(); dropBoard(); });
+  // drag her to the wall
+  fig.addEventListener('pointerdown',e=>{ if(C.finished||G.read||e.target.closest('#htHead')) return; e.preventDefault(); const p0=pt(e), x0=G.x; try{ fig.setPointerCapture(e.pointerId); }catch(_){}
+    const mv=ev=>{ const p=pt(ev); G.x=Math.max(60,Math.min(XW,x0+p.x-p0.x)); drawFig(); };
+    const up=()=>{ fig.removeEventListener('pointermove',mv); fig.removeEventListener('pointerup',up); fig.removeEventListener('pointercancel',up);
+      if(G.x>XW-24){ G.x=XW; G.wall=true; C.mark('wall'); sfx.select(); bub(L(['靠好了。','Against the wall.','ชิดผนังแล้ว']),1200); } else { G.wall=false; C.done.delete('wall'); C.paint(); C.text(); } drawFig(); };
+    fig.addEventListener('pointermove',mv); fig.addEventListener('pointerup',up); fig.addEventListener('pointercancel',up); });
+  // the headboard slides down the pole and stops on her head (only when she stands at the wall)
+  board.addEventListener('pointerdown',e=>{ if(C.finished||G.read) return; e.preventDefault(); const p0=pt(e), y0=G.boardY; try{ board.setPointerCapture(e.pointerId); }catch(_){}
+    const lim=()=>G.wall?top():FLOOR-20;
+    const mv=ev=>{ const p=pt(ev); G.boardY=Math.max(20,Math.min(lim(),y0+p.y-p0.y)); drawBoard(); };
+    const up=()=>{ board.removeEventListener('pointermove',mv); board.removeEventListener('pointerup',up); board.removeEventListener('pointercancel',up);
+      if(!G.wall){ G.boardY=30; drawBoard(); if(!C.ex){ sfx.error(); C.hint(L(['先讓她貼牆站好，頭板才量得到','Get her against the wall first','ให้ป้ายืนชิดผนังก่อน แผ่นวัดถึงจะวัดได้'])); } return; }
+      G.touch=G.boardY>=top()-6; if(G.touch){ G.boardY=top(); drawBoard(); C.mark('board'); sfx.select(); C.hint(C.ex?'':L(['點刻度讀數','tap the scale to read it','แตะไม้วัดเพื่ออ่านค่า'])); } };
+    board.addEventListener('pointermove',mv); board.addEventListener('pointerup',up); board.addEventListener('pointercancel',up); });
+  // read: tap the pole/scale once the board rests on her head
+  svg.addEventListener('pointerdown',e=>{ if(C.finished||G.read||!G.touch) return; const p=pt(e); if(Math.abs(p.x-POLE)>60) return;
+    G.read=+hCm().toFixed(1); if(G.slip) C.err('shoes'); if(!G.level) C.err('level'); C.mark('read'); sfx.get();
+    $('#htRead').style.display=''; $('#htRead').setAttribute('transform',`translate(0,${Math.max(10,G.boardY-42)})`); $('#htVal').textContent=G.read.toFixed(1)+' cm'; $('#htToday').textContent=G.read.toFixed(1)+' cm';
+    $('#htDiff').disabled=false; $('#htCheck').disabled=false; C.hint(''); try{ $('#htDiff').focus({preventScroll:true}); }catch(_){} });
+  $('#htCheck').onclick=()=>{ if(C.finished||G.read==null) return; const v=parseFloat(String($('#htDiff').value).replace(',','.')); if(isNaN(v)){ sfx.error(); return; }
+    const want=+(162-G.read).toFixed(1); if(Math.abs(Math.abs(v)-want)>0.15) C.err('compare'); C.mark('compare'); $('#htCheck').disabled=true;
+    bub(L(['……我真的變矮了？','…I really did get shorter?','…ป้าเตี้ยลงจริงๆ เหรอ?'])); C.later(()=>C.finish({cm:G.read, diff:v}),1100); };
+  function done(){ if(G.read==null) C.errs.add('noRead'); C.finish({cm:G.read}); }
+  drawFig(); drawBoard(); C.paint(); C.text(); if(!C.ex) C.hint(L(['點拖鞋脫掉 · 拖她到牆邊 · 點頭部調整 · 拖頭板','tap the slippers · drag her to the wall · tap her head · drag the headboard','แตะรองเท้า · ลากป้าไปชิดผนัง · แตะศีรษะ · ลากแผ่นวัด']));
+  bub(L(['要量喔？我穿著拖鞋就好啦。','Measure me? I\'ll keep my slippers on.','จะวัดเหรอ? ใส่รองเท้าแตะไว้ก็ได้มั้ง']));
+  return C.result;
+}
+
+/* ---------- 4) calcium: count yesterday, then plan a day that reaches 1000 mg on a small budget ---------- */
+const CA_ERR={
+  low:['還不到每天 1000 mg','Still below 1000 mg a day','ยังไม่ถึงวันละ 1000 มก.'],
+  over:['超過 1500 mg：太多也不好（便祕、結石風險）','Over 1500 mg — more isn\'t better (constipation, stones)','เกิน 1500 มก. มากไปก็ไม่ดี (ท้องผูก เสี่ยงนิ่ว)'],
+  budget:['超出每天 80 元的預算——她家經濟很緊','Over the NT$80 daily budget — money is tight for her family','เกินงบวันละ 80 ดอลลาร์ไต้หวัน ครอบครัวป้าเงินตึงมือ'],
+  soy:['一般無糖豆漿的鈣很少（約 35 mg），不能取代牛奶','Plain unsweetened soy milk has little calcium (≈35 mg) — not a milk substitute','น้ำเต้าหู้ไม่หวานทั่วไปมีแคลเซียมน้อย (≈35 มก.) ใช้แทนนมไม่ได้'],
+  uncounted:['昨天的食物還沒算完','Yesterday\'s foods weren\'t all counted','ยังนับอาหารเมื่อวานไม่ครบ'],
+};
+const CA_DAY=[['coffee',['黑咖啡','Black coffee','กาแฟดำ'],5],['noodle',['泡麵','Instant noodles','บะหมี่กึ่งสำเร็จรูป'],30],['egg',['滷蛋','Braised egg','ไข่พะโล้'],25],['rice',['白飯 1 碗','Rice, 1 bowl','ข้าวสวย 1 ถ้วย'],10],['cabbage',['炒高麗菜','Stir-fried cabbage','กะหล่ำผัด'],45],['pork',['滷肉','Braised pork','หมูพะโล้'],10]];
+const CA_SHELF=[['milk',['鮮奶 240 mL','Milk 240 mL','นม 240 มล.'],250,25],['yog',['原味優格','Plain yoghurt','โยเกิร์ตรสธรรมชาติ'],150,30],['tofu',['傳統豆腐 半塊','Firm tofu, ½ block','เต้าหู้แข็ง ครึ่งก้อน'],110,15],['fish',['小魚乾 1 湯匙','Dried small fish, 1 tbsp','ปลาตัวเล็กแห้ง 1 ช้อนโต๊ะ'],220,10],
+  ['greens',['芥藍菜 1 碗','Kailan greens, 1 bowl','คะน้า 1 ถ้วย'],240,15],['sesame',['黑芝麻 1 湯匙','Black sesame, 1 tbsp','งาดำ 1 ช้อนโต๊ะ'],145,5],['cheese',['起司片','Cheese slice','ชีสแผ่น'],120,15],['soy',['無糖豆漿 240 mL','Soy milk 240 mL','น้ำเต้าหู้ 240 มล.'],35,20],['banana',['香蕉','Banana','กล้วย'],5,10]];
+const CA_EMO={coffee:'☕',noodle:'🍜',egg:'🥚',rice:'🍚',cabbage:'🥬',pork:'🥩',milk:'🥛',yog:'🥣',tofu:'🧈',fish:'🐟',greens:'🥦',sesame:'⚫',cheese:'🧀',soy:'🫘',banana:'🍌'};
+function calciumGame(){
+  const steps=[['count',['把她昨天吃的鈣加起來','Add up yesterday\'s calcium','รวมแคลเซียมที่ป้ากินเมื่อวาน'],'🧮'],['plan',['補到每天約 1000 mg','Bring it up to about 1000 mg a day','เติมให้ถึงราววันละ 1000 มก.'],'🎯'],['cheap',['每天不超過 80 元','Keep it under NT$80 a day','ไม่เกินวันละ 80 ดอลลาร์ไต้หวัน'],'💰']];
+  const card=(k,n,mg,price,where)=>`<div class="tile" data-item="${k}" data-where="${where}" style="position:relative;width:126px"><div style="font-size:40px;line-height:1.1">${CA_EMO[k]}</div><span>${esc(L(n))}</span><span style="color:#b4621a;font-size:13px" class="mg">${where==='day'?'? mg':'≈ '+mg+' mg'}</span>${price!=null?`<span style="color:#18b07f;font-size:13px">NT$${price}</span>`:''}</div>`;
+  const scene=`<div style="position:absolute;left:16px;top:12px;right:16px;font-weight:900;color:#5a4a3a">📅 ${esc(L(['她昨天吃的（點一下算鈣）','What she ate yesterday (tap to count)','สิ่งที่ป้ากินเมื่อวาน (แตะเพื่อนับ)']))}</div>
+    <div id="caDay" style="position:absolute;left:16px;top:42px;right:16px;display:flex;gap:8px;flex-wrap:wrap">${CA_DAY.map(([k,n,mg])=>card(k,n,mg,null,'day')).join('')}</div>
+    <div class="zone" data-drop="plan" id="caPlan" style="left:16px;top:170px;right:16px;width:auto;height:200px;align-items:flex-start;justify-content:flex-start;flex-wrap:wrap;gap:8px;padding:34px 10px 8px"><span style="position:absolute;left:14px;top:6px">🍽️ ${esc(L(['明天加點什麼？（拖進來）','What to add tomorrow? (drag here)','พรุ่งนี้เพิ่มอะไรดี? (ลากมาวาง)']))}</span></div>
+    <div id="caShelf" style="position:absolute;left:16px;top:384px;right:16px;display:flex;gap:8px;flex-wrap:wrap">${CA_SHELF.map(([k,n,mg,pr])=>card(k,n,mg,pr,'shelf')).join('')}</div>`;
+  const side=`<div class="box"><div style="font-weight:900;color:#5a4a3a">🦴 ${esc(L(['每日鈣','Calcium / day','แคลเซียม/วัน']))}</div><div id="caMg" style="font-size:34px;font-weight:900">0 mg</div>
+      <div class="meter" style="height:30px"><b id="caBar" style="width:0%"></b><i style="left:${1000/1600*100}%"></i></div><div style="font-size:13px;font-weight:800;color:#b4203c">${esc(L(['目標 1000–1200 mg','Target 1000–1200 mg','เป้า 1000–1200 มก.']))}</div>
+      <div style="font-weight:900;color:#5a4a3a;margin-top:6px">💰 NT$<span id="caCost">0</span> / 80</div></div>`;
+  const C=cgPanel({title:['🦴 實作：鈣夠不夠？','🦴 Hands-on: enough calcium?','🦴 ลงมือ: แคลเซียมพอไหม?'], task:['骨鬆又骨折過的她，每天需要約 1000–1200 mg 的鈣。','With osteoporosis and a fracture, she needs about 1000–1200 mg of calcium a day.','ป้ากระดูกพรุนและเคยกระดูกหัก ต้องการแคลเซียมราววันละ 1000–1200 มก.'],
+    steps, errs:CA_ERR, err2step:{low:'plan',over:'plan',budget:'cheap',soy:'plan',uncounted:'count'}, scene, side, drop:(it,z)=>drop(it,z), onDone:()=>done(),
+    sumExtra:out=>`<p style="font-size:17px;font-weight:800;line-height:1.45;margin:8px 0 0;color:#5a4a3a">💡 ${esc(L(['便宜又高鈣：小魚乾、芥藍等深綠色蔬菜、傳統豆腐、黑芝麻、牛奶。鈣片要和 Fosamax 錯開（服藥後至少 30 分鐘）。（數值為約略值）','Cheap and calcium-rich: dried small fish, dark greens like kailan, firm tofu, black sesame, milk. Keep calcium tablets away from Fosamax (at least 30 min after it). (Values are approximate.)','ถูกและแคลเซียมสูง: ปลาตัวเล็กแห้ง ผักใบเขียวเข้มอย่างคะน้า เต้าหู้แข็ง งาดำ นม ยาเม็ดแคลเซียมต้องกินห่างจาก Fosamax (หลังยาอย่างน้อย 30 นาที) (ตัวเลขเป็นค่าประมาณ)']))}</p>`});
+  const G={counted:new Set(), day:0, plan:new Set()};
+  const mg=()=>G.day+[...G.plan].reduce((a,k)=>a+CA_SHELF.find(x=>x[0]===k)[2],0), cost=()=>[...G.plan].reduce((a,k)=>a+CA_SHELF.find(x=>x[0]===k)[3],0);
+  const upd=()=>{ const v=mg(); $('#caMg').textContent=v+' mg'; $('#caBar').style.width=Math.min(100,v/1600*100)+'%'; $('#caCost').textContent=cost(); $('#caCost').style.color=cost()>80?'#c0172f':''; };
+  $('#caDay').querySelectorAll('.tile').forEach(t=>t.addEventListener('click',()=>{ if(C.finished) return; const k=t.dataset.item; if(G.counted.has(k)) return; const d=CA_DAY.find(x=>x[0]===k); G.counted.add(k); G.day+=d[2]; t.querySelector('.mg').textContent='≈ '+d[2]+' mg'; t.classList.add('used'); sfx.pop(); upd();
+    if(G.counted.size===CA_DAY.length){ C.mark('count'); if(!C.ex) C.hint(L(['只有約 125 mg！從下面挑食物拖進「明天」','Only about 125 mg! Drag foods from below into "tomorrow"','แค่ราว 125 มก.! ลากอาหารจากด้านล่างไปใส่ "พรุ่งนี้"'])); } }));
+  $('#caShelf').querySelectorAll('.tile').forEach(t=>C.drag(t,{can:()=>G.counted.size===CA_DAY.length||C.ex}));
+  C.zone($('#caPlan'));
+  // tap a planned item to put it back
+  $('#caPlan').addEventListener('click',e=>{ const t=e.target.closest('.tile'); if(!t||C.finished) return; e.stopPropagation(); G.plan.delete(t.dataset.item); $('#caShelf').appendChild(t); t.style.position='relative'; t.style.left=t.style.top=''; sfx.click(); upd(); });
+  function drop(it,z){ if(z.dataset.drop!=='plan'||it.dataset.where!=='shelf'||G.plan.has(it.dataset.item)) return; G.plan.add(it.dataset.item); $('#caPlan').appendChild(it); it.style.position='relative'; it.style.left=it.style.top=''; sfx.select(); upd();
+    if(it.dataset.item==='soy'&&!C.ex) toast('🫘 '+L(CA_ERR.soy)); }
+  function done(){ if(G.counted.size<CA_DAY.length) C.errs.add('uncounted'); const v=mg(), c=cost();
+    if(v<1000) C.errs.add('low'); else if(v>1500) C.errs.add('over'); if(c>80) C.errs.add('budget'); if(G.plan.has('soy')&&v<1000) C.errs.add('soy');
+    if(!C.errs.has('low')&&!C.errs.has('over')) C.mark('plan'); if(!C.errs.has('budget')&&G.plan.size) C.mark('cheap');
+    C.finish({mg:v, cost:c, plan:[...G.plan]}); }
+  upd(); C.paint(); C.text(); if(!C.ex) C.hint(L(['先點她昨天吃的每樣食物','first tap each food she ate yesterday','แตะอาหารแต่ละอย่างที่ป้ากินเมื่อวานก่อน']));
+  return C.result;
+}
+
+/* ---------- 5) med review as her day: the drugs sit on a timeline (as labelled); drag the problem ones to "Ask the doctor" ---------- */
+const DAY_COLS=[['wake',['🌅 週三起床空腹','🌅 Wed, on waking','🌅 พุธ ตื่นนอนท้องว่าง'],0],['bf',['🍳 早餐','🍳 Breakfast','🍳 มื้อเช้า'],1],['lunch',['🍱 午餐','🍱 Lunch','🍱 มื้อกลางวัน'],1],['dinner',['🍲 晚餐','🍲 Dinner','🍲 มื้อเย็น'],0]];
+const DAY_SLOTS={fosamax:[['wake','']],hyzaar:[['bf','']],glucobay:[['bf','前'],['lunch','前'],['dinner','前']],glucophage:[['bf','後'],['lunch','後'],['dinner','後']],amaryl:[['dinner','×2']],ponstan:[['bf','×2'],['dinner','×2']],
+  keflex:[['bf',''],['lunch',''],['dinner','']],clarinase:[['bf','']],danzen:[['bf',''],['lunch',''],['dinner','']]};
+const DM_SRC={A:['A院','Hosp A','รพ.A'],B:['B院','Hosp B','รพ.B'],E:['耳鼻喉','ENT','ENT']};
+const DAY_TAG={'前':['飯前','before','ก่อน'],'後':['飯後','after','หลัง']};
+function dmCss(){ if($('#dmCss')) return; const st=document.createElement('style'); st.id='dmCss'; st.textContent=`
+#medrev .dm-board{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:10px 0 8px;min-height:0}
+#medrev .dm-col{background:#fbf8f2;border-radius:16px;padding:6px 8px;display:flex;flex-direction:column;gap:6px;min-height:0;overflow:auto;box-shadow:inset 0 0 0 2px #efe4d2}
+#medrev .dm-col h4{margin:2px 2px 2px;font-size:17px;color:#5a1030;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+#medrev .dm-col h4 em{font-style:normal;font-size:12px;background:#ffe3e9;color:#b4203c;border-radius:99px;padding:1px 8px}
+#medrev .dchip{display:flex;align-items:center;gap:6px;border-radius:12px;padding:6px 8px;background:#fff;font-weight:800;font-size:15px;line-height:1.2;text-align:left;box-shadow:0 0 0 2px #e6e9f5;cursor:pointer;transition:transform .12s,box-shadow .12s}
+#medrev .dchip.sA{box-shadow:0 0 0 2px #9cc3ff}#medrev .dchip.sB{box-shadow:0 0 0 2px #8fe3c8}#medrev .dchip.sE{box-shadow:0 0 0 2px #ffc58a}
+#medrev .dchip i{font-style:normal;font-size:11px;font-weight:900;color:#fff;border-radius:99px;padding:1px 6px}
+#medrev .dchip.sA i{background:#3d7bff}#medrev .dchip.sB i{background:#18b07f}#medrev .dchip.sE i{background:#ff8a1f}
+#medrev .dchip small{margin-left:auto;font-size:12px;color:#8a5a9a}
+#medrev .dchip u{text-decoration:none;font-size:13px}
+#medrev .dchip.sel{box-shadow:0 0 0 4px #13a39a;background:#e8fbf8;transform:scale(1.03)}
+#medrev .dchip.ok{box-shadow:0 0 0 4px #18b07f;background:#eafff6}#medrev .dchip.miss{box-shadow:0 0 0 4px #ffb21f;background:#fff8e0}#medrev .dchip.bad{box-shadow:0 0 0 4px #ff3d5c;background:#ffecee}
+#medrev .dm-ask{display:flex;gap:10px;align-items:center;min-height:86px;border-radius:18px;border:4px dashed #ff8aa8;background:#fff5f8;padding:8px 12px;flex-wrap:wrap}
+#medrev .dm-ask>b{font-size:17px;color:#b4203c;flex:0 0 auto}
+#medrev .dm-ask .dchip{box-shadow:0 0 0 3px #ff8aa8}
+#medrev .dm-ask .z{margin-left:4px;cursor:zoom-in}`; document.head.appendChild(st); }
+function dayMissionUI(m, i, n){
+  return new Promise(res=>{ dmCss();
+    let host=$('#medrev'); if(!host){ host=document.createElement('div'); host.id='medrev'; $('#stage').appendChild(host); }
+    const sel=new Set(), ex=EXAM(), byId=Object.fromEntries(DRUGS.map(d=>[d.id,d]));
+    const chip=(d,tag)=>`<button class="dchip s${d.src}" data-d="${d.id}"><i>${esc(L(DM_SRC[d.src]||[d.src,d.src,d.src]))}</i><span>${esc(d.n.split(' ')[0])}${tag&&DAY_TAG[tag]?` <u>${esc(L(DAY_TAG[tag]))}</u>`:tag?` <u>${tag}</u>`:''}</span>${S.mr.tags[d.id]&&!ex?'<small>⚠️</small>':''}</button>`;
+    const cols=DAY_COLS.map(([k,t,skip])=>`<div class="dm-col"><h4>${esc(L(t))}${skip?`<em>${esc(L(['常常沒吃','often skipped','มักไม่ได้กิน']))}</em>`:''}</h4>${DRUGS.filter(d=>(DAY_SLOTS[d.id]||[]).some(s=>s[0]===k)).map(d=>chip(d,(DAY_SLOTS[d.id].find(s=>s[0]===k)||[])[1])).join('')}</div>`).join('');
+    host.innerHTML=`<div class="mr-main"><div class="mr-head"><span class="no">🚨 ${T('mission')} ${i+1}/${n}</span><span class="tx">${esc(L(m.q))}</span><span id="mrTimer"></span></div>
+      <div class="dm-board">${cols}</div>
+      <div class="dm-ask" id="dmAsk" data-drop="ask"><b>🩺 ${esc(L(['請醫師重新評估','Ask the doctor','ส่งให้แพทย์ทบทวน']))}</b><span class="hint" id="dmHint" style="font-size:15px;color:#8a6a7a">${esc(L(['點時間表上的藥，把它送到這裡','tap a drug on her day to send it here','แตะยาบนตารางวันเพื่อส่งมาที่นี่']))}</span></div>
+      <div class="mr-act"><span class="hint">${T('selected')}: <b id="mrCount">0</b></span><button class="gbtn" id="mrOk">${T('confirmDx')}</button></div></div>
+      <div class="mr-side">${labPanelHTML()}</div>`;
+    host.classList.remove('hidden'); host.style.animation='none'; void host.offsetWidth; host.style.animation='';
+    $('#mrSheet').onclick=()=>zoomImg(IMG.labs);
+    let done=false, iv=null;
+    const drawAsk=()=>{ const a=$('#dmAsk'); a.querySelectorAll('.dchip').forEach(x=>x.remove()); $('#dmHint').style.display=sel.size?'none':'';
+      [...sel].forEach(id=>{ const d=byId[id]; a.insertAdjacentHTML('beforeend',chip(d,'').replace('</button>',`<span class="z" data-z="${d.img}" title="photo">🔍</span></button>`)); });
+      a.querySelectorAll('.dchip').forEach(c=>c.onclick=e=>{ const z=e.target.closest('.z'); if(z){ e.stopPropagation(); sfx.paper(); zoomImg(IMG[z.dataset.z]); return; } toggle(c.dataset.d); });
+      host.querySelectorAll('.dm-board .dchip').forEach(c=>c.classList.toggle('sel',sel.has(c.dataset.d))); $('#mrCount').textContent=sel.size; };
+    const toggle=id=>{ if(done) return; if(sel.has(id)) sel.delete(id); else sel.add(id); sfx.select(); drawAsk(); };
+    host.querySelectorAll('.dm-board .dchip').forEach(c=>c.onclick=()=>toggle(c.dataset.d));
+    const fin=()=>{ if(done) return; done=true; clearInterval(iv); D.choiceFinish=null; $('#mrTimer').innerHTML='';
+      const ans=new Set(m.ans), hit=[...sel].filter(x=>ans.has(x)), extra=[...sel].filter(x=>!ans.has(x)), missed=m.ans.filter(x=>!sel.has(x));
+      host.querySelectorAll('.dchip').forEach(c=>{ const id=c.dataset.d; c.classList.remove('sel'); if(ex){ if(!sel.has(id)) c.style.opacity='.45'; return; } if(ans.has(id)) c.classList.add(sel.has(id)?'ok':'miss'); else if(sel.has(id)) c.classList.add('bad'); });
+      const perfect=!extra.length&&!missed.length, partial=!perfect&&hit.length>0; res({sel:[...sel], hit, extra, missed, perfect, partial}); };
+    $('#mrOk').onclick=()=>{ if(!sel.size){ sfx.error(); toast('🩺 '+L(['至少選一個藥','Select at least one drug','เลือกยาอย่างน้อย 1 ตัว'])); return; } fin(); };
+    if(S.qte){ const T0=performance.now(), LIM=75; let last=LIM; $('#mrTimer').innerHTML=`<div id="qte" style="--p:100%">${LIM}</div>`;
+      iv=setInterval(()=>{ const rem=Math.max(0,LIM-(performance.now()-T0)/1000), q=$('#mrTimer #qte'); if(q){ q.textContent=Math.ceil(rem); q.style.setProperty('--p',(rem/LIM*100)+'%'); }
+        if(rem<=5&&Math.ceil(rem)!==last){ last=Math.ceil(rem); sfx.tick(); } if(rem<=0){ sfx.error(); fin(); } },100); }
+  });
 }
 function renderBoard(){
   $('#boardTitle').textContent=T('boardTitle'); $('#freeSend').textContent=T('freeSend'); $('#freeIn').placeholder=T('freePh');
@@ -3155,7 +3598,7 @@ const TESTI=[
   press:[['chen','smug',['上班、下班、做代工，哪有空到處跑！牆上的月曆？那是孩子在亂畫啦。','Work, home, piecework — when would I have time to run around? The calendar on the wall? That\'s just the kids doodling.','ทำงาน กลับบ้าน ทำงานรับจ้าง จะเอาเวลาที่ไหนไปตระเวน! ปฏิทินบนผนังน่ะ ลูกๆ ขีดเล่น']]],
   hint:['這證明她有去那家醫院，但她說的是⟦只看兩家⟧。有沒有證物能看出她三月「每一天」去了哪裡？','That proves she went to that hospital, but her claim is ⟦only two hospitals⟧. Which evidence shows where she went day by day in March?','อันนี้พิสูจน์ว่าป้าไปโรงพยาบาลนั้น แต่ป้าพูดว่า "⟦ไปแค่สองโรงพยาบาล⟧" หลักฐานไหนที่เห็นว่าเดือนมีนาฯ ป้าไปที่ไหนบ้างแบบรายวัน?'],
   solve:[['chen','shock',['呃——！那、那個月曆……','Uh—! Th-that calendar…','เอ๊ะ—! ปะ…ปฏิทินนั่น…']],['chen','embarrassed',['好啦……耳鼻喉、家醫、內科也有去，一個月四十幾次……','Okay… ENT, family medicine, internal medicine too. Forty-something visits a month…','ก็ได้… หู คอ จมูก เวชฯ ครอบครัว อายุรกรรมก็ไป เดือนละสี่สิบกว่าครั้ง…']],['yeh','angry',['多重就醫最大的風險，就是重複用藥、交互作用，而且沒有人看得到全貌！','The biggest danger of doctor-shopping is duplicate drugs and interactions — and nobody sees the whole picture!','อันตรายที่สุดของการไปหาหมอหลายที่คือยาซ้ำซ้อน ยาตีกัน และไม่มีใครเห็นภาพรวม!']]]},
- {id:'s2', need:['pilljar'], near:['report','hospB_bag'], p:'P3',
+ {id:'s2', need:['pilljar'], near:['report','hospB_bag'], p:'P3', game:'height',
   st:['腰痛？做工累的啦！我的骨頭⟦好好的，人也沒有變矮⟧！','Back pain? Just tired from work! My bones are ⟦fine, and I haven\'t got any shorter⟧!','ปวดหลังเหรอ? เหนื่อยจากงานน่ะ! กระดูกป้า⟦ปกติดี ตัวก็ไม่ได้เตี้ยลง⟧!'],
   press:[['chen','smug',['A 醫院量我 158 公分，我一直都這麼高啊……應該吧。','Hospital A measured me at 158 cm — I\'ve always been that tall… I think.','รพ.A วัดได้ 158 ซม. ป้าก็สูงเท่านี้มาตลอด… มั้งนะ']]],
   hint:['這只看得到現在的狀況。她說⟦沒有變矮⟧——有沒有證物記錄著她「以前」的身高？','This only shows how things are now. She claims she ⟦hasn\'t got shorter⟧ — is there evidence of her height in the past?','อันนี้เห็นแค่สภาพตอนนี้ ป้าพูดว่า "⟦ไม่ได้เตี้ยลง⟧" มีหลักฐานที่บันทึกส่วนสูง "เมื่อก่อน" ของป้าไหม?'],
@@ -3240,6 +3683,10 @@ async function chapter3(){
     const ev=await openTray({claim:s.st, tried:tried[s.id]}); if(!ev) continue;
     const isNear=(s.near||[]).includes(ev), ok=s.need.includes(ev), near=!ok&&!EXAM()&&isNear; logEvent({type:'present', st:s.id, item:ev, ok, near, nearX:!ok&&EXAM()&&isNear});
     if(ok){ await fpShow('item',ev,async()=>{ await splash('objection','','objection'); await say('me','smug',presentAs(ev)); await sayLines(s.solve.slice(0,1)); });
+      if(s.game==='height'&&!S.calc.height){ $('#testiBanner').classList.add('hidden'); $('#testiDots').classList.add('hidden');
+        await sayLines([['yeh','smug',['那我們現在就用正確的方法量一次！','Then let\'s measure you properly — right now!','งั้นมาวัดให้ถูกวิธีกันตอนนี้เลย!']]]); hideText();
+        const hr=await heightGame(); S.calc.height={ok:hr.ok, errs:hr.errs, cm:hr.cm}; logEvent({type:'height', ok:hr.ok, errs:hr.errs, cm:hr.cm, diff:hr.diff});
+        if(EXAM()){ sfx.select(); toast(T('examNoted')); } $('#testiBanner').classList.remove('hidden'); $('#testiDots').classList.remove('hidden'); }
       await sayLines(s.solve.slice(1)); reveal(s.p); solved[s.id]=1; S.usedEv.push(ev); i=nextUnsolved(i); }
     else if(near){ tried[s.id].push(ev); await fpShow('item',ev,async()=>{ await say('me','neutral',presentUm(ev)); await say('chen','think',NEAR_LINES[tried[s.id].length%2]); });
       await sayLines([['yeh','think',s.hint]]); hide('yeh'); spend(1); hud(); }
@@ -3413,11 +3860,11 @@ async function chapter4(){
   reveal('P13');
   if(S.fl.kidney&&!EXAM()) await say('yeh','happy',['你在訪談時就問了腎臟的事——很有遠見！','You asked about her kidneys back in the interview — great foresight!','คุณถามเรื่องไตตั้งแต่ตอนสัมภาษณ์ — มองการณ์ไกลมาก!']);
   await say('yeh','angry',['可是看看這 9 種藥……三個來源，沒有一位醫師把它們放在一起看過，也沒有人依腎功能檢視！','But look at these 9 drugs… three sources, nobody has ever looked at them together, and nobody has checked them against her kidneys!','แต่ดูยา 9 ตัวนี้สิ… สามแหล่ง ไม่เคยมีหมอคนไหนดูรวมกัน และไม่มีใครทบทวนตามการทำงานของไตเลย!']);
-  await say('pilly','shock',['藥袋危機！一共 6 個任務：點選有問題的藥（可以複選），再按「確認診斷」！','Med-bag crisis! 6 missions: tap the problem drugs (several may apply), then press "Confirm"!','วิกฤตซองยา! มี 6 ภารกิจ: แตะเลือกยาที่มีปัญหา (เลือกได้หลายตัว) แล้วกด "ยืนยัน"!']);
+  await say('pilly','shock',['把藥袋排成她的一天！6 個任務：在時間表上點出有問題的藥，送到「請醫師重新評估」，再按「確認診斷」！','Her day, laid out bag by bag! 6 missions: tap the problem drugs on her timeline to send them to "Ask the doctor", then press "Confirm"!','เรียงซองยาเป็นหนึ่งวันของป้า! 6 ภารกิจ: แตะยาที่มีปัญหาบนตารางเวลาเพื่อส่งไป "ส่งให้แพทย์ทบทวน" แล้วกด "ยืนยัน"!']);
   for(let i=0;i<MISSIONS.length;i++){
     if(S.visit<=0){ S.fl.mrCut=i; break; }
     const m=MISSIONS[i]; hideAll(); hideText();
-    const r=await missionUI(m,i,MISSIONS.length);
+    const r=await dayMissionUI(m,i,MISSIONS.length);
     S.mr.ans.push({id:m.id, sel:r.sel, perfect:r.perfect, partial:r.partial}); logEvent({type:'medrev', m:m.id, sel:r.sel, perfect:r.perfect, partial:r.partial});
     if(r.perfect) S.mr.perfect++; else if(r.partial) S.mr.partial++; else { S.mr.wrong++; spend(CONFIG.COST_WRONG); }
     if(EXAM()){ sfx.select(); toast(T('examNoted')); }
@@ -3430,6 +3877,12 @@ async function chapter4(){
   }
   hideAll(); show('chen','C','sad'); show('me','L','neutral'); show('yeh','R','smug');
   await say('chen','shock',['原、原來我吃的藥有這麼多問題……難怪又累、又沒胃口、頭又一直痛……','S-so my medicines had this many problems… no wonder I\'m tired, have no appetite and keep getting headaches…','ยะ…ยาที่ป้ากินมีปัญหาเยอะขนาดนี้เลยเหรอ… มิน่าถึงเหนื่อย ไม่อยากกินข้าว แล้วก็ปวดหัวตลอด…']);
+  await say('chen','think',['對了，明天禮拜三，又要吃那顆骨頭的藥了……','Oh — tomorrow\'s Wednesday, bone-pill day again…','จริงสิ พรุ่งนี้วันพุธ ต้องกินยากระดูกอีกแล้ว…']);
+  await coach('smug',['那我們現在就一起演練一次週三早上！','Then let\'s rehearse Wednesday morning together, right now!','งั้นมาซ้อมเช้าวันพุธด้วยกันเลย!']);
+  hideAll(); hideText(); const fz=await fosaGame(); S.calc.fosa={ok:fz.ok, errs:fz.errs}; logEvent({type:'fosaGame', ok:fz.ok, errs:fz.errs});
+  if(EXAM()){ sfx.select(); toast(T('examNoted')); }
+  show('chen','C','happy'); show('me','L','neutral'); show('yeh','R','smug');
+  await say('chen','happy',['原來吃一顆藥有這麼多眉角……我會照著做！','Who knew one pill came with so many rules… I\'ll do it this way!','ใครจะรู้ว่ายาเม็ดเดียวมีกฎเยอะขนาดนี้… ป้าจะทำตามนี้นะ!']);
   await say('yeh','smug',['別擔心，我們會把這些整理成「藥事照護建議」交給您的醫師。不過在那之前……','Don\'t worry — we\'ll write all this into a pharmaceutical care report for your doctors. But before that…','ไม่ต้องห่วง เราจะสรุปทั้งหมดเป็นข้อเสนอแนะให้แพทย์ของป้า แต่ก่อนอื่น…']);
   chapterDone(4);
 }
@@ -3439,12 +3892,12 @@ async function chapter4(){
 const MYTHS=[
  {"p":"P8","m":["頭一痛就是吃藥害的，全部停掉就好！","A headache? It's the pills — just stop them all!","ปวดหัวก็เพราะยา หยุดหมดเลยก็จบ!"],"c":[[2,["突然全部停藥，血壓會反彈、頭更痛。先照常吃，我們請醫師找出頭痛的真正原因。", "Stopping everything makes BP rebound and headaches worse. Keep taking them; we'll ask the doctor to find the real cause.", "หยุดยาทั้งหมดทำให้ความดันดีดกลับ ปวดหัวหนักขึ้น กินยาต่อไปก่อน แล้วเราจะให้หมอหาสาเหตุจริง"]],[1,["有些藥確實會引起頭痛。先照常吃藥，等下次回診時再順便跟醫生提一下就好。","Some medicines really can cause headaches. Keep taking everything for now and simply mention it at your next visit.","ยาบางตัวทำให้ปวดหัวได้จริง ตอนนี้กินยาตามปกติไปก่อน แล้วค่อยบอกหมอตอนไปตามนัดครั้งหน้า"]],[0,["停幾天藥沒關係，血壓血糖不會馬上變；頭不痛了，再把漏掉的份量一次補吃回來。","A few days off is fine — BP and sugar don't change right away. When the headache's gone, make up all the missed doses at once.","หยุดยาสักสองสามวันไม่เป็นไร ความดันกับน้ำตาลไม่เปลี่ยนทันที พอหายปวดหัวก็กินยาที่ขาดไปชดเชยรวมกันทีเดียว"]]],"x":["頭痛要找原因：血壓反彈、低血糖、偽麻黃鹼、NSAID 都可能；不可自行停藥，也絕對不能一次補吃。","Headaches need a cause: rebound BP, hypos, pseudoephedrine and NSAIDs are all suspects. Never stop on your own — and never double up.","อาการปวดหัวต้องหาสาเหตุ: ความดันดีดกลับ น้ำตาลต่ำ pseudoephedrine และ NSAID ล้วนเป็นไปได้ ห้ามหยุดยาเอง และห้ามกินชดเชยทีเดียว"]},
  {"p":"P2","m":["發抖冒冷汗？吃幾顆糖就好了！","Shaky and sweaty? A few candies will fix it!","มือสั่นเหงื่อแตก? กินลูกอมสักสองสามเม็ดก็หาย!"],"c":[[2,["那是低血糖！吃 acarbose 時糖果升得太慢，要用葡萄糖錠，早餐也不能省。", "That's low sugar! With acarbose, candy is too slow — use glucose tablets, and don't skip breakfast.", "นั่นคือน้ำตาลต่ำ! กิน acarbose อยู่ ลูกอมช่วยช้าเกินไป ต้องใช้เม็ดกลูโคส และห้ามอดมื้อเช้า"]],[1,["低血糖很危險，下次手一發抖就多吃幾顆糖果，兩三顆一起吃，坐著等手不抖就好。", "Hypos are dangerous — next time eat more candy, two or three at once, and sit down until the shaking stops.", "น้ำตาลต่ำอันตรายนะ ครั้งหน้ามือสั่นเมื่อไหร่ก็กินลูกอมสองสามเม็ดพร้อมกันเลย แล้วนั่งพักรอจนมือหายสั่น"]],[0,["發抖代表血糖太高，再多吃一顆降血糖藥，多喝水就會好。", "Shaking means your sugar is too HIGH — take an extra diabetes pill and drink plenty of water.", "มือสั่นแสดงว่าน้ำตาลสูงเกิน กินยาเบาหวานเพิ่มอีกเม็ดแล้วดื่มน้ำเยอะๆ"]]],"x":["吃 acarbose 的人低血糖要用葡萄糖（錠或膠），15 分鐘後再評估；反覆低血糖代表藥物要調整，不是靠糖果撐。","On acarbose, treat hypos with glucose (tablets or gel) and reassess after 15 minutes; repeated hypos mean the drugs need changing — not more candy.","ผู้ที่กิน acarbose ต้องแก้น้ำตาลต่ำด้วยกลูโคส (เม็ดหรือเจล) แล้วประเมินซ้ำหลัง 15 นาที ถ้าน้ำตาลต่ำซ้ำๆ แปลว่าต้องปรับยา ไม่ใช่พึ่งลูกอม"]},
- {"p":"P1","m":["多看幾家醫院比較保險啦！","Seeing lots of hospitals is safer!","ไปหลายโรงพยาบาลปลอดภัยกว่า!"],"c":[[2,["固定一位家庭醫師，看診時帶健保卡和用藥清單，就能避免重複檢查和重複用藥。","Stick with one family doctor and bring your NHI card and medicine list — that prevents duplicate tests and duplicate drugs.","มีหมอประจำคนเดียว พกบัตรประกันและรายการยาไปทุกครั้ง จะช่วยกันการตรวจซ้ำและยาซ้ำได้"]],[1,["多看幾家也可以，只要每次都跟醫生說「我在別家也有拿藥」，醫生就會幫您注意。","Seeing several is okay, as long as you tell every doctor \"I also get medicine elsewhere\" — then they'll watch out for you.","ไปหลายที่ก็ได้ ขอแค่บอกหมอทุกครั้งว่า \"ได้ยาจากที่อื่นด้วย\" หมอก็จะช่วยระวังให้เอง"]],[0,["醫院和診所各有專長，每個症狀都找不同專科，雖然跑得比較多，但治得最快。","Hospitals and clinics each have specialties — see a different specialist for every symptom. More trips, but the fastest cure.","โรงพยาบาลกับคลินิกต่างก็มีความเชี่ยวชาญ อาการไหนก็ไปหาหมอเฉพาะทาง ถึงเดินทางเยอะแต่หายเร็วที่สุด"]]],"x":["健保雲端藥歷可以讓醫師看到所有用藥，固定醫師能整合全部問題，也省下掛號費和車錢。","The NHI cloud record shows doctors every medicine; a regular doctor can integrate all your problems — and it saves registration fees and fares.","ประวัติยาบนคลาวด์ช่วยให้หมอเห็นยาทั้งหมด แพทย์ประจำช่วยดูแลทุกปัญหาแบบองค์รวม และยังประหยัดค่าลงทะเบียนกับค่ารถ"]},
- {"p":"P13","m":["我的肌酸酐正常，腎臟一定沒問題！","My creatinine is normal, so my kidneys are fine!","ครีเอตินินของป้าปกติ ไตต้องไม่มีปัญหาแน่!"],"c":[[2,["您個子小，Cr 1.2 代表腎功能只剩約一半。Ponstan 這類傷腎的藥要停，我們會告訴醫師。", "You're petite, so Cr 1.2 means your kidneys work at about half speed. Ponstan should stop; we'll tell your doctor.", "ป้าตัวเล็ก Cr 1.2 แปลว่าไตทำงานเหลือราวครึ่งเดียว ยาทำร้ายไตอย่าง Ponstan ควรหยุด เราจะแจ้งหมอให้"]],[1,["腎功能只是差了一點點，以後每天多喝三千 cc 的白開水把腎臟沖乾淨，所有的藥都照原本的繼續吃。", "Your kidneys are a little weak — drink three litres of water a day to flush them out, and keep every medicine the same.", "ไตไม่ค่อยดีนิดหน่อยเท่านั้น ต่อไปดื่มน้ำเปล่าวันละสามลิตรเพื่อล้างไตให้สะอาด ส่วนยาทุกตัวก็กินเหมือนเดิมต่อไปได้เลย"]],[0,["數字正常就是腎臟健康，止痛藥想吃就吃，明年再驗一次就好。", "A normal number means healthy kidneys — take painkillers whenever you like, and check again next year.", "ตัวเลขปกติแปลว่าไตแข็งแรง ยาแก้ปวดอยากกินก็กิน ปีหน้าค่อยตรวจใหม่"]]],"x":["肌酸酐受肌肉量影響；評估腎功能要算 eGFR／CrCl，並依此檢視藥物。","Creatinine depends on muscle mass — always calculate eGFR/CrCl and review drugs against it.","ครีเอตินินขึ้นกับมวลกล้ามเนื้อ ต้องคำนวณ eGFR/CrCl เสมอ และทบทวนยาตามค่านั้น"]},
+ {"p":"P1","m":["工廠旁邊的診所最快，小毛病就換一家看，省時間！","The clinic by the factory is quickest — a different one for every little thing saves time!","คลินิกข้างโรงงานเร็วที่สุด เป็นอะไรนิดหน่อยก็เปลี่ยนไปที่ใหม่ ประหยัดเวลา!"],"c":[[2,["固定一位家庭醫師，看病都帶齊藥袋——耳鼻喉不知道您血壓高，才開了升血壓的藥。","Keep one family doctor and take every med bag along — the ENT didn't know your BP, so it gave you a BP-raising pill.","มีหมอประจำคนเดียว ไปไหนก็พกซองยาครบ ENT ไม่รู้ว่าป้าความดันสูง เลยจ่ายยาที่ทำให้ความดันขึ้น"]],[1,["小毛病去附近診所沒關係，口頭跟醫師說您吃哪些藥就好，藥袋太多不用每次都帶。","Nearby clinics are fine for small things — just tell the doctor which pills you take; there are too many bags to carry each time.","เป็นนิดหน่อยไปคลินิกใกล้ๆ ก็ได้ แค่บอกหมอปากเปล่าว่ากินยาอะไรอยู่ ซองยาเยอะเกินไม่ต้องพกไปทุกครั้งหรอก"]],[0,["更快的方法是直接在工廠旁的藥房買感冒藥和止痛藥，掛號、排隊、等叫號全都省了。","Even quicker: buy cold and pain pills at the pharmacy next to the factory — no registration, no queue, no waiting at all.","เร็วกว่านั้นอีก ซื้อยาแก้หวัดแก้ปวดที่ร้านยาข้างโรงงานเลย ไม่ต้องลงทะเบียน ไม่ต้องต่อคิว ไม่ต้องรอเรียก"]]],"x":["每家診所只看得到自己開的藥：耳鼻喉的 Clarinase 會升血壓，止痛藥也從不同地方重複拿。固定醫師、帶齊藥袋（或用健保雲端藥歷），才看得到全貌。","Each clinic sees only its own prescriptions: the ENT's Clarinase raises BP, and painkillers came from several places. One regular doctor plus every bag (or the NHI cloud record) shows the whole picture.","แต่ละคลินิกเห็นแค่ยาที่ตัวเองจ่าย Clarinase จาก ENT ทำให้ความดันขึ้น ยาแก้ปวดก็ได้ซ้ำจากหลายที่ มีหมอประจำและพกซองยาครบ (หรือใช้ประวัติยาบนคลาวด์ของประกันสุขภาพ) จึงจะเห็นภาพรวม"]},
+ {"p":"P13","m":["我尿尿正常、腳也沒腫，腎臟怎麼會有問題！","I pee normally and my legs aren't swollen — my kidneys can't be the problem!","ป้าฉี่ปกติ ขาก็ไม่บวม ไตจะมีปัญหาได้ยังไง!"],"c":[[2,["您個子小，Cr 1.2 代表腎功能只剩約一半。Ponstan 這類傷腎的藥要停，我們會告訴醫師。","You're petite, so Cr 1.2 means your kidneys work at about half speed. Ponstan should stop; we'll tell your doctor.","ป้าตัวเล็ก Cr 1.2 แปลว่าไตทำงานเหลือราวครึ่งเดียว ยาทำร้ายไตอย่าง Ponstan ควรหยุด เราจะแจ้งหมอให้"]],[1,["腎功能只是差了一點點，以後每天多喝三千 cc 的白開水把腎臟沖乾淨，所有的藥都照原本的繼續吃。","Your kidneys are a little weak — drink three litres of water a day to flush them out, and keep every medicine the same.","ไตไม่ค่อยดีนิดหน่อยเท่านั้น ต่อไปดื่มน้ำเปล่าวันละสามลิตรเพื่อล้างไตให้สะอาด ส่วนยาทุกตัวก็กินเหมือนเดิมต่อไปได้เลย"]],[0,["數字正常就是腎臟健康，止痛藥想吃就吃，明年再驗一次就好。","A normal number means healthy kidneys — take painkillers whenever you like, and check again next year.","ตัวเลขปกติแปลว่าไตแข็งแรง ยาแก้ปวดอยากกินก็กิน ปีหน้าค่อยตรวจใหม่"]]],"x":["腎功能下降早期常沒有症狀，肌酸酐又受肌肉量影響——要算 eGFR／CrCl，並依此檢視藥物。","Early kidney decline usually has no symptoms, and creatinine depends on muscle mass — always calculate eGFR/CrCl and review drugs against it.","ไตเสื่อมระยะแรกมักไม่มีอาการ และครีเอตินินขึ้นกับมวลกล้ามเนื้อ ต้องคำนวณ eGFR/CrCl เสมอ และทบทวนยาตามค่านั้น"]},
  {"p":"P6","m":["配咖啡、配白開水，還不是都一樣吞下去！","Coffee or water — it all goes down the same way!","กินกับกาแฟหรือน้ำเปล่า ก็กลืนลงไปเหมือนกันนั่นแหละ!"],"c":[[2,["一週一次，起床空腹配一大杯白開水，之後 30 分鐘保持直立、什麼都不吃不喝。", "Once a week on waking: empty stomach, a full glass of plain water, then stay upright with nothing else for 30 min.", "สัปดาห์ละครั้งตอนตื่นนอน ท้องว่าง กับน้ำเปล่าแก้วใหญ่ แล้วตัวตรง ไม่กินอะไรอีก 30 นาที"]],[1,["咖啡確實會影響藥的吸收，那就改配一大杯溫牛奶一起吃，比較不傷胃，還能順便補充鈣質。", "Coffee does affect absorption — take it with a glass of milk instead, which is gentler on the stomach and adds calcium.", "กาแฟมีผลต่อการดูดซึมยาจริง งั้นเปลี่ยนไปกินกับนมอุ่นแก้วใหญ่แทน ไม่กัดกระเพาะ แถมยังได้แคลเซียมเพิ่มอีกด้วย"]],[0,["怕傷胃的話，就睡前配點心吃，吃完馬上躺下睡，就不會覺得不舒服。", "If it bothers your stomach, take it at bedtime with a snack and lie down straight away so you sleep through it.", "ถ้ากลัวกัดกระเพาะ ก็กินก่อนนอนพร้อมขนม แล้วนอนเลยจะได้ไม่รู้สึกไม่สบาย"]]],"x":["牛奶裡的鈣、咖啡和食物都會讓 alendronate 幾乎不吸收；吃完躺下會增加食道潰瘍風險。","Calcium in milk, coffee and food all block alendronate absorption; lying down afterwards raises the risk of oesophageal ulcers.","แคลเซียมในนม กาแฟ และอาหาร ทำให้ alendronate แทบไม่ดูดซึม การนอนลงหลังกินยาเพิ่มความเสี่ยงแผลในหลอดอาหาร"]},
- {"p":"P9","m":["感冒、腰痛又不嚴重，藥拿了丟掉就好。","Colds and back pain aren't serious — collect the pills and toss them.","หวัดกับปวดหลังไม่หนัก รับยามาแล้วทิ้งก็ได้"],"c":[[2,["用不到的藥請醫生別開，剩藥拿回藥局；背痛還變矮，要請醫師照 X 光。", "Ask the doctor not to prescribe what you won't take, return leftovers to a pharmacy — and get that back pain X-rayed.", "บอกหมอว่าไม่ต้องจ่ายยาที่ไม่ได้ใช้ เอายาเหลือคืนร้านยา และให้หมอเอกซเรย์อาการปวดหลัง"]],[1,["不想吃也不用勉強，但藥不要丟垃圾桶，拿去藥局回收，對環境比較好。", "No need to force yourself, but don't throw medicine in the bin — take it back to a pharmacy; it's better for the environment.", "ไม่อยากกินก็ไม่ต้องฝืน แต่อย่าทิ้งยาลงถังขยะ เอาไปคืนร้านยาจะดีต่อสิ่งแวดล้อมกว่า"]],[0,["腰痛只是做工太累而已，藥先留著別丟，痛的時候一次多吃幾顆，效果會比較快。", "Back pain is just work strain — keep the pills and take a few extra at once when it hurts, so they act faster.", "ปวดหลังแค่เพราะทำงานหนักเกินไป เก็บยาไว้ก่อนอย่าเพิ่งทิ้ง เวลาปวดค่อยกินทีละหลายเม็ดจะได้ผลเร็วกว่า"]]],"x":["骨鬆病人新出現的背痛要排除脊椎骨折；止痛藥一次多吃會傷胃傷腎。","New back pain in osteoporosis must be checked for a vertebral fracture; doubling painkillers harms the stomach and kidneys.","ผู้ป่วยกระดูกพรุนที่ปวดหลังขึ้นใหม่ต้องตรวจแยกกระดูกสันหลังหัก และการกินยาแก้ปวดเกินขนาดทำร้ายกระเพาะกับไต"]},
+ {"p":"P9","m":["醫生開什麼我都收下，不吃也不好意思說，偷偷丟掉就好。","I accept every prescription to be polite — if I don't take them, I quietly throw them out.","หมอให้ยาอะไรป้าก็รับไว้ ไม่กินก็เกรงใจไม่กล้าบอก แอบทิ้งไปก็พอ"],"c":[[2,["跟醫師說實話：用不到的藥請他別開，剩藥拿回藥局；背痛還變矮，要請醫師照 X 光。","Tell the doctor honestly which pills you skip so they stop them, return leftovers — and get that back pain X-rayed.","บอกหมอตามจริงว่ายาไหนไม่ได้กิน หมอจะได้หยุดจ่าย เอายาเหลือคืนร้านยา และให้หมอเอกซเรย์อาการปวดหลัง"]],[1,["收下沒關係，只是不要丟進垃圾桶，拿去藥局回收比較環保，醫師那邊就不用特別講了。","Accepting them is fine — just don't bin them; take them back to a pharmacy, and there's no need to tell the doctor.","รับไว้ก็ไม่เป็นไร แค่อย่าทิ้งลงถังขยะ เอาไปคืนร้านยาจะดีต่อสิ่งแวดล้อมกว่า ส่วนหมอก็ไม่ต้องไปบอกให้ลำบากใจ"]],[0,["收下來存著，等先生或孩子哪天也感冒、腰痛的時候，就拿出來給他們吃，一點都不浪費。","Keep them in the drawer — when your husband or kids get a cold or a sore back, give them the pills so nothing's wasted.","เก็บไว้ในลิ้นชักก่อน วันไหนสามีหรือลูกเป็นหวัดหรือปวดหลังขึ้นมา ก็เอาให้เขากินได้เลย ไม่สิ้นเปลืองสักเม็ด"]]],"x":["不吃又不說，醫師會以為治療無效而加藥；把藥給家人吃也很危險。骨鬆病人新出現的背痛要排除脊椎骨折。","Skipping pills in silence makes doctors think the treatment failed and add more; sharing pills with family is risky too. New back pain in osteoporosis must be checked for a vertebral fracture.","ไม่กินแล้วไม่บอก หมอจะคิดว่ารักษาไม่ได้ผลแล้วเพิ่มยา เอายาให้คนในบ้านกินก็อันตราย ผู้ป่วยกระดูกพรุนที่ปวดหลังขึ้นใหม่ต้องตรวจแยกกระดูกสันหลังหัก"]},
  {"p":"P4","m":["忙的時候不吃飯，省時間又省錢！","When I'm busy I skip meals — saves time and money!","ยุ่งๆ ก็ไม่กินข้าว ประหยัดทั้งเวลาทั้งเงิน!"],"c":[[2,["吃降血糖藥不吃飯最容易低血糖。饅頭、雞蛋、豆漿就夠了；沒吃飯那餐就不吃 acarbose。", "Diabetes pills without meals cause hypos. A quick bun, egg and soy milk will do — and no meal, no acarbose.", "อดข้าวแต่กินยาเบาหวานเสี่ยงน้ำตาลต่ำ ซาลาเปา ไข่ น้ำเต้าหู้ก็พอ มื้อไหนไม่กินก็งด acarbose"]],[1,["盡量三餐都吃；早上真的來不及的話，去便利商店買個甜麵包或一瓶含糖飲料墊一下肚子也可以。", "Try to eat three meals; if you're rushed, a sweet bun or a sugary drink from the convenience store will tide you over.", "พยายามกินให้ครบสามมื้อ ถ้าเช้าไหนรีบจริงๆ ก็แวะซื้อขนมปังหวานหรือน้ำหวานจากร้านสะดวกซื้อมารองท้องไปก่อนก็ได้"]],[0,["沒吃飯也要照時間把降血糖藥吃完，這樣才不會忘記。", "Even when you skip a meal, take every diabetes pill on schedule — that's the only way not to forget them.", "ถึงไม่ได้กินข้าวก็ต้องกินยาเบาหวานให้ครบตามเวลา จะได้ไม่ลืม"]]],"x":["規律進食是避免低血糖的基礎，也能提供骨頭需要的蛋白質和鈣。","Regular meals are the foundation for avoiding hypos — and they supply the protein and calcium bones need.","การกินอาหารให้เป็นเวลาเป็นพื้นฐานของการป้องกันน้ำตาลต่ำ และให้โปรตีนกับแคลเซียมที่กระดูกต้องการ"]},
- {"p":"P10","m":["會累就是老了，買補品吃就好！","Tired? That's just age — buy some supplements!","เหนื่อยก็เพราะแก่ ซื้ออาหารเสริมกินก็พอ!"],"c":[[2,["疲倦、沒胃口可能來自低血糖、降血糖藥或沒吃飯，請醫師幫您抽血檢查。", "Tiredness and no appetite can come from hypos, the diabetes pills or skipped meals — let's ask for blood tests.", "เหนื่อยและเบื่ออาหารอาจมาจากน้ำตาลต่ำ ยาเบาหวาน หรือการอดข้าว ควรให้หมอเจาะเลือดตรวจ"]],[1,["應該是最近太累了，多休息、早點睡、三餐正常吃，過一兩個禮拜就會好轉了。","You're probably just worn out lately — rest more, sleep earlier and eat regular meals; it should pass in a week or two.","คงเหนื่อยสะสมช่วงนี้ พักเยอะๆ นอนเร็วขึ้น กินข้าวให้ตรงเวลา อีกสักสัปดาห์สองสัปดาห์ก็ดีขึ้น"]],[0,["這是體虛，買人蔘和雞精來補比吃藥自然安全，也不會和您現在的藥起衝突。","That's just weakness — ginseng and chicken essence are more natural than medicine and won't clash with your pills.","แค่ร่างกายอ่อนแอ ซื้อโสมกับซุปไก่สกัดมาบำรุง ธรรมชาติกว่ายาและไม่ตีกับยาที่กินอยู่"]]],"x":["症狀可能是多個問題交互造成，需要系統性評估；補品也可能和藥物交互作用，還會加重家裡的負擔。","Symptoms may come from several interacting problems; supplements can interact with medicines too — and strain the family budget.","อาการอาจเกิดจากหลายปัญหาร่วมกัน อาหารเสริมก็อาจตีกับยา แถมยังเพิ่มภาระค่าใช้จ่ายของครอบครัว"]},
+ {"p":"P10","m":["累了、吃不下，就喝提神飲料撐過去嘛！","Tired with no appetite? An energy drink gets me through the shift!","เหนื่อยแล้วกินไม่ลง ดื่มเครื่องดื่มชูกำลังก็ทำงานต่อได้!"],"c":[[2,["疲倦、沒胃口可能來自低血糖、降血糖藥或沒吃飯，請醫師幫您抽血檢查。","Tiredness and no appetite can come from hypos, the diabetes pills or skipped meals — let's ask for blood tests.","เหนื่อยและเบื่ออาหารอาจมาจากน้ำตาลต่ำ ยาเบาหวาน หรือการอดข้าว ควรให้หมอเจาะเลือดตรวจ"]],[1,["應該是最近太累了，多休息、早點睡、三餐正常吃，過一兩個禮拜就會好轉了。","You're probably just worn out lately — rest more, sleep earlier and eat regular meals; it should pass in a week or two.","คงเหนื่อยสะสมช่วงนี้ พักเยอะๆ นอนเร็วขึ้น กินข้าวให้ตรงเวลา อีกสักสัปดาห์สองสัปดาห์ก็ดีขึ้น"]],[0,["提神飲料又甜又有咖啡因，發抖的時候喝一罐，還能順便把血糖拉上來，一舉兩得。","Energy drinks are sweet and full of caffeine — drink one when you're shaky and it lifts your sugar too. Two birds, one stone.","เครื่องดื่มชูกำลังทั้งหวานทั้งมีคาเฟอีน ดื่มสักขวดตอนมือสั่นก็ช่วยดึงน้ำตาลขึ้นมาด้วย ได้สองต่อเลยนะ"]]],"x":["症狀可能是多個問題交互造成，需要系統性評估；提神飲料的咖啡因會加重心悸和失眠，吃 acarbose 時蔗糖救低血糖也太慢。","Symptoms may come from several interacting problems and need a proper work-up; energy-drink caffeine worsens palpitations and sleep, and on acarbose its sucrose is too slow for a hypo.","อาการอาจเกิดจากหลายปัญหาร่วมกัน ต้องประเมินอย่างเป็นระบบ คาเฟอีนในเครื่องดื่มชูกำลังทำให้ใจสั่น นอนไม่หลับ และเมื่อกิน acarbose น้ำตาลซูโครสแก้น้ำตาลต่ำได้ช้าเกินไป"]},
  {"p":"P12","m":["在工廠站一整天，就是運動了啦！","Standing at the factory all day IS exercise!","ยืนทำงานในโรงงานทั้งวันก็คือออกกำลังกายแล้ว!"],"c":[[2,["站著不等於運動。飯後散步 10 分鐘，再做坐站練習和踮腳尖，顧骨頭也防跌倒。", "Standing isn't exercise. Walk 10 minutes after meals and add sit-to-stands and heel raises for bones and balance.", "ยืนทำงานไม่ใช่การออกกำลังกาย เดินหลังอาหาร 10 นาที เพิ่มท่าลุกนั่งและเขย่งเท้า ช่วยกระดูกและการทรงตัว"]],[1,["那就每天上班前去跑步一小時，高強度、高衝擊的運動最能刺激骨頭，很快就會練強壯。", "Then go jogging for an hour every morning before work — hard, high-impact running builds strong bones in no time.", "งั้นตื่นมาวิ่งทุกเช้าก่อนไปทำงานวันละหนึ่งชั่วโมงเลย การวิ่งหนักๆ ที่มีแรงกระแทกสูงจะช่วยให้กระดูกแข็งแรงเร็วที่สุด"]],[0,["骨質疏鬆最安全就是少動，在家多休息，才不會又骨折。", "With osteoporosis it's safest not to move much at all — rest at home so you don't break another bone.", "กระดูกพรุนปลอดภัยที่สุดคือขยับให้น้อย พักอยู่บ้าน จะได้ไม่หักอีก"]]],"x":["骨鬆病人適合循序漸進的負重、肌力與平衡運動；突然激烈運動或完全不動都不好。","People with osteoporosis need gradual weight-bearing, strength and balance exercise; sudden intense exercise and total rest are both harmful.","ผู้ป่วยกระดูกพรุนควรออกกำลังแบบลงน้ำหนัก เสริมกล้ามเนื้อ และฝึกการทรงตัวอย่างค่อยเป็นค่อยไป การออกกำลังหนักทันทีหรือไม่ขยับเลยล้วนไม่ดี"]}
 ];
 /* v10: a myth only breaks with the BEST card. A surviving myth can still be broken in the closing summary if the
@@ -3456,24 +3909,24 @@ const MYTH_FX={
  P2:{n:['「發抖吃糖就好」','"Shaky? Just eat candy"','"มือสั่นก็กินลูกอม"'],
    kw:['低血糖','葡萄糖','發抖','冷汗','糖果','hypo','low sugar','low blood sugar','glucose','shaky','candy','sweat','น้ำตาลต่ำ','กลูโคส','มือสั่น','ลูกอม','เหงื่อ'],
    fx:['又在工廠發抖冒冷汗，吃了糖也沒有馬上好。','Got shaky and sweaty at the factory again; the candy didn\'t work fast.','มือสั่นเหงื่อแตกที่โรงงานอีก กินลูกอมแล้วก็ไม่หายเร็ว']},
- P1:{n:['「多看幾家比較保險」','"More hospitals is safer"','"ไปหลายโรงพยาบาลปลอดภัยกว่า"'],
-   kw:['固定','同一位','同一家','一位醫師','一家醫院','家庭醫師','健保卡','雲端','one doctor','one hospital','same doctor','same hospital','family doctor','regular doctor','one clinic','nhi card','medicine list','หมอประจำ','หมอคนเดียว','โรงพยาบาลเดียว','ที่เดียว','บัตรประกัน','รายการยา'],
+ P1:{n:['「小毛病就換診所」','"A new clinic for every little thing"','"เป็นนิดหน่อยก็เปลี่ยนคลินิก"'],
+   kw:['藥袋','every bag','med bag','ซองยา','固定','同一位','同一家','一位醫師','一家醫院','家庭醫師','健保卡','雲端','one doctor','one hospital','same doctor','same hospital','family doctor','regular doctor','one clinic','nhi card','medicine list','หมอประจำ','หมอคนเดียว','โรงพยาบาลเดียว','ที่เดียว','บัตรประกัน','รายการยา'],
    fx:['又去了兩家診所，拿回感冒藥和止痛藥，重複用藥又出現了。','Visited two more clinics and came home with cold medicine and painkillers. The duplicates are back.','ไปอีกสองคลินิก ได้ยาแก้หวัดกับยาแก้ปวดกลับมา ยาซ้ำกลับมาอีกแล้ว']},
- P13:{n:['「肌酸酐正常，腎沒事」','"Normal creatinine, healthy kidneys"','"ครีเอตินินปกติ ไตไม่เป็นไร"'],
+ P13:{n:['「沒症狀，腎就沒事」','"No symptoms, healthy kidneys"','"ไม่มีอาการ ไตก็ปกติ"'],
    kw:['腎','腎功能','egfr','crcl','kidney','renal','ไต'],
    fx:['覺得腎沒問題，頭痛時又自己多吃了止痛藥。','Sure her kidneys were fine, she took extra painkillers for her headaches.','คิดว่าไตไม่มีปัญหา ปวดหัวก็กินยาแก้ปวดเพิ่มเอง']},
  P6:{n:['「配咖啡也一樣」','"Coffee works just as well"','"กินกับกาแฟก็เหมือนกัน"'],
    kw:['白開水','咖啡','空腹','躺','直立','骨鬆藥','骨頭的藥','plain water','coffee','empty stomach','upright','lie down','bone pill','fosamax','alendronate','น้ำเปล่า','กาแฟ','ท้องว่าง','ตัวตรง','นอนลง','ยากระดูก'],
    fx:['骨鬆藥照樣配咖啡、吃完回去躺。','Kept taking the bone pill with coffee and going back to bed.','ยังกินยากระดูกกับกาแฟแล้วกลับไปนอนเหมือนเดิม']},
- P9:{n:['「藥拿了丟掉」','"Collect the pills, then toss them"','"รับยามาแล้วทิ้ง"'],
-   kw:['回收','剩藥','背痛','腰痛','x光','脊椎','leftover','return','back pain','x-ray','xray','spine','ยาเหลือ','คืนยา','ปวดหลัง','เอกซเรย์','กระดูกสันหลัง'],
+ P9:{n:['「不好意思說，拿了就丟」','"Too polite to say — collect and toss"','"เกรงใจไม่บอก รับมาแล้วทิ้ง"'],
+   kw:['實話','說實話','tell the doctor','honest','บอกหมอ','ตามจริง','回收','剩藥','背痛','腰痛','x光','脊椎','leftover','return','back pain','x-ray','xray','spine','ยาเหลือ','คืนยา','ปวดหลัง','เอกซเรย์','กระดูกสันหลัง'],
    fx:['背越來越痛，一次吞了好幾顆止痛藥，胃痛整晚；脊椎還是沒檢查。','Her back got worse; she swallowed several painkillers at once — stomach pain all night, spine still unchecked.','ปวดหลังหนักขึ้น กินยาแก้ปวดทีเดียวหลายเม็ด ปวดท้องทั้งคืน กระดูกสันหลังก็ยังไม่ได้ตรวจ']},
  P4:{n:['「忙就不吃飯」','"Too busy to eat"','"ยุ่งก็ไม่กินข้าว"'],
    kw:['早餐','三餐','吃飯','不要空腹','便當','breakfast','meal','eat regularly','regular meals','มื้อเช้า','สามมื้อ','กินข้าว','อดข้าว','กินให้ตรงเวลา'],
    fx:['還是常常不吃早餐，便當原封不動帶回家。','Still skips breakfast; the lunchbox still comes home untouched.','ยังอดมื้อเช้าบ่อย กล่องข้าวก็ยังถือกลับบ้านแบบไม่ได้แตะ']},
- P10:{n:['「累就吃補品」','"Tired? Buy supplements"','"เหนื่อยก็กินอาหารเสริม"'],
-   kw:['累','疲倦','補品','人蔘','人參','雞精','抽血','tired','fatigue','exhaust','supplement','ginseng','tonic','chicken essence','blood test','b12','เหนื่อย','อ่อนเพลีย','อาหารเสริม','โสม','ซุปไก่','เจาะเลือด','ตรวจเลือด'],
-   fx:['花了兩千元買人蔘雞精，還是很累，也還沒抽血。','Spent NT$2,000 on ginseng and chicken essence; still exhausted, still no blood test.','จ่ายไป 2,000 ดอลลาร์ไต้หวันกับโสมและซุปไก่สกัด ยังเหนื่อยอยู่ และยังไม่ได้เจาะเลือด']},
+ P10:{n:['「累就喝提神飲料」','"Tired? Grab an energy drink"','"เหนื่อยก็ดื่มเครื่องดื่มชูกำลัง"'],
+   kw:['提神','energy drink','ชูกำลัง','累','疲倦','補品','人蔘','人參','雞精','抽血','tired','fatigue','exhaust','supplement','ginseng','tonic','chicken essence','blood test','b12','เหนื่อย','อ่อนเพลีย','อาหารเสริม','โสม','ซุปไก่','เจาะเลือด','ตรวจเลือด'],
+   fx:['夜班還是靠提神飲料撐，一樣很累，也還沒抽血。','Still living on energy drinks through night shifts; still exhausted, still no blood test.','ยังพึ่งเครื่องดื่มชูกำลังตอนเข้ากะ ยังเหนื่อยเหมือนเดิม และยังไม่ได้เจาะเลือด']},
  P12:{n:['「站著工作就是運動」','"Standing at work is exercise"','"ยืนทำงานก็คือออกกำลังกาย"'],
    kw:['運動','散步','走路','肌力','平衡','跌倒','exercise','walk','strength','balance','fall','ออกกำลัง','เดิน','กล้ามเนื้อ','ทรงตัว','หกล้ม'],
    fx:['還是沒有運動，腿沒力，在樓梯上差點又跌倒。','Still no exercise; weak legs, and she nearly fell on the stairs again.','ยังไม่ได้ออกกำลังกาย ขาไม่มีแรง เกือบหกล้มที่บันไดอีก']},
@@ -3704,7 +4157,7 @@ function computeScore(){
   let sc=1000+Math.max(0,S.visit)*15+Math.min(0,S.visit)*20+S.hearts*80+S.trust*40+B.crit*120+B.ok*40-B.miss*60+B.maxCombo*20+bonus*60-S.hints*80-S.resets*200+cov*60-S.wrong*20
     -mythsAlive().length*150+(B.byFinal||[]).length*60
     +S.mr.perfect*150+S.mr.partial*60-S.mr.wrong*40+(S.mr.egfr?100:0)
-    +(S.custom?S.custom.score:0)+(S.first&&S.first.ok?100:0)+(S.calc.bmi&&S.calc.bmi.ok?60:0)+(S.calc.bmiClass?30:0)+(S.calc.crcl&&S.calc.crcl.ok?80:0)+(S.calc.crTrap?40:0)
+    +(S.custom?S.custom.score:0)+(S.first&&S.first.ok?100:0)+['hypo','height','ca','fosa'].filter(k=>S.calc[k]&&S.calc[k].ok).length*50+(S.calc.crcl&&S.calc.crcl.ok?80:0)+(S.calc.crTrap?40:0)
     +FOLLOW1.filter(f=>S.asked[f.id]).length*25+S.hiddenQ.length*40+(S.fl.adh?60:0)-(S.refused?150:0)-(S.timeout?300:0);
   const rt=realSec(); if(rt<25*60) sc+=200; else if(rt<35*60) sc+=100;
   const RK='SABCD', scoreRank=sc>=4600?'S':sc>=3800?'A':sc>=3000?'B':sc>=2200?'C':'D', g=rankGate();
@@ -3729,7 +4182,7 @@ async function results(){
     <div class="rtabs">${[['sum','📊 '+T('score')],['prob','🔎 '+T('tProblems')+` ${nFound}/${PROBLEMS.length}`],['bdg','🏅 '+T('badgeT')+` ${bd.earned.length}${bd.fresh.length?' ✨':''}`]].map(([k,t],i)=>`<button class="rtab${i?'':' on'}" data-rt="${k}">${t}</button>`).join('')}</div>
     <div class="rpane" data-rp="sum"><div class="rstats"><div><span>${T('score')}</span> ${S.score}</div><div><span>${T('realTime')}</span> ${fmt(realSec())}</div><div><span>${T('visitLeft')}</span> ${S.visit} ${T('min')}</div><div><span>${T('trustEnd')}</span> ${S.trust}/10</div>
     <div><span>${T('heartsLeft')}</span> ${S.hearts}</div><div><span>${T('bossAcc')}</span> ${acc}%</div><div><span>${T('mythLeftStat')}</span> 👿 ${mythsAlive().length}</div><div><span>${T('maxCombo')}</span> ${B.maxCombo}</div><div><span>${T('bonusEv')}</span> ${bonus}/4</div><div><span>${T('hintsUsed')}</span> ${S.hints}</div><div><span>${T('mrStat')}</span> ${S.mr.perfect}/6${S.mr.egfr?' · eGFR ✓':''}</div>
-    <div><span>${T('firstMoveT')}</span> ${S.first?(S.first.ok?'✅':'🔁 ×'+S.first.tries):'—'}</div><div><span>${T('calcStat')}</span> ${['bmi','egfr','crcl'].map(k=>S.calc[k]?(S.calc[k].ok?'✅':'📘'):'—').join(' ')}</div>
+    <div><span>${T('firstMoveT')}</span> ${S.first?(S.first.ok?'✅':'🔁 ×'+S.first.tries):'—'}</div><div><span>${T('calcStat')}</span> ${['egfr','crcl'].map(k=>S.calc[k]?(S.calc[k].ok?'✅':'📘'):'—').join(' ')}</div><div><span>🖐️ ${esc(L(['實作','Hands-on','ลงมือทำ']))}</span> ${[['hypo','🩸'],['height','📏'],['ca','🦴'],['fosa','💊']].map(([k,e])=>e+(S.calc[k]?(S.calc[k].ok?'✅':'📘'):'—')).join(' ')}</div>
     <div><span>${T('patStat')}</span> ☕${S.pat} · ↪${fuN}/${FOLLOW1.length} · 🗝️${S.hiddenQ.length}/3</div>${S.custom.max?`<div><span>${T('cqStat')}</span> ${S.custom.score}/${S.custom.max}</div>`:''}${ppN?`<div><span>${T('ppStat')}</span> ${ppPre}/${ppN} → <b style="color:#0a7a0a">${ppPost}/${ppN}</b></div>`:''}
     <div style="grid-column:1/4"><span>${T('chapterTimes')}</span> ${[1,2,3,4,5].map(c=>fmt(S.chT[c]||0)).join(' · ')}</div></div>${gateHTML}</div>
     <div class="rpane hidden" data-rp="prob"><div class="plist">${PROBLEMS.map(p=>`<div>${S.found[p.id]?'✅':'⬜'} ${p.icon} <b>${esc(L(p.t))}</b><div class="muted" style="font-size:13px;line-height:1.35">${esc(L(p.d))}</div></div>`).join('')}</div></div>
@@ -4204,7 +4657,7 @@ const CL={
  clPatOut:['☕ 耐心用完、訪談被迫結束','☕ Ran out of patience (interview cut short)','☕ ความอดทนหมด (การสัมภาษณ์ถูกตัดจบ)'], clRefused:['🔒 王太太沒說出秘密','🔒 Mrs. Wang kept her secret','🔒 ป้าไม่ยอมเล่าความลับ'], clTimeout:['⏰ 時間到、拜訪提早結束','⏰ Time ran out — visit ended early','⏰ หมดเวลา — การเยี่ยมจบก่อนกำหนด'],
  clEnding:['兩週後的結局','Two-week outcome','ผลลัพธ์ 2 สัปดาห์ต่อมา'], clFollow:['↪ 追問與隱藏提問','↪ Follow-ups & hidden questions','↪ คำถามต่อและคำถามลับ'], clHidden:['🗝️ 隱藏提問','🗝️ Hidden question','🗝️ คำถามลับ'],
  clMode:['模式','Mode','โหมด'], clAllModes:['全部模式','All modes','ทุกโหมด'],
- clBmiClass:['BMI 分類（台灣標準）','BMI category (Taiwan)','จัดกลุ่ม BMI (เกณฑ์ไต้หวัน)'], clCkd:['CKD 分期','CKD staging','ระยะ CKD'], clObese:['「正常」Cr 的陷阱','The "normal creatinine" trap','กับดัก Cr "ปกติ"'],
+ clBmiClass:['鈣攝取規劃（≥1000 mg、≤80 元）','Calcium plan (≥1000 mg, ≤NT$80)','วางแผนแคลเซียม (≥1000 มก., ≤80 ดอลลาร์)'], clHypo:['低血糖急救（acarbose）','Hypo rescue (acarbose)','แก้น้ำตาลต่ำ (acarbose)'], clHeight:['正確量身高','Measuring height properly','วัดส่วนสูงถูกวิธี'], clFosa:['Fosamax 週三早上','Fosamax on Wednesday morning','Fosamax เช้าวันพุธ'], clCkd:['CKD 分期','CKD staging','ระยะ CKD'], clObese:['「正常」Cr 的陷阱','The "normal creatinine" trap','กับดัก Cr "ปกติ"'],
 };
 const TC=k=>CL[k]?(CL[k][LI()]||CL[k][0]):UI[k]?T(k):TE(k);
 const CLS={fin:false, ver:'__all', mode:'all', cls:'__all'};
@@ -4222,10 +4675,10 @@ function classStats(list){
   sts.forEach(st=>{ let first=0, firstOk=0; list.forEach(s=>{ const ev=(s.log||[]).filter(e=>e.type==='present'&&e.st===st); if(ev.length){ first++; if(ev[0].ok) firstOk++; } ev.filter(e=>!e.ok).forEach(e=>{ const k=st+'|'+e.item; R.wrongEv[k]=(R.wrongEv[k]||0)+1; }); }); R.duel[st]={n:firstOk,d:first}; });
   sts.forEach((st,i)=>row('duel',st==='lock'?'💗 '+T('lockTitle').replace(/[～~]/g,'').trim():`${i+1}. ${KP(L(TESTI[i].st))}`,R.duel[st].n,R.duel[st].d));
   R.first={}; let fd=0; list.forEach(s=>{ const f=s.first&&s.first.picks&&s.first.picks[0]; if(f){ fd++; R.first[f]=(R.first[f]||0)+1; } }); R.firstD=fd; row('first',TE('firstMoveT')+' ✓',R.first.intro||0,fd);
-  R.calc={}; ['bmi','egfr','crcl'].forEach(k=>{ const has=list.filter(s=>s.calc&&s.calc[k]); R.calc[k]={n:has.filter(s=>s.calc[k].ok&&s.calc[k].tries===1).length, d:has.length}; row('calc',k.toUpperCase(),R.calc[k].n,R.calc[k].d); });
+  R.calc={}; ['egfr','crcl'].forEach(k=>{ const has=list.filter(s=>s.calc&&s.calc[k]); R.calc[k]={n:has.filter(s=>s.calc[k].ok&&s.calc[k].tries===1).length, d:has.length}; row('calc',k.toUpperCase(),R.calc[k].n,R.calc[k].d); });
   R.calcWrong={}; list.forEach(s=>(s.log||[]).filter(e=>e.type==='calc'&&!e.ok).forEach(e=>{ const k=e.id+'|'+Object.entries(e.vals||{}).sort((x,y)=>x[0]<y[0]?-1:1).map(([a,b])=>a+'='+b).join(', '); R.calcWrong[k]=(R.calcWrong[k]||0)+1; }));
-  const bc=list.filter(s=>s.calc&&'bmiClass' in s.calc), ck=list.filter(s=>(s.log||[]).some(e=>e.type==='egfr')), ob=list.filter(s=>s.calc&&'crTrap' in s.calc);
-  R.concept=[[TC('clBmiClass'),bc.filter(s=>s.calc.bmiClass).length,bc.length],[TC('clCkd'),ck.filter(s=>(s.log||[]).find(e=>e.type==='egfr').ok).length,ck.length],[TC('clObese'),ob.filter(s=>s.calc.crTrap).length,ob.length]];
+  const bc=list.filter(s=>s.calc&&s.calc.ca), hy=k=>list.filter(s=>s.calc&&s.calc[k]), ck=list.filter(s=>(s.log||[]).some(e=>e.type==='egfr')), ob=list.filter(s=>s.calc&&'crTrap' in s.calc);
+  R.concept=[[TC('clBmiClass'),bc.filter(s=>s.calc.ca.ok).length,bc.length],...[['clHypo','hypo'],['clHeight','height'],['clFosa','fosa']].map(([l,k])=>[TC(l),hy(k).filter(s=>s.calc[k].ok).length,hy(k).length]),[TC('clCkd'),ck.filter(s=>(s.log||[]).find(e=>e.type==='egfr').ok).length,ck.length],[TC('clObese'),ob.filter(s=>s.calc.crTrap).length,ob.length]];
   R.concept.forEach(([l,n,d])=>row('concept',l,n,d));
   R.mr=MISSIONS.map(m=>{ const a=list.map(s=>(s.mr&&s.mr.ans||[]).find(x=>x.id===m.id)).filter(Boolean); return {m, p:a.filter(x=>x.perfect).length, h:a.filter(x=>!x.perfect&&x.partial).length, w:a.filter(x=>!x.perfect&&!x.partial).length, d:a.length}; });
   R.mr.forEach(x=>row('mr',`${L(x.m.tag)} · ${KP(L(x.m.q)).slice(0,40)}…`,x.p,x.d));
@@ -4276,7 +4729,7 @@ function renderClass(b){
     +sec(TC('clProblems'),R.prob.slice().sort((a,b)=>a.n-b.n).map(x=>clBar(x.p.id+' '+x.p.icon+' '+esc(L(x.p.t)),x.n,R.N)).join(''))
     +sec(TC('clDuel'),R.rows.filter(r=>r.sec==='duel').map(r=>clBar(esc(r.label),r.n,r.d)).join('')+(wrongEv?`<h5>${TC('clWrongEv')}</h5><ul class="clul">${wrongEv}</ul>`:''))
     +sec(TC('clFirst'),FIRST_MOVES.map(f=>clBar((f.k==='intro'?'✅ ':'')+esc(L(f.t)),R.first[f.k]||0,R.firstD)).join(''))
-    +sec(TC('clCalc'),['bmi','egfr','crcl'].map(k=>clBar(k.toUpperCase(),R.calc[k].n,R.calc[k].d)).join('')+`<h5>${TC('clConcept')}</h5>`+R.concept.map(([l,n,d])=>clBar(l,n,d)).join('')+(calcWrong?`<h5>${TC('clCalcWrong')}</h5><ul class="clul">${calcWrong}</ul>`:''))
+    +sec(TC('clCalc'),['egfr','crcl'].map(k=>clBar(k.toUpperCase(),R.calc[k].n,R.calc[k].d)).join('')+`<h5>${TC('clConcept')}</h5>`+R.concept.map(([l,n,d])=>clBar(l,n,d)).join('')+(calcWrong?`<h5>${TC('clCalcWrong')}</h5><ul class="clul">${calcWrong}</ul>`:''))
     +sec(TC('clMR'),clLegend([['g','✅','lgPerfect'],['y','🔸','lgPartial'],['r','❌','lgWrong']])+R.mr.map(x=>clStack(esc(L(x.m.tag))+' · '+esc(KP(L(x.m.q)).slice(0,46))+'…',[[x.p,'g'],[x.h,'y'],[x.w,'r']],x.d)).join(''))
     +sec(TC('clBoss'),clLegend([['g','✅','lgCrit'],['y','🔸','lgOk'],['r','❌','lgMiss']])+R.boss.map(x=>clStack('「'+esc(L(x.m.m))+'」',[[x.c,'g'],[x.o,'y'],[x.w,'r']],x.d)).join(''))
     +sec(TC('clFinal'),R.final.map(x=>clBar(x.r.ic+' '+esc(L(x.r.k)),x.n,x.d)).join(''))
@@ -4426,10 +4879,10 @@ const DEBRIEF={
    ['如果王太太要評價你，她會怎麼說？','If Mrs. Wang rated you, what would she say?','ถ้าป้าหวังให้คะแนนคุณ ป้าจะพูดว่าอะไร?'],
    ['你得到哪一種結局？你覺得是哪個決定造成的？','Which ending did you get, and which decision caused it?','คุณได้ตอนจบแบบไหน และการตัดสินใจใดเป็นสาเหตุ?']],
  analyzeH:['② 分析 Analyze（15 分鐘）——依章節提問','② Analyze (15 min) — questions by chapter','② วิเคราะห์ Analyze (15 นาที) — คำถามรายบท'],
- analyze:[[['進門・訪談','Opening & interview','เปิดการเยี่ยม · สัมภาษณ์'],['為什麼要先自我介紹、取得同意？她頭暈冒冷汗時你怎麼反應？哪些資訊只有自己想到才問得到（過敏與牙科、存放、保健品）？','Why introduce yourself and get consent first? How did you respond when she turned dizzy and sweaty? Which facts only came from questions you thought of yourself (allergy & dental check, storage, supplements)?','ทำไมต้องแนะนำตัวและขอความยินยอมก่อน? ตอนป้าเวียนหัวเหงื่อแตก คุณตอบสนองอย่างไร? ข้อมูลใดได้มาจากคำถามที่คิดเองเท่านั้น (แพ้ยาและการตรวจฟัน การเก็บยา อาหารเสริม)?']],
+ analyze:[[['進門・訪談','Opening & interview','เปิดการเยี่ยม · สัมภาษณ์'],['為什麼要先自我介紹、取得同意？她頭暈冒冷汗時你怎麼處理——吃 acarbose 為什麼要用葡萄糖、給幾克、多久後再測？她一天的鈣差多少、用哪些便宜的食物補足？哪些資訊只有自己想到才問得到（過敏與牙科、存放、保健品）？','Why introduce yourself and get consent first? When she turned dizzy and sweaty, why glucose rather than candy on acarbose, how many grams, and when did you recheck? How short was her calcium, and which cheap foods closed the gap? Which facts only came from questions you thought of yourself (allergy & dental check, storage, supplements)?','ทำไมต้องแนะนำตัวและขอความยินยอมก่อน? ตอนป้าเวียนหัวเหงื่อแตก ทำไมต้องใช้กลูโคสแทนลูกอมเมื่อกิน acarbose ให้กี่กรัม และวัดซ้ำเมื่อไร? แคลเซียมของป้าขาดไปเท่าไร และอาหารราคาถูกอะไรช่วยเติมได้? ข้อมูลใดได้มาจากคำถามที่คิดเองเท่านั้น (แพ้ยาและการตรวจฟัน การเก็บยา อาหารเสริม)?']],
    [['搜查','House search','ค้นบ้าน'],['家裡哪些線索和王太太說的不一樣？舊健檢手冊、糖果紙條、咖啡罐告訴了我們什麼問不到的事？','Which clues in the house contradicted what she said? What did the old health booklet, the candy note and the coffee tin reveal that questions could not?','เบาะแสใดในบ้านขัดกับที่ป้าพูด? สมุดตรวจสุขภาพเล่มเก่า โน้ตกับลูกอม และกระป๋องกาแฟ บอกอะไรที่การถามให้ไม่ได้?']],
-   [['矛盾・心鎖','Contradictions & heart lock','จับโกหก · กุญแจหัวใจ'],['怎麼指出矛盾而不讓病人覺得被責怪？信任度怎麼影響她說不說出「頭痛就停藥」的原因？','How do you point out a contradiction without blaming? How did trust affect whether she told you she stops everything when a headache starts?','จะชี้ความขัดแย้งโดยไม่ตำหนิได้อย่างไร? ความไว้ใจมีผลอย่างไรต่อการที่ป้ายอมเล่าว่าปวดหัวแล้วหยุดยา?']],
-   [['藥物整合','Medication review','ทบทวนยา'],['為什麼 Cr 1.2「正常」卻是 G3a？三重打擊、glimepiride 低血糖、acarbose 與糖果、Clarinase 與頭痛、Fosamax 服法——哪個最緊急？','Why is a "normal" Cr of 1.2 actually G3a? Triple whammy, glimepiride hypos, acarbose and candy, Clarinase and headaches, Fosamax technique — which is most urgent?','ทำไม Cr 1.2 ที่ "ปกติ" จริงๆ คือ G3a? Triple whammy, glimepiride กับน้ำตาลต่ำ, acarbose กับลูกอม, Clarinase กับอาการปวดหัว, วิธีกิน Fosamax — ข้อใดเร่งด่วนที่สุด?']],
+   [['矛盾・心鎖','Contradictions & heart lock','จับโกหก · กุญแจหัวใจ'],['怎麼指出矛盾而不讓病人覺得被責怪？量身高時，哪些步驟會改變讀數（拖鞋、頭的角度）？為什麼矮 4 公分很重要？信任度怎麼影響她說不說出「頭痛就停藥」的原因？','How do you point out a contradiction without blaming? When you measured her height, which steps change the reading (slippers, head position) — and why does a 4 cm loss matter? How did trust affect whether she told you she stops everything when a headache starts?','จะชี้ความขัดแย้งโดยไม่ตำหนิได้อย่างไร? ตอนวัดส่วนสูง ขั้นไหนทำให้ค่าเปลี่ยน (รองเท้าแตะ มุมศีรษะ) และทำไมการเตี้ยลง 4 ซม. จึงสำคัญ? ความไว้ใจมีผลอย่างไรต่อการที่ป้ายอมเล่าว่าปวดหัวแล้วหยุดยา?']],
+   [['藥物整合','Medication review','ทบทวนยา'],['為什麼 Cr 1.2「正常」卻是 G3a？三重打擊、glimepiride 低血糖、acarbose 與糖果、Clarinase 與頭痛、Fosamax 服法——哪個最緊急？把藥排成她的一天後，哪些藥落在她常不吃的那一餐？週三早上的演練中，她在那 30 分鐘裡想做哪些事？','Why is a "normal" Cr of 1.2 actually G3a? Triple whammy, glimepiride hypos, acarbose and candy, Clarinase and headaches, Fosamax technique — which is most urgent? Laid out as her day, which drugs land on meals she skips? In the Wednesday rehearsal, what did she try to do during those 30 minutes?','ทำไม Cr 1.2 ที่ "ปกติ" จริงๆ คือ G3a? Triple whammy, glimepiride กับน้ำตาลต่ำ, acarbose กับลูกอม, Clarinase กับอาการปวดหัว, วิธีกิน Fosamax — ข้อใดเร่งด่วนที่สุด? เมื่อเรียงยาเป็นหนึ่งวันของป้า ยาไหนตกอยู่ในมื้อที่ป้ามักไม่กิน? ตอนซ้อมเช้าวันพุธ ป้าพยายามทำอะไรใน 30 นาทีนั้น?']],
    [['衛教・總結','Counselling & summary','ให้คำแนะนำ · สรุป'],['哪個迷思最難反駁？面對國中學歷、時間很少的病人，你的總結夠簡單嗎？有沒有請她複述（teach-back）、有沒有約追蹤？','Which myth was hardest to counter? For a patient with junior-high education and very little time, was your summary simple enough? Did it include teach-back and a follow-up?','ความเชื่อผิดข้อไหนแย้งยากที่สุด? สำหรับผู้ป่วยที่จบ ม.ต้น และมีเวลาน้อยมาก การสรุปของคุณง่ายพอไหม? มี teach-back และนัดติดตามหรือไม่?']],
    [['兩週後','Two weeks later','สองสัปดาห์ต่อมา'],['住院或低血糖昏倒的結局，是哪個漏掉的問題造成的？建議要怎麼寫，醫師才會採納？','Which missed problem led to a hospital or hypo ending? How should a recommendation be written so the doctor acts on it?','ตอนจบที่ต้องนอนโรงพยาบาลหรือหมดสติจากน้ำตาลต่ำ เกิดจากปัญหาใดที่พลาด? ควรเขียนข้อเสนอแนะอย่างไรให้แพทย์นำไปใช้?']]],
  sumH:['③ 總結 Summarize（5 分鐘）——帶走的重點','③ Summarize (5 min) — take-home points','③ สรุป Summarize (5 นาที) — ประเด็นที่ต้องจำ'],

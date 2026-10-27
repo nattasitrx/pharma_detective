@@ -13,7 +13,7 @@
   "cloudflare": {
     "bindings": {
       "TEACHER_KEY": {
-        "description": "The instructor key. Instructors type it in the game's dashboard to publish settings and read results. Use a long random value, e.g. `PD-XXXX-XXXX-XXXX-XXXX`, and do not give it to students."
+        "description": "The instructor key. Instructors type it in the game's dashboard to publish settings and read results. Use three or more words plus a number, e.g. `bamboo-lantern-kidney-27`, and do not give it to students."
       },
       "DB": {
         "description": "Stores students' game results and the instructor's published settings. Created for you."

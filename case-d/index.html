@@ -3730,18 +3730,44 @@ function simDevSVG(dev){
     <g class="sd-mdiw">${mdi}</g></g>`;
   return `<g class="sd-dev" data-dev="mdi">${mdi}</g>`;
 }
-function simFaceSVG(){ const O=SIM_O;
-  return `<g class="sd-face">
-    <path d="M820 600 V430 q-40 -36 -120 -40 l-12 -40 q70 -20 96 -110 q22 -86 -40 -150 q-60 -54 -140 -30 q-70 24 -86 94 l-6 40 l-26 44 q-6 12 8 16 l18 4 l-4 22 q-2 12 12 14 l-2 16 q-2 14 14 18 q30 8 56 -4 l10 40 q-90 6 -132 64 V600 Z" fill="#ffd9b8" stroke="${O}" stroke-width="5" stroke-linejoin="round"/>
-    <path d="M512 160 q16 -110 140 -116 q120 0 160 110 q-34 -22 -72 -16 q-10 56 -66 66 q-30 -44 -96 -34 q-34 -6 -66 -10Z" fill="#3b3045" stroke="${O}" stroke-width="5"/>
-    <ellipse cx="560" cy="198" rx="9" ry="12" fill="${O}"/><path d="M542 170 q16 -10 32 -2" stroke="${O}" stroke-width="5" fill="none" stroke-linecap="round"/>
-    <circle cx="590" cy="256" r="18" fill="#ff9fb0" opacity=".55"/>
-    <g class="sd-mouth"><path class="m-closed" d="M506 293 q9 5 18 1" stroke="#b03a48" stroke-width="6" fill="none" stroke-linecap="round"/>
-      <ellipse class="m-open" cx="514" cy="296" rx="10" ry="10" fill="#7a2232" stroke="${O}" stroke-width="4"/>
-      <path class="m-seal" d="M526 276 q-20 20 0 40" stroke="#b03a48" stroke-width="9" fill="none" stroke-linecap="round"/></g>
-    <g class="sd-throat"><path d="M530 302 q50 26 70 96" stroke="#ff8f7a" stroke-width="16" fill="none" stroke-linecap="round" opacity=".75"/></g>
+function simFaceSVG(){ const O=SIM_O, SK='#e2ab80', SH='#c08458', HR='#d2d5dc', HO='#6a6e7a', JK='#9a9560', JD='#7c7848';
+  /* Uncle Lee, 88, in profile facing left (same look as his portrait: grey crew cut, white brows, olive jacket over a white shirt) */
+  return `<g class="sd-face"><defs><linearGradient id="sdHair" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f2f3f6"/><stop offset="1" stop-color="#b9bcc6"/></linearGradient>
+      <linearGradient id="sdJk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#aaa56e"/><stop offset="1" stop-color="${JD}"/></linearGradient></defs>
+    <path d="M396 600 C410 528 462 474 556 450 C600 440 650 438 704 442 C752 446 792 458 820 474 V600 Z" fill="url(#sdJk)" stroke="${O}" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M470 600 C488 532 530 484 588 456 C606 486 614 540 606 600 Z" fill="#fbf9f1" stroke="${O}" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M588 456 C612 500 620 552 612 600" fill="none" stroke="${O}" stroke-width="4"/>
+    <path d="M598 440 C640 428 696 430 732 446 L722 476 C686 462 640 460 606 468 Z" fill="${JD}" stroke="${O}" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M556 520 C548 548 546 576 548 600" fill="none" stroke="#d8d2bf" stroke-width="3"/>
+    <rect x="660" y="508" width="60" height="54" rx="6" fill="${JK}" stroke="${O}" stroke-width="3.5"/><path d="M660 524 h60" stroke="${O}" stroke-width="3"/><path d="M676 494 v32" stroke="#3d6fc0" stroke-width="5" stroke-linecap="round"/>
+    <path d="M582 344 C586 380 584 414 594 452 C630 466 690 466 720 450 C716 404 720 330 744 268 L700 284 Z" fill="${SK}" stroke="${O}" stroke-width="4.5" stroke-linejoin="round"/>
+    <path d="M600 352 C620 380 650 392 700 388" fill="none" stroke="${SH}" stroke-width="3" opacity=".7"/>
+    <path d="M592 386 q-8 10 2 20" fill="none" stroke="${SH}" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M600 414 q22 8 48 4 M604 432 q24 8 52 2" fill="none" stroke="${SH}" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+    <path d="M600 96 C560 100 532 128 530 160 C528 178 524 190 521 200 C519 206 524 212 527 216 C520 232 504 248 490 262 C486 268 492 274 502 273 C508 273 514 271 518 274 C516 280 512 286 513 291 C514 295 518 297 517 299 C513 303 514 309 521 312 C526 314 527 318 524 324 C518 334 520 346 534 352 C552 360 572 362 588 360 L600 352 C630 340 652 324 664 304 C700 300 730 290 744 260 C760 220 750 150 712 116 C684 96 640 90 600 96 Z" fill="${SK}" stroke="${O}" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M664 304 C650 330 628 346 600 356 C632 352 656 336 664 304 Z" fill="${SH}" opacity=".45"/>
+    <ellipse cx="578" cy="262" rx="24" ry="18" fill="#e8846e" opacity=".28"/>
+    <path d="M538 166 q18 -7 36 -3 M536 180 q20 -7 40 -2" fill="none" stroke="${SH}" stroke-width="3" stroke-linecap="round"/>
+    <path d="M506 262 C512 254 522 256 525 266 C523 271 516 273 510 271" fill="none" stroke="${SH}" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M524 266 C536 278 542 292 541 308" fill="none" stroke="${SH}" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M548 322 C558 336 570 344 584 348" fill="none" stroke="${SH}" stroke-width="3" stroke-linecap="round" opacity=".85"/>
+    <path d="M546 214 C552 210 562 209 570 213 C564 220 554 221 546 216 Z" fill="#fff" stroke="${O}" stroke-width="2.5"/>
+    <ellipse cx="550" cy="215" rx="4.5" ry="5" fill="#3a2414"/>
+    <path d="M540 211 C550 204 564 204 574 211" fill="none" stroke="${O}" stroke-width="4" stroke-linecap="round"/>
+    <path d="M546 226 C554 231 564 230 572 224" fill="none" stroke="${SH}" stroke-width="3" stroke-linecap="round"/>
+    <path d="M580 208 l13 -5 M581 216 l13 1 M580 223 l12 6" stroke="${SH}" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M530 196 C542 184 568 182 592 190 C584 199 560 199 532 205 Z" fill="#eef0f4" stroke="${HO}" stroke-width="2.5" stroke-linejoin="round"/>
+    <path d="M540 194 l6 -5 M552 191 l5 -6 M564 190 l5 -6 M576 190 l4 -5" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+    <path d="M532 150 C534 112 570 86 624 84 C690 82 742 112 756 170 C764 210 758 250 746 280 C738 296 724 304 712 304 C712 280 700 262 690 250 C686 222 676 202 662 198 C650 196 640 202 634 212 C630 196 624 176 614 166 C590 158 560 160 532 150 Z" fill="url(#sdHair)" stroke="${HO}" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M560 128 l8 -8 M590 112 l8 -8 M622 104 l7 -9 M656 104 l6 -9 M690 116 l6 -9 M718 136 l6 -8 M740 168 l7 -6 M742 206 l8 -4 M736 244 l8 -2 M610 140 l7 -8 M646 136 l6 -9 M682 146 l6 -8 M712 170 l6 -7 M716 214 l7 -4" stroke="#a6aab6" stroke-width="3" stroke-linecap="round"/>
+    <path d="M664 214 C684 204 704 218 702 248 C702 272 690 290 670 288 C660 287 655 276 660 266 C664 258 666 252 662 244 C656 232 656 220 664 214 Z" fill="${SK}" stroke="${O}" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M674 228 C688 230 692 248 682 262" fill="none" stroke="${SH}" stroke-width="3.5" stroke-linecap="round"/>
+    <g class="sd-mouth"><path class="m-closed" d="M511 296 C516 299 521 299 526 296" stroke="#9a4a3a" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+      <ellipse class="m-open" cx="516" cy="297" rx="8" ry="9" fill="#6a2230" stroke="${O}" stroke-width="3.5"/>
+      <path class="m-seal" d="M526 278 q-20 18 0 38" stroke="#c0645a" stroke-width="9" fill="none" stroke-linecap="round"/></g>
+    <g class="sd-throat"><path d="M528 300 q40 22 64 100" stroke="#ff8f7a" stroke-width="16" fill="none" stroke-linecap="round" opacity=".75"/></g>
     <text class="sd-bub" x="470" y="110" text-anchor="middle" font-size="34" font-weight="900" fill="#c0172f" font-family="sans-serif"></text>
-    <text class="sd-count" x="700" y="560" text-anchor="middle" font-size="64" font-weight="900" fill="#3d7bff" font-family="sans-serif"></text>
+    <text class="sd-count" x="545" y="578" text-anchor="middle" font-size="64" font-weight="900" fill="#3d7bff" stroke="#fff" stroke-width="6" paint-order="stroke" font-family="sans-serif"></text>
   </g>`; }
 /* ===== v2: guided flow — one instruction at a time; in practice the part to touch glows and a hand points at it.
    Taps on the device (cap · canister · body · spacer · base · dose button) + four body buttons (shake · breathe out · breathe in · hold breath).

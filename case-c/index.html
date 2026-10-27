@@ -2991,6 +2991,13 @@ function cgCss(){ if($('#cgCss')) return; const st=document.createElement('style
 #cgame .who .art{position:absolute;left:50%;bottom:-6px;width:260px;transform:translateX(-50%)}
 #cgame .who .art svg{width:100%;height:auto;display:block}
 #cgame .who.tilt{transform:rotate(-58deg) translate(-40px,70px)}
+#cgame .who .bed{position:absolute;inset:0;opacity:0;transition:opacity .45s;pointer-events:none}
+#cgame .who .bed>svg{width:100%;height:100%;display:block}
+#cgame .who.lying .bed{opacity:1}
+#cgame .who .art{transition:opacity .3s}
+#cgame .who.lying .art{opacity:0}
+#cgame .who .bed .zz{animation:cgZz 1.6s ease-in-out infinite}
+@keyframes cgZz{0%{transform:translate(0,0);opacity:.2}50%{opacity:1}100%{transform:translate(10px,-16px);opacity:.2}}
 #cgame .bub{position:absolute;left:12px;right:12px;top:10px;background:#fff;border-radius:16px;padding:6px 10px;font-weight:800;font-size:16px;line-height:1.3;box-shadow:0 0 0 3px #ffb21f;z-index:2}
 #cgame .bub:empty{display:none}
 #cgame .cg-sum{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.88);border-radius:20px}
@@ -3071,11 +3078,25 @@ function cgGlassSVG(ml,kind){ const h=Math.min(1,ml/300)*150, col=kind==='bad'?'
     <rect x="0" y="${194-h}" width="140" height="${h}" fill="${col}" clip-path="url(#cgGl)"/>
     ${[100,200,300].map(v=>`<path d="M104 ${194-v/2} h12" stroke="${CG_O}" stroke-width="3"/><text x="98" y="${199-v/2}" text-anchor="end" font-size="13" font-weight="900" fill="#5a4a3a" font-family="sans-serif">${v}</text>`).join('')}
     <rect x="26" y="${194-240/2}" width="78" height="${(240-180)/2}" fill="#18b07f" opacity=".14"/></svg>`; }
-function cgClockSVG(min){ const a=min/60*360, ha=(6+min/60)*30;   // min = minutes after 6:00
-  return `<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" fill="#fff" stroke="${CG_O}" stroke-width="5"/>${[...Array(12)].map((_,i)=>`<path d="M60 12 v8" stroke="${CG_O}" stroke-width="3" transform="rotate(${i*30} 60 60)"/>`).join('')}
+function cgClockSVG(min, from, to){ const a=min/60*360, ha=(6+min/60)*30;   // min = minutes after 6:00; from..min shaded (time since the dose), to = target tick
+  const pt=m=>{ const r=m/60*2*Math.PI; return (60+48*Math.sin(r)).toFixed(1)+' '+(60-48*Math.cos(r)).toFixed(1); };
+  const wedge=from!=null&&min>from?`<path d="M60 60 L${pt(from)} A48 48 0 ${min-from>30?1:0} 1 ${pt(min)} Z" fill="#18b07f" opacity=".28"/><path d="M60 60 L${pt(from)}" stroke="#18b07f" stroke-width="3"/>`:'';
+  const goal=to!=null?`<path d="M60 60 L${pt(to)}" stroke="#ff9d1f" stroke-width="3" stroke-dasharray="5 4"/><circle cx="${pt(to).split(' ')[0]}" cy="${pt(to).split(' ')[1]}" r="6" fill="#ff9d1f" stroke="${CG_O}" stroke-width="2"/>`:'';
+  return `<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="54" fill="#fff" stroke="${CG_O}" stroke-width="5"/>${wedge}${goal}${[...Array(12)].map((_,i)=>`<path d="M60 12 v8" stroke="${CG_O}" stroke-width="3" transform="rotate(${i*30} 60 60)"/>`).join('')}
     <path d="M60 60 V34" stroke="${CG_O}" stroke-width="6" stroke-linecap="round" transform="rotate(${ha} 60 60)"/><path d="M60 60 V18" stroke="#c0172f" stroke-width="4" stroke-linecap="round" transform="rotate(${a} 60 60)"/><circle cx="60" cy="60" r="5" fill="${CG_O}"/></svg>`; }
 function cgTile(k, name, x, y, extra){ return `<div class="tile" data-item="${k}" style="left:${x}px;top:${y}px" ${extra||''}>${CG_ICON[k]||''}<span>${esc(L(name))}</span></div>`; }
 
+/* Mrs. Wang lying in bed (seen from above): her portrait turned on its side, head on the pillow, under a blanket */
+function cgBedSVG(who, emo){ const art=charSVG(who, emo||'happy').replace('<svg ','<svg x="0" y="0" width="220" height="308" ');
+  return `<svg viewBox="0 0 290 430" preserveAspectRatio="xMidYMid slice"><rect width="290" height="430" fill="#efe6f6"/><rect y="380" width="290" height="50" fill="#d9c3a5"/>
+    <rect x="6" y="132" width="24" height="262" rx="10" fill="#a8703f" stroke="${CG_O}" stroke-width="4"/>
+    <rect x="22" y="142" width="262" height="240" rx="22" fill="#fffdf8" stroke="${CG_O}" stroke-width="4"/>
+    <rect x="30" y="180" width="128" height="166" rx="40" fill="#eef1ff" stroke="${CG_O}" stroke-width="3.5"/>
+    <g transform="translate(-9 372) rotate(-90)">${art}</g>
+    <path d="M182 150 h92 q10 0 10 12 v208 q0 10 -10 10 h-92 q-12 -56 -4 -116 q-6 -60 4 -114Z" fill="#ffb3c4" stroke="${CG_O}" stroke-width="4"/>
+    <path d="M182 150 q-10 54 -4 114 q-8 60 4 116 l16 0 q-12 -56 -4 -116 q-6 -58 4 -114Z" fill="#fff" stroke="${CG_O}" stroke-width="3"/>
+    ${[0,1,2].map(i=>`<path d="M${216+i*26} 162 v206" stroke="#ff8fa8" stroke-width="5" opacity=".7"/>`).join('')}
+    <g class="zz" font-family="sans-serif" font-weight="900" fill="#7b61ff"><text x="150" y="132" font-size="32">Z</text><text x="176" y="108" font-size="24">z</text><text x="196" y="88" font-size="17">z</text></g></svg>`; }
 /* ---------- medicine games: the student decides every step. Practice mode adds a "💡 Hint" button that shows the current step,
    makes its target glow and points a hand at it (hints are counted). Exam mode has no hints. ---------- */
 function cgFlowCss(){ if($('#cgFlowCss')) return; const st=document.createElement('style'); st.id='cgFlowCss'; st.textContent=`
@@ -3157,7 +3178,8 @@ function fosaGame(){
     ['after',['7 點了！點早餐和早上的其他藥給她','7:00! Tap her breakfast and her other morning pills','เจ็ดโมงแล้ว! แตะมื้อเช้าและยาเช้าอื่นๆ ให้ป้า'],'🥟','.tile[data-item="food"]:not(.gone),.tile[data-item="pills"]:not(.gone)',['','','']]];
   const scene=`<div style="position:absolute;left:20px;top:16px;width:120px" id="cgClock">${cgClockSVG(30)}</div><div style="position:absolute;left:150px;top:36px;font-weight:900;font-size:22px;color:#b4621a;line-height:1.3">🗓️ ${esc(L(['週三早上','Wednesday','เช้าวันพุธ']))}<br><span id="cgTime" style="font-size:34px;color:#3a2a1c">6:30</span></div>
     <div class="tile" data-item="glass" style="left:400px;top:16px;width:176px;cursor:default"><div id="cgGlass">${cgGlassSVG(0,'water')}</div><span id="cgMl" style="font-size:18px">0 mL</span></div>
-    <div class="who" id="cgWho" style="right:16px;top:16px;width:290px;height:430px"><div class="bub" id="cgBub"></div><div class="art">${charSVG('chen','neutral')}</div></div>
+    <div class="who" id="cgWho" style="right:16px;top:16px;width:290px;height:430px"><div class="bed" id="cgBed"></div><div class="bub" id="cgBub"></div><div class="art">${charSVG('chen','neutral')}</div></div>
+    <div class="cg-read" id="cgDose" style="left:20px;top:168px;width:360px;text-align:left;display:none;font-weight:900;font-size:21px;line-height:1.55;color:#3a2a1c"></div>
     <div class="cg-ask hidden" id="cgAsk"><button class="no-b" id="cgStop">${esc(L(FLOWG.stop))}</button><button class="ok-b" id="cgOk">${esc(L(FLOWG.ok))}</button><div class="tm"><b id="cgAskT"></b></div></div>
     ${cgTile('water',['白開水','Plain water','น้ำเปล่า'],16,476)}${cgTile('coffee',['咖啡','Coffee','กาแฟ'],146,476)}${cgTile('milk',['牛奶','Milk','นม'],276,476)}${cgTile('juice',['柳橙汁','Orange juice','น้ำส้ม'],406,476)}
     ${cgTile('fosa',['Fosamax Plus 70 mg','Fosamax Plus 70 mg','Fosamax Plus 70 มก.'],536,476)}${cgTile('food',['早餐','Breakfast','มื้อเช้า'],666,476)}${cgTile('pills',['早上的其他藥','Other AM pills','ยาเช้าอื่นๆ'],796,476)}`;
@@ -3166,7 +3188,13 @@ function fosaGame(){
     errs:FOSA_ERR, scene, side, drop:()=>{}, onDone:()=>done()});
   cgFlow(C, FL, ['週三早上 6:30，她剛起床。陪她把這週的 Fosamax 吃對：點桌上的東西來用。卡住了就按「💡 提示」。','Wednesday, 6:30 — she\'s just up. Help her take this week\'s Fosamax the right way: tap things on the table to use them. Stuck? Tap "💡 Hint".','เช้าวันพุธ 6:30 ป้าเพิ่งตื่น พาป้ากิน Fosamax ของสัปดาห์นี้ให้ถูกวิธี: แตะของบนโต๊ะเพื่อใช้ ถ้าติดอยู่ แตะ "💡 คำใบ้"']);
   if(C.ex) $('#cgTx').textContent=L(['陪王太太完成這週的 Fosamax，從起床到吃早餐。','Walk Mrs. Wang through this week\'s Fosamax, from waking up to breakfast.','พาป้าหวังกิน Fosamax ของสัปดาห์นี้ ตั้งแต่ตื่นนอนจนถึงมื้อเช้า'])+' '+L(CGX.examNote);
-  const G={ml:0, kind:'water', swallowed:false, wait:false, after:false, min:30, want:null, wantT:0, gone:new Set(), pouring:false};
+  const G={ml:0, kind:'water', swallowed:false, wait:false, after:false, min:30, doseAt:null, want:null, wantT:0, gone:new Set(), pouring:false};
+  const hm=m=>m>=60?'7:00':'6:'+String(m).padStart(2,'0');
+  /* when she took it and how long ago (practice also shows when breakfast is allowed) */
+  const doseCard=()=>{ const d=$('#cgDose'); if(G.doseAt==null){ d.style.display='none'; return; } d.style.display='';
+    d.innerHTML=`${esc(L(['💊 吃藥時間','💊 Tablet taken at','💊 กินยาเมื่อ']))} <b style="display:inline;font-size:26px;color:#18b07f">${hm(G.doseAt)}</b><br>${esc(L(['⏱️ 已經過了','⏱️ Time since','⏱️ ผ่านไปแล้ว']))} <b style="display:inline;font-size:26px;color:#3d7bff">${G.min-G.doseAt}</b> ${esc(L(FLOWG.min))}`
+      +(C.ex?'':`<br>${esc(L(['🍽️ 可以吃早餐和其他藥','🍽️ Breakfast & other pills from','🍽️ กินข้าวและยาอื่นได้ตอน']))} <b style="display:inline;font-size:26px;color:#ff9d1f">${hm(Math.min(60,G.doseAt+30))}</b>`);
+    $('#cgClock').innerHTML=cgClockSVG(G.min, G.doseAt, C.ex?null:Math.min(60,G.doseAt+30)); };
   const bub=(t,ms)=>{ $('#cgBub').textContent=t; if(ms) C.later(()=>{ if($('#cgBub').textContent===t) $('#cgBub').textContent=''; },ms); };
   const tile=k=>$(`#cgScene .tile[data-item="${k}"]`), art=e=>{ $('#cgWho .art').innerHTML=charSVG('chen',e); };
   const glass=()=>{ $('#cgGlass').innerHTML=cgGlassSVG(G.ml,G.kind); $('#cgMl').textContent=Math.round(G.ml)+' mL'; };
@@ -3176,27 +3204,28 @@ function fosaGame(){
       if(k==='water'){ C.mark('pour'); bub(L(['一大杯白開水，好。','A full glass of plain water — good.','น้ำเปล่าเต็มแก้ว ดีแล้ว']),1500); }
       else { C.err('wrongDrink'); bub(L(['配這個不行嗎？','Can\'t I take it with this?','กินกับอันนี้ไม่ได้เหรอ?']),1600); C.later(()=>{ if(!G.swallowed){ G.ml=0; G.kind='water'; glass(); } },1400); } } },45); }
   function swallow(){ if(G.swallowed||G.pouring) return; if(!G.ml) C.err('dry'); else if(G.kind==='bad') C.err('wrongDrink');
-    G.swallowed=true; consume('fosa'); tile('fosa').classList.add('gone'); G.ml=0; glass(); sfx.whoosh(); C.mark('swallow'); bub(L(['好，吞下去了！','Done — swallowed!','กลืนแล้ว!']),1400); C.later(startWait,900); }
+    G.swallowed=true; G.doseAt=G.min; doseCard(); consume('fosa'); tile('fosa').classList.add('gone'); G.ml=0; glass(); sfx.whoosh(); C.mark('swallow'); bub(L(['好，吞下去了！','Done — swallowed!','กลืนแล้ว!']),1400); C.later(startWait,900); }
   /* the 30 minutes: she asks for four things (three not allowed, one allowed); the student taps Wait or OK for each */
   const OKW=new Set(['water','sofa','plants']), SPAN=24000, WIN=C.ex?4000:5000;
   function startWait(){ G.wait=true; if(!C.ex) C.status=FLOWG.waiting; C.guide(); const rnd=()=>Math.random()-.5;
     const evs=[...['lie','coffee','food','pills'].sort(rnd).slice(0,3), ['water','sofa','plants'][Math.floor(Math.random()*3)]].sort(rnd), t0=performance.now();
     const clk=setInterval(()=>{ if(C.finished){ clearInterval(clk); return; } const m=Math.min(60,30+Math.floor((performance.now()-t0)/SPAN*30));
-      if(m!==G.min){ G.min=m; $('#cgClock').innerHTML=cgClockSVG(m); $('#cgTime').textContent=m>=60?'7:00':'6:'+String(m).padStart(2,'0'); } if(m>=60){ clearInterval(clk); endWait(); } },200);
+      if(m!==G.min){ G.min=m; doseCard(); $('#cgTime').textContent=hm(m); } if(m>=60){ clearInterval(clk); endWait(); } },200);
     evs.forEach((ev,i)=>C.later(()=>want(ev),2000+i*5400)); }
   const WANT={lie:['好睏喔……我再躺一下就好。','So sleepy… just a little lie-down.','ง่วงจัง… ขอนอนต่อแป๊บนึงนะ'], coffee:['先喝口咖啡提神……','Just a sip of coffee to wake up…','ขอจิบกาแฟให้ตื่นหน่อย…'], food:['肚子好餓，先吃一口饅頭……','I\'m starving — one bite of my bun…','หิวจัง ขอกินซาลาเปาสักคำ…'], pills:['順便把其他藥一起吃一吃……','I\'ll take my other pills while I\'m at it…','กินยาอื่นไปพร้อมกันเลยดีกว่า…'],
     water:['我可以再喝點白開水嗎？','Can I have a bit more plain water?','ขอน้ำเปล่าอีกนิดได้ไหม?'], sofa:['我去沙發坐著看新聞喔。','I\'ll sit on the sofa and watch the news.','ไปนั่งดูข่าวที่โซฟานะ'], plants:['我去陽台澆個花。','I\'ll go and water the plants on the balcony.','ไปรดน้ำต้นไม้ที่ระเบียงนะ']};
-  function want(ev){ if(!G.wait||G.want) return; if(G.gone.has(ev)) return; G.want=ev; bub(L(WANT[ev])); sfx.blip('chen');
-    if(ev==='lie'){ $('#cgWho').classList.add('tilt'); art('think'); } else if(tile(ev)) tile(ev).classList.add('want');
+  const WICON={lie:'🛏️', coffee:'☕', food:'🥟', pills:'💊', water:'💧', sofa:'🛋️', plants:'🪴'};
+  function want(ev){ if(!G.wait||G.want) return; if(G.gone.has(ev)) return; G.want=ev; bub(WICON[ev]+' '+L(WANT[ev])); sfx.blip('chen');
+    if(ev==='lie'){ $('#cgBed').innerHTML=cgBedSVG('chen','happy'); $('#cgWho').classList.add('lying'); } else if(tile(ev)) tile(ev).classList.add('want');
     const a=$('#cgAsk'), w=$('#cgWho'); a.dataset.want=ev; a.style.left=(w.offsetLeft-236)+'px'; a.style.top=(w.offsetTop+120)+'px'; a.classList.remove('hidden');
     const b=$('#cgAskT'); b.style.transition='none'; b.style.width='100%'; void b.offsetWidth; b.style.transition=`width ${WIN}ms linear`; b.style.width='0%';
     C.guide(); G.wantT=C.later(()=>resolveWant('timeout'),WIN); }
   function resolveWant(ch){ const ev=G.want; if(!ev) return; G.want=null; clearTimeout(G.wantT); $('#cgAsk').classList.add('hidden');
-    if(ev==='lie'){ $('#cgWho').classList.remove('tilt'); art('neutral'); } else if(tile(ev)) tile(ev).classList.remove('want');
+    if(ev==='lie'&&ch==='stop'){ $('#cgWho').classList.remove('lying'); art('neutral'); } else if(tile(ev)) tile(ev).classList.remove('want');
     if(OKW.has(ev)){ if(ch==='stop'){ C.err('tooStrict'); bub(L(['咦？連這個也不行嗎……','Oh — not even that?','อ้าว แค่นี้ก็ไม่ได้เหรอ…']),1700); }
       else { sfx.select(); art('happy'); bub(L(ev==='water'?['（喝了幾口白開水）','(sips some plain water)','(จิบน้ำเปล่า)']:['好～','Okay~','โอเค~']),1400); } }
     else if(ch==='stop'){ sfx.select(); if(ev==='lie') art('happy'); bub(L(ev==='lie'?['好啦，我坐著。','Fine — I\'ll sit up.','ก็ได้ นั่งก็ได้']:['好，等 7 點再說。','Okay, after seven then.','โอเค รอเจ็ดโมงก่อน']),1500); }
-    else { C.err(ev==='lie'?'lieDown':ev==='pills'?'earlyPills':'early'); consume(ev); bub(L(ev==='lie'?['呼……（躺下了）','Zzz… (lies down)','ครอก… (นอนลงแล้ว)']:['（她吃下去了）','(she has it)','(ป้ากินไปแล้ว)']),1500); }
+    else { C.err(ev==='lie'?'lieDown':ev==='pills'?'earlyPills':'early'); consume(ev); if(ev==='lie') C.later(()=>{ if(G.want!=='lie'){ $('#cgWho').classList.remove('lying'); art('neutral'); } },2600); bub(L(ev==='lie'?['呼……（躺下了）','Zzz… (lies down)','ครอก… (นอนลงแล้ว)']:['（她吃下去了）','(she has it)','(ป้ากินไปแล้ว)']),1500); }
     C.guide(); }
   $('#cgStop').onclick=()=>{ if(!C.finished) resolveWant('stop'); };
   $('#cgOk').onclick=()=>{ if(!C.finished) resolveWant('ok'); };

@@ -719,6 +719,16 @@ html[lang=en] #logo h1{font-size:76px;letter-spacing:2px}
 #logo,#tPanel{transform-origin:0 0}
 #caseBack{position:absolute;right:28px;top:22px;z-index:3;padding:10px 22px;border-radius:99px;background:rgba(255,255,255,.92);color:#5a3a7a;font-weight:900;font-size:24px;text-decoration:none;box-shadow:0 0 0 4px #fff,0 6px 16px rgba(40,20,60,.25);cursor:pointer}
 #caseBack:hover{transform:translateY(-2px)}
+#title.locked #tPanel{display:none}
+#lockBox{position:absolute;left:70px;top:330px;width:660px;border-radius:30px;padding:22px 30px 24px;background:rgba(255,255,255,.96);box-shadow:0 0 0 5px #fff,0 0 0 10px var(--pink),0 18px 40px rgba(0,0,0,.35);text-align:center;animation:enterC .5s cubic-bezier(.2,1.2,.3,1)}
+#lockBox .langs{justify-content:center;margin-bottom:6px}
+#lockBox .lk-ic{font-size:64px;line-height:1.1}
+#lockBox h3{font-family:var(--tc);font-weight:900;font-size:34px;margin:6px 0 4px;color:#5a1030}
+#lockBox p{font-size:20px;color:#6a6585;margin:0 0 16px}
+#lockBox .lk-row{display:flex;gap:12px;justify-content:center;align-items:center}
+#lockBox input{height:60px;width:300px;border-radius:16px;border:none;padding:0 18px;font-size:28px;background:#fff5fa;box-shadow:inset 0 0 0 3px #ffc4d8;outline:none;text-align:center}
+#lockBox input:focus{box-shadow:inset 0 0 0 3px var(--pink2)}
+#lockBox .lk-alt{margin-top:16px}
 #tPanel.fitScroll{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
 .moderow{display:flex;align-items:center;gap:8px;margin-top:8px}
 .moderow .lbl{font-weight:700;font-size:18px;color:#8a4a6a}
@@ -917,6 +927,10 @@ html[lang=en] #logo h1{font-size:76px;letter-spacing:2px}
       <div id="tBrief" data-i18n-html="brief"></div>
       <div class="row" style="margin-top:12px;justify-content:flex-end"><div class="tbtns"><button class="sbtn" id="btnBadges"></button><button class="sbtn" id="btnChSel"></button></div><button class="gbtn" id="btnStart" style="font-size:30px;padding:14px 46px" data-i18n="start"></button></div>
     </div>
+    <div id="lockBox" class="hidden"><div class="langs"><button class="lbtn" data-lang="zh">中文</button><button class="lbtn" data-lang="en">English</button><button class="lbtn" data-lang="th">ไทย</button></div>
+      <div class="lk-ic">🔒</div><h3 data-i18n="lockH"></h3><p data-i18n="lockP"></p>
+      <div class="lk-row"><input id="lockIn" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"><button class="gbtn" id="lockGo" data-i18n="lockGo"></button></div>
+      <div class="lk-alt"><button class="sbtn" id="lockTeacher" data-i18n="teacherBtn"></button></div></div>
   </div>
   <div id="results" class="hidden"></div>
   <div id="introHost"></div>
@@ -1061,6 +1075,8 @@ const UI = {
   cqAnswerIs:['正確答案：','Correct answer: ','คำตอบที่ถูก: '], cqStat:['老師的加分題','Instructor questions','คำถามจากอาจารย์'], cqPick:['請先作答','Answer first','กรุณาตอบก่อน'], cqTimeUp:['時間到！','Time\'s up!','หมดเวลา!'],
   draftBadge:['👩‍🏫 試玩中：尚未發布的修改版','👩‍🏫 Preview: unpublished changes','👩‍🏫 ทดลองเล่น: ฉบับแก้ไขที่ยังไม่เผยแพร่'],
   syncNote:['遊玩結果會自動傳給老師（需要網路）','Your results go to your instructor automatically (needs internet)','ผลการเล่นจะส่งให้อาจารย์อัตโนมัติ (ต้องมีอินเทอร์เน็ต)'], syncClass:['班級','Class','ห้อง'], caseBack:['🗂 換案例','🗂 Choose a case','🗂 เลือกเคส'],
+  lockH:['這個案例還沒開放','This case is not open yet','เคสนี้ยังไม่เปิดให้เล่น'], lockP:['請輸入老師給的密碼。','Type the code from your instructor.','ใส่รหัสที่ได้จากอาจารย์'],
+  lockGo:['進入 ▶','Enter ▶','เข้าเล่น ▶'], lockBad:['密碼不對，再試一次','That code is not right — try again','รหัสไม่ถูก ลองอีกครั้ง'],
   cfgWait:['⏳ 正在載入老師設定的版本…','⏳ Loading your instructor\'s version…','⏳ กำลังโหลดเวอร์ชันของอาจารย์…'], cfgNew:['📥 已更新為老師最新發布的版本','📥 Updated to your instructor\'s latest version','📥 อัปเดตเป็นเวอร์ชันล่าสุดของอาจารย์แล้ว'],
   syncSending:['☁️ 正在把結果傳給老師…','☁️ Sending your results to your instructor…','☁️ กำลังส่งผลให้อาจารย์…'], syncOk:['☁️ 結果已傳給老師 ✓','☁️ Results sent to your instructor ✓','☁️ ส่งผลให้อาจารย์แล้ว ✓'],
   syncErr:['⚠️ 還沒傳出去，有網路時會自動重試；也可以按「下載我的報告」自己繳交','⚠️ Not sent yet — it retries automatically when you are online. You can also download your report and hand it in.','⚠️ ยังส่งไม่ได้ จะลองใหม่อัตโนมัติเมื่อมีอินเทอร์เน็ต หรือกดดาวน์โหลดรายงานส่งเองก็ได้'],
@@ -1303,7 +1319,7 @@ const PROBLEMS = [
  {id:'P16', icon:'📉', t:['Glimepiride 4 mg：低血糖與跌倒風險','Glimepiride 4 mg: hypoglycaemia and fall risk','Glimepiride 4 มก.: เสี่ยงน้ำตาลต่ำและหกล้ม'], d:['偏瘦的長者、腎功能下降、三餐不定，又是晚餐後一次 4 mg——最容易低血糖、跌倒骨折。HbA1c 升高其實是吃吃停停造成的；應和醫師討論減量，或換成低血糖風險較低的藥。','A lean older woman with declining kidneys, irregular meals and 4 mg in one dose after dinner — prime set-up for hypos, falls and fractures. The rising HbA1c reflects on-off dosing; discuss reducing it or switching to a lower-hypo-risk drug.','ผู้สูงอายุตัวผอม ไตเริ่มเสื่อม กินข้าวไม่เป็นเวลา แถมกิน 4 มก. ครั้งเดียวหลังมื้อเย็น — เสี่ยงน้ำตาลต่ำ หกล้ม กระดูกหักมากที่สุด HbA1c ที่สูงขึ้นจริงๆ มาจากการหยุดๆ กินๆ ควรปรึกษาแพทย์เรื่องลดขนาดหรือเปลี่ยนเป็นยาที่เสี่ยงน้ำตาลต่ำน้อยกว่า']},
  {id:'P17', icon:'🤧', t:['Clarinase（偽麻黃鹼）升血壓、引起頭痛','Clarinase (pseudoephedrine) raises BP and causes headaches','Clarinase (pseudoephedrine) เพิ่มความดันและทำให้ปวดหัว'], d:['耳鼻喉診所為感冒開了含偽麻黃鹼的 Clarinase：高血壓病人會血壓上升、頭痛、心悸、失眠——可能就是她頭痛的元兇之一。','The ENT clinic gave Clarinase (with pseudoephedrine) for a cold: in hypertension it raises BP and causes headache, palpitations and insomnia — maybe one culprit behind her headaches.','คลินิกหู คอ จมูกให้ Clarinase (มี pseudoephedrine) รักษาหวัด: ในผู้ป่วยความดันสูงทำให้ความดันขึ้น ปวดหัว ใจสั่น นอนไม่หลับ — อาจเป็นต้นเหตุหนึ่งของอาการปวดหัว']},
  {id:'P18', icon:'🚫', t:['感冒開抗生素 Keflex 和消炎酵素 Danzen','Antibiotic (Keflex) & enzyme (Danzen) for a common cold','ให้ยาปฏิชีวนะ Keflex และเอนไซม์ Danzen รักษาหวัด'], d:['一般感冒多是病毒感染，沒有細菌感染證據不需要抗生素；Danzen（serrapeptase）療效證據不足，日本已下市。','Common colds are viral — no antibiotic without evidence of bacterial infection; Danzen (serrapeptase) lacks evidence and was withdrawn in Japan.','หวัดธรรมดาส่วนใหญ่เกิดจากไวรัส ไม่ต้องใช้ยาปฏิชีวนะหากไม่มีหลักฐานติดเชื้อแบคทีเรีย Danzen (serrapeptase) ขาดหลักฐานว่าได้ผลและถูกถอนในญี่ปุ่นแล้ว']},
- {id:'P19', icon:'🍭', t:['吃 acarbose 時低血糖，糖果救不了急','On acarbose, candy won\'t fix a hypo fast','กิน acarbose อยู่ ลูกอมแก้น้ำตาลต่ำไม่ทัน'], d:['Acarbose 會延緩蔗糖分解，硬糖（蔗糖）升血糖太慢。低血糖要用葡萄糖錠或葡萄糖凝膠（沒有時用蜂蜜、牛奶），15 分鐘後再評估、必要時再補。','Acarbose slows the breakdown of sucrose, so hard candy (table sugar) raises glucose too slowly. Treat hypos with glucose tablets or gel (honey or milk if none), then reassess after 15 minutes and repeat if needed.','Acarbose ชะลอการย่อยซูโครส ลูกอมแข็ง (น้ำตาลทราย) จึงเพิ่มน้ำตาลช้าเกินไป น้ำตาลต่ำต้องใช้เม็ดหรือเจลกลูโคส (ถ้าไม่มีใช้น้ำผึ้งหรือนม) แล้วประเมินซ้ำหลัง 15 นาที ให้เพิ่มถ้าจำเป็น']},
+ {id:'P19', icon:'🍭', t:['吃 acarbose 時低血糖，糖果救不了急','On acarbose, candy won\'t fix a hypo fast','กิน acarbose อยู่ ลูกอมแก้น้ำตาลต่ำไม่ทัน'], d:['Acarbose 會延緩蔗糖分解，硬糖（蔗糖）升血糖太慢。低血糖要用葡萄糖錠或葡萄糖凝膠，15 分鐘後再評估、必要時再補。','Acarbose slows the breakdown of sucrose, so hard candy (table sugar) raises glucose too slowly. Treat hypos with glucose tablets or gel, then reassess after 15 minutes and repeat if needed.','Acarbose ชะลอการย่อยซูโครส ลูกอมแข็ง (น้ำตาลทราย) จึงเพิ่มน้ำตาลช้าเกินไป น้ำตาลต่ำต้องใช้เม็ดหรือเจลกลูโคส แล้วประเมินซ้ำหลัง 15 นาที ให้เพิ่มถ้าจำเป็น']},
 ];
 const LAB_DATES=['2021/09/20','2022/01/20','2022/02/18'];
 const LABS2=[
@@ -2670,7 +2686,7 @@ function cfgCacheSave(o){ try{ const all=JSON.parse(localStorage.getItem(CFG_ONL
   catch(e){ try{ localStorage.removeItem(CFG_ONLINE_KEY); }catch(_){} } }
 function applyGameCfg(c){ GAME_CFG=c; loadOverrides(); applyCfgSettings(); S.visit=CONFIG.VISIT_MIN; S.hearts=CONFIG.HEARTS; S.charges=CONFIG.SEARCH_CHARGES; MODE_FORCED=modeForced(); if(MODE_FORCED) S.mode=MODE_FORCED;
   if(!CFGS.langPicked){ const l=(c.settings||{}).lang; S.lang=LANGS.includes(l)?l:'zh'; } }
-function refreshTitle(){ if($('#title').classList.contains('hidden')) return; $('#qteToggle').checked=(GAME_CFG.settings||{}).qte!==false; showVerNote(); applyI18n(); }
+function refreshTitle(){ if($('#title').classList.contains('hidden')) return; $('#qteToggle').checked=(GAME_CFG.settings||{}).qte!==false; showVerNote(); applyI18n(); applyLock(); }
 function cfgRefresh(){
   const url=serverURL(); if(!url) return Promise.resolve(false); if(CFGS.promise) return CFGS.promise;
   CFGS.state='loading'; const ac=typeof AbortController!=='undefined'?new AbortController():null, tm=setTimeout(()=>{ try{ ac&&ac.abort(); }catch(e){} },20000);
@@ -2709,6 +2725,20 @@ function caseHome(){ try{ if(!/^https?:/.test(location.protocol)||!/\/case-[a-z]
     return '../?'+q.toString(); }catch(e){ return ''; } }
 function initCaseBack(){ const a=$('#caseBack'); if(!a) return; const go=caseHome(); a.classList.toggle('hidden',!go);
   a.onclick=e=>{ e.preventDefault(); const u=caseHome(); if(u) location.href=u; }; }
+/* ---------- entry code: the instructor can keep a case closed until they hand out a code ----------
+   It travels with the published version (⚙️ Settings → 📦 Publish), so it can differ per class link.
+   This is a gentle gate for "not this week", not real security: the code is part of the public version. */
+const LOCK_KEY='phd_unlock_'+CASE_ID; let LOCK_MEM='';
+function lockCode(){ if(CFG_DRAFTMODE) return ''; return String(((GAME_CFG_BASE.settings||{}).lockCode)||'').trim(); }
+function isLocked(){ const c=lockCode(); if(!c) return false; let u=LOCK_MEM; try{ u=localStorage.getItem(LOCK_KEY)||LOCK_MEM; }catch(e){} return u.toLowerCase()!==c.toLowerCase(); }
+function applyLock(){ const t=$('#title'), box=$('#lockBox'); if(!t||!box) return; const L=isLocked();
+  t.classList.toggle('locked',L); box.classList.toggle('hidden',!L); if(!L&&typeof fitTitle==='function') fitTitle(); }
+function tryUnlock(){ const v=$('#lockIn').value.trim(), c=lockCode();
+  if(c&&v.toLowerCase()===c.toLowerCase()){ LOCK_MEM=c; try{ localStorage.setItem(LOCK_KEY,c); }catch(e){} sfx.get(); applyLock(); }
+  else { sfx.error(); toast('🔒 '+T('lockBad')); $('#lockIn').select(); } }
+function initLock(){ const go=$('#lockGo'); if(!go) return; go.onclick=tryUnlock;
+  $('#lockIn').onkeydown=e=>{ if(e.key==='Enter') tryUnlock(); };
+  $('#lockTeacher').onclick=()=>openPage('teacher'); applyLock(); }
 /* =====================================================================
    STORY — Prologue · Chapter 1 (interview) · Chapter 2 (search)
    ===================================================================== */
@@ -2857,12 +2887,12 @@ async function dizzyEvent(){
   await say('sys','neutral',['（王太太突然臉色發白，手微微發抖，額頭冒出冷汗。）','(Mrs. Wang suddenly turns pale; her hands tremble and cold sweat beads on her forehead.)','(ป้าหวังหน้าซีดลงทันที มือสั่นเล็กน้อย เหงื่อเย็นผุดที่หน้าผาก)']);
   await say('chen','sad',['唉唷……頭有點暈……沒事沒事。','Oh… I\'m a bit dizzy… it\'s nothing, it\'s nothing.','โอ๊ย… เวียนหัวนิดหน่อย… ไม่เป็นไรๆ']);
   const c=await choose([
-    {t:['扶她坐好，問她今天吃飯了沒，請王先生拿杯蜂蜜水或果汁','Help her sit, ask whether she has eaten today, and have Mr. Wang bring honey water or juice','ช่วยป้านั่งให้สบาย ถามว่าวันนี้กินข้าวหรือยัง แล้วขอให้ลุงหวังเอาน้ำผึ้งหรือน้ำผลไม้มา']},
+    {t:['扶她坐好，問她今天吃飯了沒，從訪視包拿出葡萄糖錠給她','Help her sit, ask whether she has eaten today, and give her glucose tablets from your visit bag','ช่วยป้านั่งให้สบาย ถามว่าวันนี้กินข้าวหรือยัง แล้วหยิบเม็ดกลูโคสจากกระเป๋าเยี่ยมบ้านให้ป้า']},
     {t:['先暫停訪談，陪她坐著休息，等她舒服一點再繼續','Pause the interview and sit with her until she feels better','พักการสัมภาษณ์ไว้ก่อน นั่งอยู่เป็นเพื่อนจนป้ารู้สึกดีขึ้น']},
     {t:['趁機追問：「您今天的降血糖藥吃了幾顆？」','Seize the moment: "How many sugar pills did you take today?"','ถือโอกาสถาม: "วันนี้ป้ากินยาเบาหวานไปกี่เม็ด?"']},
   ],{timer:8, shuffle:true, id:'dizzy_event', label:['王太太看起來不太對勁！','Mrs. Wang doesn\'t look right!','ป้าหวังดูไม่ค่อยดี!']});
   if(c===0){ addTrust(1); patGain(1); S.fl.dizzyAte=1;
-    await say('chen','happy',['呼……喝了幾口就好多了。今天中午太忙，忘了吃飯……謝謝你。','Phew… a few sips and I feel better. I was so busy at lunch that I forgot to eat… thank you.','เฮ้อ… จิบไปไม่กี่อึกก็ดีขึ้นแล้ว เที่ยงนี้ยุ่งจนลืมกินข้าว… ขอบใจนะ']);
+    await say('chen','happy',['呼……吃了兩顆就好多了。今天中午太忙，忘了吃飯……謝謝你。','Phew… two of those and I feel better already. I was so busy at lunch that I forgot to eat… thank you.','เฮ้อ… กินไปสองเม็ดก็ดีขึ้นแล้ว เที่ยงนี้ยุ่งจนลืมกินข้าว… ขอบใจนะ']);
     if(!EXAM()) await say('pilly','think',['沒吃飯＋發抖、冒冷汗……記住這一幕！','No lunch + shaking and cold sweat… remember this moment!','ไม่ได้กินข้าว + มือสั่น เหงื่อแตก… จำเหตุการณ์นี้ไว้!']); }
   else if(c===1){ addTrust(1); patGain(1); await say('chen','happy',['呼……休息一下好多了。你真貼心。','Phew… a little rest helps. You\'re so thoughtful.','เฮ้อ… พักหน่อยก็ดีขึ้น หนูใส่ใจจริงๆ']); }
   else if(c===2){ addTrust(-1); patSpend(1); await say('chen','angry',['我都暈成這樣了，你還在問藥……','I\'m this dizzy and you\'re still asking about pills…','ป้าเวียนหัวขนาดนี้ ยังมาถามเรื่องยาอีก…']); }
@@ -3260,7 +3290,7 @@ const MISSIONS=[
  {id:'m4', p:'P19', ans:['glucobay'], tag:['要用葡萄糖','Use glucose','ใช้กลูโคส'],
   q:['她低血糖時都吃硬糖。哪一個藥會讓「糖果」救不了急？','She treats her hypos with hard candy. Which drug makes candy too slow to rescue her?','ป้าแก้น้ำตาลต่ำด้วยลูกอมแข็ง ยาตัวไหนทำให้ "ลูกอม" ช่วยไม่ทัน?'],
   x:[['Acarbose 會抑制腸道把蔗糖分解成葡萄糖，所以硬糖、砂糖水升血糖很慢。','Acarbose blocks the gut enzymes that split sucrose into glucose, so hard candy or sugar water raises blood glucose only slowly.','Acarbose ยับยั้งเอนไซม์ในลำไส้ที่ย่อยซูโครสเป็นกลูโคส ลูกอมแข็งหรือน้ำตาลทรายจึงเพิ่มน้ำตาลในเลือดได้ช้า'],
-     ['低血糖時要用葡萄糖錠或葡萄糖凝膠（沒有時用蜂蜜或牛奶），15 分鐘後沒改善再補一次。請她隨身帶葡萄糖錠，也讓同事知道怎麼幫她。','Use glucose tablets or gel (honey or milk if none) and repeat after 15 minutes if she isn\'t better. She should carry glucose tablets — and let her coworkers know how to help.','น้ำตาลต่ำต้องใช้เม็ดหรือเจลกลูโคส (ถ้าไม่มีใช้น้ำผึ้งหรือนม) ถ้า 15 นาทีแล้วยังไม่ดีขึ้นให้ซ้ำอีกครั้ง ให้ป้าพกเม็ดกลูโคสติดตัว และบอกเพื่อนร่วมงานว่าจะช่วยอย่างไร']]},
+     ['低血糖時要用葡萄糖錠或葡萄糖凝膠，15 分鐘後沒改善再補一次。請她隨身帶葡萄糖錠，也讓同事知道怎麼幫她。','Use glucose tablets or gel and repeat after 15 minutes if she isn\'t better. She should carry glucose tablets — and let her coworkers know how to help.','น้ำตาลต่ำต้องใช้เม็ดหรือเจลกลูโคส ถ้า 15 นาทีแล้วยังไม่ดีขึ้นให้ซ้ำอีกครั้ง ให้ป้าพกเม็ดกลูโคสติดตัว และบอกเพื่อนร่วมงานว่าจะช่วยอย่างไร']]},
  {id:'m5', p:'P17', ans:['clarinase'], tag:['升血壓','↑ BP','ความดันขึ้น'],
   q:['她有高血壓又常頭痛。耳鼻喉診所開的哪一個藥含有會升高血壓、引起頭痛和失眠的成分？','She has hypertension and frequent headaches. Which ENT prescription contains an ingredient that raises BP and causes headache and insomnia?','ป้ามีความดันสูงและปวดหัวบ่อย ยาตัวไหนจากคลินิก ENT มีส่วนประกอบที่ทำให้ความดันขึ้น ปวดหัว และนอนไม่หลับ?'],
   x:[['Clarinase 含偽麻黃鹼（pseudoephedrine 120 mg），會收縮血管、升高血壓，造成頭痛、心悸、失眠。','Clarinase contains pseudoephedrine 120 mg: it constricts blood vessels and raises BP, causing headache, palpitations and insomnia.','Clarinase มี pseudoephedrine 120 มก. ทำให้หลอดเลือดหดตัว ความดันสูงขึ้น ปวดหัว ใจสั่น นอนไม่หลับ'],
@@ -3702,6 +3732,8 @@ const ED={
  stCharges:['搜查時的放大鏡次數','Magnifier uses in the search','จำนวนครั้งที่ใช้แว่นขยายตอนค้นบ้าน'], stQte:['限時選項預設開啟','Timed choices on by default','เปิดตัวเลือกจับเวลาเป็นค่าเริ่มต้น'], stLang:['預設語言','Default language','ภาษาเริ่มต้น'],
  stServer:['結果伺服器網址','Results server address','ที่อยู่เซิร์ฟเวอร์รับผล'], stServerNote:['留空＝不自動上傳（學生要自己下載報告繳交）。預設：','Leave blank to switch automatic hand-in off (students then download their report). Default: ','เว้นว่าง = ปิดการส่งอัตโนมัติ (นักศึกษาต้องดาวน์โหลดรายงานส่งเอง) ค่าเริ่มต้น: '],
  stClass:['預設班級代碼','Default class code','รหัสห้องเริ่มต้น'], stClassNote:['連結裡有 ?class=… 時以連結為準','A ?class=… in the link takes priority','ถ้าลิงก์มี ?class=… จะใช้ค่าจากลิงก์'],
+ stLock:['🔒 案例入場密碼','🔒 Entry code for this case','🔒 รหัสเข้าเคสนี้'], stLockPh:['留空＝開放','blank = open to all','เว้นว่าง = เปิดให้ทุกคน'],
+ stLockNote:['設定後，學生要先輸入這個密碼才能玩這個案例。按「📦 發布」後才生效，也可以只發布給某個班級。這只是暫時不開放，不是真正的保密。','Students must type this code before they can play this case. It takes effect when you Publish, and you can publish it for one class only. It just keeps the case closed for now — it is not real security.','ถ้าตั้งรหัส นักศึกษาต้องใส่รหัสนี้ก่อนจึงจะเล่นเคสนี้ได้ มีผลหลังกด 📦 เผยแพร่ และเลือกเผยแพร่เฉพาะห้องได้ ใช้ปิดเคสไว้ชั่วคราวเท่านั้น ไม่ใช่ระบบความปลอดภัยจริง'],
  stPin:['教師後台密碼','Instructor PIN','รหัสเข้าหน้าอาจารย์'], stPinWarn:['密碼只能防止學生不小心進來，不是真正的保密。','The PIN only keeps students out casually — it is not real security.','รหัสนี้กันนักศึกษาเข้ามาโดยไม่ตั้งใจเท่านั้น ไม่ใช่ระบบความปลอดภัยจริง'],
  stNote:['版本說明（顯示在標題畫面，讓學生確認拿到的是新版）','Version note (shown on the title screen so students know they have the new file)','หมายเหตุเวอร์ชัน (แสดงที่หน้าแรก ให้นศ.รู้ว่าได้ไฟล์ใหม่)'], stNotePh:['例如：2026 下學期・王老師','e.g. Spring 2026 · Dr. Wang','เช่น ภาค 2/2569 · อ.สมศรี'], stDefault:['預設','Default','ค่าเดิม'],
  pbSteps:['① 修改 → ② 試玩 → ③ 下載新版 → ④ 把新檔案傳給學生','① Edit → ② Try it → ③ Download the new version → ④ Send the new file to students','① แก้ไข → ② ทดลองเล่น → ③ ดาวน์โหลดเวอร์ชันใหม่ → ④ ส่งไฟล์ใหม่ให้นักศึกษา'],
@@ -4025,6 +4057,7 @@ function edSettings(b){
     <div class="box"><label class="srow"><span>${TE('stNote')}</span><input class="ein" id="stNote" value="${esc(s.note||'')}" placeholder="${esc(TE('stNotePh'))}"></label></div>
     <div class="box"><label class="srow"><span>${TE('stServer')}</span><input class="ein" id="stServer" value="${esc(s.server!=null?s.server:CONFIG.SERVER_URL)}"></label><p class="muted">${TE('stServerNote')}${esc(CONFIG.SERVER_URL)}</p>
       <label class="srow"><span>${TE('stClass')}</span><input class="ein" id="stClass" value="${esc(s.classCode||'')}" placeholder="main"></label><p class="muted">${TE('stClassNote')}</p></div>
+    <div class="box"><label class="srow"><span>${TE('stLock')}</span><input class="ein" id="stLock" value="${esc(s.lockCode||'')}" placeholder="${esc(TE('stLockPh'))}" autocomplete="off" autocapitalize="off" spellcheck="false" style="max-width:220px"></label><p class="muted">${TE('stLockNote')}</p></div>
     <div class="box"><label class="srow"><span>${TE('stPin')}</span><input class="ein enum" id="stPin" value="${esc(s.TEACHER_PIN||'')}" placeholder="${CONFIG_DEF.TEACHER_PIN}"></label><p class="muted">🔒 ${TE('stPinWarn')}</p></div>`;
   const save=()=>{ edSave(); toast(T('saved')); };
   b.querySelectorAll('[data-st]').forEach(x=>x.onchange=()=>{ const v=Math.round(+x.value); if(v>0) s[x.dataset.st]=v; else delete s[x.dataset.st]; save(); });
@@ -4034,6 +4067,7 @@ function edSettings(b){
   $('#stNote').onchange=e=>{ s.note=e.target.value.trim(); if(!s.note) delete s.note; save(); };
   $('#stServer').onchange=e=>{ const v=e.target.value.trim(); if(v===CONFIG.SERVER_URL) delete s.server; else s.server=v; save(); };
   $('#stClass').onchange=e=>{ const v=normClass(e.target.value); if(v&&v!=='main') s.classCode=v; else delete s.classCode; e.target.value=v; save(); };
+  $('#stLock').onchange=e=>{ const v=e.target.value.trim(); if(v) s.lockCode=v; else delete s.lockCode; e.target.value=v; save(); };
   $('#stPin').onchange=e=>{ const v=e.target.value.trim(); if(v) s.TEACHER_PIN=v; else delete s.TEACHER_PIN; save(); };
 }
 /* ---------- publish ---------- */
@@ -4070,7 +4104,7 @@ function edPublish(b){
   const dl=`<div class="pubgrid"><button class="ebtn alt" id="pbPlay">${TE('pbPlay')}</button><button class="ebtn big" id="pbDl">${TE('pbDl')}</button></div><p class="ednote">📤 ${TE('pbDlNote')}</p>`;
   b.innerHTML=`<div class="pubsteps">${TE(on?'pbStepsOn':'pbSteps')}</div>
     <div class="box"><b>${TE('pbSummary').replace('{q}',w.questions.length).replace('{t}',Object.keys(w.texts).length).replace('{s}',sN)}</b>
-      <p class="${(on?pend:dirty)?'warnp':'okp'}">${on?(pend?TE('pbDirtyOn'):TE('pbCleanOn')):(dirty?TE('pbDirty'):TE('pbClean'))}</p><p class="muted">${TE(on?'pbOnStudents':'pbThisFile')}: ${ver}${m.note?' · '+esc(m.note):''}</p></div>
+      <p class="${(on?pend:dirty)?'warnp':'okp'}">${on?(pend?TE('pbDirtyOn'):TE('pbCleanOn')):(dirty?TE('pbDirty'):TE('pbClean'))}</p><p class="muted">${TE(on?'pbOnStudents':'pbThisFile')}: ${ver}${m.note?' · '+esc(m.note):''}</p>${w.settings.lockCode?`<p class="muted">${TE('stLock')}: <b>${esc(w.settings.lockCode)}</b></p>`:''}</div>
     ${on?`<div class="box onpub"><b>${TE('pbOnH')}</b><p class="muted" style="margin:4px 0 8px">${TE('pbOnIntro')}</p>
       <div class="row" style="align-items:center;gap:8px;flex-wrap:wrap"><span>${TE('pbTarget')}</span><select class="ein" id="pbTarget" style="max-width:280px"><option value="*">${TE('pbAll')}</option>${known.map(c=>`<option value="${esc(c)}">${TE('pbOneCls')}: ${esc(c)}</option>`).join('')}<option value="+">${TE('pbOtherCls')}</option></select><input class="ein hidden" id="pbCls" placeholder="ph2026a" style="max-width:170px"></div>
       ${teacherKey()?'':`<div class="row" style="margin-top:8px;align-items:center;gap:8px"><span>🔑 ${TE('pbKeyNeed')}</span><input class="ein" id="pbKey" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="••••••••" style="max-width:280px"></div>`}
@@ -4410,7 +4444,7 @@ function buildPracticeState(ch){
   if(ch>=5){ F(['P13','P14','P15','P16','P17','P18','P19'],4); prof(['renal']); S.medsSeen=true; MISSIONS.forEach(m=>{ S.mr.ans.push({id:m.id, sel:m.ans, perfect:true, partial:false}); m.ans.forEach(id=>(S.mr.tags[id]=S.mr.tags[id]||[]).push(L(m.tag))); }); S.mr.perfect=MISSIONS.length; S.mr.egfr=true; S.visit=20; }
 }
 async function practiceChapter(ch){
-  const au=audioStart(); await cfgReady(); await au; buildPracticeState(ch); const before=new Set(Object.keys(S.found));
+  const au=audioStart(); await cfgReady(); await au; if(isLocked()){ applyLock(); return; } buildPracticeState(ch); const before=new Set(Object.keys(S.found));
   $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden'); hud(); logEvent({type:'practice', ch, mode:S.mode});
   if(ch>1) await wipe(()=>{ setBg('liv'); hideAll(); hideText(); });
   try{ await [null,chapter1,chapter2,chapter3,chapter4,chapter5][ch](); }catch(e){ console.error(e); }
@@ -4451,6 +4485,7 @@ function renderResume(){ const r=loadResume(), box=$('#resumeBox'); if(!box) ret
     <div class="ra"><button class="gbtn green" id="btnResume">${T('resumeGo')}</button><button class="sbtn" id="btnDiscard">${T('resumeDel')}</button></div>`;
   $('#btnResume').onclick=()=>resumeGame(r); $('#btnDiscard').onclick=()=>{ clearResume(); sfx.click(); renderResume(); }; }
 async function resumeGame(r){
+  if(isLocked()){ applyLock(); return; }
   sfx.select(); await audioStart(); Object.assign(S, r.S); S.profile=new Set(r.S.profile||[]); S.t0=Date.now()-r.elapsed*1000; S.chStart=realSec(); S.done=false;
   applyI18n(); applyAudio(); applyMotion(); $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden'); hud();
   logEvent({type:'resume', step:r.step}); saveSession(true);
@@ -4461,7 +4496,7 @@ async function startGame(){
   const name=$('#inName').value.trim(), sid=$('#inSid').value.trim();
   if(!name||!sid){ toast(T('nameNeeded')); (name?$('#inSid'):$('#inName')).focus(); return; }
   if(loadResume()&&!startGame.ok){ showModal(`<h3>${T('startNew')}</h3><p>${T('resumeNewQ')}</p>`,[{t:T('startNew'),cls:'r',fn:()=>{ clearResume(); startGame.ok=true; startGame(); }},{t:T('cancel'),cls:''}]); return; }
-  const au=audioStart(); await cfgReady(); await au; S.qte=$('#qteToggle').checked;
+  const au=audioStart(); await cfgReady(); await au; if(isLocked()){ applyLock(); return; } S.qte=$('#qteToggle').checked;
   S.student={name,sid}; S.sessionId='PD'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); S.created=new Date().toISOString(); S.t0=Date.now();
   $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden'); hud(); logEvent({type:'start', qte:S.qte, avatar:S.avatar, gender:S.gender, mode:S.mode, view:VIEW.fp?'fp':'tp'}); saveSession(true);
   clearResume(); await runSteps(0);
@@ -4492,7 +4527,7 @@ function bindUI(){
   addEventListener('beforeunload', ()=>saveSession(true));
 }
 (async function main(){
-  bindUI(); applyView(); initSync(); initCaseBack(); showTitle(); gfxWatch(); cfgRefresh();
+  bindUI(); applyView(); initSync(); initCaseBack(); showTitle(); initLock(); gfxWatch(); cfgRefresh();
   window.__PD__={S, D, CH, ED_ST, edWork, askCustom, MISSIONS, DRUGS, ZONES, reveal, addEvidence, openPage, startGame, advance, HOTSPOTS, onHotspot, zoomTo, camReset, computeScore, FOLLOW1, BADGES, DEFAULT_QUESTIONS, practiceChapter, epiOutcomes};
 })();
 </script>

@@ -48,6 +48,39 @@ h1{margin:8px 0 0;font-weight:900;font-size:clamp(40px,7vw,72px);line-height:1.0
 .card.d .play{background:linear-gradient(90deg,#f0a24a,#d97a1c);box-shadow:0 5px 0 #9a520e}
 footer{margin-top:26px;padding:14px 18px;border-radius:18px;background:rgba(255,255,255,.75);font-size:14px;line-height:1.6;color:var(--muted)}
 footer code{background:#fff;padding:1px 6px;border-radius:6px;color:var(--ink);font-size:13px;word-break:break-all}
+.top{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.tbtn{font:inherit;font-weight:900;font-size:16px;padding:9px 18px;border-radius:99px;border:none;background:var(--navy);color:#ffe07a;cursor:pointer;box-shadow:0 4px 0 #161a45}
+.hub[hidden],.pin[hidden]{display:none}
+.pin{position:fixed;inset:0;z-index:60;background:rgba(20,12,40,.55);display:flex;align-items:center;justify-content:center;padding:16px}
+.pin .box{width:min(360px,100%);background:#fff;border-radius:22px;padding:20px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.pin h3{margin:4px 0 12px;font-size:20px}
+.pin input{font:inherit;font-size:22px;text-align:center;width:200px;padding:8px;border-radius:12px;border:none;box-shadow:inset 0 0 0 3px #ffc4d8}
+.pin .row{display:flex;gap:10px;justify-content:center;margin-top:14px}
+.b{font:inherit;font-weight:900;font-size:15px;padding:9px 16px;border-radius:99px;border:none;cursor:pointer;background:#f1eef8;color:#4a3a6a}
+.b.g{background:#18b07f;color:#fff}.b.r{background:#ff5c6b;color:#fff}.b.p{background:linear-gradient(90deg,var(--pink),var(--pink2));color:#fff}.b.n{background:var(--navy);color:#fff}
+.b:disabled{opacity:.5;cursor:default}
+.hub{margin-bottom:22px;border-radius:26px;background:rgba(255,255,255,.96);padding:18px;box-shadow:0 0 0 4px #fff,0 0 0 8px #c9c3f2,0 16px 34px rgba(60,30,90,.2)}
+.hub .hh{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px}
+.hub h2{margin:0;font-size:24px;color:#2a1a6a}
+.hub .intro{margin:6px 0 12px;color:#4a4060;line-height:1.5}
+.hub .key{border-radius:16px;background:#fff9e8;box-shadow:inset 0 0 0 2px #ffe19a;padding:12px 14px;margin-bottom:12px}
+.hub .key input,.hub .lk input{font:inherit;font-size:15px;padding:8px 10px;border-radius:10px;border:none;box-shadow:inset 0 0 0 2px #ddd6ee;max-width:260px;width:100%}
+.hub .muted{color:#6a6585;font-size:14px}
+.hub .tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.hub .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+.hub .hc{border-radius:18px;background:#fff;box-shadow:inset 0 0 0 2px #e6dff5;padding:14px;display:flex;flex-direction:column;gap:8px}
+.hub .hc.c{box-shadow:inset 0 0 0 2px #bfeee6}.hub .hc.d{box-shadow:inset 0 0 0 2px #f3dfb8}
+.hub .hc h3{margin:0;font-size:18px}
+.hub .st{border-radius:12px;padding:8px 10px;font-weight:900;background:#eafaf2;color:#11734d}
+.hub .st.off{background:#fff0f0;color:#c0392b}
+.hub .st .b{margin-top:6px}
+.hub .num{font-weight:800;color:#2a1a5a}
+.hub .acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
+.hub .lk{margin-top:14px;border-radius:16px;background:#f6f3fc;padding:12px 14px}
+.hub .lk .ln{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;margin-top:8px}
+.hub .lk code{background:#fff;border-radius:8px;padding:6px 8px;font-size:13px;word-break:break-all}
+@media (max-width:620px){.hub .lk .ln{grid-template-columns:1fr auto}.hub .lk .ln b{grid-column:1/-1;margin-top:6px}.hub{padding:14px}}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:70;background:#2a2140;color:#fff;font-weight:800;padding:10px 18px;border-radius:99px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
 @media (max-width:520px){h1{-webkit-text-stroke:5px var(--pink2)}.body h2{font-size:20px}}
 @media (prefers-reduced-motion:reduce){.card{transition:none}}
 </style>
@@ -61,11 +94,14 @@ footer code{background:#fff;padding:1px 6px;border-radius:6px;color:var(--ink);f
       <p class="lead" data-t="lead"></p>
       <div id="cls" class="cls" hidden></div>
     </div>
-    <div class="langs" role="group" aria-label="Language"><button data-l="zh">中文</button><button data-l="en">English</button><button data-l="th">ไทย</button></div>
+    <div class="top"><div class="langs" role="group" aria-label="Language"><button data-l="zh">中文</button><button data-l="en">English</button><button data-l="th">ไทย</button></div>
+      <button class="tbtn" id="tOpen" data-t="tBtn"></button></div>
   </header>
+  <section class="hub" id="hub" hidden></section>
   <main class="grid" id="cases"></main>
   <footer data-t="foot"></footer>
 </div>
+<div class="pin" id="pin" hidden><div class="box"><div style="font-size:46px">👩‍🏫</div><h3 data-t="pinT"></h3><input id="pinIn" type="password" inputmode="numeric" autocomplete="off"><div class="row"><button class="b p" id="pinOk" data-t="ok"></button><button class="b" id="pinNo" data-t="cancel"></button></div></div></div>
 <script>
 const T={
   ribbon:['居家藥事照護 × 推理冒險','Home-care pharmacy × Mystery adventure','เภสัชกรรมเยี่ยมบ้าน × ผจญภัยไขปริศนา'],
@@ -73,10 +109,26 @@ const T={
   lead:['選一個案例開始居家訪視吧！','Choose a case and start the home visit!','เลือกเคสแล้วเริ่มเยี่ยมบ้านกันเลย!'],
   cls:['班級','Class','ห้อง'], play:['開始 ▶','Play ▶','เล่น ▶'], first:['第一次玩建議從這裡開始','New? Start here','เล่นครั้งแรกแนะนำเคสนี้'],
   going:['📌 有進行中的遊戲','📌 Game in progress','📌 มีเกมที่เล่นค้าง'], shut:['🔒 尚未開放','🔒 Not open yet','🔒 ยังไม่เปิด'], done:['✅ 已破關','✅ Cleared','✅ เล่นจบแล้ว'], case:['案例','Case','เคส'],
-  foot:['👩‍🏫 老師：每個案例的「教師後台」在該案例的標題畫面。要讓全班直接進入某個案例，可以把連結寫成 <code>…/pharma_detective/?case=c&amp;class=ph2026a</code>。',
-        '👩‍🏫 Instructors: each case has its own dashboard (button on that case\'s title screen). To send a class straight into one case, use a link like <code>…/pharma_detective/?case=c&amp;class=ph2026a</code>.',
-        '👩‍🏫 อาจารย์: หน้าอาจารย์ของแต่ละเคสอยู่ที่หน้าแรกของเคสนั้น ถ้าจะให้ทั้งห้องเข้าเคสใดเคสหนึ่งโดยตรง ใช้ลิงก์แบบ <code>…/pharma_detective/?case=c&amp;class=ph2026a</code>']
+  foot:['👩‍🏫 老師：按右上角「老師」打開後台，可以開關案例、看結果、調整遊戲。','👩‍🏫 Instructors: press "Instructor" at the top right to open or close cases, see results and customise the games.','👩‍🏫 อาจารย์: กดปุ่ม "หน้าอาจารย์" มุมขวาบน เพื่อเปิด/ปิดเคส ดูผล และปรับเกม'],
 };
+/* instructor page texts */
+Object.assign(T,{
+  tBtn:['👩‍🏫 老師','👩‍🏫 Instructor','👩‍🏫 หน้าอาจารย์'], pinT:['輸入老師密碼','Enter the instructor code','กรอกรหัสอาจารย์'], ok:['確定','OK','ตกลง'], cancel:['取消','Cancel','ยกเลิก'], wrong:['密碼不對','Wrong code','รหัสไม่ถูกต้อง'],
+  hubT:['👩‍🏫 老師後台・所有案例','👩‍🏫 Instructor dashboard · all cases','👩‍🏫 หน้าอาจารย์ · ทุกเคส'],
+  hubIntro:['在這裡開關每個案例、看每個案例有多少人玩，再進入那個案例看結果或調整遊戲。','Open or close each case, see how many students played it, then go into a case to see its results or customise it.','เปิด/ปิดแต่ละเคส ดูว่ามีนักศึกษาเล่นกี่คน แล้วเข้าไปดูผลหรือปรับเกมของเคสนั้นได้เลย'],
+  close:['✕ 關閉','✕ Close','✕ ปิด'], keyH:['🔑 先輸入「收結果密碼」','🔑 First, enter the results key','🔑 ใส่ "รหัสรับผล" ก่อน'],
+  keyNote:['向設定系統的人索取，每台電腦輸入一次就好。這不是老師密碼，也不要給學生。','Ask whoever set up the system; enter it once on each computer. It is not the instructor code, and students must never have it.','ขอจากผู้ดูแลระบบ ใส่ครั้งเดียวต่อเครื่อง รหัสนี้ไม่ใช่รหัสอาจารย์ และห้ามให้นักศึกษา'],
+  save:['儲存','Save','บันทึก'], pull:['🔄 載入最新結果','🔄 Get the latest results','🔄 โหลดผลล่าสุด'], last:['最後更新','Last updated','อัปเดตล่าสุด'],
+  open:['🔓 開放中：學生可以玩','🔓 Open — students can play','🔓 เปิดอยู่ — นักศึกษาเล่นได้'], shutS:['🔒 關閉中：學生還不能玩','🔒 Closed — students cannot play yet','🔒 ปิดอยู่ — นักศึกษายังเข้าไม่ได้'], unknown:['（讀不到狀態）','(status unknown)','(อ่านสถานะไม่ได้)'],
+  btnClose:['🔒 關閉這個案例','🔒 Close this case','🔒 ปิดเคสนี้'], btnOpen:['🔓 開放這個案例','🔓 Open this case','🔓 เปิดเคสนี้'],
+  switchNote:['開關會立刻生效，對所有班級的連結都有效；正在玩的人可以玩完。','Switching takes effect at once for every class link; anyone already playing can finish.','การเปิด/ปิดมีผลทันทีกับลิงก์ทุกห้อง คนที่กำลังเล่นอยู่เล่นต่อจนจบได้'],
+  counts:['{n} 位學生 · {d} 位玩完','{n} students · {d} finished','นักศึกษา {n} คน · เล่นจบ {d} คน'], noData:['還沒有結果','No results yet','ยังไม่มีผล'], needKey:['輸入收結果密碼後才看得到人數','Enter the results key to see the numbers','ใส่รหัสรับผลก่อนจึงจะเห็นจำนวน'],
+  goRes:['👥 看結果','👥 Results','👥 ดูผล'], goDeb:['📋 課後討論','📋 Debrief','📋 Debrief'], goCus:['✏️ 調整遊戲','✏️ Customise','✏️ ปรับเกม'], goAll:['🏠 這個案例的後台','🏠 This case\'s dashboard','🏠 หน้าอาจารย์ของเคสนี้'],
+  linkH:['🔗 給學生的連結','🔗 Links for students','🔗 ลิงก์สำหรับนักศึกษา'],
+  linkNote:['可以填班級代號（例如 ph2026a，不填也可以）。「選案例」連結讓學生自己選，也可以直接傳某一個案例的連結。','Add a class code if you like (for example ph2026a). The case-chooser link lets students pick; or send the link for one case directly.','ใส่รหัสห้องได้ (เช่น ph2026a ไม่ใส่ก็ได้) ลิงก์ "หน้าเลือกเคส" ให้นักศึกษาเลือกเอง หรือส่งลิงก์ของเคสใดเคสหนึ่งโดยตรงก็ได้'],
+  code:['班級代號','Class code','รหัสห้อง'], chooser:['選案例','Case chooser','หน้าเลือกเคส'], copy:['📋 複製','📋 Copy','📋 คัดลอก'], copied:['已複製','Copied','คัดลอกแล้ว'],
+  errKey:['收結果密碼不正確','The results key is not correct','รหัสรับผลไม่ถูกต้อง'], errNet:['連不上結果伺服器','Cannot reach the results server','เชื่อมต่อระบบรับผลไม่ได้'], noKey:['請先輸入收結果密碼','Please enter the results key first','กรุณาใส่รหัสรับผลก่อน'],
+});
 const CASES=[
   {id:'a', path:'case-a/', save:'phd_chen_sessions_v3', clear:'phd_cleared', first:true,
    t:['陳伯的秘密','The Secret of Uncle Chen','ความลับของลุงเฉิน'],
@@ -124,6 +176,70 @@ if(!direct){ render();
   Promise.all(CASES.map(c=>fetch(`${API}/api/config?class=st--${c.id}&exact=1`,{cache:'no-store'}).then(r=>r.json()).then(j=>{ if(j&&j.ok) put('phd_status_'+c.id, j.config&&j.config.closed?'1':'0'); }).catch(()=>{})))
     .then(render); }
 addEventListener('pageshow',e=>{ if(e.persisted&&!direct) render(); });
+
+/* ===== instructor hub: every case in one place (open/close, counts, links, and a way into each case's dashboard) ===== */
+const HUB={on:false, pulled:0, stats:null, err:'', pins:new Set()};
+const L=k=>T[k][LANGS.indexOf(lang)];
+const tkey=()=>get('phd_tkey')||'';
+const toast=t=>{ const e=document.createElement('div'); e.className='toast'; e.textContent=t; document.body.appendChild(e); setTimeout(()=>e.remove(),2200); };
+const base=()=>location.origin+location.pathname.replace(/index\.html$/,'');
+const hubCaseURL=(c,tab)=>{ const q=new URLSearchParams(); if(cls) q.set('class',cls); q.set('lang',lang); q.set('teacher',tab); return c.path+'?'+q.toString(); };
+/* a case's own instructor code may have been changed in its published version: accept those too */
+/* each case's instructor code is the one in the version its students get (or the built-in one): the same code opens that case's own dashboard */
+function casePin(c){ const n=cls||'main', ask=q=>fetch(`${API}/api/config?${q}`,{cache:'no-store'}).then(r=>r.json()).then(j=>{ if(!j||!j.ok) throw new Error('http'); return j; });
+  const p=c.id==='a'?ask(`class=${encodeURIComponent(n)}`):ask(`class=${encodeURIComponent(c.id+'--'+n)}&exact=1`).then(j=>j.config?j:ask(`class=${encodeURIComponent(c.id+'--all')}&exact=1`));
+  return p.then(j=>{ const v=j.config&&j.config.settings&&j.config.settings.TEACHER_PIN; return v?String(v):'1234'; }).catch(()=>'1234'); }
+function loadPins(){ if(!HUB.pinsReady) HUB.pinsReady=Promise.all(CASES.map(casePin)).then(a=>{ HUB.pins=new Set(a); }); return HUB.pinsReady; }
+const tokOK=async()=>{ let t=null; try{ t=sessionStorage.getItem('phd_tok'); }catch(e){} if(!t) return false; await loadPins(); return HUB.pins.has(t); };
+async function hubEnter(){ (await tokOK())?openHub():askPin(); }
+function askPin(){ const m=document.getElementById('pin'), i=document.getElementById('pinIn'); m.hidden=false; i.value=''; setTimeout(()=>i.focus(),50); }
+async function pinOk(){ const v=document.getElementById('pinIn').value.trim(); await loadPins(); if(!HUB.pins.has(v)){ toast(L('wrong')); return; }
+  try{ sessionStorage.setItem('phd_tok',v); }catch(e){} document.getElementById('pin').hidden=true; openHub(); }
+function openHub(){ HUB.on=true; renderHub(); document.getElementById('hub').scrollIntoView({behavior:'smooth', block:'start'}); if(tkey()&&!HUB.pulled) pullAll(); refreshStatus(); }
+async function pullAll(){ const k=tkey(); if(!k){ toast(L('noKey')); return; } HUB.err=''; HUB.busy=true; renderHub();
+  try{ let off=0, got=[]; while(off!=null){ const r=await fetch(`${API}/api/sessions?after=${encodeURIComponent(off)}`,{headers:{'X-Teacher-Key':k}, cache:'no-store'});
+      if(r.status===401){ HUB.err='errKey'; break; } if(!r.ok){ HUB.err='errNet'; break; } const j=await r.json(); got=got.concat(j.sessions||[]); off=j.next; }
+    if(!HUB.err){ const st={}; CASES.forEach(c=>st[c.id]={who:new Set(), fin:new Set(), cls:{}});
+      /* one student can have several games: count people (student ID, else name) per class */
+      got.forEach(s=>{ const id=(s&&s.case)||'a', x=st[id]; if(!x) return; const cc=s.classCode||'main', u=s.student||{}, w=cc+'|'+String(u.sid||u.name||s.id||'').trim().toLowerCase();
+        if(!x.who.has(w)) x.cls[cc]=(x.cls[cc]||0)+1; x.who.add(w); if(s.done) x.fin.add(w); });
+      CASES.forEach(c=>{ const x=st[c.id]; x.n=x.who.size; x.d=x.fin.size; });
+      HUB.stats=st; HUB.pulled=Date.now(); } }
+  catch(e){ HUB.err='errNet'; } HUB.busy=false; if(HUB.err) toast(L(HUB.err)); renderHub(); }
+function refreshStatus(){ Promise.all(CASES.map(c=>fetch(`${API}/api/config?class=st--${c.id}&exact=1`,{cache:'no-store'}).then(r=>r.json()).then(j=>{ if(j&&j.ok){ put('phd_status_'+c.id, j.config&&j.config.closed?'1':'0'); HUB['k'+c.id]=true; } }).catch(()=>{}))).then(()=>{ render(); renderHub(); }); }
+async function setShut(c, closed){ const k=tkey(); if(!k){ toast(L('noKey')); const i=document.getElementById('hKey'); if(i) i.focus(); return; }
+  try{ const r=await fetch(`${API}/api/config?class=${encodeURIComponent('st--'+c.id)}`,{method:'PUT', headers:{'X-Teacher-Key':k,'Content-Type':'text/plain;charset=UTF-8'}, body:JSON.stringify({closed:!!closed, at:new Date().toISOString()})});
+    if(r.status===401){ toast(L('errKey')); return; } if(!r.ok){ toast(L('errNet')); return; } put('phd_status_'+c.id, closed?'1':'0'); HUB['k'+c.id]=true; toast(L(closed?'shutS':'open')); }
+  catch(e){ toast(L('errNet')); } render(); renderHub(); }
+function renderHub(){ const h=document.getElementById('hub'); h.hidden=!HUB.on; if(!HUB.on) return; const i=LANGS.indexOf(lang);
+  const hm=t=>new Date(t).toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}), key=tkey();
+  const links=()=>{ const q=c=>{ const p=new URLSearchParams(); if(c) p.set('case',c); if(HUB.code) p.set('class',HUB.code); const s2=p.toString(); return base()+(s2?'?'+s2:''); };
+    return [['',L('chooser')]].concat(CASES.map(c=>[c.id,`${T.case[i]} ${c.id.toUpperCase()} · ${c.t[i]}`])).map(([id,lab])=>`<div class="ln"><b>${esc(lab)}</b><code>${esc(q(id))}</code><button class="b" data-cp="${esc(q(id))}">${L('copy')}</button></div>`).join(''); };
+  h.innerHTML=`<div class="hh"><h2>${L('hubT')}</h2><button class="b" id="hubX">${L('close')}</button></div><p class="intro">${L('hubIntro')}</p>
+    ${key?'':`<div class="key"><b>${L('keyH')}</b><p class="muted" style="margin:4px 0 8px">${L('keyNote')}</p><div class="tools" style="margin:0"><input id="hKey" type="password" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="••••••••"><button class="b g" id="hKeySave">${L('save')}</button></div></div>`}
+    <div class="tools"><button class="b g" id="hPull" ${HUB.busy?'disabled':''}>${HUB.busy?'…':L('pull')}</button><span class="muted">${HUB.pulled?L('last')+': '+hm(HUB.pulled):''}</span></div>
+    <div class="cards">${CASES.map(c=>{ const shut=isShut(c), known=HUB['k'+c.id]||get('phd_status_'+c.id)!=null, x=HUB.stats&&HUB.stats[c.id];
+      const num=!key?L('needKey'):!x?'':x.n?L('counts').replace('{n}',x.n).replace('{d}',x.d).replace(/^1 students/,'1 student')+(Object.keys(x.cls).length>1||!x.cls.main?` · ${Object.entries(x.cls).map(([k,n])=>esc(k)+' '+n).join(', ')}`:''):L('noData');
+      return `<div class="hc ${c.id}"><h3>${T.case[i]} ${c.id.toUpperCase()} · ${esc(c.t[i])}</h3>
+        <div class="st${shut?' off':''}">${known?L(shut?'shutS':'open'):L('unknown')}<br><button class="b ${shut?'g':'r'}" data-sw="${c.id}">${L(shut?'btnOpen':'btnClose')}</button></div>
+        <div class="num">${num}</div>
+        <div class="acts"><a class="b n" href="${esc(hubCaseURL(c,'tSessions'))}">${L('goRes')}</a><a class="b" href="${esc(hubCaseURL(c,'tDebrief'))}">${L('goDeb')}</a><a class="b" href="${esc(hubCaseURL(c,'tCustom'))}">${L('goCus')}</a><a class="b" href="${esc(hubCaseURL(c,'tHome'))}">${L('goAll')}</a></div></div>`; }).join('')}</div>
+    <p class="muted" style="margin:8px 2px 0">${L('switchNote')}</p>
+    <div class="lk"><b>${L('linkH')}</b><p class="muted" style="margin:4px 0 0">${L('linkNote')}</p><div class="tools" style="margin:8px 0 0"><span>${L('code')}</span><input id="hCode" placeholder="ph2026a" value="${esc(HUB.code||'')}"></div><div id="hLinks">${links()}</div></div>`;
+  h.querySelectorAll('a.b').forEach(a=>a.style.textDecoration='none');
+  document.getElementById('hubX').onclick=()=>{ HUB.on=false; renderHub(); };
+  document.getElementById('hPull').onclick=pullAll;
+  const ks=document.getElementById('hKeySave'); if(ks) ks.onclick=()=>{ const v=document.getElementById('hKey').value.trim(); if(!v) return; put('phd_tkey',v); pullAll(); };
+  h.querySelectorAll('[data-sw]').forEach(b=>b.onclick=()=>{ const c=CASES.find(x=>x.id===b.dataset.sw); b.disabled=true; setShut(c,!isShut(c)); });
+  const bindCopy=()=>h.querySelectorAll('[data-cp]').forEach(b=>b.onclick=()=>{ const t=b.dataset.cp; try{ navigator.clipboard.writeText(t).then(()=>toast(L('copied')),()=>prompt('',t)); }catch(e){ prompt('',t); } });
+  bindCopy();
+  document.getElementById('hCode').oninput=e=>{ HUB.code=e.target.value.trim().toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,40); document.getElementById('hLinks').innerHTML=links(); bindCopy(); };
+}
+document.getElementById('tOpen').onclick=hubEnter;
+document.getElementById('pinOk').onclick=pinOk; document.getElementById('pinNo').onclick=()=>{ document.getElementById('pin').hidden=true; };
+document.getElementById('pinIn').onkeydown=e=>{ if(e.key==='Enter') pinOk(); };
+const _render=render; render=function(){ _render(); renderHub(); };
+if(!direct){ loadPins(); if(qs.get('teacher')) hubEnter(); }
 </script>
 </body>
 </html>

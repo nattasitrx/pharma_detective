@@ -4359,6 +4359,7 @@ function bindClass(b,R){
    A case can add its own lines through CASE_TEACH = {prepExtra:[[zh,en,th]], handsQ:[[zh,en,th]]}.
    ===================================================================== */
 const TT={
+ allCases:['🗂 所有案例','🗂 All cases','🗂 ทุกเคส'],
  tHome:['🏠 開始','🏠 Start','🏠 เริ่มต้น'], tSessions:['👥 每位學生','👥 Students','👥 ผลรายคน'], tClass:['📊 全班概況','📊 Class overview','📊 ภาพรวมทั้งห้อง'],
  tCustom:['✏️ 調整遊戲','✏️ Customise','✏️ ปรับเกม'], tAdv:['🧰 進階','🧰 Advanced','🧰 ขั้นสูง'],
  /* start */
@@ -4478,6 +4479,7 @@ function handsOn(list){ const rows=[], mist={};
     f.forEach(e=>(e.errs||[]).forEach(x=>{ mist[x]=(mist[x]||0)+1; })); });
   return {rows, mist:Object.entries(mist).sort((a,b)=>b[1]-a[1])}; }
 function tCss(){ if($('#tCss2')) return; const st=document.createElement('style'); st.id='tCss2'; st.textContent=`
+#pTitle .tAllCases{margin-left:10px;font-size:14px;font-weight:900;padding:5px 12px;border-radius:99px;background:#2b2f6b;color:#ffe07a;text-decoration:none;vertical-align:middle;white-space:nowrap}
 #pBody .thello{font-size:17px;font-weight:800;color:#3a2a5a;margin:0 0 10px}
 #pBody .tcard{border-radius:18px;padding:14px 16px;background:#fff;box-shadow:inset 0 0 0 2px #e6dff5;margin-bottom:12px}
 #pBody .tcard h3{margin:0 0 6px;font-size:19px;color:#3a2a7a}
@@ -4527,6 +4529,9 @@ function tCss(){ if($('#tCss2')) return; const st=document.createElement('style'
 @media print{ #pBody .dbflow{gap:4px} }`; document.head.appendChild(st); }
 /* ---------- router ---------- */
 function renderTeacher2(b){ tCss();
+  try{ sessionStorage.setItem('phd_tok', String(CONFIG.TEACHER_PIN)); }catch(e){}   // signed in for this browser tab: the case chooser's instructor page (and any case with the same code) opens without asking again
+  if(P.wantTab){ const t=P.wantTab; P.wantTab=null; return openPage('teacher', t); }
+  allCasesLink();
   if(P.tab==='tHome') return renderHome(b);
   if(P.tab==='tSessions') return renderStudents(b);
   if(P.tab==='tClass') return renderClass2(b);
@@ -4814,6 +4819,18 @@ Object.assign(ED,{
   reflNote:['反思題不算分；答案在「👥 每位學生」和「📊 全班概況」。','Reflection questions are not scored; read the answers under 👥 Students and 📊 Class overview.','คำถามสะท้อนคิดไม่นับคะแนน อ่านคำตอบได้ที่แท็บ 👥 ผลรายคน และ 📊 ภาพรวมทั้งห้อง'],
   pbDlNote:['下載的檔案已經包含所有修改和上傳的圖片。用 Google Drive、LINE 或教學平台傳給學生，學生用瀏覽器（Chrome、Edge、Safari）打開。','The downloaded file already contains every change and uploaded picture. Share it by Google Drive, LINE or your LMS; students open it in a browser (Chrome, Edge, Safari).','ไฟล์ที่ดาวน์โหลดมีการแก้ไขและรูปที่อัปโหลดครบแล้ว ส่งให้นักศึกษาทาง Google Drive, LINE หรือระบบ LMS ได้เลย นักศึกษาเปิดด้วยเบราว์เซอร์ (Chrome, Edge, Safari)'],
 });
+
+/* ---------- the case chooser's instructor page is the hub: link back to it, and arrive from it on a chosen tab (?teacher=<tab>) ---------- */
+function allCasesLink(){ const h=(typeof caseHome==='function')?caseHome():'', t=$('#pTitle'); if(!h||!t) return;
+  const a=document.createElement('a'); a.className='tAllCases'; a.id='tAllCases'; a.href=h+'&teacher=1'; a.textContent=L(TT.allCases); t.appendChild(a); }
+async function teacherDeepLink(){ let t='';
+  try{ const u=new URL(location.href); t=u.searchParams.get('teacher')||''; if(!t) return; u.searchParams.delete('teacher'); history.replaceState(history.state,'',u.pathname+u.search+u.hash); }catch(e){ return; }
+  P.wantTab=PAGES.teacher.tabs.includes(t)?t:null;
+  if(typeof CFGS!=='undefined'&&CFGS.promise) await Promise.race([CFGS.promise, sleep(6000)]);   // this case's own instructor code may come with the published version
+  let tok=null; try{ tok=sessionStorage.getItem('phd_tok'); }catch(e){}
+  if(tok&&tok===String(CONFIG.TEACHER_PIN)) P.teacherOK=true;
+  openPage('teacher'); }
+addEventListener('load', ()=>setTimeout(teacherDeepLink, 400));
 /* =====================================================================
    PAGES (outside the stage): case file · settings · instructor dashboard
    ===================================================================== */

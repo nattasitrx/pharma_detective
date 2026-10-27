@@ -1065,7 +1065,7 @@ const UI = {
   tLabUp:['上傳檢驗報告影像','Upload lab images','อัปโหลดภาพแล็บ'], tBagUp:['上傳證物照片（藥袋等）','Upload evidence photos (med bags…)','อัปโหลดภาพหลักฐาน (ซองยา…)'],
   calcClues:['📋 線索（不一定全部用得到）','📋 Clues (not all are needed)','📋 เบาะแส (ไม่จำเป็นต้องใช้ทุกตัว)'], calcGo:['＝ 計算並確認','＝ Calculate & check','＝ คำนวณและตรวจ'],
   calcHow:['點空格 → 點線索或用按鍵輸入','Tap a box → tap a clue or use the keypad','แตะช่อง → แตะเบาะแสหรือกดปุ่มตัวเลข'], calcFill:['每個空格都要填數字','Fill every box with a number','ต้องใส่ตัวเลขให้ครบทุกช่อง'],
-  calcTry:['嘗試','Try','ครั้งที่'], calcOk:['算對了！','Correct!','ถูกต้อง!'], calcCont:['看懂了，繼續 ▶','Got it, continue ▶','เข้าใจแล้ว ไปต่อ ▶'], calcStat:['計算題（BMI／eGFR／CrCl）','Calculations (BMI / eGFR / CrCl)','โจทย์คำนวณ (BMI / eGFR / CrCl)'],
+  calcTry:['嘗試','Try','ครั้งที่'], calcOk:['算對了！','Correct!','ถูกต้อง!'], calcCont:['看懂了，繼續 ▶','Got it, continue ▶','เข้าใจแล้ว ไปต่อ ▶'], calcStat:['計算題（eGFR／CrCl）','Calculations (eGFR / CrCl)','โจทย์คำนวณ (eGFR / CrCl)'],
   tCalc:['計算題','Calculations','โจทย์คำนวณ'], firstMoveT:['進門第一步','First move at the door','ก้าวแรกในบ้าน'],
   cqTitle:['老師的加分題','Instructor\'s question','คำถามจากอาจารย์'], cqIntro:['老師出的加分題來了！認真作答喔～','Bonus questions from your instructor! Do your best~','คำถามพิเศษจากอาจารย์มาแล้ว! ตั้งใจตอบนะ~'],
   cqSubmit:['送出答案','Submit','ส่งคำตอบ'], cqNext:['繼續 ▶','Continue ▶','ไปต่อ ▶'], cqPickOne:['選一個答案','Pick one answer','เลือก 1 คำตอบ'], cqPickMany:['可以選好幾個','You may pick several','เลือกได้หลายข้อ'],
@@ -3090,13 +3090,8 @@ ANSWERS.dog=async()=>{ await say('chen','happy',['小黑啊？跟我十幾年了
 ANSWERS.money=async()=>{ await say('chen','neutral',['我有榮民的就養金，阿梅也會給一點。看病不用錢，政府都幫我們出！','I have my veteran\'s pension, and Ah-Mei gives me a bit. Seeing the doctor costs nothing — the government pays for us!','ลุงมีเบี้ยเลี้ยงทหารผ่านศึก พี่เหมยก็ให้บ้าง หาหมอไม่เสียเงิน รัฐบาลจ่ายให้หมด!']);
   await say('chen','smug',['能省就省——電費、菜錢，一塊都不浪費。','I save wherever I can — electricity, groceries, not a dollar wasted.','ประหยัดได้ก็ประหยัด — ค่าไฟ ค่ากับข้าว ไม่ให้เสียสักบาท']); };
 async function bmiTask(){
-  if(S.calc.bmi){ reveal('P12'); return; }
-  await say('pilly','happy',['拿出計算機！🧮 用李伯伯剛剛說的數字，自己算算他的 BMI。','Calculator time! 🧮 Use the numbers Uncle Lee just told you to work out his BMI.','หยิบเครื่องคิดเลข! 🧮 ใช้ตัวเลขที่ลุงหลี่เพิ่งบอก คำนวณ BMI ด้วยตัวเอง']); hideText();
-  const r=await calcPanel(CALC_BMI); S.calc.bmi={ok:r.ok, tries:r.tries, value:+r.r.toFixed(1)};
-  const c=await choose([{t:['過輕（< 18.5）','Underweight (< 18.5)','น้ำหนักน้อย (< 18.5)']},{t:['正常（18.5–24）','Normal (18.5–24)','ปกติ (18.5–23.9)']},{t:['過重（24–27）','Overweight (24–27)','น้ำหนักเกิน (24–26.9)']},{t:['肥胖（≥ 27）','Obese (≥ 27)','อ้วน (≥ 27)']}],
-    {id:'bmiClass', label:['依台灣國健署標準，BMI 22.2 屬於？','By Taiwan\'s (HPA) cut-offs, BMI 22.2 is…','ตามเกณฑ์ของไต้หวัน (HPA) BMI 22.2 อยู่กลุ่มใด?']});
-  S.calc.bmiClass=c===1; if(c===1) sfx.get(); else sfx.error();
-  await yehSays(c===1?'happy':'think',[(c===1?'沒錯！':'是正常喔。')+'台灣標準 BMI 18.5–24 是正常體重。對很高齡的長者來說，BMI 稍微高一點反而比較安全；重要的是體重不要往下掉、要保住肌肉。他 88 歲、肌肉不多——等一下看腎功能時要記得這一點！',(c===1?'Right! ':'It\'s normal. ')+'Taiwan counts BMI 18.5–24 as normal weight (WHO: 18.5–24.9). In the very old, a slightly higher BMI is actually safer — what matters is not losing weight and keeping muscle. He\'s 88 with little muscle — remember that when we look at his kidneys!',(c===1?'ถูกต้อง! ':'อยู่ในกลุ่มปกตินะ ')+'เกณฑ์ไต้หวัน BMI 18.5–24 = ปกติ · 🇹🇭 ถ้าใช้เกณฑ์คนเอเชียแบบที่ไทยใช้: 18.5–22.9 = ปกติ ลุงก็ยังปกติ (ใกล้ขอบบน) · สำหรับผู้สูงอายุมากๆ BMI สูงขึ้นเล็กน้อยกลับปลอดภัยกว่า สิ่งสำคัญคือน้ำหนักไม่ลดลงและรักษากล้ามเนื้อไว้ ลุงอายุ 88 กล้ามเนื้อน้อย — จำไว้ตอนดูการทำงานของไตนะ!']);
+  if(S.fl.exAsked){ reveal('P12'); return; } S.fl.exAsked=1;
+  await coach('think',['167 公分、62 公斤——88 歲、肌肉不多。等一下看腎功能時要記得這一點！','167 cm and 62 kg — at 88, with little muscle. Remember that when we look at his kidneys!','167 ซม. 62 กก. — อายุ 88 กล้ามเนื้อน้อย จำไว้ตอนดูการทำงานของไตนะ!']);
   await say('chen','neutral',['運動喔？偶爾帶小黑去公園走走。可是膝蓋又痛又沒力，爬這四樓，上來就喘得要命。','Exercise? Now and then I walk Blackie in the park. But my knees are sore and weak, and climbing these four floors leaves me gasping.','ออกกำลังกายเหรอ? บางทีก็พาเจ้าดำไปเดินที่สวน แต่เข่าทั้งปวดทั้งไม่มีแรง ขึ้นสี่ชั้นนี่มาถึงก็หอบแทบตาย']); S.profile.add('knee');
   reveal('P12');
 }
@@ -3647,66 +3642,431 @@ function inhHost(step, q, body, act){
   return h;
 }
 function inhHide(){ const h=$('#inhal'); if(h){ h.classList.add('hidden'); h.innerHTML=''; } }
-/* step 2: tap every step of his Berotec demo that was WRONG (multi-select, like missionUI) */
-function inhMdiUI(){
+/* ---- hands-on inhaler simulator: the student operates a drawn device with their own hands ----
+   devices: 'mdi' (Berotec), 'spacer' (Berotec + spacer), 'resp' (Spiolto Respimat, 2 puffs)
+   gestures (one pointer, mouse or touch): drag the device (up-down = shake, onto the mouth = lips on), tap the cap,
+   drag across the clear base = turn, press the canister / dose button AND keep sliding = press while breathing in,
+   hold the side buttons = breathe out / hold your breath. */
+const SIMX={
+  hdr:{mdi:['🫁 實作 1：藍色 Berotec','🫁 Hands-on 1: blue Berotec','🫁 ลงมือ 1: Berotec สีฟ้า'], spacer:['🫁 實作 2：加上吸藥輔助器','🫁 Hands-on 2: with a spacer','🫁 ลงมือ 2: ใช้กับกระบอกช่วยสูด'], resp:['🫁 實作 3：綠色 Spiolto Respimat','🫁 Hands-on 3: green Spiolto Respimat','🫁 ลงมือ 3: Spiolto Respimat สีเขียว']},
+  task:{mdi:['用這支示範吸入器，親手做一次正確的 1 噴給李伯伯看。','Use this demo inhaler to show Uncle Lee one correct puff — with your own hands.','ใช้ยาพ่นตัวอย่างนี้ สาธิตการพ่นที่ถูกต้อง 1 ครั้งให้ลุงหลี่ดู ด้วยมือคุณเอง'],
+    spacer:['裝上吸藥輔助器，再做 1 噴。','Fit the spacer and do one puff with it.','ต่อกระบอกช่วยสูด แล้วพ่นอีก 1 ครั้ง'],
+    resp:['示範 Spiolto 的一次劑量（2 噴）。','Demonstrate one dose of Spiolto (2 puffs).','สาธิต Spiolto หนึ่งโดส (2 พัฟ)']},
+  steps:['步驟','Steps','ขั้นตอน'], you:['你（示範）','You (demo)','คุณ (สาธิต)'],
+  out:['😮‍💨 吐氣','😮‍💨 Breathe out','😮‍💨 หายใจออก'], hold:['⏱️ 閉氣','⏱️ Hold breath','⏱️ กลั้นหายใจ'], press:['按住','press & hold','กดค้าง'],
+  lungs:['肺','Lungs','ปอด'], flow:['吸氣速度','Breath speed','ความเร็วการสูด'],
+  slow:['剛好','good','พอดี'], fast:['太快','too fast','เร็วไป'],
+  slide:['按住不放，慢慢滑開 ＝ 一邊吸氣','keep pressing and slide away slowly = breathe in','กดค้างแล้วค่อยๆ ลากออก = หายใจเข้า'],
+  slideSp:['按住霧，慢慢滑開 ＝ 把藥霧吸進去','press the mist and slide away slowly = breathe it in','กดที่ละอองแล้วค่อยๆ ลากออก = สูดยาเข้าไป'],
+  done:['✅ 完成','✅ Done','✅ เสร็จแล้ว'], again:['↺ 再做一次','↺ Try again','↺ ลองอีกครั้ง'], cont:['繼續','Continue','ไปต่อ'],
+  puff2:['第 2 噴：整套動作再做一次！','Puff 2: the whole routine again!','พัฟที่ 2: ทำทั้งขั้นตอนอีกรอบ!'], puff:['第 {n} 噴','Puff {n}','พัฟที่ {n}'],
+  perfect:['完美示範！','Perfect demonstration!','สาธิตได้สมบูรณ์!'], fixes:['要修正的地方','What to fix','สิ่งที่ต้องแก้'],
+  click:['喀！','Click!','คลิก!'], loaded:['已上膛','loaded','พร้อมพ่น'], cough:['咳咳！','*cough*','แค่กๆ!'],
+  nothing:['……什麼都沒噴出來','…nothing came out','…ไม่มีอะไรออกมา'], examNote:['照你教病人的方式，自己完整做一次。','Do it exactly as you would teach a patient.','ทำให้ครบเหมือนที่คุณจะสอนผู้ป่วย'],
+  shakeHint:['把吸入器上下拖動來搖勻','drag the inhaler up and down to shake it','ลากยาพ่นขึ้นลงเพื่อเขย่า'],
+  ctrl:['操作：拖動＝移動／搖　點蓋子＝開／關　按住藥罐或按鈕再滑開＝邊按邊吸　右邊按鈕＝按住','Controls: drag = move / shake · tap the cap · press the canister or button and slide = press while breathing in · side buttons = press and hold','วิธีควบคุม: ลาก = ย้าย/เขย่า · แตะฝา · กดกระป๋องหรือปุ่มแล้วลาก = กดพร้อมหายใจเข้า · ปุ่มด้านข้าง = กดค้าง'],
+  capFirst:['先拔蓋子','Cap off first','ถอดฝาก่อน'],
+};
+const SIM_STEPS={
+  mdi:[['cap',['拔掉蓋子','Cap off','ถอดฝาครอบ'],'🧢'],['shake',['上下搖勻（4 下）','Shake it (4×)','เขย่า (4 ครั้ง)'],'👋'],['out',['離開吸嘴，把氣吐乾淨','Breathe out fully, away from it','หายใจออกให้สุด ห่างจากกระบอก'],'😮‍💨'],
+    ['lips',['吸嘴放進嘴裡、嘴唇包緊','Mouthpiece in, lips sealed','อมปากกระบอก ปิดริมฝีปาก'],'👄'],['press',['開始吸氣的同時按壓','Press as you start breathing in','กดพร้อมเริ่มหายใจเข้า'],'👆'],
+    ['slow',['慢慢深吸 3–5 秒','Breathe in slowly, 3–5 s','สูดช้าๆ ลึกๆ 3–5 วินาที'],'🐢'],['hold',['閉氣數到 10','Hold for a count of 10','กลั้นหายใจนับถึง 10'],'⏱️'],['recap',['蓋回蓋子','Cap back on','ปิดฝาครอบ'],'🧢']],
+  spacer:[['cap',['拔掉蓋子','Cap off','ถอดฝาครอบ'],'🧢'],['shake',['上下搖勻（4 下）','Shake it (4×)','เขย่า (4 ครั้ง)'],'👋'],['attach',['插進輔助器','Push it into the spacer','เสียบเข้ากระบอกช่วยสูด'],'🔌'],
+    ['out',['離開吸嘴，把氣吐乾淨','Breathe out fully, away from it','หายใจออกให้สุด ห่างจากกระบอก'],'😮‍💨'],['lips',['含住輔助器的吸嘴','Lips on the spacer mouthpiece','อมปากกระบอกช่วยสูด'],'👄'],
+    ['press',['按 1 下，把藥噴進輔助艙','Press once into the chamber','กด 1 ครั้งให้ยาเข้ากระบอก'],'👆'],['slow',['馬上慢慢深吸','Breathe in slowly, right away','สูดช้าๆ ลึกๆ ทันที'],'🐢'],['hold',['閉氣數到 10','Hold for a count of 10','กลั้นหายใจนับถึง 10'],'⏱️']],
+  resp:[['turn',['蓋子蓋著，轉底座到「喀」','Cap closed: turn the base until it clicks','ปิดฝาไว้ หมุนฐานจนคลิก'],'🔄'],['open',['打開蓋子','Flip the cap open','เปิดฝา'],'🔓'],['out',['離開吸嘴，把氣吐乾淨','Breathe out fully, away from it','หายใจออกให้สุด ห่างจากกระบอก'],'😮‍💨'],
+    ['lips',['含住吸嘴（不擋住通氣孔）','Lips on (vents uncovered)','อมปากกระบอก (ไม่บังรูอากาศ)'],'👄'],['press',['慢慢吸氣的同時按按鈕','Press the button as you breathe in','กดปุ่มพร้อมหายใจเข้า'],'👆'],
+    ['slow',['慢慢深吸 3–5 秒','Breathe in slowly, 3–5 s','สูดช้าๆ ลึกๆ 3–5 วินาที'],'🐢'],['hold',['閉氣數到 10','Hold for a count of 10','กลั้นหายใจนับถึง 10'],'⏱️'],['close',['蓋上蓋子','Close the cap','ปิดฝา'],'🧢']],
+};
+const SIM_ERR={
+  capOn:['蓋子還沒拔，按了藥也出不來','The cap was still on — no medicine could come out','ยังไม่ถอดฝา กดไปยาก็ไม่ออก'],
+  noShake:['沒先搖勻：每一噴前都要上下搖 4–5 下','Not shaken: shake 4–5 times before every puff','ไม่ได้เขย่า: ต้องเขย่า 4–5 ครั้งก่อนพ่นทุกครั้ง'],
+  noOut:['沒先吐氣：肺還是滿的，吸不深','Didn\'t breathe out first — lungs still full, so the breath in is shallow','ไม่ได้หายใจออกก่อน ปอดยังเต็มจึงสูดได้ไม่ลึก'],
+  outIn:['對著吸嘴吐氣：濕氣會讓藥結塊，要先離開吸嘴再吐','Breathed out into the mouthpiece — moisture clogs it; turn away first','หายใจออกใส่ปากกระบอก ความชื้นทำให้ยาจับตัว ต้องหันออกก่อน'],
+  air:['吸嘴不在嘴裡就按：藥全噴到空氣中','Pressed with the mouthpiece out of the mouth — the dose went into the air','กดตอนปากกระบอกไม่ได้อยู่ในปาก ยาพ่นไปในอากาศหมด'],
+  early:['先按了才吸（跟李伯伯一樣）：藥打到喉嚨，咳出來了','Pressed first, breathed later (just like Uncle Lee) — the spray hit the throat','กดก่อนแล้วค่อยสูด (เหมือนลุงหลี่) ยาไปกระแทกคอแล้วไอออกหมด'],
+  fast:['吸太快：藥撞在喉嚨，要慢慢吸 3–5 秒','Breathed in too fast — the drug hits the throat; take 3–5 s','สูดเร็วเกินไป ยาไปติดคอ ต้องสูดช้าๆ 3–5 วินาที'],
+  short:['吸太短：要一口氣慢慢吸到底','Breath too short — keep breathing in until the lungs are full','สูดสั้นไป ต้องสูดช้าๆ จนเต็มปอด'],
+  noHold:['閉氣不夠久：要閉氣約 10 秒，藥才留在肺裡','Breath-hold too short — hold about 10 s so the drug settles in the lungs','กลั้นหายใจไม่นานพอ ต้องกลั้นราว 10 วินาทีให้ยาค้างในปอด'],
+  noRecap:['用完沒蓋回蓋子','Cap not put back afterwards','ใช้เสร็จไม่ปิดฝาครอบ'],
+  noDose:['還沒有成功吸進一劑藥','No dose actually reached the lungs','ยังไม่มียาเข้าปอดสักโดส'],
+  openTurn:['蓋子打開才轉：要蓋著轉到「喀」一聲，再打開','Turned with the cap open — turn with the cap CLOSED until it clicks, then open','หมุนตอนเปิดฝา ต้องปิดฝาไว้แล้วหมุนจนคลิก แล้วค่อยเปิด'],
+  noTurn:['沒先轉底座：按了什麼都沒噴出來（李伯伯的問題！）','Didn\'t turn the base — press and nothing comes out (Uncle Lee\'s problem!)','ไม่ได้หมุนฐานก่อน กดแล้วไม่มีอะไรออกมา (ปัญหาของลุงหลี่!)'],
+  capShut:['蓋子沒打開就按：軟霧噴進蓋子裡','Pressed with the cap shut — the mist went into the cap','กดตอนยังไม่เปิดฝา ละอองพ่นเข้าฝา'],
+  onePuff:['Spiolto 每次是 2 噴：整套動作要做兩次','Spiolto is 2 puffs: the whole routine twice','Spiolto ใช้ครั้งละ 2 พัฟ: ต้องทำทั้งขั้นตอน 2 รอบ'],
+  noClose:['用完沒蓋上蓋子','Cap not closed afterwards','ใช้เสร็จไม่ปิดฝา'],
+  noSpacer:['沒接上輔助器就按：藥噴到外面','Pressed without the spacer attached — the spray went outside','กดก่อนต่อกระบอกช่วยสูด ยาพ่นออกไปข้างนอก'],
+  twoPuff:['一次只噴 1 下進輔助艙，吸完再噴下一下','One puff into the spacer at a time — breathe it in before the next','พ่นเข้ากระบอกทีละ 1 พัฟ สูดเสร็จก่อนค่อยพ่นครั้งต่อไป'],
+  late:['噴進輔助艙後等太久：藥霧會沉到管壁上，要馬上吸','Waited too long after the puff — the mist settles on the walls; breathe in right away','รอนานเกินไปหลังพ่นเข้ากระบอก ละอองยาเกาะผนัง ต้องสูดทันที'],
+};
+const SIM_O='#3a2e22';
+function simDevSVG(dev){
+  const O=SIM_O;
+  if(dev==='resp') return `<g class="sd-dev" data-dev="resp">
+    <path d="M-62 -24 H-8 q10 0 10 10 v28 q0 10 -10 10 H-62 Z" fill="#dfe5ea" stroke="${O}" stroke-width="5" data-p="body"/>
+    <path d="M-34 -12 h20 M-34 12 h20" stroke="#8c99a6" stroke-width="3" stroke-linecap="round" data-p="body"/>
+    <rect x="-156" y="-60" width="98" height="236" rx="26" fill="#c3cad2" stroke="${O}" stroke-width="5" data-p="body"/>
+    <rect x="-150" y="28" width="86" height="40" rx="8" fill="#3aa05a" stroke="${O}" stroke-width="3" data-p="body"/>
+    <text x="-107" y="55" text-anchor="middle" font-size="19" font-weight="900" fill="#fff" font-family="sans-serif" data-p="body">Spiolto</text>
+    <rect x="-140" y="82" width="54" height="26" rx="6" fill="#f4f7fa" stroke="${O}" stroke-width="3" data-p="body"/><text class="sd-cnt" x="-113" y="101" text-anchor="middle" font-size="16" font-weight="900" fill="${O}" font-family="sans-serif" data-p="body">60</text>
+    <g data-p="btn" class="sd-btn"><rect x="-64" y="44" width="34" height="80" rx="13" fill="#3aa05a" stroke="${O}" stroke-width="4"/><path d="M-52 66 v34" stroke="#bff0cf" stroke-width="4" stroke-linecap="round"/></g>
+    <g data-p="base" class="sd-base"><rect x="-152" y="170" width="90" height="96" rx="22" fill="rgba(214,232,244,.85)" stroke="${O}" stroke-width="5"/>
+      <g class="sd-stripes">${[0,1,2,3,4,5].map(i=>`<path d="M${-150+i*18} 182 v72" stroke="#9fc3dc" stroke-width="5" stroke-linecap="round"/>`).join('')}</g>
+      <path d="M-128 248 h40 l-8 -7 m8 7 l-8 7" stroke="${O}" stroke-width="3.5" fill="none" stroke-linecap="round"/></g>
+    <g data-p="cap" class="sd-cap"><path d="M-162 -56 q0 -46 46 -46 h108 q20 0 20 20 v62 q0 14 -14 14 H-162 Z" fill="#3aa05a" stroke="${O}" stroke-width="5"/><path d="M-140 -78 h100" stroke="#8fe0a8" stroke-width="6" stroke-linecap="round"/></g>
+  </g>`;
+  const mdi=`<g class="sd-mdi">
+    <g data-p="can" class="sd-can"><rect x="-126" y="-292" width="54" height="120" rx="12" fill="#d5dbe2" stroke="${O}" stroke-width="5"/><rect x="-120" y="-280" width="12" height="96" rx="6" fill="#f3f6f9"/><rect x="-126" y="-206" width="54" height="16" fill="#aab3bd" stroke="${O}" stroke-width="3"/></g>
+    <path d="M-136 -196 h74 v150 h56 q18 0 18 18 v44 q0 18 -18 18 h-112 q-18 0 -18 -18 Z" fill="#3a7cc4" stroke="${O}" stroke-width="5" stroke-linejoin="round" data-p="body"/>
+    <path d="M-120 -170 v110" stroke="#9cc6ee" stroke-width="7" stroke-linecap="round" data-p="body"/>
+    <rect x="-112" y="-120" width="34" height="26" rx="5" fill="#fff" stroke="${O}" stroke-width="3" data-p="body"/><text class="sd-cnt" x="-95" y="-101" text-anchor="middle" font-size="15" font-weight="900" fill="#c62828" font-family="sans-serif" data-p="body">12</text>
+    <text x="-99" y="-140" text-anchor="middle" font-size="12.5" font-weight="900" fill="#fff" font-family="sans-serif" data-p="body">Berotec</text>
+    <g data-p="cap" class="sd-cap"><path d="M-60 -54 h56 q32 0 32 48 q0 48 -32 48 h-56 Z" fill="#2c5f97" stroke="${O}" stroke-width="5"/><path d="M-46 -36 v58" stroke="#7fb1e3" stroke-width="6" stroke-linecap="round"/></g>
+  </g>`;
+  if(dev==='spacer') return `<g class="sd-dev" data-dev="spacer">
+    <g class="sd-sp" data-p="spacer"><rect x="-330" y="-62" width="272" height="124" rx="56" fill="rgba(220,236,250,.75)" stroke="${O}" stroke-width="5"/>
+      <path d="M-58 -26 h40 q14 0 14 14 v24 q0 14 -14 14 h-40 Z" fill="#f2c94c" stroke="${O}" stroke-width="5"/><rect x="-350" y="-40" width="26" height="80" rx="10" fill="#f2c94c" stroke="${O}" stroke-width="5"/>
+      <g class="sd-chmist"></g><path d="M-300 -40 q130 -16 230 0" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round" opacity=".8"/></g>
+    <g class="sd-mdiw">${mdi}</g></g>`;
+  return `<g class="sd-dev" data-dev="mdi">${mdi}</g>`;
+}
+function simFaceSVG(){ const O=SIM_O;
+  return `<g class="sd-face">
+    <path d="M820 600 V430 q-40 -36 -120 -40 l-12 -40 q70 -20 96 -110 q22 -86 -40 -150 q-60 -54 -140 -30 q-70 24 -86 94 l-6 40 l-26 44 q-6 12 8 16 l18 4 l-4 22 q-2 12 12 14 l-2 16 q-2 14 14 18 q30 8 56 -4 l10 40 q-90 6 -132 64 V600 Z" fill="#ffd9b8" stroke="${O}" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M512 160 q16 -110 140 -116 q120 0 160 110 q-34 -22 -72 -16 q-10 56 -66 66 q-30 -44 -96 -34 q-34 -6 -66 -10Z" fill="#3b3045" stroke="${O}" stroke-width="5"/>
+    <ellipse cx="560" cy="198" rx="9" ry="12" fill="${O}"/><path d="M542 170 q16 -10 32 -2" stroke="${O}" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <circle cx="590" cy="256" r="18" fill="#ff9fb0" opacity=".55"/>
+    <g class="sd-mouth"><path class="m-closed" d="M506 293 q9 5 18 1" stroke="#b03a48" stroke-width="6" fill="none" stroke-linecap="round"/>
+      <ellipse class="m-open" cx="514" cy="296" rx="10" ry="10" fill="#7a2232" stroke="${O}" stroke-width="4"/>
+      <path class="m-seal" d="M526 276 q-20 20 0 40" stroke="#b03a48" stroke-width="9" fill="none" stroke-linecap="round"/></g>
+    <g class="sd-throat"><path d="M530 302 q50 26 70 96" stroke="#ff8f7a" stroke-width="16" fill="none" stroke-linecap="round" opacity=".75"/></g>
+    <text class="sd-bub" x="470" y="110" text-anchor="middle" font-size="34" font-weight="900" fill="#c0172f" font-family="sans-serif"></text>
+    <text class="sd-count" x="700" y="560" text-anchor="middle" font-size="64" font-weight="900" fill="#3d7bff" font-family="sans-serif"></text>
+  </g>`; }
+function inhSim(dev){
+  if(!$('#isimCss')){ const st=document.createElement('style'); st.id='isimCss'; st.textContent=`
+#isim{position:absolute;left:34px;right:34px;top:94px;bottom:16px;z-index:24;display:flex;flex-direction:column;background:rgba(255,255,255,.98);border-radius:28px;padding:12px 16px;box-shadow:0 0 0 5px #fff,0 0 0 10px #8c9a3e,0 16px 40px rgba(0,0,0,.35);animation:enterC .4s cubic-bezier(.2,1.2,.4,1);touch-action:none;-webkit-user-select:none;user-select:none}
+#isim .is-head{display:flex;gap:14px;align-items:center;background:linear-gradient(90deg,#f3f1dc,#fff1dc);border-radius:18px;padding:8px 14px;min-height:58px}
+#isim .is-head .no{flex:0 0 auto;background:#6b7a2a;color:#fff;font-weight:900;border-radius:14px;padding:6px 12px;font-size:19px}
+#isim .is-head .tx{flex:1;font-family:var(--tc);font-weight:900;font-size:23px;line-height:1.3;color:#3b3a12}
+#isim .is-head .pf:empty{display:none}
+#isim .is-head .pf{flex:0 0 auto;font-weight:900;font-size:20px;color:#2d7a3d;background:#e7f8ec;border-radius:12px;padding:4px 12px}
+#isim .is-body{flex:1;display:flex;gap:12px;min-height:0;margin-top:10px}
+#isim .is-steps{width:292px;flex:0 0 auto;display:flex;flex-direction:column;gap:6px;overflow:auto}
+#isim .is-steps h4{margin:2px 4px 4px;font-size:18px;color:#6b7a2a}
+#isim .st{display:flex;gap:8px;align-items:center;padding:7px 10px;border-radius:12px;background:#f6f6f2;font-weight:800;font-size:17px;line-height:1.25;color:#55524a;transition:background .2s}
+#isim .st i{font-style:normal;flex:0 0 26px;text-align:center;font-size:20px}
+#isim .st.nx{background:#fff3cf;box-shadow:inset 0 0 0 3px #ffb21f;color:#3b3a12}
+#isim .st.ok{background:#e6f8ee;color:#1f7a4a}
+#isim .st.bad{background:#ffeaee;color:#b4203c}
+#isim .is-bench{flex:1;position:relative;border-radius:20px;background:linear-gradient(180deg,#eef6ff 0,#f8fbff 62%,#efe2c8 62%,#e7d4b0 100%);overflow:hidden;min-width:0}
+#isim .is-bench svg{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}
+#isim .is-hint{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);background:rgba(59,58,18,.82);color:#fff;font-weight:800;font-size:18px;border-radius:99px;padding:6px 16px;white-space:nowrap;pointer-events:none;transition:opacity .3s}
+#isim .is-hint:empty{opacity:0}
+#isim .is-side{width:236px;flex:0 0 auto;display:flex;flex-direction:column;gap:10px}
+#isim .is-meter{flex:1;display:flex;gap:10px;min-height:0;background:#f4f7fb;border-radius:18px;padding:10px}
+#isim .lung{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-weight:900;font-size:15px;color:#4a4560}
+#isim .lung .tube{position:relative;flex:1;width:58px;border-radius:24px;background:#fff;box-shadow:inset 0 0 0 4px #c9d3e0;overflow:hidden}
+#isim .lung .tube b{position:absolute;left:0;right:0;bottom:0;background:linear-gradient(180deg,#8fd0ff,#3d7bff);transition:height .08s linear}
+#isim .gauge{width:100%;display:block}
+#isim .is-btn{position:relative;border-radius:18px;padding:14px 10px;font-weight:900;font-size:21px;color:#fff;background:linear-gradient(180deg,#7ab8ff,#3d7bff);box-shadow:0 5px 0 #2856b8;touch-action:none;overflow:hidden}
+#isim .is-btn small{display:block;font-size:14px;opacity:.85;font-weight:800}
+#isim .is-btn.hold{background:linear-gradient(180deg,#b9a6ff,#7b61ff);box-shadow:0 5px 0 #5a43d6}
+#isim .is-btn.on{transform:translateY(4px);box-shadow:0 1px 0 #2856b8}
+#isim .is-btn .pg{position:absolute;left:0;bottom:0;height:6px;background:#fff;opacity:.85}
+#isim .is-btn.done{background:linear-gradient(180deg,#7fe0b0,#18b07f);box-shadow:0 5px 0 #0f7d58}
+#isim .is-sum{position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.88);border-radius:20px}
+#isim .is-sum .card{width:min(760px,92%);background:#fff;border-radius:22px;padding:18px 24px;box-shadow:0 0 0 4px #8c9a3e,0 12px 30px rgba(0,0,0,.2)}
+#isim .is-sum h3{margin:0 0 10px;font-family:var(--tc);font-size:28px}
+#isim .is-sum li{font-size:19px;line-height:1.45;margin:4px 0;font-weight:700}
+#isim .is-sum .act{display:flex;gap:12px;justify-content:flex-end;margin-top:12px}
+#isim .sd-can,#isim .sd-cap,#isim .sd-btn,#isim [data-p]{cursor:pointer}
+#isim .sd-can{transition:transform .08s}
+#isim .sd-cap{transition:transform .35s cubic-bezier(.3,1.4,.5,1),opacity .3s}
+#isim .sd-mouth .m-open,#isim .sd-mouth .m-seal{display:none}
+#isim .face-open .sd-mouth .m-closed,#isim .face-seal .sd-mouth .m-closed{display:none}
+#isim .face-open .sd-mouth .m-open{display:inline}
+#isim .face-seal .sd-mouth .m-seal{display:inline}
+#isim .face-cough .sd-face{animation:hitShake .4s}
+#isim .sd-throat{opacity:0;transition:opacity .3s}
+#isim .throat-hit .sd-throat{opacity:1}
+#isim .mist circle{fill:#fff;stroke:#9fc3dc;stroke-width:2}
+#isim .sd-guide{pointer-events:none}
+@keyframes hitShake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}`; document.head.appendChild(st); }
   return new Promise(res=>{
-    const sel=new Set(), wrong=new Set(INH_MDI.filter(s=>s.w).map(s=>s.k));
-    const h=inhHost(2,['他剛才用藍色 Berotec 的示範——點出所有「做錯」的步驟（可以複選）。','His Berotec demo, step by step — tap every step he did WRONG (several may apply).','การสาธิตพ่น Berotec ของลุงทีละขั้น แตะทุกขั้นที่ลุง "ทำผิด" (เลือกได้หลายข้อ)'],
-      INH_MDI.map((s,j)=>`<button class="ih-card" data-k="${s.k}" style="animation-delay:${j*.04}s"><span class="em">${s.e}</span><span class="tt">${esc(L(s.t))}<span class="fx"></span></span><span class="mk"></span></button>`).join(''),
-      `<span class="hint">${esc(L(['照他做的順序排列','In the order he did them','เรียงตามลำดับที่ลุงทำ']))} · ${T('selected')}: <b id="ihCount">0</b></span><button class="gbtn" id="ihOk">${T('confirmDx')}</button>`);
-    let done=false;
-    h.querySelectorAll('.ih-card').forEach(c=>c.onclick=()=>{ if(done) return; const k=c.dataset.k;
-      if(sel.has(k)){ sel.delete(k); c.classList.remove('sel'); } else { sel.add(k); c.classList.add('sel'); } sfx.select(); $('#ihCount').textContent=sel.size; });
-    $('#ihOk').onclick=()=>{ if(done) return;
-      if(!sel.size){ sfx.error(); toast('🫁 '+L(['至少選一個步驟','Select at least one step','เลือกอย่างน้อย 1 ขั้นตอน'])); return; }
-      done=true; $('#ihOk').disabled=true;
-      const hit=[...sel].filter(k=>wrong.has(k)), extra=[...sel].filter(k=>!wrong.has(k)), missed=[...wrong].filter(k=>!sel.has(k));
-      h.querySelectorAll('.ih-card').forEach(c=>{ const k=c.dataset.k, s=INH_MDI.find(x=>x.k===k), mk=c.querySelector('.mk');
-        if(EXAM()){ if(!sel.has(k)) c.style.opacity='.45'; return; }
-        c.classList.remove('sel');
-        if(wrong.has(k)){ c.classList.add(sel.has(k)?'ok':'miss'); mk.textContent=sel.has(k)?'✔️':'❗'; c.querySelector('.fx').textContent='→ '+L(s.f); }
-        else if(sel.has(k)){ c.classList.add('bad'); mk.textContent='✖️'; }
-        else { c.classList.add('fine'); mk.textContent='👍'; } });
-      res({sel:[...sel], hit, extra, missed, perfect:!extra.length&&!missed.length, partial:!!hit.length&&!!(extra.length||missed.length)}); };
+    const steps=SIM_STEPS[dev], maxT=EXAM()?1:2, ex=EXAM();
+    let host=$('#isim'); if(!host){ host=document.createElement('div'); host.id='isim'; $('#stage').appendChild(host); }
+    host.innerHTML=`<div class="is-head"><span class="no">${esc(L(SIMX.hdr[dev]))}</span><span class="tx" id="simTx"></span><span class="pf" id="simPf"></span></div>
+      <div class="is-body">${ex?'':`<div class="is-steps" id="simSteps"></div>`}
+        <div class="is-bench" id="simBench"><svg id="simSvg" viewBox="0 0 820 600" preserveAspectRatio="xMidYMid meet">
+          ${simFaceSVG()}<circle id="simMouth" cx="514" cy="296" r="40" fill="none"/>
+          <g id="simCapHome"></g><g id="simDevG">${simDevSVG(dev)}</g><g id="simFx" style="pointer-events:none"></g><g id="simGuide" class="sd-guide"></g></svg><div class="is-hint" id="simHint"></div></div>
+        <div class="is-side"><div class="is-meter"><div class="lung"><span>🫁 ${esc(L(SIMX.lungs))}</span><div class="tube"><b id="simLung"></b></div></div></div>
+          <svg class="gauge" viewBox="0 0 200 134"><path d="M20 104 A80 80 0 0 1 180 104" fill="none" stroke="#e8edf3" stroke-width="22"/>
+            <path d="M20 104 A80 80 0 0 1 128 30" fill="none" stroke="#5fd39a" stroke-width="22"/><path d="M128 30 A80 80 0 0 1 162 56" fill="none" stroke="#ffd166" stroke-width="22"/><path d="M162 56 A80 80 0 0 1 180 104" fill="none" stroke="#ff6b81" stroke-width="22"/>
+            <line id="simNeedle" x1="100" y1="104" x2="100" y2="34" stroke="${SIM_O}" stroke-width="6" stroke-linecap="round"/><circle cx="100" cy="104" r="9" fill="${SIM_O}"/>
+            <text x="100" y="131" text-anchor="middle" font-size="15" font-weight="900" fill="#4a4560" font-family="sans-serif">${esc(L(SIMX.flow))}</text></svg>
+          <button class="is-btn" id="simOut">${esc(L(SIMX.out))}<small>${esc(L(SIMX.press))}</small><span class="pg"></span></button>
+          <button class="is-btn hold" id="simHold">${esc(L(SIMX.hold))}<small>${esc(L(SIMX.press))}</small><span class="pg"></span></button>
+          <button class="gbtn green" id="simDone" style="font-size:20px;padding:12px 10px">${esc(L(SIMX.done))}</button></div></div>`;
+    host.classList.remove('hidden');
+    const svg=$('#simSvg'), devG=$('#simDevG'), fx=$('#simFx'), guide=$('#simGuide'), bench=$('#simBench');
+    const MOUTH={x:516,y:296}, SOCK=326, HOME={mdi:{x:250,y:430}, spacer:{x:170,y:320}, resp:{x:250,y:300}}[dev];
+    const SP_HOME={x:470,y:470};   // spacer lies on the table; the inhaler starts at the left
+    let tries=0, allErrs=[], firstErrs=null, finished=false, raf=0;
+    let s;
+    const reset=()=>{
+      s={cap:dev!=='resp', capOpen:false, shakes:0, loaded:false, turn:0, atMouth:false, attached:false, lungs:.55, exhaled:false, puffs:0, good:0, puffNo:1,
+         pos:{...HOME}, spPos:{...SP_HOME}, gest:null, phase:'prep', inh:null, holdN:0, holdT:0, holdDue:0, outOn:false, holdOn:false,
+         chamber:0, chamberT:0, errs:new Set(), done:new Set(), rate:0, bub:0, cycles:0, puffDone:false, okPuff:false};
+      if(dev==='spacer'){ devG.innerHTML=simDevSVG('spacer'); }
+      else devG.innerHTML=simDevSVG(dev);
+      draw(); paintSteps(); setText();
+    };
+    const pt=e=>{ const p=svg.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; const m=svg.getScreenCTM(); return m?p.matrixTransform(m.inverse()):{x:0,y:0}; };
+    const err=(k,soft)=>{ if(!s.errs.has(k)){ s.errs.add(k); if(!ex&&!soft) toast('⚠️ '+L(SIM_ERR[k])); } sfx.error(); paintSteps(); };
+    const mark=k=>{ if(!s.done.has(k)){ s.done.add(k); if(!ex) sfx.select(); paintSteps(); setText(); } };
+    const bub=(t,ms)=>{ const b=svg.querySelector('.sd-bub'); b.textContent=t; clearTimeout(s.bub); s.bub=setTimeout(()=>{ b.textContent=''; },ms||1200); };
+    const faceCls=()=>{ bench.classList.toggle('face-seal',s.atMouth); bench.classList.toggle('face-open',!s.atMouth&&near()<160); };
+    const tip=()=>dev==='spacer'&&s.attached?{x:s.spPos.x,y:s.spPos.y}:s.pos;
+    const near=()=>{ const t=tip(); return Math.hypot(t.x-MOUTH.x,t.y-MOUTH.y); };
+    function draw(){
+      const d=devG.querySelector('.sd-dev');
+      if(dev==='spacer'){ const sp=devG.querySelector('.sd-sp'), w=devG.querySelector('.sd-mdiw');
+        sp.setAttribute('transform',`translate(${s.spPos.x},${s.spPos.y})`);
+        const mp=s.attached?{x:s.spPos.x-SOCK,y:s.spPos.y}:s.pos; w.setAttribute('transform',`translate(${mp.x},${mp.y})`); }
+      else d.setAttribute('transform',`translate(${s.pos.x},${s.pos.y})`);
+      const cap=devG.querySelector('.sd-cap');
+      if(dev==='resp') cap.setAttribute('transform',s.capOpen?'rotate(-118 -156 -56)':'');
+      else { const home=capHomeAt(); cap.style.opacity='1'; cap.setAttribute('transform',s.cap?'':`translate(${home.x},${home.y})`); }
+      if(dev==='resp'){ const sb=devG.querySelector('.sd-stripes'); sb.setAttribute('transform',`translate(${(s.turn%36)/2},0)`); }
+      faceCls();
+    }
+    // the removed MDI cap rests on the table, below-left of the device
+    const capHomeAt=()=>{ const p=dev==='spacer'&&s.attached?{x:s.spPos.x-SOCK,y:s.spPos.y}:s.pos; return {x:76-p.x, y:548-p.y}; };
+    function paintSteps(){
+      const box=$('#simSteps'); if(!box) return; const nx=steps.find(x=>!s.done.has(x[0]));
+      const badSteps=new Set(); const ERR2STEP={capOn:'cap',noShake:'shake',noOut:'out',outIn:'out',air:'lips',early:'press',fast:'slow',short:'slow',noHold:'hold',noRecap:'recap',openTurn:'turn',noTurn:'turn',capShut:'open',noClose:'close',noSpacer:'attach',twoPuff:'press',late:'slow'};
+      s.errs.forEach(k=>ERR2STEP[k]&&badSteps.add(ERR2STEP[k]));
+      box.innerHTML=`<h4>${esc(L(SIMX.steps))}${dev==='resp'?' · '+esc(L(SIMX.puff).replace('{n}',s.puffNo)):''}</h4>`+steps.map(([k,t,ic])=>`<div class="st ${s.done.has(k)?'ok':badSteps.has(k)?'bad':nx&&nx[0]===k?'nx':''}" data-k="${k}"><i>${s.done.has(k)?'✔️':badSteps.has(k)?'❗':ic}</i><span>${esc(L(t))}</span></div>`).join('');
+    }
+    function setText(){
+      $('#simPf').textContent=dev==='resp'?L(SIMX.puff).replace('{n}',s.puffNo)+' / 2':'';
+      const nx=steps.find(x=>!s.done.has(x[0]));
+      $('#simTx').textContent=ex?L(SIMX.task[dev])+' '+L(SIMX.examNote):(nx?nx[2]+' '+L(nx[1]):L(SIMX.task[dev]));
+      let h=ex?L(SIMX.ctrl):'';
+      if(!ex&&nx){ if(nx[0]==='shake') h=L(SIMX.shakeHint); else if(nx[0]==='press'&&dev!=='spacer') h='👆 '+L(SIMX.slide); else if(nx[0]==='slow'&&dev==='spacer') h='☁️ '+L(SIMX.slideSp); else if(nx[0]==='out') h='😮‍💨 → '+L(SIMX.out); else if(nx[0]==='hold') h='⏱️ → '+L(SIMX.hold); }
+      $('#simHint').textContent=h;
+    }
+    function puffFx(kind){ // kind: lungs | air | throat | chamber | none
+      const t=kind==='chamber'?{x:s.spPos.x-300,y:s.spPos.y}:tip(), g=document.createElementNS('http://www.w3.org/2000/svg','g'); g.setAttribute('class','mist'); fx.appendChild(g);
+      const n=kind==='none'?0:9; for(let i=0;i<n;i++){ const c=document.createElementNS('http://www.w3.org/2000/svg','circle'); c.setAttribute('r',String(8+Math.random()*10)); c.setAttribute('cx',String(t.x-6)); c.setAttribute('cy',String(t.y+(Math.random()*20-10))); g.appendChild(c);
+        const dx=kind==='air'?-40-Math.random()*80:kind==='chamber'?40+Math.random()*220:30+Math.random()*60, dy=kind==='air'?-80-Math.random()*60:kind==='lungs'?60+Math.random()*80:kind==='throat'?20:(Math.random()*30-15);
+        c.animate([{transform:'translate(0,0)',opacity:.95},{transform:`translate(${dx}px,${dy}px)`,opacity:0}],{duration:kind==='chamber'?2600:900+Math.random()*500,easing:'ease-out',fill:'forwards'}); }
+      setTimeout(()=>g.remove(),2800);
+      if(kind!=='none') sfx.whoosh();
+    }
+    function cough(){ bench.classList.remove('face-cough'); void bench.offsetWidth; bench.classList.add('face-cough','throat-hit'); setTimeout(()=>bench.classList.remove('throat-hit'),900); bub(L(SIMX.cough)); sfx.cough(1); }
+    function moveHome(){ if(dev==='spacer'&&s.attached) s.spPos={...SP_HOME}; else s.pos={...HOME}; s.atMouth=false; draw(); }
+    /* ---------- pointer gestures on the bench ---------- */
+    svg.addEventListener('pointerdown',e=>{
+      if(finished||s.gest) return; const part=e.target.closest('[data-p]'); if(!part) return; e.preventDefault();
+      try{ svg.setPointerCapture(e.pointerId); }catch(_){}
+      const p=pt(e), k=part.dataset.p, now=performance.now();
+      if(k==='cap'){ s.gest={k:'cap', p0:p, t0:now}; return; }
+      if(k==='base'){ s.gest={k:'turn', p0:p, t0:now, last:p.x}; return; }
+      if(k==='can'||k==='btn'){ pressStart(p,now); return; }
+      if(k==='spacer'&&s.attached&&s.atMouth&&s.phase!=='hold'){ s.gest={k:'inhale', p0:p, t0:now, started:true, red:0, last:now, lastP:0, puff:null}; startInhale(now,true); return; }
+      s.gest={k:'drag', p0:p, t0:now, start:dev==='spacer'&&s.attached?{...s.spPos}:dev==='spacer'&&k==='spacer'?{...s.spPos}:{...s.pos}, what:dev==='spacer'&&(k==='spacer'||s.attached)?'sp':'dev', moved:0, lastY:p.y, dir:0, ext:p.y};
+    });
+    svg.addEventListener('pointermove',e=>{
+      const g=s&&s.gest; if(!g||finished) return; const p=pt(e), now=performance.now();
+      if(g.k==='drag'){ const dx=p.x-g.p0.x, dy=p.y-g.p0.y; g.moved=Math.max(g.moved,Math.hypot(dx,dy));
+        const np={x:Math.max(40,Math.min(800,g.start.x+dx)), y:Math.max(60,Math.min(580,g.start.y+dy))};
+        if(g.what==='sp') s.spPos=np; else s.pos=np;
+        if(s.atMouth&&near()>70){ s.atMouth=false; }
+        // shaking = quick up/down reversals (only the inhaler, not the bare spacer)
+        if(g.what==='dev'||s.attached){ const d=Math.sign(p.y-g.lastY); if(d&&d!==g.dir){ if(g.dir&&Math.abs(p.y-g.ext)>=22){ s.shakes++; sfx.rattle(); if(s.shakes>=4) mark('shake'); } g.dir=d; g.ext=g.lastY; } g.lastY=p.y; }
+        draw(); return; }
+      if(g.k==='turn'){ const d=p.x-g.last; g.last=p.x; if(d>0&&!s.loaded){ if(s.capOpen&&!s.errs.has('openTurn')) err('openTurn'); s.turn=Math.min(180,s.turn+d*1.5); if(s.turn>=180){ s.loaded=true; s.turn=0; sfx.clink(); bub(L(SIMX.click)); mark('turn'); if(s.capOpen) mark('open'); } draw(); } return; }
+      if(g.k==='press'||g.k==='inhale'){ const prog=Math.min(1,Math.hypot(p.x-g.p0.x,p.y-g.p0.y)/300);
+        if(!g.started&&prog>0.04){ g.started=true; startInhale(now,false); }
+        if(g.started){ const dt=Math.max(16,now-g.last)/1000, r=Math.max(0,(prog-g.lastP)/dt); s.rate=s.rate*.8+r*.2; if(s.rate>.6) g.red+=dt; g.last=now; g.lastP=Math.max(g.lastP,prog);
+          s.lungs=Math.min(1,s.inh.base+(1-s.inh.base)*g.lastP); drawGuide(g,p); } return; }
+    });
+    const up=e=>{ const g=s&&s.gest; if(!g) return; s.gest=null; try{ svg.releasePointerCapture(e.pointerId); }catch(_){} guide.innerHTML=''; if(finished) return;
+      const now=performance.now();
+      if(g.k==='cap'){ toggleCap(); return; }
+      if(g.k==='drag'){
+        if(g.what==='dev'&&dev==='spacer'&&!s.attached){ const sock={x:s.spPos.x-SOCK,y:s.spPos.y}; if(Math.hypot(s.pos.x-sock.x,s.pos.y-sock.y)<100){
+            if(s.cap){ err('capOn'); bub(L(SIMX.capFirst),1500); s.pos={...HOME}; draw(); return; }
+            s.attached=true; sfx.clink(); mark('attach'); draw(); setText(); return; } }
+        if(near()<90&&(dev!=='spacer'||s.attached)){ if(!s.atMouth){ s.atMouth=true; sfx.pop(); if(dev==='resp'&&!s.capOpen){} mark('lips'); } const t=tip(); const dx=MOUTH.x-6-t.x, dy=MOUTH.y-t.y; if(dev==='spacer'&&s.attached){ s.spPos.x+=dx; s.spPos.y+=dy; } else { s.pos.x+=dx; s.pos.y+=dy; } }
+        else if(g.moved>8&&!(dev==='spacer'&&g.what==='sp'&&!s.attached)) { /* leave it where it is, but keep it on the bench */ s.atMouth=false; }
+        draw(); return; }
+      if(g.k==='press'||g.k==='inhale') endInhale(g,now);
+    };
+    svg.addEventListener('pointerup',up); svg.addEventListener('pointercancel',up);
+    function toggleCap(){
+      if(dev==='resp'){ s.capOpen=!s.capOpen; sfx.plastic(); if(s.capOpen){ if(s.loaded) mark('open'); }
+        else if(s.puffDone){ s.puffDone=false; mark('close'); afterClose(); } draw(); return; }
+      s.cap=!s.cap; sfx.plastic(); if(!s.cap) mark('cap'); draw();
+      if(s.cap&&s.puffDone&&dev==='mdi'){ mark('recap'); setTimeout(()=>finish(),700); }
+    }
+    function afterClose(){ if(dev!=='resp') return; s.cycles++;
+      if(s.puffNo===1){ s.puffNo=2; s.done=new Set(); s.loaded=false; s.exhaled=false; s.phase='prep'; if(!ex){ toast('2️⃣ '+L(SIMX.puff2)); } paintSteps(); setText(); }
+      else setTimeout(()=>finish(),700); }
+    function pressStart(p,now){
+      const can=devG.querySelector(dev==='resp'?'.sd-btn':'.sd-can'); can.style.transform=dev==='resp'?'translate(-6px,0)':'translate(0,16px)'; setTimeout(()=>{ can.style.transform=''; },260);
+      sfx.click(); let puff='ok';
+      if(s.phase==='hold'){ return; }
+      if(dev==='resp'){ if(!s.loaded){ err('noTurn'); bub(L(SIMX.nothing),1500); puff='none'; } else if(!s.capOpen){ err('capShut'); puff='cap'; s.loaded=false; } }
+      else { if(s.cap){ err('capOn'); bub(L(SIMX.nothing),1500); puff='none'; }
+        else { if(s.shakes<4) err('noShake'); if(dev==='spacer'&&!s.attached){ err('noSpacer'); puff='air'; } } }
+      if(puff==='ok'&&!s.atMouth&&dev!=='spacer'){ err('air'); puff='air'; }
+      if(puff==='ok'||puff==='air'||puff==='cap'){ s.puffs++; s.shakes=0; if(dev==='resp') s.loaded=false;
+        const c=devG.querySelector('.sd-cnt'); if(c) c.textContent=String(Math.max(0,+c.textContent-1)); }
+      if(puff==='air'){ puffFx('air'); paintSteps(); return; }
+      if(puff==='cap'||puff==='none'){ paintSteps(); return; }
+      if(dev==='spacer'){ if(s.chamber>0){ err('twoPuff'); } s.chamber=1; s.chamberT=now; puffFx('chamber'); mark('press'); setText(); return; }
+      s.gest={k:'press', p0:p, t0:now, started:false, red:0, last:now, lastP:0, puff:now};
+      s.phase='press';
+    }
+    function startInhale(now,spacer){
+      if(s.lungs>.4&&!s.exhaled) err('noOut');
+      s.inh={t0:now, base:s.exhaled?.1:s.lungs}; s.rate=0;
+      const g=s.gest;
+      if(!spacer&&g&&g.puff&&now-g.puff>800){ err('early'); g.badPuff='early'; cough(); puffFx('throat'); }
+      else if(!spacer){ puffFx('lungs'); }
+      if(spacer){ if(s.chamber&&now-s.chamberT>5000) err('late'); if(s.chamber) puffFx('lungs'); }
+    }
+    function endInhale(g,now){
+      s.phase='prep';
+      if(!g.started){ if(g.k==='press'){ err('early'); cough(); puffFx('throat'); } return; }
+      const dur=(now-s.inh.t0)/1000, full=g.lastP>=.85;
+      let okPuff=!g.badPuff&&(dev==='spacer'?s.chamber>0:true);
+      if(!full){ err('short'); okPuff=false; }
+      else if(dur<2.2||g.red>dur*.35){ err('fast'); okPuff=false; cough(); }
+      else mark('slow');
+      if(g.k==='press'&&!g.badPuff) mark('press');
+      if(dev==='spacer') s.chamber=0;
+      s.exhaled=false; s.rate=0;
+      s.phase='hold'; s.holdDue=now+(ex?3200:4500); s.holdN=0; s.okPuff=okPuff;
+    }
+    function holdDone(ok){
+      s.phase='after'; s.holdOn=false; $('#simHold').classList.remove('on');
+      if(ok){ mark('hold'); if(s.okPuff) s.good++; } else err('noHold'); s.puffDone=true;
+      svg.querySelector('.sd-count').textContent='';
+      s.lungs=.5; s.atMouth=false; sfx.whoosh();
+      setTimeout(()=>{ if(finished) return; moveHome(); if(dev==='spacer'&&s.done.has('hold')) setTimeout(()=>finish(),600); },500);
+    }
+    function drawGuide(g,p){ guide.innerHTML=`<line x1="${g.p0.x}" y1="${g.p0.y}" x2="${p.x}" y2="${p.y}" stroke="#3d7bff" stroke-width="6" stroke-dasharray="10 8" stroke-linecap="round"/><circle cx="${p.x}" cy="${p.y}" r="14" fill="#3d7bff" opacity=".6"/>`; }
+    /* ---------- hold buttons: breathe out / hold breath ---------- */
+    const holdBtn=(id,on,off)=>{ const b=$('#'+id);
+      b.addEventListener('pointerdown',e=>{ e.preventDefault(); if(finished) return; try{ b.setPointerCapture(e.pointerId); }catch(_){} b.classList.add('on'); on(); });
+      const rel=()=>{ if(!b.classList.contains('on')) return; b.classList.remove('on'); off(); };
+      b.addEventListener('pointerup',rel); b.addEventListener('pointercancel',rel); b.addEventListener('lostpointercapture',rel); };
+    holdBtn('simOut',()=>{ s.outOn=true; if(s.atMouth) err('outIn'); },()=>{ s.outOn=false; });
+    holdBtn('simHold',()=>{ if(s.phase==='hold'){ s.holdOn=true; s.holdT=performance.now(); } },()=>{ if(s.phase==='hold'&&s.holdOn){ s.holdOn=false; if(s.holdN<10) holdDone(false); } });
+    /* ---------- frame loop: lungs, gauge, breathing out, hold count ---------- */
+    let lastF=performance.now();
+    const tick=now=>{ if(finished) return; const dt=Math.min(.1,(now-lastF)/1000); lastF=now;
+      if(s.outOn&&s.phase!=='hold'){ s.lungs=Math.max(.06,s.lungs-dt*.75); if(s.lungs<=.15&&!s.exhaled){ s.exhaled=true; if(!s.atMouth) mark('out'); } $('#simOut .pg').style.width=((1-s.lungs)*100)+'%'; } else $('#simOut .pg').style.width='0';
+      if(s.phase==='hold'){ if(s.holdOn){ const n=Math.min(10,1+Math.floor((now-s.holdT)/450)); if(n!==s.holdN){ s.holdN=n; svg.querySelector('.sd-count').textContent=String(n); sfx.tick(); } $('#simHold .pg').style.width=(s.holdN*10)+'%'; if(s.holdN>=10&&now-s.holdT>=10*450) holdDone(true); }
+        else if(now>s.holdDue) holdDone(false); } else $('#simHold .pg').style.width='0';
+      if(!(s.gest&&(s.gest.k==='press'||s.gest.k==='inhale')&&s.gest.started)) s.rate*=.9;
+      $('#simLung').style.height=(s.lungs*100)+'%';
+      const a=Math.min(1,s.rate/.9)*180-90; $('#simNeedle').setAttribute('transform',`rotate(${a} 100 104)`);
+      raf=requestAnimationFrame(tick); };
+    raf=requestAnimationFrame(tick);
+    /* ---------- finish / summary ---------- */
+    function finish(){
+      if(finished) return; finished=true; cancelAnimationFrame(raf);
+      if(dev==='mdi'&&!s.cap&&s.good) s.errs.add('noRecap');
+      if(dev==='resp'&&s.good){ if(s.cycles+(s.puffDone?1:0)<2) s.errs.add('onePuff'); if(s.capOpen) s.errs.add('noClose'); }
+      if(!s.good) s.errs.add('noDose');
+      tries++; const errs=[...s.errs]; allErrs.push(errs); if(!firstErrs) firstErrs=errs;
+      const ok=!errs.length;
+      logEvent({type:'inhSim', dev, errs, ok, try:tries, puffs:s.puffs, good:s.good});
+      if(ex){ sfx.select(); setTimeout(()=>close(ok),500); return; }
+      if(ok) sfx.get(); else sfx.error();
+      const sum=document.createElement('div'); sum.className='is-sum';
+      sum.innerHTML=`<div class="card"><h3>${ok?'🎉 '+esc(L(SIMX.perfect)):'🔧 '+esc(L(SIMX.fixes))}</h3>${ok?'':`<ul>${errs.map(k=>`<li>${esc(L(SIM_ERR[k]))}</li>`).join('')}</ul>`}
+        <div class="act">${!ok&&tries<maxT?`<button class="gbtn gray" id="simAgain">${esc(L(SIMX.again))}</button>`:''}<button class="gbtn green" id="simCont">${esc(L(SIMX.cont))}</button></div></div>`;
+      bench.appendChild(sum);
+      $('#simCont').onclick=()=>{ sfx.click(); close(ok); };
+      const ag=$('#simAgain'); if(ag) ag.onclick=()=>{ sfx.click(); sum.remove(); finished=false; reset(); lastF=performance.now(); raf=requestAnimationFrame(tick); };
+    }
+    function close(ok){ host.classList.add('hidden'); host.innerHTML=''; res({ok, errs:allErrs[allErrs.length-1]||[], firstErrs:firstErrs||[], tries}); }
+    $('#simDone').onclick=()=>{ if(finished) return; sfx.click(); finish(); };
+    reset();
   });
 }
-/* step 3: tap the Spiolto Respimat steps in order — numbers appear; tap the last one again to undo; reset; 2 tries, then the solution */
-function inhOrderUI(){
-  return new Promise(res=>{
-    const N=INH_RESPI.length, maxT=EXAM()?1:2; let order;
-    do{ order=INH_RESPI.map((_,i)=>i); for(let a=N-1;a>0;a--){ const b=Math.floor(Math.random()*(a+1)); [order[a],order[b]]=[order[b],order[a]]; } }while(order.every((v,i)=>v===i));
-    const hintTxt=()=>L(['依正確順序點選卡片；再點最後一張可以取消','Tap the cards in the right order; tap the last one again to undo','แตะการ์ดตามลำดับที่ถูกต้อง แตะใบล่าสุดอีกครั้งเพื่อยกเลิก'])+(maxT>1?' · '+L(['剩餘機會','Tries left','โอกาสที่เหลือ'])+' '+(maxT-tries):'');
-    let seq=[], tries=0, busy=false, done=false;
-    const h=inhHost(3,['把 Spiolto Respimat（綠色軟霧吸入器）的 7 個步驟排出正確順序。','Put the 7 steps of the Spiolto Respimat (green soft-mist inhaler) in the right order.','เรียง 7 ขั้นตอนการใช้ Spiolto Respimat (ยาพ่นละอองฝอยสีเขียว) ให้ถูกลำดับ'],
-      order.map((i,j)=>`<button class="ih-card" data-i="${i}" style="animation-delay:${j*.04}s"><span class="n"></span><span class="em">${INH_RESPI[i].e}</span><span class="tt">${esc(L(INH_RESPI[i].t))}</span><span class="mk"></span></button>`).join(''),
-      `<span class="hint" id="ihHint"></span><button class="gbtn gray" id="ihReset">↺ ${esc(L(['重來','Reset','เริ่มใหม่']))}</button>`);
-    const cards=()=>[...h.querySelectorAll('.ih-card')];
-    const paint=()=>cards().forEach(c=>{ const p=seq.indexOf(+c.dataset.i); c.querySelector('.n').textContent=p>=0?String(p+1):''; c.classList.toggle('sel',p>=0); });
-    const clear=()=>{ seq=[]; cards().forEach(c=>{ c.classList.remove('ok','bad','miss'); c.querySelector('.mk').textContent=''; }); paint(); $('#ihHint').textContent=hintTxt(); };
-    const finish=ok=>{ if(done) return; done=true; res({ok, tries, seq:seq.slice()}); };
-    const check=()=>{ busy=true; tries++; const ok=seq.every((v,p)=>v===p);
-      cards().forEach(c=>c.classList.remove('sel'));
-      if(ok){ sfx.get(); if(!EXAM()) cards().forEach(c=>c.classList.add('ok')); setTimeout(()=>finish(true),900); return; }
-      if(EXAM()){ sfx.select(); setTimeout(()=>finish(false),600); return; }
-      sfx.error(); cards().forEach(c=>{ const i=+c.dataset.i, okHere=seq.indexOf(i)===i; c.classList.add(okHere?'ok':'bad'); c.querySelector('.mk').textContent=okHere?'✔️':'✖️'; });
-      $('#ihHint').textContent=hintTxt();
-      if(tries<maxT){ toast('🔁 '+L(['順序還不對——紅色的放錯位置了，再試一次！','Not quite — the red ones are out of place. Try again!','ลำดับยังไม่ถูก ใบสีแดงอยู่ผิดตำแหน่ง ลองอีกครั้ง!'])); setTimeout(()=>{ clear(); busy=false; },1500); return; }
-      setTimeout(()=>{ const g=h.querySelector('.ih-grid');   // show the solution (busy stays true: cards are locked)
-        cards().sort((a,b)=>a.dataset.i-b.dataset.i).forEach(c=>{ const i=+c.dataset.i, okHere=seq.indexOf(i)===i; c.classList.remove('ok','bad'); c.classList.add(okHere?'ok':'miss'); c.querySelector('.n').textContent=String(i+1); c.querySelector('.mk').textContent=''; c.style.animation='none'; g.appendChild(c); });
-        $('#ihHint').textContent='📘 '+L(['正確順序：轉 → 開 → 吐氣 → 含住 → 吸氣同時按 → 閉氣 → 蓋上','Correct order: Turn → Open → breathe out → lips on → Press while breathing in → hold → close','ลำดับที่ถูก: หมุน → เปิด → หายใจออก → อมปากกระบอก → กดขณะหายใจเข้า → กลั้นหายใจ → ปิดฝา']);
-        const b=$('#ihReset'); b.className='gbtn green'; b.textContent=L(['繼續','Continue','ไปต่อ']); b.onclick=()=>{ sfx.click(); finish(false); }; },1500);
-    };
-    cards().forEach(c=>c.onclick=()=>{ if(done||busy) return; const i=+c.dataset.i, p=seq.indexOf(i);
-      if(p>=0){ if(p===seq.length-1){ seq.pop(); sfx.click(); paint(); } return; }
-      seq.push(i); sfx.select(); paint(); if(seq.length===N) check(); });
-    $('#ihReset').onclick=()=>{ if(done||busy) return; sfx.click(); clear(); };
-    $('#ihHint').textContent=hintTxt();
+/* ---- mission 2, hands-on: sort his medicines by anticholinergic load (strong · some/local · none) ---- */
+const ACB_KEY={benamine:['strong'], peace:['strong'], royamet:['some'], spiolto:['some'], sinbaby:['some','none'], clarinase:['none','some'], famo:['none','some'], sketa:['none','some'], mopride:['none'], minidiab:['none'], amtrel:['none']};
+const ACB_G={peace:'triprolidine + pseudoephedrine', spiolto:'tiotropium + olodaterol (inhaled)', sinbaby:'diphenhydramine 0.5% (skin lotion)', clarinase:'loratadine + pseudoephedrine', sketa:'chlorzoxazone + acetaminophen', amtrel:'amlodipine + benazepril'};
+const ACB_BINS=[['strong',['🔴 強烈抗膽鹼（Beers：長者避免）','🔴 Strongly anticholinergic (Beers: avoid)','🔴 ต้านโคลิเนอร์จิกแรง (Beers: เลี่ยง)'],3],['some',['🟡 有一些／局部','🟡 Some / mainly local','🟡 มีบ้าง / เฉพาะที่'],1],['none',['⚪ 幾乎沒有','⚪ Little or none','⚪ แทบไม่มี'],0]];
+const ACB_FX=[['👄',['口乾','dry mouth','ปากแห้ง']],['🚽',['尿不出來','urinary retention','ปัสสาวะไม่ออก']],['💩',['便秘','constipation','ท้องผูก']],['🌀',['混亂、嗜睡','confusion, drowsiness','สับสน ง่วง']],['🧍',['跌倒','falls','หกล้ม']]];
+function acbCss(){ if($('#acbCss')) return; const st=document.createElement('style'); st.id='acbCss'; st.textContent=`
+#medrev .acb-tray{display:flex;flex-wrap:wrap;gap:8px;min-height:64px;padding:8px;border-radius:16px;background:#f6f4fb;margin-top:10px}
+#medrev .acb-bins{flex:1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:10px 0 8px;min-height:0}
+#medrev .acb-bin{border-radius:18px;border:4px dashed #d9d3ea;background:#fbfaff;padding:8px;display:flex;flex-direction:column;gap:6px;overflow:auto;cursor:pointer;min-height:0}
+#medrev .acb-bin[data-bin=strong]{border-color:#ff9db0;background:#fff4f6}#medrev .acb-bin[data-bin=some]{border-color:#ffd77a;background:#fffaee}
+#medrev .acb-bin h4{margin:0 0 4px;font-size:16px;line-height:1.25;color:#3a2a4a}
+#medrev .acb-bin.over{box-shadow:0 0 0 5px #13a39a}
+#medrev .acard{display:flex;align-items:center;gap:6px;border-radius:12px;padding:6px 10px;background:#fff;font-weight:800;font-size:15px;line-height:1.2;box-shadow:0 0 0 2px #e6e9f5;cursor:grab;touch-action:none;text-align:left}
+#medrev .acard small{color:#6a6585;font-weight:700;font-size:12px}
+#medrev .acard.sel{box-shadow:0 0 0 4px #13a39a;background:#e8fbf8}
+#medrev .acard.ok{box-shadow:0 0 0 4px #18b07f;background:#eafff6}#medrev .acard.bad{box-shadow:0 0 0 4px #ff3d5c;background:#ffecee}
+#medrev .acb-load{display:flex;align-items:center;gap:10px;margin-top:6px}
+#medrev .acb-load .meter{flex:1;height:22px;border-radius:99px;background:#f0ecf8;overflow:hidden;box-shadow:inset 0 0 0 2px #e2dbf2}
+#medrev .acb-load .meter b{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffd166,#ff3d5c);transition:width .3s}
+#medrev .acb-fx span{display:inline-block;margin-left:4px;font-size:20px;opacity:.2;transition:opacity .3s,transform .3s}#medrev .acb-fx span.on{opacity:1;transform:scale(1.15)}`; document.head.appendChild(st); }
+function acbSortUI(m, i, n){
+  return new Promise(res=>{ acbCss();
+    let host=$('#medrev'); if(!host){ host=document.createElement('div'); host.id='medrev'; $('#stage').appendChild(host); }
+    const ex=EXAM(), ids=Object.keys(ACB_KEY), byId=Object.fromEntries(DRUGS.map(d=>[d.id,d])), at={};
+    if(ex) for(let a=ids.length-1;a>0;a--){ const b=Math.floor(Math.random()*(a+1)); [ids[a],ids[b]]=[ids[b],ids[a]]; }
+    const card=id=>{ const d=byId[id]; return `<button class="acard" data-d="${id}"><span>${esc(d.n.split(' ')[0])}<br><small>${esc(ACB_G[id]||d.g.split(/[ (]/)[0])}</small></span></button>`; };
+    host.innerHTML=`<div class="mr-main"><div class="mr-head"><span class="no">🚨 ${T('mission')} ${i+1}/${n}</span><span class="tx">${esc(L(['把李伯伯的藥依「抗膽鹼負擔」分類：拖進（或點選再點）下面三個籃子。','Sort Uncle Lee\'s medicines by anticholinergic load: drag them (or tap, then tap a basket) into the three baskets.','จัดยาของลุงหลี่ตาม "ภาระฤทธิ์ต้านโคลิเนอร์จิก": ลาก (หรือแตะแล้วแตะตะกร้า) ลงตะกร้าทั้งสามใบ']))}</span><span id="mrTimer"></span></div>
+      <div class="acb-tray" id="acbTray">${ids.map(card).join('')}</div>
+      <div class="acb-bins">${ACB_BINS.map(([k,t])=>`<div class="acb-bin" data-bin="${k}"><h4>${esc(L(t))}</h4></div>`).join('')}</div>
+      <div class="acb-load"><b style="white-space:nowrap">🧠 ${esc(L(['總負擔','Total load','ภาระรวม']))}</b><div class="meter"><b id="acbBar"></b></div><span class="acb-fx" id="acbFx">${ACB_FX.map(([e,t])=>`<span title="${esc(L(t))}">${e}</span>`).join('')}</span></div>
+      <div class="mr-act"><span class="hint">${esc(L(['88 歲＋攝護腺肥大＋常頭暈：負擔越重越危險','88 + BPH + dizzy spells: the heavier the load, the greater the danger','อายุ 88 + ต่อมลูกหมากโต + เวียนหัวบ่อย: ภาระยิ่งมากยิ่งอันตราย']))} · ${T('selected')}: <b id="mrCount">0</b>/${ids.length}</span><button class="gbtn" id="mrOk">${T('confirmDx')}</button></div></div>
+      <div class="mr-side">${labPanelHTML()}</div>`;
+    host.classList.remove('hidden'); host.style.animation='none'; void host.offsetWidth; host.style.animation='';
+    $('#mrSheet').onclick=()=>zoomImg(IMG.labs);
+    let done=false, iv=null, sel=null;
+    const load=()=>{ const v=Object.values(at).reduce((a,b)=>a+(ACB_BINS.find(x=>x[0]===b)[2]),0); $('#acbBar').style.width=Math.min(100,v/10*100)+'%';
+      [...$('#acbFx').children].forEach((e,j)=>e.classList.toggle('on',v>=[1,3,4,6,7][j])); $('#mrCount').textContent=Object.keys(at).length; };
+    const put=(el,bin)=>{ if(done) return; const id=el.dataset.d; if(bin){ at[id]=bin; host.querySelector(`.acb-bin[data-bin="${bin}"]`).appendChild(el); } else { delete at[id]; $('#acbTray').appendChild(el); } el.classList.remove('sel'); sel=null; sfx.select(); load(); };
+    host.querySelectorAll('.acb-bin').forEach(b=>b.addEventListener('click',e=>{ if(e.target.closest('.acard')) return; if(sel) put(sel,b.dataset.bin); }));
+    $('#acbTray').addEventListener('click',e=>{ if(e.target.closest('.acard')) return; if(sel) put(sel,null); });
+    host.querySelectorAll('.acard').forEach(c=>c.addEventListener('pointerdown',e=>{ if(done) return; e.preventDefault();
+      const st=$('#stage').getBoundingClientRect(), k=st.width/1600, x0=e.clientX, y0=e.clientY; let moved=0, over=null; try{ c.setPointerCapture(e.pointerId); }catch(_){}
+      const mv=ev=>{ moved=Math.max(moved,Math.hypot(ev.clientX-x0,ev.clientY-y0)/k); if(moved<8) return; c.style.transform=`translate(${(ev.clientX-x0)/k}px,${(ev.clientY-y0)/k}px)`; c.style.zIndex=50; c.style.position='relative';
+        const t=document.elementsFromPoint(ev.clientX,ev.clientY).find(nd=>nd.classList&&(nd.classList.contains('acb-bin')||nd.id==='acbTray')); if(t!==over){ over&&over.classList.remove('over'); over=t; over&&over.classList.add('over'); } };
+      const up=()=>{ c.removeEventListener('pointermove',mv); c.removeEventListener('pointerup',up); c.removeEventListener('pointercancel',up); c.style.transform=''; c.style.zIndex=''; over&&over.classList.remove('over');
+        if(moved<8){ if(sel===c){ c.classList.remove('sel'); sel=null; } else { sel&&sel.classList.remove('sel'); sel=c; c.classList.add('sel'); sfx.select(); } return; }
+        if(over) put(c, over.id==='acbTray'?null:over.dataset.bin); };
+      c.addEventListener('pointermove',mv); c.addEventListener('pointerup',up); c.addEventListener('pointercancel',up); }));
+    const fin=()=>{ if(done) return; done=true; clearInterval(iv); D.choiceFinish=null; $('#mrTimer').innerHTML='';
+      const strong=ids.filter(id=>at[id]==='strong'), ans=new Set(m.ans), hit=strong.filter(x=>ans.has(x)), extra=strong.filter(x=>!ans.has(x)), missed=m.ans.filter(x=>at[x]!=='strong');
+      const wrong=ids.filter(id=>!(ACB_KEY[id]||[]).includes(at[id]||'—'));
+      host.querySelectorAll('.acard').forEach(c=>{ const id=c.dataset.d; if(ex){ c.style.opacity='.6'; return; } c.classList.add(wrong.includes(id)?'bad':'ok'); });
+      const perfect=!extra.length&&!missed.length&&!wrong.length, partial=!perfect&&hit.length>0;
+      S.calc.acb={ok:perfect, wrong:wrong.length}; res({sel:strong, hit, extra, missed, perfect, partial, bins:Object.assign({},at), wrong}); };
+    $('#mrOk').onclick=()=>{ const left=ids.filter(id=>!at[id]); if(left.length){ sfx.error(); toast('🧠 '+L(['每個藥都要放進籃子','Put every medicine in a basket','ใส่ยาทุกตัวลงตะกร้า'])+` (${left.length})`); return; } fin(); };
+    if(S.qte){ const T0=performance.now(), LIM=90; let last=LIM; $('#mrTimer').innerHTML=`<div id="qte" style="--p:100%">${LIM}</div>`;
+      iv=setInterval(()=>{ const rem=Math.max(0,LIM-(performance.now()-T0)/1000), q=$('#mrTimer #qte'); if(q){ q.textContent=Math.ceil(rem); q.style.setProperty('--p',(rem/LIM*100)+'%'); }
+        if(rem<=5&&Math.ceil(rem)!==last){ last=Math.ceil(rem); sfx.tick(); } if(rem<=0){ sfx.error(); fin(); } },100); }
+    load();
   });
 }
 async function inhalerTask(){
   const tch=async(e,t)=>{ if(!EXAM()) await say('yeh',e,t); };   // teaching asides: skipped in exam mode (like coach())
   const fb=ok=>{ if(EXAM()){ sfx.select(); toast(T('examNoted')); } else if(ok) sfx.get(); else sfx.error(); };
-  const r={rescue:false, steps:false, order:false, dose:false, stepsSel:[], orderTries:0};
+  const r={rescue:false, steps:false, spacer:false, order:false, dose:false, stepsSel:[], orderTries:0};
   show('chen','C','neutral');
   try{
     await say('yeh','smug',['在處理這一大堆文件之前——李伯伯，先示範一下您平常怎麼用這兩支吸入器給我們看。','Before the paperwork — Uncle Lee, show us how you use your two puffers.','ก่อนจะจัดการเอกสารกองนี้ ลุงหลี่ลองสาธิตให้ดูหน่อยว่าปกติใช้ยาพ่นสองอันนี้อย่างไร']);
@@ -3719,27 +4079,32 @@ async function inhalerTask(){
       {timer:25, shuffle:true, id:'inhRescue', label:['他拿起綠色的 Spiolto。你怎麼跟他說？','He grabs the green Spiolto. What do you tell him?','ลุงคว้า Spiolto สีเขียว คุณจะบอกลุงว่าอย่างไร?']});
     r.rescue=c1===0; fb(r.rescue);
     await tch(r.rescue?'happy':'think',[`${r.rescue?'說得好！':''}藍色 Berotec（fenoterol）是短效的「急救」藥，幾分鐘內打開氣管；綠色 Spiolto（tiotropium＋olodaterol）是長效的「保養」藥，要每天固定用，效果慢慢累積。他剛好用反了：每天吸急救藥（難怪藍色那支快用完了），保養藥卻沒好好用。藍色那支越用越兇，就是 COPD 控制不好的警訊，要告訴醫師。`,`${r.rescue?'Well said! ':''}The blue Berotec (fenoterol) is a short-acting rescue drug that opens the airways within minutes; the green Spiolto (tiotropium + olodaterol) is long-acting maintenance — used every day, its effect builds up. He has them back to front: puffing the rescue one daily (no wonder the blue one is nearly empty) while the maintenance one goes unused. Needing the blue one more and more is a warning sign of poorly controlled COPD — the doctor must know.`,`${r.rescue?'พูดได้ดี! ':''}สีฟ้า Berotec (fenoterol) เป็นยาบรรเทาอาการออกฤทธิ์สั้น ขยายหลอดลมได้ในไม่กี่นาที ส่วนสีเขียว Spiolto (tiotropium + olodaterol) เป็นยาควบคุมอาการออกฤทธิ์นาน ต้องใช้ทุกวันเพื่อให้ได้ผลสะสม ลุงใช้สลับกันพอดี: พ่นยาบรรเทาอาการทุกวัน (มิน่าอันสีฟ้าจะหมดแล้ว) แต่ยาควบคุมกลับไม่ได้ใช้ให้ดี ถ้าต้องใช้อันสีฟ้าบ่อยขึ้นเรื่อยๆ คือสัญญาณเตือนว่า COPD คุมไม่อยู่ ต้องแจ้งแพทย์`]);
-    /* 2 — watch his Berotec MDI demo, tap the wrong steps */
+    /* 2 — his Berotec demo, then the student shows the right way on a demo inhaler (hands-on) */
     await say('yeh','neutral',['那請您用藍色那支示範一次，就像您在家裡那樣。','Then please show us the blue one — exactly as you do at home.','งั้นลองสาธิตอันสีฟ้าให้ดูหน่อย ทำเหมือนที่ลุงทำที่บ้านเลยนะ']);
     await say('chen','happy',['看好了，小老弟！','Watch closely, young comrade!','ดูให้ดีนะ สหายน้อย!']);
     await say('sys','neutral',['（他拔掉蓋子，直接把吸嘴塞進嘴裡，「噗」一聲先按了下去，接著急急吸了一小口氣——立刻嗆咳，把藥吐進衛生紙裡，再把蓋子蓋回去。）','(He pulls off the cap, pops the mouthpiece straight into his mouth, presses — pfft! — then gasps a quick, short breath, coughs at once and spits into a tissue, and puts the cap back on.)','(ลุงถอดฝาออก ยัดปากกระบอกเข้าปากทันที กด "ฟึ่บ" ไปก่อน แล้วค่อยรีบสูดหายใจสั้นๆ ทีหนึ่ง ไอสำลักทันที บ้วนยาลงกระดาษทิชชู แล้วปิดฝากลับ)']);
     await say('chen','embarrassed',['咳……這藥每次都苦苦的，大半都吐到衛生紙上了。','*cough*… it always tastes awful — most of it ends up in the tissue.','แค่ก… ยานี่ขมทุกที ส่วนใหญ่ก็บ้วนลงทิชชูหมด']);
+    await say('yeh','smug',['看出問題了嗎？這是示範用的吸入器——你親手做一次正確的給他看！','Spot the problems? Here\'s a demo inhaler — show him the right way with your own hands!','เห็นปัญหาไหม? นี่คือยาพ่นตัวอย่าง ลองสาธิตวิธีที่ถูกให้ลุงดูด้วยมือคุณเอง!']);
     hideText();
-    const m=await inhMdiUI(); r.steps=m.perfect; r.stepsSel=m.sel;
-    if(EXAM()){ sfx.select(); toast(T('examNoted')); await sleep(900); }
-    else { if(m.perfect) splash('perfect','gold','crit'); else if(m.hit.length){ sfx.hit(); toast('🔸 '+T('partial')); } else { sfx.error(); toast('❌ '+T('wrongDx')); } await sleep(1800); }
-    await tch(m.perfect?'happy':'neutral',['正確的定量噴霧吸入器（MDI）：拔蓋 → 搖勻 → 先把氣吐乾淨 → 含住吸嘴 → 開始慢慢吸氣的「同時」按一下 → 繼續慢慢深吸 → 閉氣約 10 秒。他最大的問題是「按」和「吸」對不上，藥都噴在嘴巴和喉嚨，咳一咳就吐掉了。','Correct metered-dose inhaler (MDI) use: cap off → shake → breathe out fully → lips around the mouthpiece → press AS you start a slow breath in → keep breathing in slowly and deeply → hold about 10 s. His big problem is that pressing and breathing don\'t match — the spray lands in his mouth and throat, and he coughs it out.','การใช้ยาพ่นชนิดกดสูด (MDI) ที่ถูกต้อง: ถอดฝา → เขย่า → หายใจออกให้สุด → อมปากกระบอก → กดพร้อมกับเริ่มหายใจเข้าช้าๆ → สูดต่อไปช้าๆ ลึกๆ → กลั้นหายใจราว 10 วินาที ปัญหาใหญ่ของลุงคือจังหวะกดกับหายใจไม่ตรงกัน ยาจึงไปค้างในปากและคอ แล้วไอบ้วนทิ้งหมด']);
+    const m=await inhSim('mdi'); r.steps=m.ok; r.stepsSel=m.firstErrs; r.mdiErrs=m.errs; r.mdiTries=m.tries;
+    if(EXAM()){ sfx.select(); toast(T('examNoted')); await sleep(700); }
+    else if(m.ok) splash(m.tries===1?'perfect':'gotcha','gold','crit');
+    await tch(m.ok?'happy':'neutral',['正確的定量噴霧吸入器（MDI）：拔蓋 → 搖勻 → 先把氣吐乾淨 → 含住吸嘴 → 開始慢慢吸氣的「同時」按一下 → 繼續慢慢深吸 → 閉氣約 10 秒。他最大的問題是「按」和「吸」對不上，藥都噴在嘴巴和喉嚨，咳一咳就吐掉了。','Correct metered-dose inhaler (MDI) use: cap off → shake → breathe out fully → lips around the mouthpiece → press AS you start a slow breath in → keep breathing in slowly and deeply → hold about 10 s. His big problem is that pressing and breathing don\'t match — the spray lands in his mouth and throat, and he coughs it out.','การใช้ยาพ่นชนิดกดสูด (MDI) ที่ถูกต้อง: ถอดฝา → เขย่า → หายใจออกให้สุด → อมปากกระบอก → กดพร้อมกับเริ่มหายใจเข้าช้าๆ → สูดต่อไปช้าๆ ลึกๆ → กลั้นหายใจราว 10 วินาที ปัญหาใหญ่ของลุงคือจังหวะกดกับหายใจไม่ตรงกัน ยาจึงไปค้างในปากและคอ แล้วไอบ้วนทิ้งหมด']);
     await tch('smug',['像他這樣手和呼吸配合不來的長者，可以加一個「吸藥輔助器（spacer）」：先把藥按進輔助艙，再慢慢吸幾口就好，不用搶時間。教完一定要請他「回覆示教」（teach-back），親眼看到他做對才算數。','For an older person who can\'t coordinate hand and breath, add a spacer: press the puff into the chamber, then take a few slow breaths — no race against the spray. And after teaching, always ask him to show it back (teach-back): it only counts when you see him do it right.','ผู้สูงอายุที่จังหวะมือกับการหายใจไม่ไปด้วยกันแบบลุง ให้ใช้กระบอกช่วยพ่น (spacer): กดยาเข้ากระบอกก่อน แล้วค่อยๆ สูดหายใจช้าๆ สองสามครั้ง ไม่ต้องรีบแข่งกับยา และสอนเสร็จต้องให้ลุงสาธิตกลับ (teach-back) ทุกครั้ง เห็นกับตาว่าทำถูกถึงจะนับ']);
-    inhHide();
-    /* 3 — Spiolto Respimat steps in order */
-    await say('chen','think',['那這支綠的呢？有時候我按了，什麼都沒噴出來！','And this green one? Sometimes I press and nothing comes out at all!','แล้วอันสีเขียวนี่ล่ะ? บางทีลุงกดแล้วไม่มีอะไรออกมาเลย!']);
-    await say('yeh','neutral',['綠色這支是「軟霧吸入器」，用法和藍色的不一樣。來，把步驟排出正確的順序！','The green one is a soft-mist inhaler — it works differently from the blue one. Come on, put its steps in the right order!','อันสีเขียวเป็นยาพ่นชนิดละอองฝอย วิธีใช้ต่างจากอันสีฟ้า มา เรียงขั้นตอนให้ถูกลำดับกัน!']);
+    await say('yeh','neutral',['來，裝上輔助器再做一次——這次「先按、再吸」反而沒關係。','Now fit the spacer and do it again — this time pressing first, then breathing in, is fine.','มา ต่อกระบอกช่วยสูดแล้วลองอีกครั้ง คราวนี้กดก่อนแล้วค่อยสูดก็ไม่เป็นไร']);
     hideText();
-    const o=await inhOrderUI(); r.order=o.ok; r.orderTries=o.tries;
+    const sp=await inhSim('spacer'); r.spacer=sp.ok; r.spacerErrs=sp.errs;
+    if(EXAM()){ sfx.select(); toast(T('examNoted')); await sleep(700); }
+    else if(sp.ok) splash('gotcha','gold','crit');
+    await tch(sp.ok?'happy':'think',['有了輔助器，按和吸不用同時：藥先噴進輔助艙，再慢慢吸。但要在幾秒內吸，而且一次只噴一下。','With a spacer, pressing and breathing don\'t have to match: the puff waits in the chamber while he breathes in slowly. Just breathe in within a few seconds — and one puff at a time.','มีกระบอกช่วยสูดแล้ว การกดกับการสูดไม่ต้องพร้อมกัน ยาจะรออยู่ในกระบอกระหว่างที่ลุงสูดช้าๆ แค่ต้องสูดภายในไม่กี่วินาที และพ่นทีละครั้ง']);
+    /* 3 — Spiolto Respimat, hands-on: turn · open · press while breathing in, twice */
+    await say('chen','think',['那這支綠的呢？有時候我按了，什麼都沒噴出來！','And this green one? Sometimes I press and nothing comes out at all!','แล้วอันสีเขียวนี่ล่ะ? บางทีลุงกดแล้วไม่มีอะไรออกมาเลย!']);
+    await say('yeh','neutral',['綠色這支是「軟霧吸入器」，用法和藍色的不一樣。換你示範一次完整的劑量給他看！','The green one is a soft-mist inhaler — it works differently from the blue one. Show him one full dose yourself!','อันสีเขียวเป็นยาพ่นชนิดละอองฝอย วิธีใช้ต่างจากอันสีฟ้า ลองสาธิตหนึ่งโดสเต็มให้ลุงดู!']);
+    hideText();
+    const o=await inhSim('resp'); r.order=o.ok; r.orderTries=o.tries; r.respErrs=o.errs;
     if(EXAM()){ sfx.select(); toast(T('examNoted')); await sleep(700); }
     else if(o.ok) splash(o.tries===1?'perfect':'gotcha','gold','crit');
     await tch(o.ok?'happy':'think',['Respimat 不用搖，噴出來的是慢慢的軟霧。口訣 T-O-P：轉（Turn）→ 開（Open）→ 按（Press）。「2 噴」就是整套做兩次。他說「按了沒東西出來」，就是因為忘了先把底座轉到「喀」一聲。','The Respimat needs no shaking — it releases a slow, soft mist. Remember T-O-P: Turn → Open → Press. "Two puffs" means doing the whole routine twice. His "I press and nothing comes out" happens when he forgets to turn the base until it clicks.','Respimat ไม่ต้องเขย่า ยาออกมาเป็นละอองฝอยช้าๆ จำง่ายๆ ว่า T-O-P: หมุน (Turn) → เปิด (Open) → กด (Press) "2 พัฟ" คือทำครบทุกขั้นสองรอบ ที่ลุงบอกว่า "กดแล้วไม่มีอะไรออกมา" ก็เพราะลืมหมุนฐานจนได้ยินเสียงคลิกก่อน']);
-    inhHide();
     /* 4 — "2 puffs twice a day" on the bag */
     await say('yeh','think',['還有一件事：Spiolto 的藥袋上寫的是什麼？','One more thing — what does the Spiolto bag say?','อีกเรื่องหนึ่ง ซองยา Spiolto เขียนว่าอย่างไร?']);
     await say('chen','neutral',['每次 2 噴，一天 2 次，早晚飯前。白紙黑字寫在這裡！','Two puffs, twice a day, before breakfast and dinner. It\'s right here in black and white!','ครั้งละ 2 พัฟ วันละ 2 ครั้ง ก่อนอาหารเช้าและเย็น เขียนไว้ชัดๆ ตรงนี้เลย!']);
@@ -3773,7 +4138,7 @@ async function chapter4(){
   for(let i=0;i<MISSIONS.length;i++){
     if(S.visit<=0){ S.fl.mrCut=i; break; }
     const m=MISSIONS[i]; hideAll(); hideText();
-    const r=await missionUI(m,i,MISSIONS.length);
+    const r=m.id==='m2'?await acbSortUI(m,i,MISSIONS.length):await missionUI(m,i,MISSIONS.length);
     S.mr.ans.push({id:m.id, sel:r.sel, perfect:r.perfect, partial:r.partial}); logEvent({type:'medrev', m:m.id, sel:r.sel, perfect:r.perfect, partial:r.partial});
     if(r.perfect) S.mr.perfect++; else if(r.partial) S.mr.partial++; else { S.mr.wrong++; spend(CONFIG.COST_WRONG); }
     if(EXAM()){ sfx.select(); toast(T('examNoted')); }
@@ -4065,7 +4430,7 @@ function computeScore(){
   let sc=1000+Math.max(0,S.visit)*15+Math.min(0,S.visit)*20+S.hearts*80+S.trust*40+B.crit*120+B.ok*40-B.miss*60+B.maxCombo*20+bonus*60-S.hints*80-S.resets*200+cov*60-S.wrong*20
     -mythsAlive().length*150+(B.byFinal||[]).length*60
     +S.mr.perfect*150+S.mr.partial*60-S.mr.wrong*40+(S.mr.egfr?100:0)+(S.inh?[S.inh.rescue,S.inh.steps,S.inh.order,S.inh.dose].filter(Boolean).length*25:0)
-    +(S.custom?S.custom.score:0)+(S.first&&S.first.ok?100:0)+(S.calc.bmi&&S.calc.bmi.ok?60:0)+(S.calc.bmiClass?30:0)+(S.calc.crcl&&S.calc.crcl.ok?80:0)+(S.calc.crTrap?40:0)
+    +(S.custom?S.custom.score:0)+(S.first&&S.first.ok?100:0)+(S.calc.acb&&S.calc.acb.ok?60:0)+(S.calc.crcl&&S.calc.crcl.ok?80:0)+(S.calc.crTrap?40:0)
     +FOLLOW1.filter(f=>S.asked[f.id]).length*25+S.hiddenQ.length*40+(S.fl.adh?60:0)-(S.refused?150:0)-(S.timeout?300:0);
   const rt=realSec(); if(rt<25*60) sc+=200; else if(rt<35*60) sc+=100;
   const RK='SABCD', scoreRank=sc>=4600?'S':sc>=3800?'A':sc>=3000?'B':sc>=2200?'C':'D', g=rankGate();
@@ -4090,7 +4455,7 @@ async function results(){
     <div class="rtabs">${[['sum','📊 '+T('score')],['prob','🔎 '+T('tProblems')+` ${nFound}/${PROBLEMS.length}`],['bdg','🏅 '+T('badgeT')+` ${bd.earned.length}${bd.fresh.length?' ✨':''}`]].map(([k,t],i)=>`<button class="rtab${i?'':' on'}" data-rt="${k}">${t}</button>`).join('')}</div>
     <div class="rpane" data-rp="sum"><div class="rstats"><div><span>${T('score')}</span> ${S.score}</div><div><span>${T('realTime')}</span> ${fmt(realSec())}</div><div><span>${T('visitLeft')}</span> ${S.visit} ${T('min')}</div><div><span>${T('trustEnd')}</span> ${S.trust}/10</div>
     <div><span>${T('heartsLeft')}</span> ${S.hearts}</div><div><span>${T('bossAcc')}</span> ${acc}%</div><div><span>${T('mythLeftStat')}</span> 👿 ${mythsAlive().length}</div><div><span>${T('maxCombo')}</span> ${B.maxCombo}</div><div><span>${T('bonusEv')}</span> ${bonus}/4</div><div><span>${T('hintsUsed')}</span> ${S.hints}</div><div><span>${T('mrStat')}</span> ${S.mr.perfect}/6${S.mr.egfr?' · eGFR ✓':''}${S.inh?' · 🫁 '+[S.inh.rescue,S.inh.steps,S.inh.order,S.inh.dose].filter(Boolean).length+'/4':''}</div>
-    <div><span>${T('firstMoveT')}</span> ${S.first?(S.first.ok?'✅':'🔁 ×'+S.first.tries):'—'}</div><div><span>${T('calcStat')}</span> ${['bmi','egfr','crcl'].map(k=>S.calc[k]?(S.calc[k].ok?'✅':'📘'):'—').join(' ')}</div>
+    <div><span>${T('firstMoveT')}</span> ${S.first?(S.first.ok?'✅':'🔁 ×'+S.first.tries):'—'}</div><div><span>${T('calcStat')}</span> ${['egfr','crcl'].map(k=>S.calc[k]?(S.calc[k].ok?'✅':'📘'):'—').join(' ')}</div><div><span>🖐️ ${esc(L(['實作','Hands-on','ลงมือทำ']))}</span> ${S.inh?['🔵'+(S.inh.steps?'✅':'📘'),'🫙'+(S.inh.spacer?'✅':'📘'),'🟢'+(S.inh.order?'✅':'📘')].join(' '):'—'} · 🧠${S.calc.acb?(S.calc.acb.ok?'✅':'📘'):'—'}</div>
     <div><span>${T('patStat')}</span> ☕${S.pat} · ↪${fuN}/${FOLLOW1.length} · 🗝️${S.hiddenQ.length}/3</div>${S.custom.max?`<div><span>${T('cqStat')}</span> ${S.custom.score}/${S.custom.max}</div>`:''}${ppN?`<div><span>${T('ppStat')}</span> ${ppPre}/${ppN} → <b style="color:#0a7a0a">${ppPost}/${ppN}</b></div>`:''}
     <div style="grid-column:1/4"><span>${T('chapterTimes')}</span> ${[1,2,3,4,5].map(c=>fmt(S.chT[c]||0)).join(' · ')}</div></div>${gateHTML}</div>
     <div class="rpane hidden" data-rp="prob"><div class="plist">${PROBLEMS.map(p=>`<div>${S.found[p.id]?'✅':'⬜'} ${p.icon} <b>${esc(L(p.t))}</b><div class="muted" style="font-size:13px;line-height:1.35">${esc(L(p.d))}</div></div>`).join('')}</div></div>
@@ -4608,7 +4973,7 @@ const CL={
  clPatOut:['☕ 耐心用完、訪談被迫結束','☕ Ran out of patience (interview cut short)','☕ ความอดทนหมด (การสัมภาษณ์ถูกตัดจบ)'], clRefused:['🔒 李伯伯沒說出秘密','🔒 Uncle Lee kept his secret','🔒 ลุงไม่ยอมเล่าความลับ'], clTimeout:['⏰ 時間到、拜訪提早結束','⏰ Time ran out — visit ended early','⏰ หมดเวลา — การเยี่ยมจบก่อนกำหนด'],
  clEnding:['兩週後的結局','Two-week outcome','ผลลัพธ์ 2 สัปดาห์ต่อมา'], clFollow:['↪ 追問與隱藏提問','↪ Follow-ups & hidden questions','↪ คำถามต่อและคำถามลับ'], clHidden:['🗝️ 隱藏提問','🗝️ Hidden question','🗝️ คำถามลับ'],
  clMode:['模式','Mode','โหมด'], clAllModes:['全部模式','All modes','ทุกโหมด'],
- clBmiClass:['BMI 分類（台灣標準）','BMI category (Taiwan)','จัดกลุ่ม BMI (เกณฑ์ไต้หวัน)'], clCkd:['CKD 分期','CKD staging','ระยะ CKD'], clObese:['「正常」Cr 的陷阱','The "normal creatinine" trap','กับดัก Cr "ปกติ"'],
+ clBmiClass:['抗膽鹼負擔分類','Anticholinergic-load sort','จัดกลุ่มภาระต้านโคลิเนอร์จิก'], clInhM:['藍色 MDI 親手示範','Blue MDI, hands-on','MDI สีฟ้า ลงมือ'], clInhR:['綠色 Respimat 親手示範','Green Respimat, hands-on','Respimat สีเขียว ลงมือ'], clCkd:['CKD 分期','CKD staging','ระยะ CKD'], clObese:['「正常」Cr 的陷阱','The "normal creatinine" trap','กับดัก Cr "ปกติ"'],
 };
 const TC=k=>CL[k]?(CL[k][LI()]||CL[k][0]):UI[k]?T(k):TE(k);
 const CLS={fin:false, ver:'__all', mode:'all', cls:'__all'};
@@ -4626,10 +4991,10 @@ function classStats(list){
   sts.forEach(st=>{ let first=0, firstOk=0; list.forEach(s=>{ const ev=(s.log||[]).filter(e=>e.type==='present'&&e.st===st); if(ev.length){ first++; if(ev[0].ok) firstOk++; } ev.filter(e=>!e.ok).forEach(e=>{ const k=st+'|'+e.item; R.wrongEv[k]=(R.wrongEv[k]||0)+1; }); }); R.duel[st]={n:firstOk,d:first}; });
   sts.forEach((st,i)=>row('duel',st==='lock'?'💗 '+T('lockTitle').replace(/[～~]/g,'').trim():`${i+1}. ${KP(L(TESTI[i].st))}`,R.duel[st].n,R.duel[st].d));
   R.first={}; let fd=0; list.forEach(s=>{ const f=s.first&&s.first.picks&&s.first.picks[0]; if(f){ fd++; R.first[f]=(R.first[f]||0)+1; } }); R.firstD=fd; row('first',TE('firstMoveT')+' ✓',R.first.intro||0,fd);
-  R.calc={}; ['bmi','egfr','crcl'].forEach(k=>{ const has=list.filter(s=>s.calc&&s.calc[k]); R.calc[k]={n:has.filter(s=>s.calc[k].ok&&s.calc[k].tries===1).length, d:has.length}; row('calc',k.toUpperCase(),R.calc[k].n,R.calc[k].d); });
+  R.calc={}; ['egfr','crcl'].forEach(k=>{ const has=list.filter(s=>s.calc&&s.calc[k]); R.calc[k]={n:has.filter(s=>s.calc[k].ok&&s.calc[k].tries===1).length, d:has.length}; row('calc',k.toUpperCase(),R.calc[k].n,R.calc[k].d); });
   R.calcWrong={}; list.forEach(s=>(s.log||[]).filter(e=>e.type==='calc'&&!e.ok).forEach(e=>{ const k=e.id+'|'+Object.entries(e.vals||{}).sort((x,y)=>x[0]<y[0]?-1:1).map(([a,b])=>a+'='+b).join(', '); R.calcWrong[k]=(R.calcWrong[k]||0)+1; }));
-  const bc=list.filter(s=>s.calc&&'bmiClass' in s.calc), ck=list.filter(s=>(s.log||[]).some(e=>e.type==='egfr')), ob=list.filter(s=>s.calc&&'crTrap' in s.calc);
-  R.concept=[[TC('clBmiClass'),bc.filter(s=>s.calc.bmiClass).length,bc.length],[TC('clCkd'),ck.filter(s=>(s.log||[]).find(e=>e.type==='egfr').ok).length,ck.length],[TC('clObese'),ob.filter(s=>s.calc.crTrap).length,ob.length]];
+  const bc=list.filter(s=>s.calc&&s.calc.acb), ih=k=>list.filter(s=>(s.log||[]).some(e=>e.type==='inhaler')).map(s=>(s.log||[]).filter(e=>e.type==='inhaler').pop()), ck=list.filter(s=>(s.log||[]).some(e=>e.type==='egfr')), ob=list.filter(s=>s.calc&&'crTrap' in s.calc);
+  R.concept=[[TC('clBmiClass'),bc.filter(s=>s.calc.acb.ok).length,bc.length],[TC('clInhM'),ih().filter(e=>e.steps).length,ih().length],[TC('clInhR'),ih().filter(e=>e.order).length,ih().length],[TC('clCkd'),ck.filter(s=>(s.log||[]).find(e=>e.type==='egfr').ok).length,ck.length],[TC('clObese'),ob.filter(s=>s.calc.crTrap).length,ob.length]];
   R.concept.forEach(([l,n,d])=>row('concept',l,n,d));
   R.mr=MISSIONS.map(m=>{ const a=list.map(s=>(s.mr&&s.mr.ans||[]).find(x=>x.id===m.id)).filter(Boolean); return {m, p:a.filter(x=>x.perfect).length, h:a.filter(x=>!x.perfect&&x.partial).length, w:a.filter(x=>!x.perfect&&!x.partial).length, d:a.length}; });
   R.mr.forEach(x=>row('mr',`${L(x.m.tag)} · ${KP(L(x.m.q)).slice(0,40)}…`,x.p,x.d));
@@ -4680,7 +5045,7 @@ function renderClass(b){
     +sec(TC('clProblems'),R.prob.slice().sort((a,b)=>a.n-b.n).map(x=>clBar(x.p.id+' '+x.p.icon+' '+esc(L(x.p.t)),x.n,R.N)).join(''))
     +sec(TC('clDuel'),R.rows.filter(r=>r.sec==='duel').map(r=>clBar(esc(r.label),r.n,r.d)).join('')+(wrongEv?`<h5>${TC('clWrongEv')}</h5><ul class="clul">${wrongEv}</ul>`:''))
     +sec(TC('clFirst'),FIRST_MOVES.map(f=>clBar((f.k==='intro'?'✅ ':'')+esc(L(f.t)),R.first[f.k]||0,R.firstD)).join(''))
-    +sec(TC('clCalc'),['bmi','egfr','crcl'].map(k=>clBar(k.toUpperCase(),R.calc[k].n,R.calc[k].d)).join('')+`<h5>${TC('clConcept')}</h5>`+R.concept.map(([l,n,d])=>clBar(l,n,d)).join('')+(calcWrong?`<h5>${TC('clCalcWrong')}</h5><ul class="clul">${calcWrong}</ul>`:''))
+    +sec(TC('clCalc'),['egfr','crcl'].map(k=>clBar(k.toUpperCase(),R.calc[k].n,R.calc[k].d)).join('')+`<h5>${TC('clConcept')}</h5>`+R.concept.map(([l,n,d])=>clBar(l,n,d)).join('')+(calcWrong?`<h5>${TC('clCalcWrong')}</h5><ul class="clul">${calcWrong}</ul>`:''))
     +sec(TC('clMR'),clLegend([['g','✅','lgPerfect'],['y','🔸','lgPartial'],['r','❌','lgWrong']])+R.mr.map(x=>clStack(esc(L(x.m.tag))+' · '+esc(KP(L(x.m.q)).slice(0,46))+'…',[[x.p,'g'],[x.h,'y'],[x.w,'r']],x.d)).join(''))
     +sec(TC('clBoss'),clLegend([['g','✅','lgCrit'],['y','🔸','lgOk'],['r','❌','lgMiss']])+R.boss.map(x=>clStack('「'+esc(L(x.m.m))+'」',[[x.c,'g'],[x.o,'y'],[x.w,'r']],x.d)).join(''))
     +sec(TC('clFinal'),R.final.map(x=>clBar(x.r.ic+' '+esc(L(x.r.k)),x.n,x.d)).join(''))
@@ -4833,7 +5198,7 @@ const DEBRIEF={
  analyze:[[['進門・訪談','Opening & interview','เปิดการเยี่ยม · สัมภาษณ์'],['為什麼要先自我介紹、取得同意？李伯伯說「醫生從來不解釋」——這對你是阻力還是機會？哪些資訊只有自己想到才問得到（過敏、藥放在哪裡、自費保健品）？「半夜起來頭暈、不太喝水」代表什麼風險？','Why introduce yourself and get consent first? Uncle Lee says "doctors never explain anything" — obstacle or opportunity? Which facts only came from questions you thought of yourself (allergies, where medicines are kept, self-paid health products)? What risk lies behind "dizzy when I get up at night, and I don\'t drink much water"?','ทำไมต้องแนะนำตัวและขอความยินยอมก่อน? ลุงบอกว่า "หมอไม่เคยอธิบายอะไรเลย" — เป็นอุปสรรคหรือโอกาส? ข้อมูลใดได้มาจากคำถามที่คิดเองเท่านั้น (แพ้ยา ที่เก็บยา ผลิตภัณฑ์สุขภาพที่ซื้อเอง)? "ลุกกลางคืนแล้วเวียนหัว และไม่ค่อยดื่มน้ำ" บ่งบอกความเสี่ยงอะไร?']],
    [['搜查','Room search','ค้นห้อง'],['房間裡哪些線索和李伯伯說的不一樣？快用完的藍色吸入器 vs. 幾乎沒動的綠色吸入器、包起來的冷氣遙控器、發酸的稀飯和螞蟻、泡在鐵杯裡的假牙、餅乾盒裡的自費收據——各自告訴我們什麼問不到的事？','Which clues in the room contradicted what he said? The nearly empty blue inhaler vs. the almost untouched green one, the wrapped-up AC remote, the sour porridge with ants, the dentures in a metal cup, the self-paid receipts in the biscuit tin — what did each reveal that questions could not?','เบาะแสใดในห้องขัดกับที่ลุงพูด? ยาพ่นสีฟ้าที่ใกล้หมด กับยาพ่นสีเขียวที่แทบไม่ได้ใช้ รีโมตแอร์ที่ห่อถุงไว้ ข้าวต้มบูดกับมด ฟันปลอมแช่ในแก้วเหล็ก ใบเสร็จซื้อเองในกล่องขนม — แต่ละอย่างบอกอะไรที่การถามให้ไม่ได้?']],
    [['矛盾・心鎖','Contradictions & heart lock','จับโกหก · กุญแจหัวใจ'],['怎麼指出矛盾而不讓一位自尊心很強的老人覺得被責怪？他為什麼隱瞞跌倒（怕被送進榮家、失去房間和小黑）？請阿梅帶小黑去散步，為什麼比當著她的面問好？怎麼在尊重他的自主和處理安全風險之間取得平衡？','How do you point out a contradiction without shaming a proud old man? Why did he hide the fall (fear of being sent to the veterans\' home and losing his room and Blackie)? Why was asking Ah-Mei to walk Blackie better than asking in front of her? How do you balance his autonomy against the safety risks?','จะชี้ความขัดแย้งโดยไม่ให้ผู้สูงอายุที่มีศักดิ์ศรีสูงรู้สึกถูกตำหนิได้อย่างไร? ทำไมลุงปิดเรื่องหกล้ม (กลัวถูกส่งเข้าบ้านพักทหารผ่านศึก เสียห้องและเจ้าดำ)? ทำไมการขอให้พี่เหมยพาเจ้าดำไปเดินเล่นจึงดีกว่าถามต่อหน้าเธอ? จะสมดุลระหว่างความเป็นตัวของตัวเองของลุงกับความเสี่ยงด้านความปลอดภัยอย่างไร?']],
-   [['吸入器・藥物整合','Inhalers & medication review','ยาพ่น · ทบทวนยา'],['急救用 Berotec 和每天保養用 Spiolto 差在哪？他的 MDI 示範錯了哪幾步？為什麼 Cr 0.8「正常」卻要用 CrCl ≈ 56 調整 famotidine？兩種偽麻黃鹼、抗膽鹼負擔、88 歲用 glipizide、兩種止痛藥、兩種 H2 阻斷劑、外用類固醇——哪個最緊急？為什麼？','What separates rescue Berotec from daily-maintenance Spiolto? Which steps of his MDI demo were wrong? Why does a "normal" Cr of 0.8 still mean dosing famotidine by CrCl ≈ 56? Two pseudoephedrines, anticholinergic burden, glipizide at 88, two painkillers, two H2 blockers, a potent topical steroid — which is most urgent, and why?','Berotec ยาฉุกเฉิน กับ Spiolto ยาควบคุมทุกวัน ต่างกันอย่างไร? ลุงสาธิตพ่น MDI ผิดขั้นไหนบ้าง? ทำไม Cr 0.8 ที่ "ปกติ" ยังต้องปรับขนาด famotidine ตาม CrCl ≈ 56? Pseudoephedrine ซ้ำ 2 ตัว ภาระยา anticholinergic, glipizide ในวัย 88, ยาแก้ปวด 2 ตัว, ยา H2 blocker 2 ตัว, สเตียรอยด์ทาแรงสูง — ข้อใดเร่งด่วนที่สุด เพราะอะไร?']],
+   [['吸入器・藥物整合','Inhalers & medication review','ยาพ่น · ทบทวนยา'],['急救用 Berotec 和每天保養用 Spiolto 差在哪？親手示範時哪一步最難做對（按和吸的時機、閉氣）？什麼時候該用輔助器？為什麼 Cr 0.8「正常」卻要用 CrCl ≈ 56 調整 famotidine？兩種偽麻黃鹼、抗膽鹼負擔、88 歲用 glipizide、兩種止痛藥、兩種 H2 阻斷劑、外用類固醇——哪個最緊急？為什麼？','What separates rescue Berotec from daily-maintenance Spiolto? In the hands-on demo, which step was hardest to get right (timing the press with the breath, the breath-hold) — and when would a spacer help? Why does a "normal" Cr of 0.8 still mean dosing famotidine by CrCl ≈ 56? Two pseudoephedrines, anticholinergic burden, glipizide at 88, two painkillers, two H2 blockers, a potent topical steroid — which is most urgent, and why?','Berotec ยาฉุกเฉิน กับ Spiolto ยาควบคุมทุกวัน ต่างกันอย่างไร? ตอนลงมือสาธิตเอง ขั้นไหนทำให้ถูกยากที่สุด (จังหวะกดกับหายใจ การกลั้นหายใจ) และเมื่อไรควรใช้กระบอกช่วยสูด? ทำไม Cr 0.8 ที่ "ปกติ" ยังต้องปรับขนาด famotidine ตาม CrCl ≈ 56? Pseudoephedrine ซ้ำ 2 ตัว ภาระยา anticholinergic, glipizide ในวัย 88, ยาแก้ปวด 2 ตัว, ยา H2 blocker 2 ตัว, สเตียรอยด์ทาแรงสูง — ข้อใดเร่งด่วนที่สุด เพราะอะไร?']],
    [['衛教・總結','Counselling & summary','ให้คำแนะนำ · สรุป'],['哪個迷思最難反駁？面對只讀到小學二年級、但很願意學的病人，你的總結夠簡單嗎？有沒有用圖、藥物時間表？有沒有請他「示範一次」吸入器（show-back）、約好追蹤和每天的電話關心？','Which myth was hardest to counter? For a patient with only two years of schooling but eager to learn, was your summary simple enough? Did you use pictures or a medicine chart? Did you ask him to show you the inhaler once more (show-back), and set a follow-up and a daily phone check?','ความเชื่อผิดข้อไหนแย้งยากที่สุด? สำหรับผู้ป่วยที่เรียนแค่ ป.2 แต่อยากเรียนรู้มาก การสรุปของคุณง่ายพอไหม? ใช้รูปภาพหรือตารางยาหรือเปล่า? ให้ลุง "สาธิตพ่นยาอีกครั้ง" (show-back) นัดติดตาม และจัดให้มีคนโทรถามทุกวันหรือไม่?']],
    [['兩週後','Two weeks later','สองสัปดาห์ต่อมา'],['低血糖跌倒、尿不出來要插尿管、COPD 急性惡化——各是哪個漏掉的問題造成的？四個處方來源的醫師，建議要怎麼寫、寄給誰，才會被採納？','A hypoglycaemic fall, urinary retention needing a catheter, a COPD flare — which missed problem led to each? With four prescribing sources, how and to whom should the recommendation be written so it gets acted on?','หกล้มจากน้ำตาลต่ำ ปัสสาวะไม่ออกจนต้องใส่สาย COPD กำเริบ — แต่ละอย่างเกิดจากปัญหาใดที่พลาด? เมื่อมีผู้สั่งยาถึง 4 แหล่ง ควรเขียนข้อเสนอแนะอย่างไร ส่งถึงใคร แพทย์จึงจะนำไปใช้?']]],
  sumH:['③ 總結 Summarize（5 分鐘）——帶走的重點','③ Summarize (5 min) — take-home points','③ สรุป Summarize (5 นาที) — ประเด็นที่ต้องจำ'],

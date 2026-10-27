@@ -108,7 +108,9 @@ input,textarea{font-family:var(--font);-webkit-user-select:text;user-select:text
 .bar{width:150px;height:16px;border-radius:99px;background:#ffe0ea;overflow:hidden;box-shadow:inset 0 0 0 2px #ffb3c9}
 .bar i{display:block;height:100%;background:linear-gradient(90deg,#ff9cbc,#ff4f86);transition:width .6s cubic-bezier(.3,1.4,.5,1);border-radius:99px}
 #hProg .bar i{background:linear-gradient(90deg,#7ff0cf,#20b48c)}
-.spacer{flex:1}
+.spacer{flex:1;min-width:0}
+#hChap{display:block;flex:0 1 auto;min-width:70px;overflow:hidden;text-overflow:ellipsis;line-height:1.45}
+#hud>.chip:not(#hChap),#hud .ibtn{flex:none}
 .ibtn{width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,.92);font-size:28px;box-shadow:0 0 0 4px rgba(255,255,255,.4),0 6px 16px rgba(0,0,0,.25);transition:transform .15s}
 .ibtn:hover{transform:scale(1.1) rotate(-6deg)}
 
@@ -2170,14 +2172,41 @@ function say(who, e, text, o){
     const nmTxt = who==='me'?(S.student.name||T('you')):T(who), nmEl=$('#tName');
     if(nmTxt!==D.lastName){ nmEl.classList.remove('swap'); void nmEl.offsetWidth; nmEl.classList.add('swap'); D.lastName=nmTxt; } nmEl.textContent=nmTxt;
     if(who==='me') D.lastAsk=text; else if(who==='sys') D.lastAsk=null;
-    D.cur={who,text,e}; D.hist.push({who,text}); if(D.hist.length>400) D.hist.shift();
+    D.cur={who,text,e,pg:1}; D.pg=null; D.hist.push({who,text}); if(D.hist.length>400) D.hist.shift();
     D.res=res; D.waiting=false;
     if(o.sfx) sfx[o.sfx](); else if(e==='cough') sfx.cough(2);
     if(e==='shock'&&CH[who]) act(who,'hop'); if((e==='cough'||e==='angry')&&CH[who]) act(who,'shake');
     startTyping();
   });
 }
-function lineText(){ return D.cur?(Array.isArray(D.cur.text)?L(D.cur.text):D.cur.text):''; }
+function fullText(){ return D.cur?(Array.isArray(D.cur.text)?L(D.cur.text):D.cur.text):''; }
+function lineText(){ const f=fullText(); if(!D.cur||!D.cur.pg) return f;
+  const key=S.lang+'|'+$('#tbox').clientWidth+'|'+f; if(!D.pg||D.pg.key!==key) D.pg={key, list:paginate(f), i:0};
+  return D.pg.list[Math.min(D.pg.i,D.pg.list.length-1)]; }
+/* pages: only when the line would need < 27px; break at sentence ends, then clauses, then spaces — never inside ⟦…⟧ */
+const PG_MIN=27, PG_ABBR=/(?:^|[\s(])(?:Dr|Mr|Mrs|Ms|St|No|vs|e\.g|i\.e)\.$/;
+function pgEnd(lv,ch,nx,buf){
+  if(lv===0) return /[。！？；…\n]/.test(ch)||(/[.!?]/.test(ch)&&nx===' '&&!PG_ABBR.test(buf));
+  if(lv===1) return /[，、：—]/.test(ch)||(/[,;:]/.test(ch)&&nx===' ');
+  return ch===' '; }
+function paginate(full){
+  const tb=$('#tbox'), t=$('#tText'); if(tb.classList.contains('hidden')||!tb.clientHeight) return [full];
+  const cs=getComputedStyle(tb), avail=tb.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom)+2, keepFs=t.style.fontSize;
+  const fits=(s,fs)=>{ t.style.fontSize=fs+'px'; t.innerHTML=richLine(s,1e9,0); return t.scrollHeight<=avail; };
+  const cut=(s,lv)=>{ const out=[]; let buf='', d=0; const a=Array.from(s);
+    a.forEach((ch,i)=>{ buf+=ch; if(ch==='⟦') d++; else if(ch==='⟧') d=Math.max(0,d-1);
+      if(!d&&i<a.length-1&&pgEnd(lv,ch,a[i+1],buf)){ out.push(buf); buf=''; } });
+    if(buf) out.push(buf); return out; };
+  try{
+    if(fits(full,PG_MIN)) return [full];
+    let atoms=[full];
+    for(let lv=0;lv<3;lv++) atoms=atoms.flatMap(x=>fits(x.trim(),PG_MIN)?[x]:cut(x,lv));
+    const pages=[]; let cur='';
+    for(const a of atoms){ if(cur&&!fits((cur+a).trim(),31)){ pages.push(cur.trim()); cur=a; } else cur+=a; }
+    if(cur.trim()) pages.push(cur.trim());
+    return pages.length?pages:[full];
+  } finally { t.style.fontSize=keepFs; D.fitKey=''; }
+}
 function startTyping(){
   const len=Array.from(KP(lineText())).length; D.shown=0; D.typing=true; $('#tNext').style.visibility='hidden'; clearInterval(D.iv);
   speaking(D.cur.who,true); refreshEditButtons();
@@ -2196,18 +2225,36 @@ function richLine(full, n, k){
 }
 function renderLine(anim){
   if(!D.cur) return; const full=lineText(), t=$('#tText');
+  fitLine(t, full);
   const k=(D.typing&&anim&&D.shown>0)?(S.lang==='zh'?1:2):0;
   t.innerHTML=richLine(full, D.typing?D.shown:1e9, k);
   const a=$('#tAsk'), w=D.cur.who, showAsk=D.lastAsk&&w!=='me'&&w!=='sys'&&w!=='pilly';
   a.classList.toggle('hidden',!showAsk); if(showAsk) a.textContent='🗨 '+T('youSaid')+'：'+KP(Array.isArray(D.lastAsk)?L(D.lastAsk):D.lastAsk);
 }
+// shrink the font step by step until the WHOLE line fits the box (measured once per line, before typing starts)
+function fitLine(t, full){
+  const tb=$('#tbox'); if(tb.classList.contains('hidden')||!tb.clientHeight){ t.style.fontSize=''; D.fitKey=''; return; }
+  const key=S.lang+'|'+tb.clientWidth+'|'+full; if(D.fitKey===key) return; D.fitKey=key;
+  t.style.fontSize=''; t.innerHTML=richLine(full,1e9,0);
+  const cs=getComputedStyle(tb), avail=tb.clientHeight-parseFloat(cs.paddingTop)-parseFloat(cs.paddingBottom)+2;
+  let fs=parseFloat(getComputedStyle(t).fontSize)||31; while(t.scrollHeight>avail&&fs>19){ fs-=2; t.style.fontSize=fs+'px'; }
+}
 function finishTyping(){ clearInterval(D.iv); D.typing=false; renderLine(false); speaking(null,false); D.waiting=true; $('#tNext').style.visibility='visible'; }
 function advance(){
   const now=performance.now(); if(now-D.lastClick<220) return; D.lastClick=now;
   if(D.typing){ finishTyping(); return; }
+  if(D.waiting&&D.res&&D.cur&&D.cur.pg&&D.pg&&D.pg.i<D.pg.list.length-1){ D.waiting=false; D.pg.i++; sfx.click(); startTyping(); return; }
   if(D.waiting&&D.res){ D.waiting=false; const r=D.res; D.res=null; sfx.click(); r(); }
 }
 function hideText(){ $('#tbox').classList.add('hidden'); D.lastName=''; }
+function fitChoices(box){
+  const btns=[...box.querySelectorAll('.cbtn')], q=box.querySelector('#qte'); if(!btns.length||!box.clientHeight) return;
+  const fits=()=>{ const kids=[...box.children]; return kids.reduce((a,k)=>a+k.offsetHeight,0)+(kids.length-1)*parseFloat(box.style.gap)<=box.clientHeight; };
+  for(const [w,fs,pad,gap,qs] of [[960,28,20,18,120],[1240,28,20,18,120],[1240,26,16,14,96],[1240,24,13,10,84],[1240,22,10,8,76],[1240,20,8,6,68]]){
+    btns.forEach(b=>{ b.style.width=w+'px'; b.style.fontSize=fs+'px'; b.style.paddingTop=b.style.paddingBottom=pad+'px'; });
+    if(q){ q.style.width=q.style.height=qs+'px'; q.style.fontSize=Math.round(qs*.37)+'px'; }
+    box.style.gap=gap+'px'; if(fits()) break; }
+}
 function choose(opts, o){
   o=o||{};
   return new Promise(res=>{
@@ -2215,7 +2262,7 @@ function choose(opts, o){
     if(timed) h+=`<div id="qte">${o.timer}</div><div id="qteLbl">${esc(L(o.label||['快選！','Quick!','เลือกเร็ว!']))}</div>`;
     const order=opts.map((_,i)=>i); if(o.shuffle) for(let a=order.length-1;a>0;a--){ const b=Math.floor(Math.random()*(a+1)); [order[a],order[b]]=[order[b],order[a]]; }
     order.forEach((i,pos)=>{ const op=opts[i]; h+=`<button class="cbtn" data-i="${i}" style="animation-delay:${pos*.08}s"><span class="k">${pos+1}</span><span class="ctx">${esc(L(op.t))}</span>${D.editPlay?`<span class="cedit" data-ce="${i}" title="✏️">✏️</span>`:''}</button>`; });
-    box.innerHTML=h; box.classList.remove('hidden');
+    box.innerHTML=h; box.classList.remove('hidden'); fitChoices(box);
     let done=false, iv=null;
     const fin=i=>{ if(done) return; done=true; clearInterval(iv); D.choiceFinish=null; box.classList.add('hidden'); box.innerHTML='';
       logEvent({type:'choice', id:o.id||'', pick:i, text:i>=0?L(opts[i].t):'(timeout)'}); res(i); };

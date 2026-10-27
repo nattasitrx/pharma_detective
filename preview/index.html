@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>藥師偵探 · Pharma Detective</title>
+<meta name="description" content="Home-care pharmacy mystery games for pharmacy students: choose a case.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;700&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#2a2140;--muted:#6a6585;--pink:#ff7aa8;--pink2:#ff4f86;--navy:#2b2f6b;--card:#fff;--ring:#ffd0e1;--sky1:#9fd4ff;--sky2:#ffe3f0;
+  --tc:'Noto Sans TC','Mali',system-ui,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0}
+html{min-height:100%;background:linear-gradient(180deg,var(--sky1) 0%,#cfe9ff 38%,var(--sky2) 100%)}
+body{font-family:var(--tc);color:var(--ink);background:transparent;min-height:100vh;-webkit-text-size-adjust:100%}
+.wrap{max-width:1180px;margin:0 auto;padding:22px 16px 40px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px 20px;margin-bottom:18px}
+.ribbon{display:inline-block;padding:5px 16px;border-radius:99px;background:var(--navy);color:#ffe07a;font-weight:900;font-size:14px;letter-spacing:2px}
+h1{margin:8px 0 0;font-weight:900;font-size:clamp(40px,7vw,72px);line-height:1.05;color:#fff;-webkit-text-stroke:6px var(--pink2);paint-order:stroke;text-shadow:0 7px 0 #8a1f4a;letter-spacing:3px}
+.lead{margin:12px 0 0;font-weight:700;font-size:clamp(16px,2.2vw,20px);color:var(--navy)}
+.langs{display:flex;gap:8px}
+.langs button{font:inherit;font-weight:900;font-size:16px;padding:8px 16px;border-radius:99px;border:none;background:rgba(255,255,255,.85);color:#5a4a7a;cursor:pointer}
+.langs button.on{background:linear-gradient(90deg,var(--pink),var(--pink2));color:#fff}
+.cls{display:inline-flex;align-items:center;gap:6px;margin-top:10px;padding:5px 12px;border-radius:99px;background:#fff;color:#11734d;font-weight:800;font-size:14px;box-shadow:0 0 0 3px #bdf0d8}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px}
+.card{position:relative;display:flex;flex-direction:column;background:var(--card);border-radius:26px;overflow:hidden;box-shadow:0 0 0 4px #fff,0 0 0 8px var(--ring),0 16px 34px rgba(60,30,90,.22);text-decoration:none;color:inherit;transition:transform .15s,box-shadow .15s}
+.card:hover,.card:focus-visible{transform:translateY(-4px);box-shadow:0 0 0 4px #fff,0 0 0 8px var(--pink),0 22px 40px rgba(60,30,90,.3);outline:none}
+.card.c{--ring:#bfeee6}.card.c:hover,.card.c:focus-visible{box-shadow:0 0 0 4px #fff,0 0 0 8px #2cb5a8,0 22px 40px rgba(60,30,90,.3)}
+.card.d{--ring:#f3dfb8}.card.d:hover,.card.d:focus-visible{box-shadow:0 0 0 4px #fff,0 0 0 8px #e0892e,0 22px 40px rgba(60,30,90,.3)}
+.pic{position:relative;aspect-ratio:16/9;background:#dfefff}
+.pic img{display:block;width:100%;height:100%;object-fit:cover}
+.badge{position:absolute;left:12px;top:12px;display:flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;background:rgba(43,47,107,.9);color:#fff;font-weight:900;font-size:15px}
+.badge b{font-size:20px;color:#ffe07a}
+.flag{position:absolute;right:12px;top:12px;padding:4px 10px;border-radius:99px;font-weight:900;font-size:13px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.flag.go{color:#b35a00}.flag.done{color:#11734d}
+.body{display:flex;flex-direction:column;gap:8px;padding:14px 18px 18px;flex:1}
+.body h2{margin:0;font-size:22px;font-weight:900;line-height:1.3}
+.who{margin:0;font-size:15px;line-height:1.55;color:#4a4060}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:2px}
+.tags span{font-size:13px;font-weight:800;padding:3px 10px;border-radius:99px;background:#f3f0fb;color:#5a4a7a}
+.start{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:8px}
+.hint{font-size:13px;font-weight:800;color:#ff4f86}
+.play{display:inline-flex;align-items:center;gap:6px;padding:10px 20px;border-radius:99px;background:linear-gradient(90deg,var(--pink),var(--pink2));color:#fff;font-weight:900;font-size:17px;box-shadow:0 5px 0 #c2245e}
+.card.c .play{background:linear-gradient(90deg,#3cc3b4,#1f9a8c);box-shadow:0 5px 0 #146b61}
+.card.d .play{background:linear-gradient(90deg,#f0a24a,#d97a1c);box-shadow:0 5px 0 #9a520e}
+footer{margin-top:26px;padding:14px 18px;border-radius:18px;background:rgba(255,255,255,.75);font-size:14px;line-height:1.6;color:var(--muted)}
+footer code{background:#fff;padding:1px 6px;border-radius:6px;color:var(--ink);font-size:13px;word-break:break-all}
+@media (max-width:520px){h1{-webkit-text-stroke:5px var(--pink2)}.body h2{font-size:20px}}
+@media (prefers-reduced-motion:reduce){.card{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <span class="ribbon" data-t="ribbon"></span>
+      <h1 data-t="title"></h1>
+      <p class="lead" data-t="lead"></p>
+      <div id="cls" class="cls" hidden></div>
+    </div>
+    <div class="langs" role="group" aria-label="Language"><button data-l="zh">中文</button><button data-l="en">English</button><button data-l="th">ไทย</button></div>
+  </header>
+  <main class="grid" id="cases"></main>
+  <footer data-t="foot"></footer>
+</div>
+<script>
+const T={
+  ribbon:['居家藥事照護 × 推理冒險','Home-care pharmacy × Mystery adventure','เภสัชกรรมเยี่ยมบ้าน × ผจญภัยไขปริศนา'],
+  title:['藥師偵探','Pharma Detective','นักสืบเภสัช'],
+  lead:['選一個案例開始居家訪視吧！','Choose a case and start the home visit!','เลือกเคสแล้วเริ่มเยี่ยมบ้านกันเลย!'],
+  cls:['班級','Class','ห้อง'], play:['開始 ▶','Play ▶','เล่น ▶'], first:['第一次玩建議從這裡開始','New? Start here','เล่นครั้งแรกแนะนำเคสนี้'],
+  going:['📌 有進行中的遊戲','📌 Game in progress','📌 มีเกมที่เล่นค้าง'], done:['✅ 已破關','✅ Cleared','✅ เล่นจบแล้ว'], case:['案例','Case','เคส'],
+  foot:['👩‍🏫 老師：每個案例的「教師後台」在該案例的標題畫面。要讓全班直接進入某個案例，可以把連結寫成 <code>…/pharma_detective/?case=c&amp;class=ph2026a</code>。',
+        '👩‍🏫 Instructors: each case has its own dashboard (button on that case\'s title screen). To send a class straight into one case, use a link like <code>…/pharma_detective/?case=c&amp;class=ph2026a</code>.',
+        '👩‍🏫 อาจารย์: หน้าอาจารย์ของแต่ละเคสอยู่ที่หน้าแรกของเคสนั้น ถ้าจะให้ทั้งห้องเข้าเคสใดเคสหนึ่งโดยตรง ใช้ลิงก์แบบ <code>…/pharma_detective/?case=c&amp;class=ph2026a</code>']
+};
+const CASES=[
+  {id:'a', path:'case-a/', save:'phd_chen_sessions_v3', clear:'phd_cleared', first:true,
+   t:['陳伯的秘密','The Secret of Uncle Chen','ความลับของลุงเฉิน'],
+   who:['61 歲雜貨店老闆，上個月看醫生 40 多次，吃了一大堆藥，身體卻越來越糟。','A 61-year-old grocer who saw doctors 40+ times last month, takes piles of medicine and keeps getting worse.','เจ้าของร้านโชห่วยวัย 61 เดือนเดียวไปหาหมอ 40 กว่าครั้ง กินยาเพียบแต่อาการกลับแย่ลง'],
+   tags:[['腎功能','糖尿病用藥','用藥迷思'],['Kidney function','Diabetes medicines','Medicine myths'],['การทำงานของไต','ยาเบาหวาน','ความเชื่อผิดเรื่องยา']]},
+  {id:'c', path:'case-c/', save:'phd_wang_sessions_v1', clear:'phd_wang_cleared',
+   t:['王太太的秘密','The Secret of Mrs. Wang','ความลับของป้าหวัง'],
+   who:['61 歲工廠作業員、五個孩子的媽。頭痛就自己停藥，今年初還跌倒骨折。','A 61-year-old factory worker and mother of five who stops her medicines when headaches strike — and broke her wrist in a fall this year.','พนักงานโรงงานวัย 61 แม่ลูกห้า ปวดหัวทีไรก็หยุดยาเอง ต้นปียังหกล้มจนข้อมือหัก'],
+   tags:[['低血糖','骨質疏鬆','隱藏的腎功能下降'],['Hypoglycaemia','Osteoporosis','Hidden kidney decline'],['น้ำตาลต่ำ','กระดูกพรุน','ไตเสื่อมที่ซ่อนอยู่']]},
+  {id:'d', path:'case-d/', save:'phd_lee_sessions_v1', clear:'phd_lee_cleared',
+   t:['李伯伯的秘密','The Secret of Uncle Lee','ความลับของลุงหลี่'],
+   who:['88 歲老榮民，獨居沒有電梯的 4 樓小套房，一年看醫生 93 次，吸入劑總是用不好。','An 88-year-old veteran living alone on a 4th floor with no lift: 93 doctor visits in a year, and inhalers he cannot quite use.','ทหารผ่านศึกวัย 88 อยู่คนเดียวชั้น 4 ไม่มีลิฟต์ ปีเดียวไปหาหมอ 93 ครั้ง และใช้ยาพ่นไม่ถูกวิธี'],
+   tags:[['吸入劑技巧','高齡用藥','居家環境'],['Inhaler technique','Medicines in old age','Home safety'],['เทคนิคใช้ยาพ่น','ยาในผู้สูงอายุ','ความปลอดภัยในบ้าน']]},
+];
+const LANGS=['zh','en','th'];
+const qs=new URLSearchParams(location.search);
+const cls=(qs.get('class')||'').trim().toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,40);
+const get=k=>{ try{ return localStorage.getItem(k); }catch(e){ return null; } };
+const put=(k,v)=>{ try{ localStorage.setItem(k,v); }catch(e){} };
+let lang=LANGS.includes(qs.get('lang'))?qs.get('lang'):(LANGS.includes(get('phd_lang_pick'))?get('phd_lang_pick'):((navigator.language||'').toLowerCase().startsWith('th')?'th':'zh'));
+const caseURL=c=>{ const q=new URLSearchParams(); if(cls) q.set('class',cls); q.set('lang',lang); return c.path+'?'+q.toString(); };
+/* a link like ?case=c goes straight to that case */
+const direct=CASES.find(c=>c.id===String(qs.get('case')||'').toLowerCase());
+if(direct){ if(!qs.get('lang')) lang=LANGS.includes(get('phd_lang_pick'))?get('phd_lang_pick'):lang; location.replace(caseURL(direct)); }
+const esc=s=>String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+function inProgress(c){ try{ const r=JSON.parse(get(c.save+'_resume')||'null'); return !!(r&&r.S&&!r.S.done&&!r.S.practice); }catch(e){ return false; } }
+function render(){
+  const i=LANGS.indexOf(lang);
+  document.documentElement.lang=lang==='zh'?'zh-Hant':lang;
+  document.querySelectorAll('[data-t]').forEach(e=>{ const v=T[e.dataset.t][i]; if(e.dataset.t==='foot') e.innerHTML=v; else e.textContent=v; });
+  document.querySelectorAll('.langs button').forEach(b=>b.classList.toggle('on',b.dataset.l===lang));
+  const cb=document.getElementById('cls'); cb.hidden=!cls; cb.textContent='🏫 '+T.cls[i]+': '+cls;
+  document.getElementById('cases').innerHTML=CASES.map(c=>{
+    const going=inProgress(c), done=get(c.clear)==='1';
+    return `<a class="card ${c.id}" href="${esc(caseURL(c))}">
+      <div class="pic"><img src="img/case-${c.id}.jpg" alt="" loading="lazy" width="800" height="450"><span class="badge">${T.case[i]} <b>${c.id.toUpperCase()}</b></span>${going?`<span class="flag go">${T.going[i]}</span>`:done?`<span class="flag done">${T.done[i]}</span>`:''}</div>
+      <div class="body"><h2>${esc(c.t[i])}</h2><p class="who">${esc(c.who[i])}</p><div class="tags">${c.tags[i].map(t=>`<span>${esc(t)}</span>`).join('')}</div>
+        <div class="start"><span class="hint">${c.first?esc(T.first[i]):''}</span><span class="play">${T.play[i]}</span></div></div></a>`; }).join('');
+}
+document.querySelectorAll('.langs button').forEach(b=>b.onclick=()=>{ lang=b.dataset.l; put('phd_lang_pick',lang); render(); });
+if(!direct) render();
+addEventListener('pageshow',e=>{ if(e.persisted&&!direct) render(); });
+</script>
+</body>
+</html>

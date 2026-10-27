@@ -725,10 +725,8 @@ html[lang=en] #logo h1{font-size:76px;letter-spacing:2px}
 #lockBox .lk-ic{font-size:64px;line-height:1.1}
 #lockBox h3{font-family:var(--tc);font-weight:900;font-size:34px;margin:6px 0 4px;color:#5a1030}
 #lockBox p{font-size:20px;color:#6a6585;margin:0 0 16px}
-#lockBox .lk-row{display:flex;gap:12px;justify-content:center;align-items:center}
-#lockBox input{height:60px;width:300px;border-radius:16px;border:none;padding:0 18px;font-size:28px;background:#fff5fa;box-shadow:inset 0 0 0 3px #ffc4d8;outline:none;text-align:center}
-#lockBox input:focus{box-shadow:inset 0 0 0 3px var(--pink2)}
-#lockBox .lk-alt{margin-top:16px}
+#lockBox .lk-alt{margin-top:10px}
+.casesw{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}.casesw .st{font-weight:900}.casesw .st.on{color:#11734d}.casesw .st.off{color:#c0392b}
 #tPanel.fitScroll{overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;touch-action:pan-y}
 .moderow{display:flex;align-items:center;gap:8px;margin-top:8px}
 .moderow .lbl{font-weight:700;font-size:18px;color:#8a4a6a}
@@ -929,7 +927,6 @@ html[lang=en] #logo h1{font-size:76px;letter-spacing:2px}
     </div>
     <div id="lockBox" class="hidden"><div class="langs"><button class="lbtn" data-lang="zh">中文</button><button class="lbtn" data-lang="en">English</button><button class="lbtn" data-lang="th">ไทย</button></div>
       <div class="lk-ic">🔒</div><h3 data-i18n="lockH"></h3><p data-i18n="lockP"></p>
-      <div class="lk-row"><input id="lockIn" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false"><button class="gbtn" id="lockGo" data-i18n="lockGo"></button></div>
       <div class="lk-alt"><button class="sbtn" id="lockTeacher" data-i18n="teacherBtn"></button></div></div>
   </div>
   <div id="results" class="hidden"></div>
@@ -1075,8 +1072,10 @@ const UI = {
   cqAnswerIs:['正確答案：','Correct answer: ','คำตอบที่ถูก: '], cqStat:['老師的加分題','Instructor questions','คำถามจากอาจารย์'], cqPick:['請先作答','Answer first','กรุณาตอบก่อน'], cqTimeUp:['時間到！','Time\'s up!','หมดเวลา!'],
   draftBadge:['👩‍🏫 試玩中：尚未發布的修改版','👩‍🏫 Preview: unpublished changes','👩‍🏫 ทดลองเล่น: ฉบับแก้ไขที่ยังไม่เผยแพร่'],
   syncNote:['遊玩結果會自動傳給老師（需要網路）','Your results go to your instructor automatically (needs internet)','ผลการเล่นจะส่งให้อาจารย์อัตโนมัติ (ต้องมีอินเทอร์เน็ต)'], syncClass:['班級','Class','ห้อง'], caseBack:['🗂 換案例','🗂 Choose a case','🗂 เลือกเคส'],
-  lockH:['這個案例還沒開放','This case is not open yet','เคสนี้ยังไม่เปิดให้เล่น'], lockP:['請輸入老師給的密碼。','Type the code from your instructor.','ใส่รหัสที่ได้จากอาจารย์'],
-  lockGo:['進入 ▶','Enter ▶','เข้าเล่น ▶'], lockBad:['密碼不對，再試一次','That code is not right — try again','รหัสไม่ถูก ลองอีกครั้ง'],
+  lockH:['這個案例還沒開放','This case is not open yet','เคสนี้ยังไม่เปิดให้เล่น'], lockP:['老師開放之後就能玩了，可以先選其他案例。','Your instructor will open it soon — you can choose another case for now.','อาจารย์จะเปิดให้เล่นเร็วๆ นี้ ระหว่างนี้เลือกเคสอื่นก่อนได้'],
+  swH:['學生可以玩這個案例嗎？','Can students play this case?','นักศึกษาเล่นเคสนี้ได้ไหม'], swOpen:['🔓 開放中：學生可以玩','🔓 Open — students can play','🔓 เปิดอยู่ — นักศึกษาเล่นได้'], swClosed:['🔒 關閉中：學生還不能進入','🔒 Closed — students cannot enter yet','🔒 ปิดอยู่ — นักศึกษายังเข้าไม่ได้'],
+  swClose:['🔒 關閉這個案例','🔒 Close this case','🔒 ปิดเคสนี้'], swOpenBtn:['🔓 開放這個案例','🔓 Open this case','🔓 เปิดเคสนี้'], swUnknown:['（讀不到狀態）','(status unavailable)','(อ่านสถานะไม่ได้)'],
+  swNote:['按下就生效，所有班級的連結都一樣。已經在玩的學生可以玩完。','Takes effect at once for every class link. Students who are already playing can finish.','มีผลทันทีกับลิงก์ของทุกห้อง ใครที่กำลังเล่นอยู่เล่นต่อจนจบได้'],
   cfgWait:['⏳ 正在載入老師設定的版本…','⏳ Loading your instructor\'s version…','⏳ กำลังโหลดเวอร์ชันของอาจารย์…'], cfgNew:['📥 已更新為老師最新發布的版本','📥 Updated to your instructor\'s latest version','📥 อัปเดตเป็นเวอร์ชันล่าสุดของอาจารย์แล้ว'],
   syncSending:['☁️ 正在把結果傳給老師…','☁️ Sending your results to your instructor…','☁️ กำลังส่งผลให้อาจารย์…'], syncOk:['☁️ 結果已傳給老師 ✓','☁️ Results sent to your instructor ✓','☁️ ส่งผลให้อาจารย์แล้ว ✓'],
   syncErr:['⚠️ 還沒傳出去，有網路時會自動重試；也可以按「下載我的報告」自己繳交','⚠️ Not sent yet — it retries automatically when you are online. You can also download your report and hand it in.','⚠️ ยังส่งไม่ได้ จะลองใหม่อัตโนมัติเมื่อมีอินเทอร์เน็ต หรือกดดาวน์โหลดรายงานส่งเองก็ได้'],
@@ -2788,6 +2787,7 @@ function renderOnline(b){
   const url=serverURL(), key=teacherKey(), cls=Object.entries(SYNC.classes||{}).sort((a,c)=>a[0].localeCompare(c[0]));
   const hm=t=>new Date(t).toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
   b.innerHTML=`<p class="edintro">${T('onIntro')}</p>
+   ${url?`<div class="box casesw"><b>🚦 ${T('swH')}</b><span class="st" id="swSt">…</span><button class="sbtn" id="swBtn" disabled>…</button><p class="muted" style="flex-basis:100%;margin:0">${T('swNote')}</p></div>`:''}
    <div class="box"><b>${T('onServer')}</b><div class="row" style="margin-top:6px;align-items:center"><code style="font-size:13px">${esc(url||'—')}</code><button class="sbtn" id="onTest">${T('onTest')}</button><span id="onTestR" class="muted"></span></div></div>
    <div class="box"><b>${T('onKey')}</b><div class="row" style="margin-top:6px"><input class="ein" id="onKeyIn" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" value="${esc(key)}" placeholder="••••••••" style="max-width:300px"><button class="sbtn" id="onKeySave">${T('onSave')}</button></div><p class="muted" style="margin-top:4px">🔑 ${T('onKeyNote')}</p></div>
    <div class="box"><div class="row" style="align-items:center"><button class="sbtn g" id="onPull">${T('onPull')}</button><span class="muted">${SYNC.pulled?T('onLast')+': '+hm(SYNC.pulled)+' · '+SYNC.remote.length+' '+T('onRecords'):T('onAuto')}</span></div>
@@ -2795,6 +2795,12 @@ function renderOnline(b){
      <p class="muted" style="margin-top:6px">${T('onLocalNote')}</p></div>
    <div class="box"><b>${T('onLinkH')}</b><p class="muted" style="margin:4px 0">${T('onLinkNote')}</p><div class="row" style="align-items:center"><input class="ein" id="onCls" placeholder="ph2026a" style="max-width:180px"><code id="onLink" style="font-size:13px">${esc(gameLink(''))}</code><button class="sbtn" id="onCopyLink">${T('onCopy')}</button></div></div>`;
   const copy=t=>{ const done=()=>toast('📋 '+T('onCopied')); try{ navigator.clipboard.writeText(t).then(done,()=>prompt('',t)); }catch(e){ prompt('',t); } };
+  const swPaint=()=>{ const st=$('#swSt'), bt=$('#swBtn'); if(!st) return; st.className='st '+(LOCK.closed?'off':'on'); st.textContent=LOCK.known?T(LOCK.closed?'swClosed':'swOpen'):T('swUnknown');
+    bt.textContent=T(LOCK.closed?'swOpenBtn':'swClose'); bt.className='sbtn '+(LOCK.closed?'g':'r'); bt.disabled=!LOCK.known; };
+  if($('#swBtn')){ swPaint(); statusFetch(url).then(swPaint,swPaint);
+    $('#swBtn').onclick=async()=>{ setTeacherKey($('#onKeyIn').value); if(!teacherKey()){ toast('⚠️ '+T('onNoKey')); $('#onKeyIn').focus(); return; }
+      const bt=$('#swBtn'); bt.disabled=true; const r=await setCaseClosed(!LOCK.closed);
+      if(r.ok){ sfx.get(); toast(T(LOCK.closed?'swClosed':'swOpen')); } else toast('⚠️ '+T(r.error==='badkey'?'onBadKey':r.error==='nokey'?'onNoKey':'onDown')); swPaint(); }; }
   $('#onTest').onclick=async()=>{ $('#onTestR').textContent='…'; const ok=await serverHealth(); $('#onTestR').textContent=ok?T('onUp'):T('onDown'); };
   $('#onKeySave').onclick=()=>{ setTeacherKey($('#onKeyIn').value); sfx.click(); toast('🔑 '+T('saved')); };
   $('#onPull').onclick=async()=>{ setTeacherKey($('#onKeyIn').value); if(!teacherKey()){ toast('⚠️ '+T('onNoKey')); return; }
@@ -2824,7 +2830,7 @@ function refreshTitle(){ if($('#title').classList.contains('hidden')) return; $(
 function cfgRefresh(){
   const url=serverURL(); if(!url) return Promise.resolve(false); if(CFGS.promise) return CFGS.promise;
   CFGS.state='loading'; const ac=typeof AbortController!=='undefined'?new AbortController():null, tm=setTimeout(()=>{ try{ ac&&ac.abort(); }catch(e){} },20000);
-  CFGS.promise=(async()=>{ try{
+  CFGS.promise=(async()=>{ const stP=statusFetch(url, ac?ac.signal:undefined).catch(()=>null); try{
       const get=async q=>{ const r=await fetch(`${url}/api/config?${q}`,{cache:'no-store', signal:ac?ac.signal:undefined}); const j=await r.json(); if(!r.ok||!j||!j.ok) throw new Error('http'); return j; };
       let j;
       if(!CFG_NS) j=await get(`class=${encodeURIComponent(CFG_REQ_CLASS)}`);
@@ -2838,7 +2844,7 @@ function cfgRefresh(){
       if(idle){ applyGameCfg(next); refreshTitle(); if(j.config) toast(T('cfgNew')); }
       return true;
     }catch(e){ CFGS.state='error'; return false; }
-    finally{ clearTimeout(tm); CFGS.promise=null; } })();
+    finally{ await stP; applyLock(); clearTimeout(tm); CFGS.promise=null; } })();
   return CFGS.promise;
 }
 /* starting a game waits (briefly) for the instructor's version, so a first-time visitor plays the right one */
@@ -2859,20 +2865,20 @@ function caseHome(){ try{ if(!/^https?:/.test(location.protocol)||!/\/case-[a-z]
     return '../?'+q.toString(); }catch(e){ return ''; } }
 function initCaseBack(){ const a=$('#caseBack'); if(!a) return; const go=caseHome(); a.classList.toggle('hidden',!go);
   a.onclick=e=>{ e.preventDefault(); const u=caseHome(); if(u) location.href=u; }; }
-/* ---------- entry code: the instructor can keep a case closed until they hand out a code ----------
-   It travels with the published version (⚙️ Settings → 📦 Publish), so it can differ per class link.
-   This is a gentle gate for "not this week", not real security: the code is part of the public version. */
-const LOCK_KEY='phd_unlock_'+CASE_ID; let LOCK_MEM='';
-function lockCode(){ if(CFG_DRAFTMODE) return ''; return String(((GAME_CFG_BASE.settings||{}).lockCode)||'').trim(); }
-function isLocked(){ const c=lockCode(); if(!c) return false; let u=LOCK_MEM; try{ u=localStorage.getItem(LOCK_KEY)||LOCK_MEM; }catch(e){} return u.toLowerCase()!==c.toLowerCase(); }
+/* ---------- open / closed: the instructor can keep a case closed ("not this week") with one switch ----------
+   The state is stored on the server under its own key (st--<case>), apart from published versions, and applies at once
+   to every class link. Students see a "not open yet" card instead of the title panel; the dashboard stays reachable. */
+const LOCK={closed:false, key:'phd_status_'+CASE_ID, sk:'st--'+CASE_ID, known:false};
+try{ LOCK.closed=localStorage.getItem(LOCK.key)==='1'; }catch(e){}
+const isLocked=()=>!CFG_DRAFTMODE&&LOCK.closed;
 function applyLock(){ const t=$('#title'), box=$('#lockBox'); if(!t||!box) return; const L=isLocked();
   t.classList.toggle('locked',L); box.classList.toggle('hidden',!L); if(!L&&typeof fitTitle==='function') fitTitle(); }
-function tryUnlock(){ const v=$('#lockIn').value.trim(), c=lockCode();
-  if(c&&v.toLowerCase()===c.toLowerCase()){ LOCK_MEM=c; try{ localStorage.setItem(LOCK_KEY,c); }catch(e){} sfx.get(); applyLock(); }
-  else { sfx.error(); toast('🔒 '+T('lockBad')); $('#lockIn').select(); } }
-function initLock(){ const go=$('#lockGo'); if(!go) return; go.onclick=tryUnlock;
-  $('#lockIn').onkeydown=e=>{ if(e.key==='Enter') tryUnlock(); };
-  $('#lockTeacher').onclick=()=>openPage('teacher'); applyLock(); }
+async function statusFetch(url, signal){
+  const r=await fetch(`${url}/api/config?class=${encodeURIComponent(LOCK.sk)}&exact=1`,{cache:'no-store', signal}); const j=await r.json(); if(!r.ok||!j||!j.ok) throw new Error('http');
+  LOCK.closed=!!(j.config&&j.config.closed); LOCK.known=true; try{ localStorage.setItem(LOCK.key, LOCK.closed?'1':'0'); }catch(e){} return LOCK.closed; }
+async function setCaseClosed(closed){ const r=await teacherFetch(`/api/config?class=${encodeURIComponent(LOCK.sk)}`,{method:'PUT', headers:{'Content-Type':'text/plain;charset=UTF-8'}, body:JSON.stringify({closed:!!closed, at:new Date().toISOString()})});
+  if(r.ok){ LOCK.closed=!!closed; LOCK.known=true; try{ localStorage.setItem(LOCK.key, closed?'1':'0'); }catch(e){} applyLock(); } return r; }
+function initLock(){ const tb=$('#lockTeacher'); if(tb) tb.onclick=()=>openPage('teacher'); applyLock(); }
 /* =====================================================================
    STORY — Prologue · Chapter 1 (interview) · Chapter 2 (search)
    ===================================================================== */
@@ -4093,8 +4099,6 @@ const ED={
  stCharges:['搜查時的放大鏡次數','Magnifier uses in the search','จำนวนครั้งที่ใช้แว่นขยายตอนค้นบ้าน'], stQte:['限時選項預設開啟','Timed choices on by default','เปิดตัวเลือกจับเวลาเป็นค่าเริ่มต้น'], stLang:['預設語言','Default language','ภาษาเริ่มต้น'],
  stServer:['結果伺服器網址','Results server address','ที่อยู่เซิร์ฟเวอร์รับผล'], stServerNote:['留空＝不自動上傳（學生要自己下載報告繳交）。預設：','Leave blank to switch automatic hand-in off (students then download their report). Default: ','เว้นว่าง = ปิดการส่งอัตโนมัติ (นักศึกษาต้องดาวน์โหลดรายงานส่งเอง) ค่าเริ่มต้น: '],
  stClass:['預設班級代碼','Default class code','รหัสห้องเริ่มต้น'], stClassNote:['連結裡有 ?class=… 時以連結為準','A ?class=… in the link takes priority','ถ้าลิงก์มี ?class=… จะใช้ค่าจากลิงก์'],
- stLock:['🔒 案例入場密碼','🔒 Entry code for this case','🔒 รหัสเข้าเคสนี้'], stLockPh:['留空＝開放','blank = open to all','เว้นว่าง = เปิดให้ทุกคน'],
- stLockNote:['設定後，學生要先輸入這個密碼才能玩這個案例。按「📦 發布」後才生效，也可以只發布給某個班級。這只是暫時不開放，不是真正的保密。','Students must type this code before they can play this case. It takes effect when you Publish, and you can publish it for one class only. It just keeps the case closed for now — it is not real security.','ถ้าตั้งรหัส นักศึกษาต้องใส่รหัสนี้ก่อนจึงจะเล่นเคสนี้ได้ มีผลหลังกด 📦 เผยแพร่ และเลือกเผยแพร่เฉพาะห้องได้ ใช้ปิดเคสไว้ชั่วคราวเท่านั้น ไม่ใช่ระบบความปลอดภัยจริง'],
  stPin:['教師後台密碼','Instructor PIN','รหัสเข้าหน้าอาจารย์'], stPinWarn:['密碼只能防止學生不小心進來，不是真正的保密。','The PIN only keeps students out casually — it is not real security.','รหัสนี้กันนักศึกษาเข้ามาโดยไม่ตั้งใจเท่านั้น ไม่ใช่ระบบความปลอดภัยจริง'],
  stNote:['版本說明（顯示在標題畫面，讓學生確認拿到的是新版）','Version note (shown on the title screen so students know they have the new file)','หมายเหตุเวอร์ชัน (แสดงที่หน้าแรก ให้นศ.รู้ว่าได้ไฟล์ใหม่)'], stNotePh:['例如：2026 下學期・王老師','e.g. Spring 2026 · Dr. Wang','เช่น ภาค 2/2569 · อ.สมศรี'], stDefault:['預設','Default','ค่าเดิม'],
  pbSteps:['① 修改 → ② 試玩 → ③ 下載新版 → ④ 把新檔案傳給學生','① Edit → ② Try it → ③ Download the new version → ④ Send the new file to students','① แก้ไข → ② ทดลองเล่น → ③ ดาวน์โหลดเวอร์ชันใหม่ → ④ ส่งไฟล์ใหม่ให้นักศึกษา'],
@@ -4461,7 +4465,6 @@ function edSettings(b){
     <div class="box"><label class="srow"><span>${TE('stNote')}</span><input class="ein" id="stNote" value="${esc(s.note||'')}" placeholder="${esc(TE('stNotePh'))}"></label></div>
     <div class="box"><label class="srow"><span>${TE('stServer')}</span><input class="ein" id="stServer" value="${esc(s.server!=null?s.server:CONFIG.SERVER_URL)}"></label><p class="muted">${TE('stServerNote')}${esc(CONFIG.SERVER_URL)}</p>
       <label class="srow"><span>${TE('stClass')}</span><input class="ein" id="stClass" value="${esc(s.classCode||'')}" placeholder="main"></label><p class="muted">${TE('stClassNote')}</p></div>
-    <div class="box"><label class="srow"><span>${TE('stLock')}</span><input class="ein" id="stLock" value="${esc(s.lockCode||'')}" placeholder="${esc(TE('stLockPh'))}" autocomplete="off" autocapitalize="off" spellcheck="false" style="max-width:220px"></label><p class="muted">${TE('stLockNote')}</p></div>
     <div class="box"><label class="srow"><span>${TE('stPin')}</span><input class="ein enum" id="stPin" value="${esc(s.TEACHER_PIN||'')}" placeholder="${CONFIG_DEF.TEACHER_PIN}"></label><p class="muted">🔒 ${TE('stPinWarn')}</p></div>`;
   const save=()=>{ edSave(); toast(T('saved')); };
   b.querySelectorAll('[data-st]').forEach(x=>x.onchange=()=>{ const v=Math.round(+x.value); if(v>0) s[x.dataset.st]=v; else delete s[x.dataset.st]; save(); });
@@ -4471,7 +4474,6 @@ function edSettings(b){
   $('#stNote').onchange=e=>{ s.note=e.target.value.trim(); if(!s.note) delete s.note; save(); };
   $('#stServer').onchange=e=>{ const v=e.target.value.trim(); if(v===CONFIG.SERVER_URL) delete s.server; else s.server=v; save(); };
   $('#stClass').onchange=e=>{ const v=normClass(e.target.value); if(v&&v!=='main') s.classCode=v; else delete s.classCode; e.target.value=v; save(); };
-  $('#stLock').onchange=e=>{ const v=e.target.value.trim(); if(v) s.lockCode=v; else delete s.lockCode; e.target.value=v; save(); };
   $('#stPin').onchange=e=>{ const v=e.target.value.trim(); if(v) s.TEACHER_PIN=v; else delete s.TEACHER_PIN; save(); };
 }
 /* ---------- publish ---------- */
@@ -4508,7 +4510,7 @@ function edPublish(b){
   const dl=`<div class="pubgrid"><button class="ebtn alt" id="pbPlay">${TE('pbPlay')}</button><button class="ebtn big" id="pbDl">${TE('pbDl')}</button></div><p class="ednote">📤 ${TE('pbDlNote')}</p>`;
   b.innerHTML=`<div class="pubsteps">${TE(on?'pbStepsOn':'pbSteps')}</div>
     <div class="box"><b>${TE('pbSummary').replace('{q}',w.questions.length).replace('{t}',Object.keys(w.texts).length).replace('{s}',sN)}</b>
-      <p class="${(on?pend:dirty)?'warnp':'okp'}">${on?(pend?TE('pbDirtyOn'):TE('pbCleanOn')):(dirty?TE('pbDirty'):TE('pbClean'))}</p><p class="muted">${TE(on?'pbOnStudents':'pbThisFile')}: ${ver}${m.note?' · '+esc(m.note):''}</p>${w.settings.lockCode?`<p class="muted">${TE('stLock')}: <b>${esc(w.settings.lockCode)}</b></p>`:''}</div>
+      <p class="${(on?pend:dirty)?'warnp':'okp'}">${on?(pend?TE('pbDirtyOn'):TE('pbCleanOn')):(dirty?TE('pbDirty'):TE('pbClean'))}</p><p class="muted">${TE(on?'pbOnStudents':'pbThisFile')}: ${ver}${m.note?' · '+esc(m.note):''}</p></div>
     ${on?`<div class="box onpub"><b>${TE('pbOnH')}</b><p class="muted" style="margin:4px 0 8px">${TE('pbOnIntro')}</p>
       <div class="row" style="align-items:center;gap:8px;flex-wrap:wrap"><span>${TE('pbTarget')}</span><select class="ein" id="pbTarget" style="max-width:280px"><option value="*">${TE('pbAll')}</option>${known.map(c=>`<option value="${esc(c)}">${TE('pbOneCls')}: ${esc(c)}</option>`).join('')}<option value="+">${TE('pbOtherCls')}</option></select><input class="ein hidden" id="pbCls" placeholder="ph2026a" style="max-width:170px"></div>
       ${teacherKey()?'':`<div class="row" style="margin-top:8px;align-items:center;gap:8px"><span>🔑 ${TE('pbKeyNeed')}</span><input class="ein" id="pbKey" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="••••••••" style="max-width:280px"></div>`}

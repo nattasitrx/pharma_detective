@@ -3761,8 +3761,18 @@ const FLOWX={
   inChamber:['輔助艙裡有藥霧：{s} 秒內吸進去','Mist in the chamber: breathe it in within {s} s','มีละอองยาในกระบอก: สูดภายใน {s} วินาที'], good:['好！藥進到肺裡了','Good — the dose reached the lungs','ดีมาก! ยาเข้าปอดแล้ว'],
   notNow:['先從嘴裡拿開再搖','Take it out of your mouth to shake it','เอาออกจากปากก่อนค่อยเขย่า'],
   puff2:['第 2 噴：整套再做一次！','Puff 2: the whole routine once more!','พัฟที่ 2: ทำทั้งชุดอีกรอบ!'],
+  hintB:['💡 提示','💡 Hint','💡 คำใบ้'], next:['下一步呢？','what next?','ต่อไปทำอะไร?'], hintsUsed:['用了提示','Hints used','ใช้คำใบ้'],
+  takeOut:['先從嘴裡拿出來','Take it out of his mouth first','เอาออกจากปากก่อน'], outAway:['別對著吸嘴吐氣！先拿開再吐','Not into the mouthpiece! Take it out, then breathe out','อย่าหายใจออกใส่ปากกระบอก! เอาออกก่อนแล้วค่อยหายใจออก'],
+  puffOut:['（還沒閉氣就拿出來，一口氣吐掉了）','(taken out before holding — the breath came straight out)','(เอาออกก่อนกลั้นหายใจ ลมหายใจออกมาหมด)'],
+  how:{mdi:['點吸入器的部位來操作（蓋子、藥罐、吸入器本身），右邊的按鈕控制李伯伯的呼吸。照你教病人的順序做；卡住了就按「💡 提示」。','Tap parts of the inhaler (cap, canister, the inhaler itself); the buttons on the right control Uncle Lee\'s breathing. Do it in the order you\'d teach a patient — stuck? Tap "💡 Hint".','แตะส่วนต่างๆ ของยาพ่น (ฝา กระป๋องยา ตัวยาพ่น) ปุ่มด้านขวาใช้ควบคุมการหายใจของลุง ทำตามลำดับที่จะสอนผู้ป่วย ถ้าติดอยู่ แตะ "💡 คำใบ้"'],
+    spacer:['點吸入器、藥罐和輔助器來操作，右邊的按鈕控制呼吸。照你教病人的順序做；卡住了就按「💡 提示」。','Tap the inhaler, its canister and the spacer; the buttons on the right control breathing. Do it in the order you\'d teach a patient — stuck? Tap "💡 Hint".','แตะยาพ่น กระป๋องยา และกระบอกช่วยสูด ปุ่มด้านขวาใช้ควบคุมการหายใจ ทำตามลำดับที่จะสอนผู้ป่วย ถ้าติดอยู่ แตะ "💡 คำใบ้"'],
+    resp:['點 Respimat 的部位來操作（綠色蓋子、透明底座、綠色按鈕、吸入器本身），右邊的按鈕控制呼吸。要做 2 噴；卡住了就按「💡 提示」。','Tap parts of the Respimat (green cap, clear base, green dose button, the inhaler itself); the buttons on the right control breathing. Two puffs — stuck? Tap "💡 Hint".','แตะส่วนต่างๆ ของ Respimat (ฝาสีเขียว ฐานใส ปุ่มสีเขียว ตัวยาพ่น) ปุ่มด้านขวาใช้ควบคุมการหายใจ ต้องทำ 2 พัฟ ถ้าติดอยู่ แตะ "💡 คำใบ้"']},
 };
-const FLOW={ mdi:['cap','shake','out','mouth','in','press','hold','recap'], spacer:['cap','shake','attach','out','mouth','press','in','hold'], resp:['turn','open','out','mouth','in','press','hold','close'] };
+const DIDX={cap:['拔掉蓋子','Cap off','ถอดฝาแล้ว'], shake:['搖勻了','Shaken','เขย่าแล้ว'], attach:['裝上輔助器','Spacer fitted','ต่อกระบอกช่วยสูดแล้ว'], out:['吐完氣','Breathed out','หายใจออกแล้ว'], mouth:['含住吸嘴','Mouthpiece in','อมปากกระบอกแล้ว'],
+  in:['開始吸氣','Breathing in','เริ่มสูดหายใจ'], press:['藥吸進去了','Dose breathed in','ยาเข้าไปแล้ว'], hold:['閉氣 10 秒','Breath held','กลั้นหายใจแล้ว'], remove:['從嘴裡拿出來','Out of his mouth','เอาออกจากปากแล้ว'],
+  recap:['蓋回蓋子','Cap on','ปิดฝาแล้ว'], turn:['底座轉好了','Base turned','หมุนฐานแล้ว'], open:['打開蓋子','Cap open','เปิดฝาแล้ว'], close:['蓋上蓋子','Cap closed','ปิดฝาแล้ว'],
+  spPress:['藥霧噴進輔助艙','Puff in the chamber','ละอองยาเข้ากระบอกแล้ว'], spIn:['把藥霧吸進去了','Mist breathed in','สูดละอองยาแล้ว']};
+const FLOW={ mdi:['cap','shake','out','mouth','in','press','hold','remove','recap'], spacer:['cap','shake','attach','out','mouth','press','in','hold','remove'], resp:['turn','open','out','mouth','in','press','hold','remove','close'] };
 const FLOW_T={
   cap:['點一下藍色蓋子，把它拔掉','Tap the blue cap to take it off','แตะฝาสีน้ำเงินเพื่อถอดออก','🧢'],
   shake:['按「搖一搖」：每一噴前都要搖勻','Press "Shake" — shake well before every puff','กด "เขย่า" — ต้องเขย่าก่อนพ่นทุกครั้ง','👋'],
@@ -3773,6 +3783,7 @@ const FLOW_T={
   press:{mdi:['就是現在！點藥罐按下去','Now! Tap the canister to press it','ตอนนี้เลย! แตะกระป๋องยาเพื่อกด','👆'], spacer:['點藥罐按 1 下：藥霧噴進輔助艙','Tap the canister once — the puff fills the chamber','แตะกระป๋องยา 1 ครั้ง ละอองยาจะเข้าไปในกระบอก','👆'], resp:['就是現在！點綠色按鈕','Now! Tap the green dose button','ตอนนี้เลย! แตะปุ่มสีเขียว','👆']},
   hold:['按住「閉氣」，數到 10','Press and hold "Hold breath" to a count of 10','กดค้าง "กลั้นหายใจ" นับถึง 10','🤐'],
   recap:['點蓋子，把它蓋回去','Tap the cap to put it back on','แตะฝาเพื่อปิดกลับ','🧢'],
+  remove:{mdi:['閉完氣，點吸入器把它從嘴裡拿出來','Breath held — tap the inhaler to take it out of his mouth','กลั้นหายใจแล้ว แตะยาพ่นเพื่อเอาออกจากปาก','👋'], spacer:['閉完氣，點輔助器把它從嘴裡拿出來','Breath held — tap the spacer to take it out of his mouth','กลั้นหายใจแล้ว แตะกระบอกช่วยสูดเพื่อเอาออกจากปาก','👋'], resp:['閉完氣，點吸入器把它從嘴裡拿出來（下一噴要先蓋上、再轉底座）','Breath held — tap the inhaler to take it out of his mouth (the next puff starts with the cap closed and a turn)','กลั้นหายใจแล้ว แตะยาพ่นเพื่อเอาออกจากปาก (พัฟต่อไปต้องปิดฝาแล้วหมุนฐานใหม่)','👋']},
   turn:['蓋子蓋著，點透明底座：轉半圈到「喀」','Cap closed: tap the clear base to turn it until it clicks','ปิดฝาไว้ แตะฐานใสเพื่อหมุนจนได้ยินเสียงคลิก','🔄'],
   open:['點綠色蓋子，把它完全打開','Tap the green cap to flip it fully open','แตะฝาสีเขียวเพื่อเปิดให้สุด','🔓'],
   close:['點蓋子蓋上','Tap the cap to close it','แตะฝาเพื่อปิด','🧢'],
@@ -3833,6 +3844,11 @@ function inhSim(dev){
 @keyframes fgGlowB{0%,100%{box-shadow:0 5px 0 rgba(0,0,0,.25),0 0 0 0 rgba(255,196,0,.9)}50%{box-shadow:0 5px 0 rgba(0,0,0,.25),0 0 0 8px rgba(255,196,0,.9)}}
 @keyframes fgHand{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
 #isim .fg-hand.side{animation-name:fgHandX}
+#isim .is-head .tx.how{font-size:20px;color:#55541f}
+#isim .is-hb{font-size:20px;padding:10px 8px}
+#isim .is-hb.nudge{animation:fgNudge .6s ease-in-out infinite alternate}
+#isim .is-hn{margin:10px 0 0;font-weight:800;font-size:18px;color:#8a6a1a}
+@keyframes fgNudge{from{transform:scale(1);filter:drop-shadow(0 0 0 rgba(255,196,0,0))}to{transform:scale(1.07);filter:drop-shadow(0 0 10px #ffc400)}}
 @keyframes fgHandX{0%,100%{transform:translateX(0)}50%{transform:translateX(-12px)}}
 @keyframes hitShake{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}`; document.head.appendChild(st); }
   return new Promise(res=>{
@@ -3846,20 +3862,22 @@ function inhSim(dev){
           <button class="is-btn" id="simOut">${esc(L(FLOWX.out))}<small>${esc(L(FLOWX.ph))}</small><span class="pg"></span></button>
           <button class="is-btn in" id="simIn">${esc(L(FLOWX.inn))}</button>
           <button class="is-btn hold" id="simHold">${esc(L(FLOWX.hold))}<small>${esc(L(FLOWX.ph))}</small><span class="pg"></span></button>
-          <button class="gbtn green" id="simDone" style="font-size:19px;padding:10px 8px;margin-top:auto">${esc(L(FLOWX.finish))}</button></div></div>
+          ${ex?'':`<button class="gbtn gold is-hb" id="simHintBtn" style="margin-top:auto">${esc(L(FLOWX.hintB))}</button>`}<button class="gbtn green" id="simDone" style="font-size:19px;padding:10px 8px;${ex?'margin-top:auto':''}">${esc(L(FLOWX.finish))}</button></div></div>
       <div class="fg-hand hidden" id="simHand">👆</div>`;
     host.classList.remove('hidden'); host.style.animation='none'; void host.offsetWidth; host.style.animation='';
     const svg=$('#simSvg'), devG=$('#simDevG'), fx=$('#simFx'), bench=$('#simBench');
     const MOUTH={x:516,y:296}, SOCK=326, HOME={mdi:{x:250,y:430}, spacer:{x:170,y:250}, resp:{x:250,y:300}}[dev], SP_HOME={x:540,y:480};
-    const WIN=dev==='resp'?1.5:1.3, INHALE=4.0;
-    let tries=0, allErrs=[], firstErrs=null, finished=false, raf=0, s, timers=[];
+    const WIN=dev==='resp'?2.6:2.0, INHALE=5.0;
+    let tries=0, allErrs=[], firstErrs=null, finished=false, raf=0, s, timers=[], hintsN=0, idleT=0;
     const later=(fn,ms)=>{ const t=setTimeout(()=>{ if(!finished) fn(); },ms); timers.push(t); return t; };
     const reset=()=>{ timers.forEach(clearTimeout); timers=[]; cancelAnimationFrame(raf);
       s={capOn:dev!=='resp', capOpen:false, shaken:false, attached:false, exhaled:false, atMouth:false, inhaling:false, t0:0, pressed:false, good:false, held:false,
-         turned:false, chamber:0, chamberN:0, puffs:0, puffNo:1, lungs:.55, busy:false, pos:{...HOME}, sp:{...SP_HOME}, done:new Set(), errs:new Set(), bubT:0};
-      devG.innerHTML=simDevSVG(dev); wire(); draw(); guide(); };
-    const err=(k,soft)=>{ if(!s.errs.has(k)){ s.errs.add(k); if(!ex&&!soft) toast('⚠️ '+L(SIM_ERR[k])); } sfx.error(); };
-    const mark=k=>{ s.done.add(k); guide(); };
+         turned:false, chamber:0, chamberN:0, puffs:0, puffNo:1, lungs:.55, busy:false, pos:{...HOME}, sp:{...SP_HOME}, done:new Set(), errs:new Set(), bubT:0, hintOn:null, hinted:new Set(), last:null, miss:0};
+      devG.innerHTML=simDevSVG(dev); wire(); draw(); guide(); idle(); };
+    const nudge=on=>{ const b=$('#simHintBtn'); if(b) b.classList.toggle('nudge',!!on); };
+    const idle=()=>{ clearTimeout(idleT); if(!ex) idleT=later(()=>nudge(1),15000); };
+    const err=(k,soft)=>{ if(!s.errs.has(k)){ s.errs.add(k); if(!ex&&!soft) toast('⚠️ '+L(SIM_ERR[k])); } sfx.error(); if(++s.miss>=2) nudge(1); };
+    const mark=k=>{ if(!s.done.has(k)){ s.last=k; s.miss=0; nudge(0); idle(); } s.done.add(k); guide(); };
     const unmark=(...ks)=>{ ks.forEach(k=>s.done.delete(k)); guide(); };
     const bub=(t,ms)=>{ const b=svg.querySelector('.sd-bub'); b.textContent=t; clearTimeout(s.bubT); s.bubT=setTimeout(()=>{ b.textContent=''; },ms||1600); };
     const hint=t=>{ $('#simHint').textContent=t||''; };
@@ -3881,25 +3899,29 @@ function inhSim(dev){
       setTimeout(()=>g.remove(),2600); sfx.whoosh(); }
     const cough=()=>{ bench.classList.add('throat-hit','face-cough'); bub(L(SIMX.cough)); sfx.cough&&sfx.cough(1); setTimeout(()=>bench.classList.remove('throat-hit','face-cough'),900); };
     // ---------- guidance (practice): instruction + glow + pointing hand ----------
-    const targetOf=k=>({cap:'.sd-cap',recap:'.sd-cap',open:'.sd-cap',close:'.sd-cap',turn:'.sd-base',attach:'.sd-sp rect',mouth:dev==='spacer'?'.sd-sp rect':'[data-p="body"]',press:dev==='resp'?'.sd-btn':'.sd-can'})[k];
+    const targetOf=k=>({cap:'.sd-cap',recap:'.sd-cap',open:'.sd-cap',close:'.sd-cap',turn:'.sd-base',attach:'.sd-sp rect',mouth:dev==='spacer'?'.sd-sp rect':'[data-p="body"]',remove:dev==='spacer'?'.sd-sp rect':'[data-p="body"]',press:dev==='resp'?'.sd-btn':'.sd-can'})[k];
     const btnOf=k=>({shake:'#simShake',out:'#simOut',in:'#simIn',hold:'#simHold'})[k];
+    const did=k=>dev==='spacer'&&k==='press'?DIDX.spPress:dev==='spacer'&&k==='in'?DIDX.spIn:DIDX[k];
+    const tx=(t,how)=>{ const e=$('#simTx'); e.textContent=t; e.classList.toggle('how',!!how); };
     function guide(){
-      host.querySelectorAll('.fg-glow').forEach(e=>e.classList.remove('fg-glow'));
+      host.querySelectorAll('.fg-glow').forEach(e=>e.classList.remove('fg-glow')); const hd=$('#simHand'); hd.classList.add('hidden');
       const nx=order.find(k=>!s.done.has(k)), i=nx?order.indexOf(nx)+1:order.length;
       $('#simPf').textContent=dev==='resp'?L(SIMX.puff).replace('{n}',s.puffNo)+' / 2':'';
-      if(ex){ $('#simSn').textContent=''; $('#simTx').textContent=L(SIMX.task[dev])+' '+L(FLOWX.exam); $('#simHand').classList.add('hidden'); return; }
+      if(ex){ $('#simSn').textContent=''; tx(L(SIMX.task[dev])+' '+L(FLOWX.exam)); return; }
       $('#simSn').textContent=L(FLOWX.step).replace('{i}',i).replace('{n}',order.length);
-      if(!nx){ $('#simTx').textContent=L(FLOWX.good); $('#simHand').classList.add('hidden'); return; }
-      const t=T(nx); $('#simTx').textContent=t[3]+' '+L(t);
+      if(!nx){ tx(L(FLOWX.good)); const hb=$('#simHintBtn'); if(hb) nudge(0); return; }
+      if(s.hintOn!==nx){ if(s.last) tx('✓ '+L(did(s.last))+' — '+L(FLOWX.next)); else if(s.puffNo>1) tx(L(FLOWX.puff2)); else tx(L(FLOWX.how[dev]),1); return; }
+      const t=T(nx); tx('💡 '+t[3]+' '+L(t));
       const el=btnOf(nx)?$(btnOf(nx)):devG.querySelector(targetOf(nx));
-      if(!el){ $('#simHand').classList.add('hidden'); return; }
+      if(!el) return;
       const g=btnOf(nx)?el:(el.closest('g[data-p]')||el); g.classList.add('fg-glow');
-      requestAnimationFrame(()=>{ const r=el.getBoundingClientRect(), hr=host.getBoundingClientRect(), k=hr.width/host.offsetWidth, hd=$('#simHand');
-        if(!r.width){ hd.classList.add('hidden'); return; } hd.classList.remove('hidden'); const sb=el.classList.contains('is-btn');
+      requestAnimationFrame(()=>{ const r=el.getBoundingClientRect(), hr=host.getBoundingClientRect(), k=hr.width/host.offsetWidth;
+        if(!r.width) return; hd.classList.remove('hidden'); const sb=el.classList.contains('is-btn');
         hd.textContent=sb?'👉':'👆'; hd.classList.toggle('side',sb);
         if(sb){ hd.style.left=((r.left-hr.left)/k-66)+'px'; hd.style.top=((r.top-hr.top)/k+r.height/k/2-34)+'px'; }
         else { hd.style.left=((r.left-hr.left)/k+r.width/k/2-24)+'px'; hd.style.top=((r.bottom-hr.top)/k-4)+'px'; } });
     }
+    function showHint(){ if(finished) return; const nx=order.find(k=>!s.done.has(k)); if(!nx) return; sfx.click(); const key=s.puffNo+':'+nx; if(!s.hinted.has(key)){ s.hinted.add(key); hintsN++; } s.hintOn=nx; nudge(0); guide(); }
     // ---------- actions ----------
     function shake(){ if(s.busy||finished) return; if(dev==='resp'){ bub(L(FLOWX.noShakeR)); return; } if(s.atMouth){ bub(L(FLOWX.notNow)); return; }
       const base=dev==='spacer'?null:{...s.pos}; let n=0; s.busy=true; sfx.rattle&&sfx.rattle();
@@ -3907,25 +3929,30 @@ function inhSim(dev){
         if(n<8) setTimeout(step,85); else { s.busy=false; if(dev==='spacer') devG.querySelectorAll('.sd-dev,.sd-mdiw').forEach(g=>g.style.transform=''); s.shaken=true; mark('shake'); } };
       step(); }
     function tapCap(){ if(s.busy||finished) return;
+      if(s.atMouth){ bub(L(FLOWX.takeOut)); sfx.error(); return; }
       if(dev==='resp'){ if(!s.capOpen){ s.capOpen=true; sfx.click(); draw(); mark('open'); return; }
         s.capOpen=false; sfx.click(); draw(); if(s.good&&s.held){ mark('close'); endPuff(); } else unmark('open'); return; }
-      if(s.capOn){ if(s.atMouth) return; s.capOn=false; sfx.pop(); draw(); mark('cap'); return; }
-      if(s.atMouth) return;
+      if(s.capOn){ s.capOn=false; sfx.pop(); draw(); mark('cap'); return; }
       s.capOn=true; sfx.pop(); draw(); if(dev==='mdi'&&s.good){ if(!s.held) err('noHold',1); mark('recap'); later(()=>finish(),700); } }
-    function tapBase(){ if(s.busy||finished||dev!=='resp') return; if(s.capOpen) err('openTurn');
+    function tapBase(){ if(s.busy||finished||dev!=='resp') return; if(s.atMouth){ bub(L(FLOWX.takeOut)); sfx.error(); return; } if(s.capOpen) err('openTurn');
       const st=devG.querySelector('.sd-stripes'); st.animate([{transform:'translateX(0)'},{transform:'translateX(18px)'},{transform:'translateX(0)'}],{duration:500}); sfx.click(); bub(L(SIMX.click),900); s.turned=true; mark('turn'); }
     function tapBody(){ if(s.busy||finished) return;
       if(dev==='spacer'&&!s.attached){ if(s.capOn){ bub(L(FLOWX.capFirst)); sfx.error(); return; } tween(()=>s.pos,p=>{ s.pos=p; },{x:SP_HOME.x-SOCK,y:SP_HOME.y},420,()=>{ s.attached=true; draw(); sfx.click(); mark('attach'); }); return; }
-      if(s.atMouth) return;
+      if(s.atMouth){ if(s.inhaling){ if(dev!=='spacer') press(); return; } return takeOut(); }
       if(dev!=='resp'&&s.capOn){ bub(L(FLOWX.capFirst)); err('capOn',1); return; }
       if(dev==='resp'&&!s.capOpen){ bub(L(FLOWX.openFirst)); sfx.error(); return; }
       const get=dev==='spacer'?()=>s.sp:()=>s.pos, set=dev==='spacer'?p=>{ s.sp=p; }:p=>{ s.pos=p; };
       tween(get,set,MOUTH,480,()=>{ s.atMouth=true; draw(); sfx.select(); mark('mouth'); }); }
+    function takeOut(){ if(s.inhaling) return;
+      if(s.good&&!s.held){ err('noHold'); s.held=true; bub(L(FLOWX.puffOut),1800); }
+      s.lungs=Math.min(s.lungs,.5); away();
+      if(s.good){ mark('hold'); mark('remove'); if(dev==='spacer') later(()=>finish(),700); }
+      else unmark('mouth','in','press'); }
     function away(){ const get=dev==='spacer'?()=>s.sp:()=>s.pos, set=dev==='spacer'?p=>{ s.sp=p; }:p=>{ s.pos=p; }; s.atMouth=false; tween(get,set,dev==='spacer'?SP_HOME:HOME,420); }
     // breathe out: press and hold
     let outIv=0;
-    const outDown=()=>{ if(s.busy||finished||s.inhaling) return; $('#simOut').classList.add('on'); if(s.atMouth) err('outIn'); else bench.classList.add('face-open');
-      clearInterval(outIv); outIv=setInterval(()=>{ s.lungs=Math.max(.06,s.lungs-.05); draw(); $('#simOut .pg').style.width=Math.round((1-(s.lungs-.06)/.94)*100)+'%'; if(s.lungs<=.12){ s.exhaled=true; } },60); };
+    const outDown=()=>{ if(s.busy||finished||s.inhaling) return; if(s.atMouth){ err('outIn'); bub(L(FLOWX.outAway),1800); return; } $('#simOut').classList.add('on'); bench.classList.add('face-open');
+      clearInterval(outIv); outIv=setInterval(()=>{ s.lungs=Math.max(.06,s.lungs-.009); draw(); $('#simOut .pg').style.width=Math.round((1-(s.lungs-.06)/.94)*100)+'%'; if(s.lungs<=.12){ s.exhaled=true; } },60); };
     const outUp=()=>{ if(!outIv) return; clearInterval(outIv); outIv=0; $('#simOut').classList.remove('on'); bench.classList.remove('face-open'); $('#simOut .pg').style.width='0';
       if(s.exhaled) mark('out'); else if(!ex) hint(L(FLOWX.keep)); };
     // breathe in: automatic slow breath; press must land early in it
@@ -3936,7 +3963,6 @@ function inhSim(dev){
       s.inhaling=true; s.pressed=false; s.t0=performance.now(); mark('in'); hint('');
       const from=s.lungs, dur=INHALE*(1-from)/.94*1000, tm=$('#simTm'); tm.classList.remove('hidden'); $('#simGz').style.display=(ex||dev==='spacer')?'none':''; $('#simGz').style.width=(WIN/INHALE*100)+'%';
       if(dev==='spacer'&&s.chamberN&&(performance.now()-s.chamber)/1000>5) err('late');
-      if(!ex&&dev!=='spacer'){ const t=T('press'); $('#simTx').textContent=t[3]+' '+L(t); }
       const f=now=>{ const el=(now-s.t0)/1000, k=Math.min(1,el*1000/dur); s.lungs=from+(1-from)*k; draw(); $('#simMk').style.left=Math.min(100,el/INHALE*100)+'%';
         if(k<1&&!finished) raf=requestAnimationFrame(f); else endInhale(); };
       raf=requestAnimationFrame(f); }
@@ -3964,15 +3990,15 @@ function inhSim(dev){
       $('#simHold').classList.add('on'); holdN=0; const cnt=svg.querySelector('.sd-count'); clearInterval(holdIv);
       holdIv=setInterval(()=>{ holdN++; cnt.textContent=holdN; $('#simHold .pg').style.width=Math.min(100,holdN*10)+'%'; sfx.tick&&sfx.tick(); if(holdN>=10){ holdUp(); } },420); };
     const holdUp=()=>{ if(!holdIv) return; clearInterval(holdIv); holdIv=0; $('#simHold').classList.remove('on'); setTimeout(()=>{ svg.querySelector('.sd-count').textContent=''; $('#simHold .pg').style.width='0'; },500);
-      if(holdN<10) err('noHold'); s.held=true; mark('hold'); s.lungs=.5; draw(); later(()=>{ away(); if(dev==='spacer') later(()=>finish(),700); },500); };
-    function endPuff(){ s.puffs++; if(s.puffs<2){ s.puffNo=2; s.good=false; s.held=false; s.exhaled=false; s.turned=false; s.done=new Set(); bub(L(FLOWX.puff2),1800); guide(); } else later(()=>finish(),600); }
+      if(holdN<10) err('noHold'); s.held=true; mark('hold'); draw(); };
+    function endPuff(){ s.puffs++; if(s.puffs<2){ s.puffNo=2; s.good=false; s.held=false; s.exhaled=false; s.turned=false; s.done=new Set(); s.last=null; s.hintOn=null; bub(L(FLOWX.puff2),1800); guide(); } else later(()=>finish(),600); }
     function wire(){
       devG.querySelectorAll('.sd-cap').forEach(e=>e.addEventListener('click',ev=>{ ev.stopPropagation(); tapCap(); }));
       devG.querySelectorAll('.sd-can,.sd-btn').forEach(e=>e.addEventListener('click',ev=>{ ev.stopPropagation(); press(); }));
       devG.querySelectorAll('.sd-base').forEach(e=>e.addEventListener('click',ev=>{ ev.stopPropagation(); tapBase(); }));
       devG.querySelectorAll('[data-p="body"],.sd-sp').forEach(e=>e.addEventListener('click',ev=>{ ev.stopPropagation(); tapBody(); }));
     }
-    $('#simShake').onclick=shake; $('#simIn').onclick=breatheIn;
+    $('#simShake').onclick=shake; $('#simIn').onclick=breatheIn; if($('#simHintBtn')) $('#simHintBtn').onclick=showHint;
     const hb=(el,d,u)=>{ el.addEventListener('pointerdown',e=>{ e.preventDefault(); try{ el.setPointerCapture(e.pointerId); }catch(_){} d(); }); ['pointerup','pointercancel','pointerleave'].forEach(t=>el.addEventListener(t,u)); };
     hb($('#simOut'),outDown,outUp); hb($('#simHold'),holdDown,holdUp);
     $('#simDone').onclick=()=>{ if(!finished) finish(); };
@@ -3980,15 +4006,15 @@ function inhSim(dev){
       if(dev==='resp'){ if(!s.puffs&&!s.good) err('noDose',1); else if(s.puffs<2) err('onePuff',1); if(s.capOpen) err('noClose',1); }
       else { if(!s.good) err('noDose',1); else if(dev==='mdi'&&!s.capOn) err('noRecap',1); }
       const errs=[...s.errs]; tries++; if(!firstErrs) firstErrs=errs.slice(); allErrs=errs; const ok=!errs.length;
-      logEvent({type:'inhSim', dev, errs, ok, try:tries, puffs:s.puffs, good:s.good?1:0});
-      if(ex){ sfx.select(); setTimeout(()=>{ host.classList.add('hidden'); host.innerHTML=''; res({ok, errs, firstErrs, tries}); },500); return; }
+      logEvent({type:'inhSim', dev, errs, ok, try:tries, puffs:s.puffs, good:s.good?1:0, hints:hintsN});
+      if(ex){ sfx.select(); setTimeout(()=>{ host.classList.add('hidden'); host.innerHTML=''; res({ok, errs, firstErrs, tries, hints:0}); },500); return; }
       if(ok) sfx.get(); else sfx.error();
       const sum=document.createElement('div'); sum.className='is-sum';
-      sum.innerHTML=`<div class="card"><h3>${ok?'🎉 '+esc(L(SIMX.perfect)):'🔧 '+esc(L(SIMX.fixes))}</h3>${ok?'':`<ul>${errs.map(k=>`<li>${esc(L(SIM_ERR[k]))}</li>`).join('')}</ul>`}
+      sum.innerHTML=`<div class="card"><h3>${ok?'🎉 '+esc(L(SIMX.perfect)):'🔧 '+esc(L(SIMX.fixes))}</h3>${ok?'':`<ul>${errs.map(k=>`<li>${esc(L(SIM_ERR[k]))}</li>`).join('')}</ul>`}${hintsN?`<p class="is-hn">💡 ${esc(L(FLOWX.hintsUsed))}: ${hintsN}</p>`:''}
         <div class="act">${ok||tries>=2?'':`<button class="gbtn gray" id="simAgain">${esc(L(SIMX.again))}</button>`}<button class="gbtn green" id="simCont">${esc(L(SIMX.cont))}</button></div></div>`;
       bench.appendChild(sum);
       const a=$('#simAgain'); if(a) a.onclick=()=>{ sfx.click(); sum.remove(); finished=false; reset(); };
-      $('#simCont').onclick=()=>{ sfx.click(); host.classList.add('hidden'); host.innerHTML=''; res({ok, errs:allErrs, firstErrs, tries}); }; }
+      $('#simCont').onclick=()=>{ sfx.click(); host.classList.add('hidden'); host.innerHTML=''; res({ok, errs:allErrs, firstErrs, tries, hints:hintsN}); }; }
     reset();
   });
 }

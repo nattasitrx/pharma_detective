@@ -664,7 +664,7 @@ details.box>summary{cursor:pointer;list-style:none}details.box>summary::-webkit-
 /* ---- v7: light graphics mode (low-spec devices) ---- */
 #stage.lowfx [class*="bgx-"]{animation:none!important}
 #stage.lowfx .cs .sway,#stage.lowfx .cs .sway-b,#stage.lowfx .cs .ahoge,#stage.lowfx .cs .breath,#stage.lowfx .cs .fan,#stage.lowfx .cs .wing,#stage.lowfx .cs .twinkle,#stage.lowfx .cs .drop,#stage.lowfx .cs .bob,#stage.lowfx .cs .spin-slow,#stage.lowfx .cs .pulse{animation:none!important}
-#stage.lowfx .char,#stage.lowfx #titleChars .char,#stage.lowfx .flyItem,#stage.lowfx .gcard .get{filter:none!important}
+#stage.lowfx .char,#stage.lowfx #titleChars .char,#stage.lowfx .flyItem,#stage.lowfx .gcard .get,#stage.lowfx #intro .por{filter:none!important}
 #stage.lowfx .char.dim{filter:none!important;opacity:.72}
 #stage.lowfx #bgfx,#stage.lowfx .bgl.kb svg{animation:none!important}
 #stage.lowfx #bgfx .motes,#stage.lowfx #bgfx .speedlines,#stage.lowfx .rays{display:none!important}
@@ -5366,11 +5366,13 @@ function renderMenu(b){
   $('#mRe').onclick=()=>showModal(`<h3>${T('restart')}</h3><p>${T('confirmRestart')}</p>`,[{t:T('restart'),cls:'r',fn:()=>{ saveSession(true); location.reload(); }},{t:T('cancel'),cls:''}]);
 }
 /* ---------- graphics quality: auto (measures FPS) · high · light ---------- */
-const GFX={pref:(()=>{ try{ return localStorage.getItem('phd_gfx')||'auto'; }catch(e){ return 'auto'; } })(), autoLow:false, low:false, bad:0};
+/* iPhone / iPad Safari runs out of memory on the full effects (filters on animated characters at 3x screens): start them in light mode */
+const GFX_IOS=(()=>{ try{ return /iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1); }catch(e){ return false; } })();
+const GFX={pref:(()=>{ try{ return localStorage.getItem('phd_gfx')||'auto'; }catch(e){ return 'auto'; } })(), autoLow:GFX_IOS, low:false, bad:0};
 function applyGfx(){ GFX.low=GFX.pref==='low'||(GFX.pref==='auto'&&GFX.autoLow); const st=$('#stage'); st.classList.toggle('lowfx',GFX.low);
   if(GFX.low){ st.style.setProperty('--px',0); st.style.setProperty('--py',0); }
   const b=$('#gfxBtn'); if(b) b.textContent='🎨 '+T('gfx')+': '+T('gfx_'+GFX.pref)+(GFX.pref==='auto'?` (${T(GFX.low?'gfx_low':'gfx_high')})`:''); }
-function setGfx(pref){ GFX.pref=pref; try{ localStorage.setItem('phd_gfx',pref); }catch(e){} if(pref==='auto'){ GFX.autoLow=false; GFX.bad=0; } applyGfx(); }
+function setGfx(pref){ GFX.pref=pref; try{ localStorage.setItem('phd_gfx',pref); }catch(e){} if(pref==='auto'){ GFX.autoLow=GFX_IOS; GFX.bad=0; } applyGfx(); }
 function fpsProbe(ms){ return new Promise(res=>{ let n=0; const t0=performance.now(); const f=()=>{ n++; const dt=performance.now()-t0; if(dt<ms) requestAnimationFrame(f); else res(n*1000/dt); }; requestAnimationFrame(f); }); }
 async function gfxWatch(){
   try{ if(navigator.deviceMemory&&navigator.deviceMemory<=2) GFX.autoLow=true; }catch(e){}

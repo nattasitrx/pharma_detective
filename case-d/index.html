@@ -3969,7 +3969,8 @@ function inhSim(dev){
 #isim .fg-tm.hidden{display:none}
 #isim .fg-tm .bar{position:relative;flex:1;height:30px;border-radius:99px;background:#fff;box-shadow:inset 0 0 0 3px #b9e6dc;overflow:hidden}
 #isim .fg-tm .gz{position:absolute;left:0;top:0;bottom:0;background:#9df0c4}
-#isim .fg-tm .gz b{position:absolute;left:8px;top:2px;font-size:16px;color:#0b6b3a}
+#isim .fg-tm .gz b{position:absolute;left:8px;top:2px;font-size:16px;color:#0b6b3a;white-space:nowrap;animation:gzP .55s ease-in-out infinite alternate}
+@keyframes gzP{from{transform:scale(1)}to{transform:scale(1.12)}}
 #isim .fg-tm .mk{position:absolute;top:-4px;bottom:-4px;width:8px;border-radius:4px;background:#13a39a;left:0}
 #isim .is-sum{position:absolute;inset:0;z-index:7;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.9);border-radius:20px}
 #isim .is-sum .card{width:min(760px,92%);background:#fff;border-radius:22px;padding:18px 24px;box-shadow:0 0 0 4px #8c9a3e,0 12px 30px rgba(0,0,0,.2)}
@@ -4013,7 +4014,7 @@ function inhSim(dev){
     host.classList.remove('hidden'); typeof audioDuck==='function'&&audioDuck(1); host.style.animation='none'; void host.offsetWidth; host.style.animation='';
     const svg=$('#simSvg'), devG=$('#simDevG'), fx=$('#simFx'), bench=$('#simBench');
     const MOUTH={x:516,y:296}, SOCK=326, HOME={mdi:{x:250,y:430}, spacer:{x:170,y:250}, resp:{x:250,y:300}}[dev], SP_HOME={x:540,y:480};
-    const WIN=dev==='resp'?2.6:2.0, INHALE=5.0;
+    const WIN=ex?(dev==='resp'?3.4:3.0):(dev==='resp'?4.0:3.5), INHALE=7.0;   // seconds: a slow 7-second breath; the press must land in its first part
     let tries=0, allErrs=[], firstErrs=null, finished=false, raf=0, s, timers=[], hintsN=0, idleT=0;
     const later=(fn,ms)=>{ const t=setTimeout(()=>{ if(!finished) fn(); },ms); timers.push(t); return t; };
     const reset=()=>{ timers.forEach(clearTimeout); timers=[]; cancelAnimationFrame(raf);
@@ -4108,6 +4109,7 @@ function inhSim(dev){
       if(dev==='spacer'&&!s.chamberN){ bub(L(T('press'))); }
       if(s.lungs>.4) err('noOut',1);
       s.inhaling=true; s.pressed=false; s.t0=performance.now(); mark('in'); hint('');
+      if(!ex&&dev!=='spacer') tx('👆 '+L(T('press')));   // the timed moment: say plainly what to do now (no pointing)
       const from=s.lungs, dur=INHALE*(1-from)/.94*1000, tm=$('#simTm'); s.inH&&s.inH.stop(.1); s.inH=sfxLoop('in',{sec:dur/1000}); tm.classList.remove('hidden'); $('#simGz').style.display=(ex||dev==='spacer')?'none':''; $('#simGz').style.width=(WIN/INHALE*100)+'%';
       if(dev==='spacer'&&s.chamberN&&(performance.now()-s.chamber)/1000>5) err('late');
       const f=now=>{ const el=(now-s.t0)/1000, k=Math.min(1,el*1000/dur); s.lungs=from+(1-from)*k; draw(); $('#simMk').style.left=Math.min(100,el/INHALE*100)+'%';

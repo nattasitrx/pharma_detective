@@ -3316,13 +3316,16 @@ function fosaGame(){
       else { C.err('wrongDrink'); bub(L(['配這個不行嗎？','Can\'t I take it with this?','กินกับอันนี้ไม่ได้เหรอ?']),1600); C.later(()=>{ if(!G.swallowed){ G.ml=0; G.kind='water'; glass(); } },1400); } } },45); }
   function swallow(){ if(G.swallowed||G.pouring) return; if(!G.ml) C.err('dry'); else if(G.kind==='bad') C.err('wrongDrink');
     G.swallowed=true; G.doseAt=G.min; doseCard(); consume('fosa'); tile('fosa').classList.add('gone'); G.ml=0; glass(); sfx.gulp(); C.mark('swallow'); bub(L(['好，吞下去了！','Done — swallowed!','กลืนแล้ว!']),1400); C.later(startWait,900); }
-  /* the 30 minutes: she asks for four things (three not allowed, one allowed); the student taps Wait or OK for each */
-  const OKW=new Set(['water','sofa','plants']), SPAN=24000, WIN=C.ex?4000:5000;
+  /* the 30 minutes: she asks for four things (three not allowed, one allowed); the student taps Wait or OK for each.
+     The clock stands still while she is asking (and briefly after), so there is time to read and decide. */
+  const OKW=new Set(['water','sofa','plants']), SPAN=24000, WIN=C.ex?7000:10000, ASK_AT=[2000,7400,12800,18200];
   function startWait(){ G.wait=true; if(!C.ex) C.status=FLOWG.waiting; C.guide(); const rnd=()=>Math.random()-.5;
-    const evs=[...['lie','coffee','food','pills'].sort(rnd).slice(0,3), ['water','sofa','plants'][Math.floor(Math.random()*3)]].sort(rnd), t0=performance.now();
-    const clk=setInterval(()=>{ if(C.finished){ clearInterval(clk); return; } const m=Math.min(60,30+Math.floor((performance.now()-t0)/SPAN*30));
-      if(m!==G.min){ G.min=m; doseCard(); $('#cgTime').textContent=hm(m); sfx.tick(); } if(m>=60){ clearInterval(clk); endWait(); } },200);
-    evs.forEach((ev,i)=>C.later(()=>want(ev),2000+i*5400)); }
+    const evs=[...['lie','coffee','food','pills'].sort(rnd).slice(0,3), ['water','sofa','plants'][Math.floor(Math.random()*3)]].sort(rnd);
+    let last=performance.now(), next=0; G.free=0; G.hold=0;
+    const clk=setInterval(()=>{ if(C.finished){ clearInterval(clk); return; } const now=performance.now(); if(!G.want&&now>=G.hold) G.free+=now-last; last=now;
+      if(next<evs.length&&!G.want&&G.free>=ASK_AT[next]) want(evs[next++]);
+      const m=Math.min(60,30+Math.floor(G.free/SPAN*30));
+      if(m!==G.min){ G.min=m; doseCard(); $('#cgTime').textContent=hm(m); sfx.tick(); } if(m>=60){ clearInterval(clk); endWait(); } },200); }
   const WANT={lie:['好睏喔……我再躺一下就好。','So sleepy… just a little lie-down.','ง่วงจัง… ขอนอนต่อแป๊บนึงนะ'], coffee:['先喝口咖啡提神……','Just a sip of coffee to wake up…','ขอจิบกาแฟให้ตื่นหน่อย…'], food:['肚子好餓，先吃一口饅頭……','I\'m starving — one bite of my bun…','หิวจัง ขอกินซาลาเปาสักคำ…'], pills:['順便把其他藥一起吃一吃……','I\'ll take my other pills while I\'m at it…','กินยาอื่นไปพร้อมกันเลยดีกว่า…'],
     water:['我可以再喝點白開水嗎？','Can I have a bit more plain water?','ขอน้ำเปล่าอีกนิดได้ไหม?'], sofa:['我去沙發坐著看新聞喔。','I\'ll sit on the sofa and watch the news.','ไปนั่งดูข่าวที่โซฟานะ'], plants:['我去陽台澆個花。','I\'ll go and water the plants on the balcony.','ไปรดน้ำต้นไม้ที่ระเบียงนะ']};
   const WICON={lie:'🛏️', coffee:'☕', food:'🥟', pills:'💊', water:'💧', sofa:'🛋️', plants:'🪴'};
@@ -3331,7 +3334,7 @@ function fosaGame(){
     const a=$('#cgAsk'), w=$('#cgWho'); a.dataset.want=ev; a.style.left=(w.offsetLeft-236)+'px'; a.style.top=(w.offsetTop+120)+'px'; a.classList.remove('hidden');
     const b=$('#cgAskT'); b.style.transition='none'; b.style.width='100%'; void b.offsetWidth; b.style.transition=`width ${WIN}ms linear`; b.style.width='0%';
     C.guide(); G.wantT=C.later(()=>resolveWant('timeout'),WIN); }
-  function resolveWant(ch){ const ev=G.want; if(!ev) return; G.want=null; clearTimeout(G.wantT); $('#cgAsk').classList.add('hidden');
+  function resolveWant(ch){ const ev=G.want; if(!ev) return; G.want=null; G.hold=performance.now()+1400; clearTimeout(G.wantT); $('#cgAsk').classList.add('hidden');
     if(ev==='lie'&&ch==='stop'){ $('#cgWho').classList.remove('lying'); art('neutral'); } else if(tile(ev)) tile(ev).classList.remove('want');
     if(OKW.has(ev)){ if(ch==='stop'){ C.err('tooStrict'); bub(L(['咦？連這個也不行嗎……','Oh — not even that?','อ้าว แค่นี้ก็ไม่ได้เหรอ…']),1700); }
       else { sfx.select(); art('happy'); bub(L(ev==='water'?['（喝了幾口白開水）','(sips some plain water)','(จิบน้ำเปล่า)']:['好～','Okay~','โอเค~']),1400); } }

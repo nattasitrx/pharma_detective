@@ -1087,7 +1087,7 @@ const UI = {
   onServer:['結果伺服器','Results server','เซิร์ฟเวอร์รับผล'], onTest:['測試連線','Test connection','ทดสอบการเชื่อมต่อ'], onUp:['連線正常 ✓','Connected ✓','เชื่อมต่อได้ ✓'], onDown:['連不上伺服器','Cannot reach the server','เชื่อมต่อเซิร์ฟเวอร์ไม่ได้'],
   onKey:['教師金鑰','Instructor key','รหัสอาจารย์สำหรับเซิร์ฟเวอร์'], onSave:['儲存','Save','บันทึก'],
   onKeyNote:['每台裝置輸入一次就好，會記在這台裝置上。金鑰和後台密碼不一樣，請不要給學生。','Enter it once per device; it is remembered on this device. It is not the dashboard PIN — never give it to students.','ใส่ครั้งเดียวต่อเครื่อง ระบบจะจำไว้ในเครื่องนี้ รหัสนี้ไม่ใช่รหัสเข้าหน้าอาจารย์ และห้ามให้นักศึกษา'],
-  onPull:['⬇️ 載入最新結果','⬇️ Load latest results','⬇️ โหลดผลล่าสุด'], onPulled:['已載入 {n} 筆紀錄','Loaded {n} records','โหลดแล้ว {n} รายการ'], onBadKey:['教師金鑰不正確','Wrong instructor key','รหัสอาจารย์ไม่ถูกต้อง'], onNoKey:['請先輸入教師金鑰','Enter the instructor key first','กรุณาใส่รหัสอาจารย์ก่อน'],
+  onPull:['⬇️ 載入最新結果','⬇️ Load latest results','⬇️ โหลดผลล่าสุด'], onPulled:['已載入 {n} 筆紀錄','Loaded {n} records','โหลดแล้ว {n} รายการ'], onBadKey:['收結果密碼不正確','The results key is not correct','รหัสรับผลไม่ถูกต้อง'], onNoKey:['請先輸入收結果密碼','Enter the results key first','กรุณาใส่รหัสรับผลก่อน'],
   onLast:['上次載入','Last loaded','โหลดล่าสุด'], onAuto:['之後打開教師後台時會自動載入','After this it loads by itself whenever you open the dashboard','ครั้งต่อไปจะโหลดให้อัตโนมัติเมื่อเปิดหน้าอาจารย์'], onClasses:['班級','Class','ห้อง'], onRecords:['筆','records','รายการ'],
   onLinkH:['給學生的連結','Link for students','ลิงก์สำหรับนักศึกษา'], onCopy:['複製','Copy','คัดลอก'], onCopied:['已複製','Copied','คัดลอกแล้ว'],
   onLinkNote:['輸入班級代碼（英文或數字，例如 ph2026a）就能把各班分開。學生打開連結就能玩，結果會自動歸到這個班。','Type a class code (letters or numbers, e.g. ph2026a) to keep classes apart. Students just open the link and their results are filed under that class.','ใส่รหัสห้อง (ตัวอักษรหรือตัวเลข เช่น ph2026a) เพื่อแยกแต่ละห้อง นักศึกษาเปิดลิงก์แล้วเล่นได้เลย ผลจะเข้าห้องนั้นเอง'],
@@ -2771,7 +2771,7 @@ function initSync(){
 }
 /* ---------- instructor side ---------- */
 const teacherKey=()=>{ try{ return localStorage.getItem(SYNC.KEY)||''; }catch(e){ return SYNC.memKey||''; } };
-function setTeacherKey(k){ k=String(k||'').trim(); SYNC.memKey=k; try{ if(k) localStorage.setItem(SYNC.KEY,k); else localStorage.removeItem(SYNC.KEY); }catch(e){} }
+function setTeacherKey(k){ k=String(k||'').trim(); SYNC.memKey=k; SYNC.badKey=false; try{ if(k) localStorage.setItem(SYNC.KEY,k); else localStorage.removeItem(SYNC.KEY); }catch(e){} }
 async function serverPull(){
   const url=serverURL(), key=teacherKey();
   if(!url) return {ok:false, error:'nourl'}; if(!key) return {ok:false, error:'nokey'};
@@ -2780,12 +2780,12 @@ async function serverPull(){
     let offset=0, got=[], classes={};
     while(offset!=null){
       const r=await fetch(`${url}/api/sessions?after=${encodeURIComponent(offset)}`,{headers:{'X-Teacher-Key':key}, cache:'no-store'});
-      if(r.status===401) return {ok:false, error:'badkey'};
+      if(r.status===401){ SYNC.badKey=true; return {ok:false, error:'badkey'}; }   // the saved key no longer matches (it may have been changed in Cloudflare)
       if(!r.ok) return {ok:false, error:'http'};
       const j=await r.json(); got=got.concat(j.sessions||[]); classes=j.classes||classes; offset=j.next;
     }
     got=got.filter(isMine); got.forEach(s=>{ s.fromServer=true; }); classes={}; got.forEach(s=>{ const c=s.classCode||'main'; classes[c]=(classes[c]||0)+1; });
-    SYNC.remote=got; SYNC.classes=classes; SYNC.pulled=Date.now();
+    SYNC.remote=got; SYNC.classes=classes; SYNC.pulled=Date.now(); SYNC.badKey=false;
     return {ok:true, n:got.length, classes};
   }catch(e){ return {ok:false, error:'net'}; }
   finally{ SYNC.pulling=false; }
@@ -2805,7 +2805,7 @@ async function serverAutoPull(){
   if(!serverURL()||!teacherKey()||SYNC.pulling||Date.now()-SYNC.pulled<60000) return;
   const r=await serverPull();
   if(r.ok){ toast('☁️ '+T('onPulled').replace('{n}',r.n)); if(P.cur==='teacher'&&['tHome','tOnline','tSessions','tClass','tDebrief'].includes(P.tab)) renderPage(); }
-  else if(r.error==='badkey') toast('⚠️ '+T('onBadKey'));
+  else if(r.error==='badkey'){ toast('⚠️ '+T('onBadKey')); if(P.cur==='teacher'&&P.tab==='tHome') renderPage(); }
 }
 function renderOnline(b){
   const url=serverURL(), key=teacherKey(), cls=Object.entries(SYNC.classes||{}).sort((a,c)=>a[0].localeCompare(c[0]));
@@ -2878,7 +2878,7 @@ function mediaPending(){ const lm=mediaStore(), bm=GAME_CFG_BASE.media||{}, flat
   const have=new Set(flat(bm)); return flat(lm).some(x=>!have.has(x)); }
 async function teacherFetch(path, opt){ const url=serverURL(), key=teacherKey(); if(!url) return {ok:false, error:'nourl'}; if(!key) return {ok:false, error:'nokey'};
   try{ const o=Object.assign({cache:'no-store'}, opt||{}); o.headers=Object.assign({'X-Teacher-Key':key}, (opt&&opt.headers)||{});
-    const r=await fetch(url+path, o); if(r.status===401) return {ok:false, error:'badkey'}; if(r.status===413) return {ok:false, error:'big'};
+    const r=await fetch(url+path, o); if(r.status===401){ SYNC.badKey=true; return {ok:false, error:'badkey'}; } if(r.status===413) return {ok:false, error:'big'};
     const j=await r.json().catch(()=>({})); return r.ok&&j.ok?j:{ok:false, error:'http'}; }catch(e){ return {ok:false, error:'net'}; } }
 const serverConfigs=async()=>{ const r=await teacherFetch('/api/configs'); if(r.ok) r.configs=(r.configs||[]).filter(c=>cfgLabel(c.cls)!==null).map(c=>Object.assign({}, c, {key:c.cls, cls:cfgLabel(c.cls)})); return r; };
 const serverPublish=(target,cfg)=>teacherFetch(`/api/config?class=${encodeURIComponent(cfgKey(target))}&note=${encodeURIComponent((cfg.meta&&cfg.meta.note)||'')}`,{method:'PUT', headers:{'Content-Type':'text/plain;charset=UTF-8'}, body:JSON.stringify(cfg)});
@@ -4864,6 +4864,8 @@ const TT={
  goDebrief:['📋 打開課後討論指引','📋 Open the Debrief guide','📋 เปิดคู่มือ Debrief'],
  hMode:['學生玩的模式','Mode students play','โหมดที่นักศึกษาเล่น'], change:['更改','Change','เปลี่ยน'],
  kH:['🔑 先輸入「收結果密碼」','🔑 First, enter the results key','🔑 ใส่ "รหัสรับผล" ก่อน'],
+ kBadH:['🔑 存著的收結果密碼不能用了','🔑 The saved results key no longer works','🔑 รหัสรับผลที่บันทึกไว้ใช้ไม่ได้แล้ว'],
+ kBadNote:['如果剛在 Cloudflare 換了密碼，在這裡輸入新的密碼；每台電腦都要換一次。學生不受影響。','If the key was just changed in Cloudflare, enter the new one here; do this once on each computer. Students are not affected.','ถ้าเพิ่งเปลี่ยนรหัสใน Cloudflare ให้ใส่รหัสใหม่ที่นี่ ทำครั้งเดียวต่อเครื่อง นักศึกษาไม่ได้รับผลกระทบ'],
  kNote:['向設定系統的人索取，每台電腦輸入一次就好。這不是進老師頁的密碼，也不要給學生。','Ask whoever set up the system; enter it once on each computer. It is not the code for this page, and students must never have it.','ขอจากผู้ดูแลระบบ ใส่ครั้งเดียวต่อเครื่อง รหัสนี้ไม่ใช่รหัสเข้าหน้าอาจารย์ และห้ามให้นักศึกษา'],
  offNote:['這份遊戲沒有連到結果伺服器：學生玩完要按「下載我的報告」把檔案交給你，再到「🧰 進階」打開。','This copy is not connected to a results server: students press "Download my report" and send you the file; open it under 🧰 Advanced.','เกมชุดนี้ไม่ได้เชื่อมกับระบบรับผล นักศึกษาต้องกด "ดาวน์โหลดรายงาน" แล้วส่งไฟล์ให้อาจารย์ เปิดไฟล์ได้ที่แท็บ 🧰 ขั้นสูง'],
  /* students */
@@ -5032,7 +5034,7 @@ function renderHome(b){
   const hm=t=>new Date(t).toLocaleString([], {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'}), mode=(edWork().settings||{}).mode;
   b.innerHTML=`<p class="thello">${TX('hHello')}</p>
    ${url?`<div class="tcard st" id="hSt"><b class="tbig">${TX('hCase')}</b><span class="tbig" id="swSt">…</span><button class="sbtn" id="swBtn" disabled>…</button><p class="tn" style="flex-basis:100%;margin:0">${TX('hCaseNote')}</p></div>`:`<div class="tcard key"><p class="tn" style="margin:0">ℹ️ ${TX('offNote')}</p></div>`}
-   ${url&&!key?`<div class="tcard key"><h3>${TX('kH')}</h3><p class="tn">${TX('kNote')}</p><div class="trow"><input class="ein" id="hKey" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="••••••••" style="max-width:300px"><button class="sbtn g" id="hKeySave">${T('onSave')}</button></div></div>`:''}
+   ${url&&(!key||SYNC.badKey)?`<div class="tcard key"><h3>${TX(SYNC.badKey?'kBadH':'kH')}</h3><p class="tn">${TX(SYNC.badKey?'kBadNote':'kNote')}</p><div class="trow"><input class="ein" id="hKey" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="••••••••" style="max-width:300px"><button class="sbtn g" id="hKeySave">${T('onSave')}</button></div></div>`:''}
    <div class="tcard"><h3>${TX('h1')}</h3><p class="tn">${TX('h1Note')}</p>
      <div class="trow"><span>${TX('hCode')}</span><input class="ein" id="hCls" placeholder="ph2026a" style="max-width:180px"></div>
      <div class="trow" style="margin-top:8px"><span class="tlink" id="hLink">${esc(gameLink(''))}</span><button class="sbtn b" id="hCopy">📋 ${T('onCopy')}</button></div>

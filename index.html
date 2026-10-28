@@ -4498,7 +4498,7 @@ function studentCard(s){
     ${pp}
     ${s.refl&&s.refl.length?`<h4>💭 ${T('reflT')}</h4>`+s.refl.map(a=>`<div class="ll free"><b>${esc(a.q)}</b><br>“${esc(a.ans)}”</div>`).join(''):''}
     ${s.custom&&s.custom.list&&s.custom.list.length?`<h4>${TE('tCustom')} (${s.custom.score}/${s.custom.max})</h4>`+s.custom.list.map(a=>`<div class="ll${a.kind==='text'?' free':''}">${a.ok?'✅':a.partial?'🔸':a.kind==='text'&&!a.auto?'📝':'❌'} <b>${esc(a.q)}</b> → “${esc(a.ans)}” <span class="muted">(${a.pts}/${a.max})</span></div>`).join(''):''}
-    <h4>${TX('dMemo')}</h4><div class="ll" style="white-space:pre-wrap">${esc(s.notes&&s.notes.memo||'—')}</div>
+    <h4>${TX('dMemo')}</h4><div class="ll" style="white-space:pre-wrap">${esc(s.notes&&s.notes.memo||'—')}</div>${typeof memoTeacherHTML==='function'?memoTeacherHTML(s):''}
     <details style="margin-top:10px"><summary class="muted">${TX('dRaw')} (${log.length})</summary>${log.map(e=>`<div class="ll">[${fmt(e.t)}] ${esc(JSON.stringify(e))}</div>`).join('')}</details>
     <button class="sbtn r" data-del="${esc(s.id)}" data-nm="${esc(nm)}" style="margin-top:10px">${TX('dDel')}</button></div></details>`;
 }
@@ -4723,6 +4723,185 @@ async function teacherDeepLink(){ let t='';
   if(tok&&tok===String(CONFIG.TEACHER_PIN)) P.teacherOK=true;
   openPage('teacher'); }
 addEventListener('load', ()=>setTimeout(teacherDeepLink, 400));
+/* =====================================================================
+   CASE FILE · 📝 MEMO v2 — the student's own drug notebook
+   💊 Drug notes: for every medicine already seen — quick tags, "what to watch out for", "what else to check or ask"
+   🗂 My groups: the student makes their own groups (by condition, by problem, "ask the doctor") and files drugs in them
+   📝 Free notes: the original free-text memo
+   Only drugs the student has seen are listed (named in evidence already found, or the full list once Chapter 4 opens it),
+   so nothing is given away. Everything lives in S.notes and goes to the instructor with the game.
+   ===================================================================== */
+const MM={
+  mDrugs:['💊 藥物筆記','💊 Drug notes','💊 โน้ตยา'], mGroups:['🗂 我的分組','🗂 My groups','🗂 จัดกลุ่มยา'], mFree:['📝 自由筆記','📝 Free notes','📝 โน้ตอิสระ'],
+  dIntro:['記下每個藥要注意什麼、還要查什麼。這裡只會出現你已經看過的藥。','Note what to watch for with each medicine and what to check next. Only medicines you have already seen are listed.','จดว่ายาแต่ละตัวต้องระวังอะไร และต้องดูประเด็นไหนเพิ่ม ที่นี่จะแสดงเฉพาะยาที่เคยเห็นแล้ว'],
+  dNone:['還沒看到任何藥。找到藥袋之後，藥會出現在這裡；也可以在下面自己新增。','No medicines seen yet. Once you find med bags they appear here — or add one yourself below.','ยังไม่เห็นยาเลย พอเจอซองยาแล้วยาจะขึ้นที่นี่ หรือเพิ่มเองด้านล่างก็ได้'],
+  dMore:['找到更多藥袋，清單會變長。','Find more med bags and the list grows.','เจอซองยาเพิ่ม รายการจะยาวขึ้น'],
+  fWarn:['⚠️ 這個藥要注意什麼？','⚠️ What to watch out for?','⚠️ ยาตัวนี้ต้องระวังอะไร?'],
+  fMore:['🔍 還要查什麼、問什麼？','🔍 What else to check or ask?','🔍 ต้องดูประเด็นไหนเพิ่ม / ถามอะไรอีก?'],
+  phWarn:['例如：腎功能差要減量？會讓血糖太低？','e.g. needs a lower dose for weak kidneys? could push sugar too low?','เช่น ไตไม่ดีต้องลดขนาด? ทำให้น้ำตาลต่ำ?'],
+  phMore:['例如：問他實際怎麼吃、查跟哪個藥重複','e.g. ask how he really takes it; check which drug it duplicates','เช่น ถามว่ากินจริงยังไง ดูว่าซ้ำกับยาตัวไหน'],
+  inGroups:['分組','Groups','กลุ่ม'], noGroup:['（還沒有分組，到「🗂 我的分組」建立）','(no groups yet — make one in 🗂 My groups)','(ยังไม่มีกลุ่ม สร้างได้ที่ "🗂 จัดกลุ่มยา")'],
+  srcL:['來源','Source','แหล่ง'], own:['自己新增','Added by you','เพิ่มเอง'],
+  addOwn:['＋ 自己新增一項（例如保健品、自己買的藥）','+ Add your own (e.g. a supplement or a medicine bought over the counter)','+ เพิ่มเอง (เช่น อาหารเสริม ยาที่ซื้อเอง)'],
+  ownPh:['名稱','Name','ชื่อ'], add:['新增','Add','เพิ่ม'], del:['🗑 刪除','🗑 Delete','🗑 ลบ'], delQ:['刪除這一項和它的筆記？','Delete this item and its notes?','ลบรายการนี้และโน้ตของมัน?'],
+  search:['🔎 搜尋藥名','🔎 Search','🔎 ค้นหาชื่อยา'], fAll:['全部','All','ทั้งหมด'], fNoted:['寫過的','Noted','จดแล้ว'], fTodo:['還沒寫的','Not yet','ยังไม่ได้จด'],
+  gIntro:['自己建立分組，把藥放進去：可以照疾病、照問題，或照「要問醫師的」來分。一個藥可以放在好幾組。','Make your own groups and file drugs in them — by condition, by problem, or "ask the doctor". A drug can sit in several groups.','สร้างกลุ่มเองแล้วใส่ยาลงไป จะแบ่งตามโรค ตามปัญหา หรือ "ต้องถามหมอ" ก็ได้ ยาตัวเดียวอยู่ได้หลายกลุ่ม'],
+  gNew:['新分組的名稱','New group name','ชื่อกลุ่มใหม่'], gCreate:['＋ 建立分組','+ Create group','+ สร้างกลุ่ม'], gIdeas:['快速建立：','Quick start:','สร้างเร็ว:'],
+  gIdea:[['⚠️ 要小心的藥','⚠️ Drugs to watch','⚠️ ยาที่ต้องระวัง'],['❓ 要問醫師／病人','❓ Ask the doctor / patient','❓ ต้องถามหมอ / ผู้ป่วย'],['🔁 可能重複','🔁 Possible duplicates','🔁 อาจซ้ำซ้อน']],
+  gAdd:['＋ 放入…','+ Add…','+ ใส่ยา…'], gEmpty:['還沒有藥','No drugs yet','ยังไม่มียา'], gNote:['這一組要注意什麼？','What to watch for in this group?','กลุ่มนี้ต้องดูอะไร?'],
+  gRename:['✏️ 改名','✏️ Rename','✏️ เปลี่ยนชื่อ'], gDelQ:['刪除這個分組？（藥和筆記不會刪掉）','Delete this group? (The drugs and their notes stay.)','ลบกลุ่มนี้? (ยาและโน้ตยังอยู่)'],
+  gNone:['還沒有分組。先建立一個吧！','No groups yet — make your first one!','ยังไม่มีกลุ่ม สร้างกลุ่มแรกเลย!'],
+  loose:['還沒分組的藥','Not in any group yet','ยาที่ยังไม่ได้จัดกลุ่ม'], loosePick:['點藥名，再選要放進哪一組','Tap a drug, then pick a group','แตะชื่อยา แล้วเลือกกลุ่ม'], allIn:['每個藥都分好組了 👍','Every drug is in a group 👍','จัดกลุ่มครบทุกตัวแล้ว 👍'],
+  to:['放進','Put in','ใส่ใน'], cancel:['取消','Cancel','ยกเลิก'], toDrug:['看筆記','Notes','ดูโน้ต'],
+  tDrugNotes:['藥物筆記與分組','Drug notes & groups','โน้ตยาและการจัดกลุ่ม'],
+};
+/* quick tags: the student's own judgement, never marked right or wrong */
+const MTAGS=[['warn',['⚠️ 要小心','⚠️ Caution','⚠️ ต้องระวัง']],['dup',['🔁 重複','🔁 Duplicate','🔁 ซ้ำซ้อน']],['ddi',['💥 交互作用','💥 Interaction','💥 ยาตีกัน']],
+  ['kid',['🫘 腎功能／劑量','🫘 Kidney / dose','🫘 ไต / ขนาดยา']],['use',['❔ 用法不對','❔ Used wrongly','❔ ใช้ไม่ถูก']],['ask',['❓ 要再問','❓ Ask more','❓ ถามเพิ่ม']],
+  ['stop',['✋ 可能不需要','✋ Maybe not needed','✋ อาจไม่จำเป็น']],['ok',['✅ 沒問題','✅ Looks fine','✅ ดูโอเค']]];
+const MTAG=Object.fromEntries(MTAGS);
+const MX=k=>L(MM[k]);
+const M={sub:'drugs', q:'', filter:'all', open:new Set(), pick:null};
+function memoData(){ const n=S.notes||(S.notes={}); n.drugs=n.drugs||{}; n.groups=n.groups||[]; n.own=n.own||[]; return n; }
+/* a medicine counts as seen once a found piece of evidence names it (brand or generic), or when the full list opens in Chapter 4 */
+function memoItems(){ const n=memoData();
+  const evTxt=(S.evidence||[]).map(k=>{ const it=ITEMS[k]; return it?JSON.stringify([it.n,it.d]).toLowerCase():''; }).join(' ');
+  const keys=d=>[String(d.n||'').split(/[ 㐀-鿿]/)[0], String(d.g||'').split(/[ +\/]/)[0]].filter(x=>x&&x.length>3).map(x=>x.toLowerCase());
+  const seen=DRUGS.filter(d=>S.medsSeen||n.drugs[d.id]||n.groups.some(g=>g.ids.includes(d.id))||keys(d).some(k=>evTxt.includes(k)));
+  return seen.map(d=>Object.assign({}, d)).concat(n.own.map(o=>({id:o.id, n:o.n, own:true}))); }
+const memoNote=id=>{ const n=memoData(); return n.drugs[id]||(n.drugs[id]={tags:[], warn:'', more:''}); };
+const memoHas=id=>{ const x=memoData().drugs[id]; return !!(x&&((x.tags||[]).length||String(x.warn||'').trim()||String(x.more||'').trim())); };
+const memoSave=()=>{ if(typeof saveSession==='function') saveSession(); };
+function memoCss(){ if($('#memoCss')) return; const st=document.createElement('style'); st.id='memoCss'; st.textContent=`
+#pBody .msub{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+#pBody .msub button{padding:7px 16px;border-radius:99px;font-weight:800;font-size:15px;background:#f1eef8;color:#4a3a6a}
+#pBody .msub button.on{background:#5a3fd6;color:#fff}
+#pBody .mintro{color:#5a5070;font-size:14.5px;line-height:1.5;margin:0 0 10px}
+#pBody .mbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}
+#pBody .mbar .ein{max-width:220px}
+#pBody .mbar .fb{padding:5px 12px;border-radius:99px;font-weight:700;font-size:13.5px;background:#f6f3fc;color:#5a4a7a}
+#pBody .mbar .fb.on{background:#2a1a6a;color:#fff}
+#pBody details.mdc{border-radius:16px;background:#fff;box-shadow:inset 0 0 0 2px #eadcf5;margin-bottom:8px}
+#pBody details.mdc[open]{box-shadow:inset 0 0 0 2px #b9a6ef}
+#pBody details.mdc>summary{list-style:none;cursor:pointer;padding:8px 12px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#pBody details.mdc>summary::-webkit-details-marker{display:none}
+#pBody .mdc .th{width:44px;height:44px;object-fit:cover;border-radius:8px;flex:none;background:#f4f1fa}
+#pBody .mdc .th.own{display:flex;align-items:center;justify-content:center;font-size:24px}
+#pBody .mdc .nm{font-weight:900;color:#2a1a4a;font-size:16px}
+#pBody .mdc .gn{color:#7a7090;font-size:13px}
+#pBody .mdc .tg{display:flex;gap:4px;flex-wrap:wrap}
+#pBody .mdc .tg span,#pBody .mchip{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12.5px;font-weight:800;background:#fff1d6;color:#7a4b00}
+#pBody .mdc .gp span,#pBody .mgchip{display:inline-block;padding:2px 9px;border-radius:99px;font-size:12.5px;font-weight:800;background:#e8f1ff;color:#1f4a9a}
+#pBody .mdc .pv{flex-basis:100%;color:#5a5070;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:54px}
+#pBody .mdc .in{padding:0 14px 12px}
+#pBody .mdc .meta{color:#5a5070;font-size:13.5px;margin-bottom:8px}
+#pBody .mtags{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 10px}
+#pBody .mtags button{padding:5px 11px;border-radius:99px;font-weight:700;font-size:13.5px;background:#f6f3fc;color:#5a4a7a;box-shadow:inset 0 0 0 2px #e6dff5}
+#pBody .mtags button.on{background:#fff1d6;color:#7a4b00;box-shadow:inset 0 0 0 2px #ffcf73}
+#pBody .mlab{display:block;font-weight:800;color:#3a2a6a;font-size:14.5px;margin:6px 0 4px}
+#pBody .mdc textarea.ein{min-height:54px}
+#pBody .mgrp{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-top:8px}
+#pBody .mgrp button{padding:4px 11px;border-radius:99px;font-weight:700;font-size:13px;background:#f3f7ff;color:#3a5a9a;box-shadow:inset 0 0 0 2px #d6e4ff}
+#pBody .mgrp button.on{background:#2f6be0;color:#fff;box-shadow:none}
+#pBody .mown{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+#pBody .mown .ein{max-width:260px}
+#pBody .mgbox{border-radius:16px;background:#f7faff;box-shadow:inset 0 0 0 2px #d6e4ff;padding:10px 12px;margin-bottom:10px}
+#pBody .mgbox h4{margin:0;font-size:16.5px;color:#1f3a7a;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+#pBody .mgbox h4 .sp{flex:1}
+#pBody .mgbox .mem{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+#pBody .mgbox .mem .dchip{display:inline-flex;align-items:center;gap:4px;padding:4px 6px 4px 11px;border-radius:99px;background:#fff;box-shadow:inset 0 0 0 2px #cfdcf5;font-weight:800;font-size:13.5px;color:#2a1a4a}
+#pBody .mgbox .mem .dchip i{font-style:normal;font-size:12px;color:#a06a00}
+#pBody .mgbox .mem .dchip button{width:22px;height:22px;border-radius:50%;background:#eef2fb;color:#5a6a8a;font-size:12px;line-height:22px;padding:0}
+#pBody .mgbox select{max-width:240px}
+#pBody .mloose{border-radius:16px;background:#fffaf0;box-shadow:inset 0 0 0 2px #ffe3a8;padding:10px 12px}
+#pBody .mloose .dl{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+#pBody .mloose .dl button{padding:5px 12px;border-radius:99px;font-weight:800;font-size:13.5px;background:#fff;color:#2a1a4a;box-shadow:inset 0 0 0 2px #f1d79a}
+#pBody .mloose .dl button.on{background:#2a1a6a;color:#fff;box-shadow:none}
+#pBody .mloose .to{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;align-items:center}
+#pBody .mloose .to button{padding:5px 12px;border-radius:99px;font-weight:800;font-size:13.5px;background:#2f6be0;color:#fff}
+#pBody .mloose .to button.x{background:#eee;color:#555}
+#pBody .mideas{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:4px 0 12px;font-size:13.5px;color:#5a5070}
+#pBody .mideas button{padding:4px 11px;border-radius:99px;font-weight:700;font-size:13px;background:#f1eef8;color:#4a3a6a}
+#pBody textarea.memo{min-height:240px}
+`; document.head.appendChild(st); }
+function renderMemo(b){ memoCss(); memoData(); const keep=b.scrollTop;
+  b.innerHTML=`<div class="msub">${['drugs','groups','free'].map(k=>`<button data-ms="${k}" class="${M.sub===k?'on':''}">${MX(k==='drugs'?'mDrugs':k==='groups'?'mGroups':'mFree')}</button>`).join('')}</div><div id="mBody"></div>`;
+  b.querySelectorAll('[data-ms]').forEach(x=>x.onclick=()=>{ M.sub=x.dataset.ms; M.pick=null; sfx.click(); renderMemo(b); b.scrollTop=0; });
+  const host=$('#mBody'); (M.sub==='groups'?memoGroups:M.sub==='free'?memoFree:memoDrugList)(host, b);
+  b.scrollTop=keep; }
+/* 💊 drug notes */
+function memoDrugList(host, b){ const n=memoData(), all=memoItems(), q=M.q.trim().toLowerCase();
+  const list=all.filter(d=>(!q||(d.n+' '+(d.g||'')).toLowerCase().includes(q))&&(M.filter==='all'||(M.filter==='noted')===memoHas(d.id)));
+  const gName=id=>n.groups.filter(g=>g.ids.includes(id)).map(g=>g.name);
+  const card=d=>{ const x=n.drugs[d.id]||{tags:[], warn:'', more:''}, gs=gName(d.id), pv=[x.warn,x.more].map(s=>String(s||'').trim()).filter(Boolean).join(' · ');
+    return `<details class="mdc" data-id="${esc(d.id)}" ${M.open.has(d.id)?'open':''}><summary>
+      ${d.own?`<span class="th own">📝</span>`:`<img class="th" src="${IMG[d.img]||''}" alt="" data-mz="1">`}
+      <span><span class="nm">${esc(d.n)}</span>${d.g?` <span class="gn">${esc(d.g)}</span>`:''}${d.own?` <span class="gn">· ${MX('own')}</span>`:''}</span>
+      <span class="tg">${(x.tags||[]).map(t=>MTAG[t]?`<span>${esc(L(MTAG[t]))}</span>`:'').join('')}</span>
+      <span class="gp">${gs.map(g=>`<span>🗂 ${esc(g)}</span>`).join(' ')}</span>${pv?`<span class="pv">✎ ${esc(pv)}</span>`:''}</summary>
+      <div class="in">${d.own?'':`<div class="meta">${d.sig?esc(L(d.sig)):''}${d.src&&typeof SRC!=='undefined'&&SRC[d.src]?` · ${MX('srcL')}: ${esc(L(SRC[d.src]))}`:''}${d.cls&&S.medsSeen?` · ${esc(L(d.cls))}`:''}</div>`}
+        <div class="mtags">${MTAGS.map(([k,t])=>`<button data-tag="${k}" class="${(x.tags||[]).includes(k)?'on':''}">${esc(L(t))}</button>`).join('')}</div>
+        <label class="mlab">${MX('fWarn')}</label><textarea class="ein" data-f="warn" placeholder="${esc(MX('phWarn'))}">${esc(x.warn||'')}</textarea>
+        <label class="mlab">${MX('fMore')}</label><textarea class="ein" data-f="more" placeholder="${esc(MX('phMore'))}">${esc(x.more||'')}</textarea>
+        <div class="mgrp"><b>🗂 ${MX('inGroups')}:</b> ${n.groups.length?n.groups.map(g=>`<button data-gt="${esc(g.id)}" class="${g.ids.includes(d.id)?'on':''}">${esc(g.name)}</button>`).join(''):`<span class="muted">${MX('noGroup')}</span>`}</div>
+        ${d.own?`<div class="mown"><button class="sbtn" data-del="1">${MX('del')}</button></div>`:''}</div></details>`; };
+  host.innerHTML=`<p class="mintro">${MX('dIntro')}</p>
+    <div class="mbar"><input class="ein" id="mQ" placeholder="${esc(MX('search'))}" value="${esc(M.q)}">${['all','noted','todo'].map(k=>`<button class="fb ${M.filter===k?'on':''}" data-mf="${k}">${MX(k==='all'?'fAll':k==='noted'?'fNoted':'fTodo')}</button>`).join('')}</div>
+    <div id="mList">${all.length?list.map(card).join('')||`<p class="muted">—</p>`:`<p class="mintro">${MX('dNone')}</p>`}</div>
+    ${!S.medsSeen&&all.length?`<p class="muted" style="margin:4px 2px 0">${MX('dMore')}</p>`:''}
+    <div class="mown"><input class="ein" id="mOwn" placeholder="${esc(MX('ownPh'))}" maxlength="60"><button class="sbtn" id="mOwnAdd">${MX('addOwn')}</button></div>`;
+  $('#mQ').oninput=e=>{ M.q=e.target.value; const pos=e.target.selectionStart; memoDrugList(host,b); const i=$('#mQ'); i.focus(); try{ i.setSelectionRange(pos,pos); }catch(_){} };
+  host.querySelectorAll('[data-mf]').forEach(x=>x.onclick=()=>{ M.filter=x.dataset.mf; sfx.click(); memoDrugList(host,b); });
+  host.querySelectorAll('details.mdc').forEach(el=>{ const id=el.dataset.id;
+    el.addEventListener('toggle',()=>{ if(el.open) M.open.add(id); else M.open.delete(id); });
+    const im=el.querySelector('img[data-mz]'); if(im) im.onclick=e=>{ e.preventDefault(); e.stopPropagation(); if(typeof zoomImg==='function') zoomImg(im.src); };
+    el.querySelectorAll('[data-tag]').forEach(t=>t.onclick=()=>{ const x=memoNote(id), k=t.dataset.tag; x.tags=x.tags.includes(k)?x.tags.filter(y=>y!==k):x.tags.concat(k); sfx.click(); memoSave(); M.open.add(id); memoDrugList(host,b); });
+    el.querySelectorAll('textarea[data-f]').forEach(ta=>ta.oninput=()=>{ memoNote(id)[ta.dataset.f]=ta.value; memoSave(); });
+    el.querySelectorAll('[data-gt]').forEach(t=>t.onclick=()=>{ const g=memoData().groups.find(y=>y.id===t.dataset.gt); if(!g) return; g.ids=g.ids.includes(id)?g.ids.filter(y=>y!==id):g.ids.concat(id); sfx.click(); memoSave(); M.open.add(id); memoDrugList(host,b); });
+    const del=el.querySelector('[data-del]'); if(del) del.onclick=()=>memoAsk(MX('delQ'), MX('del'), ()=>{ const n=memoData(); n.own=n.own.filter(o=>o.id!==id); delete n.drugs[id]; n.groups.forEach(g=>g.ids=g.ids.filter(y=>y!==id)); memoSave(); memoRe(); }); });
+  const addOwn=()=>{ const v=$('#mOwn').value.trim().slice(0,60); if(!v) { $('#mOwn').focus(); return; } const n=memoData(), id='own'+Date.now().toString(36); n.own.push({id, n:v}); M.open.add(id); sfx.select(); memoSave(); memoDrugList(host,b); };
+  $('#mOwnAdd').onclick=addOwn; $('#mOwn').onkeydown=e=>{ if(e.key==='Enter') addOwn(); };
+}
+/* in-game dialogs (no browser pop-ups) */
+const memoRe=()=>{ if(P.cur==='case'&&P.tab==='tMemo') renderMemo($('#pBody')); };
+const memoAsk=(msg, yes, fn)=>showModal(`<h3>${esc(msg)}</h3>`,[{t:yes, cls:'r', fn},{t:T('cancel'), cls:''}]);
+/* 🗂 my groups */
+function memoGroups(host, b){ const n=memoData(), all=memoItems(), byId=Object.fromEntries(all.map(d=>[d.id,d]));
+  const loose=all.filter(d=>!n.groups.some(g=>g.ids.includes(d.id)));
+  const tagsOf=id=>((n.drugs[id]||{}).tags||[]).map(t=>MTAG[t]?L(MTAG[t]).split(' ')[0]:'').join('');
+  host.innerHTML=`<p class="mintro">${MX('gIntro')}</p>
+    <div class="mbar"><input class="ein" id="gNew" placeholder="${esc(MX('gNew'))}" maxlength="40"><button class="sbtn" id="gMake" style="background:#2f6be0;color:#fff">${MX('gCreate')}</button></div>
+    <div class="mideas">${MX('gIdeas')} ${MM.gIdea.map((g,i)=>`<button data-gi="${i}">${esc(L(g))}</button>`).join('')}</div>
+    ${n.groups.length?n.groups.map(g=>`<div class="mgbox" data-g="${esc(g.id)}"><h4>🗂 <span>${esc(g.name)}</span><span class="sp"></span><button class="sbtn" data-gren="1">${MX('gRename')}</button><button class="sbtn" data-gdel="1">${MX('del')}</button></h4>
+      <div class="mem">${g.ids.filter(id=>byId[id]).map(id=>`<span class="dchip">${esc(byId[id].n)} <i>${tagsOf(id)}</i><button data-gout="${esc(id)}" aria-label="remove">✕</button></span>`).join('')||`<span class="muted">${MX('gEmpty')}</span>`}</div>
+      <div class="mbar" style="margin-bottom:6px"><select class="ein" data-gadd="1"><option value="">${MX('gAdd')}</option>${all.filter(d=>!g.ids.includes(d.id)).map(d=>`<option value="${esc(d.id)}">${esc(d.n)}</option>`).join('')}</select></div>
+      <textarea class="ein" data-gnote="1" placeholder="${esc(MX('gNote'))}">${esc(g.note||'')}</textarea></div>`).join(''):`<p class="mintro">${MX('gNone')}</p>`}
+    ${all.length?`<div class="mloose"><b>${MX('loose')}</b> <span class="muted">· ${loose.length?MX('loosePick'):MX('allIn')}</span>
+      <div class="dl">${loose.map(d=>`<button data-lp="${esc(d.id)}" class="${M.pick===d.id?'on':''}">${esc(d.n)}</button>`).join('')}</div>
+      ${M.pick&&byId[M.pick]&&n.groups.length?`<div class="to"><b>${MX('to')}:</b> ${n.groups.map(g=>`<button data-lto="${esc(g.id)}">${esc(g.name)}</button>`).join('')}<button class="x" data-lx="1">${MX('cancel')}</button></div>`:''}</div>`:''}`;
+  const make=name=>{ name=String(name||'').trim().slice(0,40); if(!name) return false; n.groups.push({id:'g'+Date.now().toString(36)+n.groups.length, name, ids:[], note:''}); sfx.select(); memoSave(); memoGroups(host,b); return true; };
+  $('#gMake').onclick=()=>{ if(!make($('#gNew').value)) $('#gNew').focus(); }; $('#gNew').onkeydown=e=>{ if(e.key==='Enter') $('#gMake').click(); };
+  host.querySelectorAll('[data-gi]').forEach(x=>x.onclick=()=>make(L(MM.gIdea[+x.dataset.gi])));
+  host.querySelectorAll('.mgbox').forEach(box=>{ const g=n.groups.find(y=>y.id===box.dataset.g); if(!g) return;
+    box.querySelector('[data-gren]').onclick=()=>{ showModal(`<h3>${MX('gRename')}</h3><input class="ein" id="gRenIn" maxlength="40" value="${esc(g.name)}" style="font-size:18px">`,[{t:T('ok'), keep:true, fn:c=>{ const v=c.querySelector('#gRenIn').value.trim().slice(0,40); if(!v) return; g.name=v; memoSave(); MQ.length=0; nextModal(); memoRe(); }},{t:T('cancel'), cls:''}]); setTimeout(()=>{ const i=$('#gRenIn'); if(i){ i.focus(); i.select(); i.onkeydown=e=>{ if(e.key==='Enter') $('#mCard [data-mb="0"]').click(); }; } },60); };
+    box.querySelector('[data-gdel]').onclick=()=>memoAsk(MX('gDelQ'), MX('del'), ()=>{ n.groups=n.groups.filter(y=>y!==g); memoSave(); memoRe(); });
+    box.querySelectorAll('[data-gout]').forEach(x=>x.onclick=()=>{ g.ids=g.ids.filter(y=>y!==x.dataset.gout); sfx.click(); memoSave(); memoGroups(host,b); });
+    box.querySelector('[data-gadd]').onchange=e=>{ const v=e.target.value; if(v&&!g.ids.includes(v)){ g.ids.push(v); sfx.click(); memoSave(); memoGroups(host,b); } };
+    box.querySelector('[data-gnote]').oninput=e=>{ g.note=e.target.value; memoSave(); }; });
+  host.querySelectorAll('[data-lp]').forEach(x=>x.onclick=()=>{ if(!n.groups.length){ toast('🗂 '+MX('gNone')); $('#gNew').focus(); return; } M.pick=M.pick===x.dataset.lp?null:x.dataset.lp; sfx.click(); memoGroups(host,b); });
+  host.querySelectorAll('[data-lto]').forEach(x=>x.onclick=()=>{ const g=n.groups.find(y=>y.id===x.dataset.lto); if(g&&M.pick&&!g.ids.includes(M.pick)) g.ids.push(M.pick); M.pick=null; sfx.select(); memoSave(); memoGroups(host,b); });
+  const lx=host.querySelector('[data-lx]'); if(lx) lx.onclick=()=>{ M.pick=null; memoGroups(host,b); };
+}
+/* 📝 free notes (the original memo) */
+function memoFree(host){ host.innerHTML=`<textarea class="memo" id="memo" placeholder="${T('memoPh')}">${esc(S.notes.memo||'')}</textarea>`; $('#memo').oninput=e=>{ S.notes.memo=e.target.value; memoSave(); }; }
+{ const f=renderCase; renderCase=function(b){ if(P.tab==='tMemo') return renderMemo(b); return f(b); }; }
+/* for the instructor: the student's drug notes and groups, read-only */
+function memoTeacherHTML(s){ const n=s&&s.notes||{}, dn=n.drugs||{}, groups=n.groups||[], own=n.own||[];
+  const name=id=>{ const d=DRUGS.find(x=>x.id===id); if(d) return d.n; const o=own.find(x=>x.id===id); return o?o.n:id; };
+  const rows=Object.entries(dn).filter(([id,x])=>x&&((x.tags||[]).length||String(x.warn||'').trim()||String(x.more||'').trim()));
+  if(!rows.length&&!groups.length) return '';
+  return `<h4>💊 ${esc(MX('tDrugNotes'))}</h4>${rows.map(([id,x])=>`<div class="ll"><b>${esc(name(id))}</b> ${(x.tags||[]).map(t=>MTAG[t]?`<span class="chip">${esc(L(MTAG[t]))}</span>`:'').join(' ')}${String(x.warn||'').trim()?`<br>⚠️ ${esc(x.warn)}`:''}${String(x.more||'').trim()?`<br>🔍 ${esc(x.more)}`:''}</div>`).join('')}
+    ${groups.map(g=>`<div class="ll">🗂 <b>${esc(g.name)}</b>: ${g.ids.map(name).map(esc).join(', ')||'—'}${String(g.note||'').trim()?` — ${esc(g.note)}`:''}</div>`).join('')}`; }
 /* =====================================================================
    PAGES (outside the stage): case file · settings · instructor dashboard
    ===================================================================== */

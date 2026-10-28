@@ -3317,7 +3317,7 @@ async function chapter1(){
   show('chen','C','think'); await introCard('chen'); show('me','L','neutral'); emo('chen','think');
   await say('sys','neutral',['房間只有五坪：一張床、一張小方桌、一個牆上的層架，角落是小小的煮食區。李伯伯穿著汗濕的白色汗衫坐在床邊，搖著蒲扇，收音機裡唱著京劇，還沒注意到你們。門後掛著一大袋醫院藥袋，小方桌上也堆著藥……','The room is barely 16 square metres: one bed, a little square table, a wall shelf and a tiny cooking corner. Uncle Lee sits on the edge of the bed in a sweat-soaked white undershirt, waving a palm-leaf fan, Peking opera crackling from the radio — he hasn\'t noticed you yet. A big bag of hospital medicines hangs behind the door, and more pills are piled on the little table…','ห้องกว้างแค่ราว 16 ตารางเมตร: เตียงหนึ่งหลัง โต๊ะสี่เหลี่ยมเล็กๆ ชั้นวางติดผนัง และมุมทำอาหารเล็กๆ ลุงหลี่ใส่เสื้อกล้ามขาวเปียกเหงื่อ นั่งอยู่ที่ขอบเตียง โบกพัดใบลาน วิทยุเปิดงิ้วปักกิ่ง ยังไม่ทันเห็นพวกคุณ หลังประตูแขวนถุงยาโรงพยาบาลใบใหญ่ บนโต๊ะเล็กก็มียากองอยู่…']);
   await say('pilly','think',['進到病人家裡的第一步很重要！你會先做什麼？','Your first move inside a patient\'s home matters! What do you do first?','ก้าวแรกในบ้านผู้ป่วยสำคัญมาก! คุณจะทำอะไรก่อน?']);
-  await firstMove();
+  await part('fm', firstMove);
   await say('chen','happy',['政府還派藥師爬四層樓來看我這個老兵，好，好啊！醫生每次講兩句就叫下一號，從來沒人跟我解釋過。','The government sending pharmacists up four flights of stairs to see an old soldier — good, very good! The doctors say two sentences and call the next number; nobody ever explains anything to me.','รัฐบาลส่งเภสัชกรปีนบันไดสี่ชั้นมาเยี่ยมทหารแก่อย่างลุง ดี ดีมาก! หมอพูดสองคำก็เรียกคิวถัดไปแล้ว ไม่เคยมีใครอธิบายอะไรให้ลุงฟังเลย']);
   await say('chen','sad',['不過……藥一天吃一大把，人還是頭暈、沒力氣，痰一直咳不完……（他嘆了口氣，拍了拍膝蓋）','But… I swallow a fistful of pills every day and I\'m still dizzy, weak, and the phlegm never stops… (he sighs and pats his knees)','แต่… กินยาวันละกำมือ ก็ยังเวียนหัว ไม่มีแรง เสมหะก็ไอไม่หมดสักที… (ลุงถอนหายใจแล้วตบเข่าเบาๆ)']);
   if(!CH.wife) show('wife','R','sad');
@@ -3325,9 +3325,9 @@ async function chapter1(){
   hide('wife');
   await say('pilly','happy',EXAM()?['提問時間！✨ 點「提問卡」或用自己的話問。','Question time! ✨ Pick a question card or ask in your own words.','ได้เวลาถาม! ✨ เลือกการ์ดคำถามหรือพิมพ์ถามเอง']:['提問時間！✨ 點「提問卡」或用自己的話問。目標：找出這一章的 5 個問題！','Question time! ✨ Pick a question card or ask in your own words. Goal: uncover 5 problems in this chapter!','ได้เวลาถาม! ✨ เลือกการ์ดคำถามหรือพิมพ์ถามเอง เป้าหมาย: หาปัญหา 5 ข้อในบทนี้!']);
   await say('pilly','think',['不過李伯伯 88 歲了，天氣又熱，☕ 耐心有限——沒辦法全部問完！問了某些題目還會冒出「追問」卡；有些事卡片上沒有，要你自己想到、打字問。','But Uncle Lee is 88 and it\'s hot, so his ☕ patience is limited — you can\'t ask everything! Some answers unlock "follow-up" cards, and some things aren\'t on any card: you\'ll have to think of them and type the question yourself.','แต่ลุงหลี่อายุ 88 แล้ว อากาศก็ร้อน ☕ ความอดทนมีจำกัด — ถามได้ไม่หมดทุกข้อ! บางคำตอบจะปลดล็อกการ์ด "ถามต่อ" และบางเรื่องไม่มีในการ์ด ต้องคิดเองแล้วพิมพ์ถาม']);
-  let announced=false;
+  let announced=!!S.fl.c1ann;
   while(true){
-    if(S.visit<=0) break;
+    resumePoint(); if(S.visit<=0) break;
     hideText(); pillyHide(); if(CH.wife) hide('wife'); emo('chen','neutral'); focusSpeaker('none');
     const a=await boardAction(); $('#board').classList.add('hidden');
     if(a.type==='next'){ if(await confirmEndAsk()) break; continue; }
@@ -3348,7 +3348,7 @@ async function chapter1(){
     patSpend(cost); hud();
     if(FOLLOW1.filter(f=>S.asked[f.parent]).length>before) toast('↪ '+T('fuTag')+' +1');
     if(S.questions===3&&!S.asked.cough){ S.asked.cough=1; await coughEvent(); }
-    if(!EXAM()&&!announced&&CH1_NEED.every(p=>S.found[p])){ announced=true; await say('pilly','happy',['第一章的 5 個線索全部到手！可以「前往搜查」，也可以再多問幾題喔～','All 5 Chapter-1 clues collected! You can "Go search" now, or keep asking~','ได้เบาะแสบทที่ 1 ครบ 5 ข้อแล้ว! จะ "ไปค้นบ้าน" เลย หรือถามต่อก็ได้~']); }
+    if(!EXAM()&&!announced&&CH1_NEED.every(p=>S.found[p])){ announced=true; S.fl.c1ann=1; await say('pilly','happy',['第一章的 5 個線索全部到手！可以「前往搜查」，也可以再多問幾題喔～','All 5 Chapter-1 clues collected! You can "Go search" now, or keep asking~','ได้เบาะแสบทที่ 1 ครบ 5 ข้อแล้ว! จะ "ไปค้นบ้าน" เลย หรือถามต่อก็ได้~']); }
     if(S.pat>0&&S.pat<=3&&!S.fl.patWarn){ S.fl.patWarn=1; toast('☕ '+T('patLow')); await say('sys','neutral',['（李伯伯打了個大哈欠，手上的蒲扇越搖越慢。）','(Uncle Lee lets out a huge yawn; the palm-leaf fan in his hand slows down.)','(ลุงหลี่หาวยาวๆ พัดใบลานในมือโบกช้าลงเรื่อยๆ)']); }
     if(S.pat<=0){ emo('chen','sad'); await say('chen','sad',['唉……老了，講沒幾句就累。讓我躺一下好不好？你們要看就在房間裡看看吧，別踩到小黑就好。','Sigh… I\'m old — a few words and I\'m worn out. Let me lie down for a bit, alright? Have a look around the room if you like — just don\'t step on Blackie.','เฮ้อ… แก่แล้ว คุยไม่กี่คำก็เหนื่อย ขอลุงนอนพักหน่อยได้ไหม? จะดูอะไรในห้องก็ดูได้เลย แค่อย่าเหยียบเจ้าดำก็พอ']);
       S.fl.patOut=1; logEvent({type:'patienceOut', found:CH1_NEED.filter(p=>S.found[p])});
@@ -3414,7 +3414,7 @@ async function onHotspot(id, ev){
       if(KEY_ITEMS.every(hasEv)&&!S.asked.allkeys){ S.asked.allkeys=1; toast('⭐ '+L(['7 個關鍵證物全部到手！可以結束搜查了','All 7 key items found! You can finish the search','ได้หลักฐานสำคัญครบ 7 ชิ้นแล้ว! จบการค้นได้'])); } }
     else stagePop('✓ '+L(it.n),x,y-20); }
   else stagePop(L(hs.t),x,y-20);
-  sparkHint(); updSearchHud();
+  sparkHint(); updSearchHud(); saveMid();
   if(S.visit<=0&&D.searchStop){ D.searchStop(); return; }
   if(S.charges<=0&&!KEY_ITEMS.every(hasEv)) toast('🔍 '+(EXAM()?L(['放大鏡用完了！搜查結束。','Out of magnifier charges — the search is over.','แว่นขยายหมดแล้ว — การค้นจบลง']):L(['放大鏡用完了！按「超級放大鏡」補充並顯示線索','Out of charges! Use the Super magnifier to refill and reveal clues','แว่นขยายหมด! กด "แว่นขยายพิเศษ" เพื่อเติมและดูเบาะแส'])));
 }
@@ -3428,14 +3428,14 @@ async function chapter2(){
   await say('pilly','happy',EXAM()?['點家具可以「靠近調查」。關鍵證物有 7 個，放大鏡只有 16 次——每次也會花 1 分鐘，用完就結束搜查！','Click furniture to take a closer look. There are 7 key items and only 16 magnifier charges — each costs 1 minute, and when they run out the search ends!','คลิกเฟอร์นิเจอร์เพื่อเข้าไปดูใกล้ๆ มีหลักฐานสำคัญ 7 ชิ้น แว่นขยายใช้ได้ 16 ครั้ง ครั้งละ 1 นาที หมดแล้วการค้นจะจบ!']:['點家具可以「靠近調查」！用手電筒找找發光的地方 ✨ 關鍵證物有 7 個，放大鏡只有 16 次——每次也會花 1 分鐘喔！','Click furniture to take a closer look! Use the flashlight and watch for glints ✨ There are 7 key items and only 16 magnifier charges — each costs 1 minute!','คลิกเฟอร์นิเจอร์เพื่อเข้าไปดูใกล้ๆ! ส่องไฟฉายหาจุดที่มีประกาย ✨ มีหลักฐานสำคัญ 7 ชิ้น แว่นขยายใช้ได้ 16 ครั้ง ครั้งละ 1 นาที!']);
   if(S.hintSpots.length) await say('pilly','smug',[`剛剛訪談時，李伯伯和阿梅提到了 ${S.hintSpots.length} 個地方——我用 📌 標起來了！問得好就有回報～`,`During the interview, Uncle Lee and Ah-Mei mentioned ${S.hintSpots.length} places — I've marked them with 📌! Good questions pay off~`,`ตอนสัมภาษณ์ ลุงกับพี่เหมยพูดถึง ${S.hintSpots.length} จุด — พิลลี่ปัก 📌 ไว้ให้แล้ว! ถามดีก็ได้รางวัล~`]);
   hideAll(); hideText();
-  const st=$('#stage'); st.classList.add('searching','overview'); $('#searchHud').classList.remove('hidden'); updSearchHud(); toast('🔦 '+T('zoomHint'));
+  resumePoint(); const st=$('#stage'); st.classList.add('searching','overview'); $('#searchHud').classList.remove('hidden'); updSearchHud(); toast('🔦 '+T('zoomHint'));
   Object.keys(S.opened).forEach(id=>{ const g=hsEl(id); if(g) g.classList.add('open'); });
   const gl=setInterval(glintTick, 2600); sparkHint();
   await new Promise(res=>{
     D.searchStop=()=>{ D.searchStop=null; $('#bg').onclick=null; res(); };
     const bg=$('#bg'); bg.onclick=e=>{ if(!st.classList.contains('searching')) return; const z=e.target.closest('[data-zone]'); if(z&&!D.zoomed){ zoomTo(z.dataset.zone); return; } const g=e.target.closest('.hs'); if(g&&g.dataset.hs) onHotspot(g.dataset.hs, e); };
     $('#zoomBack').onclick=()=>{ sfx.zoom(); camReset(); };
-    $('#sHint').onclick=()=>{ if(EXAM()) return; S.sparkOn=true; S.hints++; S.charges+=4; spend(CONFIG.COST_HINT); sfx.get(); sparkHint(); updSearchHud(); logEvent({type:'hint', where:'search'}); if(S.visit<=0&&D.searchStop) D.searchStop(); };
+    $('#sHint').onclick=()=>{ if(EXAM()) return; S.sparkOn=true; S.hints++; S.charges+=4; spend(CONFIG.COST_HINT); sfx.get(); sparkHint(); updSearchHud(); logEvent({type:'hint', where:'search'}); saveMid(); if(S.visit<=0&&D.searchStop) D.searchStop(); };
     $('#sDone').onclick=()=>{ sfx.select(); if(EXAM()&&KEY_ITEMS.some(k=>!hasEv(k))&&S.charges>0){ showModal(`<h3>${L(['結束搜查？','Finish the search?','จบการค้นบ้าน?'])}</h3><p>${L(['結束後就不能再回來找了。','You can\'t come back once you leave.','ออกไปแล้วจะกลับมาค้นอีกไม่ได้'])}</p>`,[{t:T('sDone'),cls:'p',fn:()=>{ D.searchStop&&D.searchStop(); }},{t:T('cancel'),cls:''}]); return; } D.searchStop&&D.searchStop(); };
     if(S.visit<=0) D.searchStop();
   });
@@ -3513,7 +3513,7 @@ function showStatement(i, solved, lost){
   $('#testiDots').innerHTML=TESTI.map((x,j)=>`<span class="${solved[x.id]?'ok':''} ${j===i?'on':''}" style="${lost[x.id]?'opacity:.35':''}"></span>`).join('');
 }
 async function chapter3(){
-  S.chStart=realSec(); hideAll(); playTheme('tense'); S.hearts=CONFIG.HEARTS; $('#hHearts').classList.remove('hidden'); hud();
+  S.chStart=realSec(); hideAll(); playTheme('tense'); if(!RS.ff) S.hearts=CONFIG.HEARTS; $('#hHearts').classList.remove('hidden'); hud();
   await chapterCard(3);
   $('#bgCam').classList.add('dark'); bgFx('testi'); show('me','L','smug'); show('chen','C','smug');
   await say('chen','smug',['什麼證據不證據的！我當了一輩子兵，生活跟營區一樣，樣樣都有規矩！','Evidence? Hmph! I was a soldier all my life — I run things like a barracks, everything in order!','หลักฐานอะไรกัน! ลุงเป็นทหารมาทั้งชีวิต ใช้ชีวิตเหมือนอยู่ในค่าย ทุกอย่างมีระเบียบ!']);
@@ -3521,14 +3521,14 @@ async function chapter3(){
   await say('pilly','neutral',['每句只有「一個」證物能直接推翻它。完全無關的證物會扣❤️；有關但不夠直接的，陳藥師會給提示。用過的證物會變灰，不能再用！','Each claim has exactly ONE item that directly disproves it. Unrelated items cost ❤️; related-but-indirect ones get a hint from Pharmacist Chen. Used items turn grey and can\'t be reused!','แต่ละประโยคมีหลักฐานที่หักล้างตรงๆ ได้ "ชิ้นเดียว" หลักฐานที่ไม่เกี่ยวจะเสีย ❤️ ส่วนที่เกี่ยวแต่ยังไม่ตรง เภสัชกรเฉินจะใบ้ให้ หลักฐานที่ใช้แล้วจะเป็นสีเทา ใช้ซ้ำไม่ได้!']);
   $('#testiTitle').textContent=T('testiTitle'); $('#testiBanner').classList.remove('hidden'); $('#testiDots').classList.remove('hidden');
   $('#tPress').textContent=T('press'); $('#tPresent').textContent=T('present');
-  const solved={}, tried={}, lost={}; TESTI.forEach(t=>{ tried[t.id]=[]; if(!t.need.some(hasEv)) lost[t.id]=1; });
+  const T3=((S.seg||(S.seg={})).t3=S.seg.t3||{solved:{},tried:{},lost:{}}), solved=T3.solved, tried=T3.tried, lost=T3.lost; TESTI.forEach(t=>{ tried[t.id]=tried[t.id]||[]; if(!t.need.some(hasEv)) lost[t.id]=1; });
   const nLost=Object.keys(lost).length; if(nLost){ logEvent({type:'unprovable', st:Object.keys(lost)});
     await say('pilly','sad',[`糟糕……有 ${nLost} 句話，我們手上沒有能直接推翻的證物（搜查時漏掉了）。那幾句只能先放過了。`,`Uh-oh… for ${nLost} of his claims we have no evidence that directly disproves them (we missed it in the search). We'll have to let those go.`,`แย่แล้ว… มี ${nLost} ประโยคที่เราไม่มีหลักฐานหักล้างตรงๆ (พลาดไปตอนค้นบ้าน) ข้อพวกนั้นต้องปล่อยผ่านไป`]); }
   const open=()=>TESTI.filter(t=>!solved[t.id]&&!lost[t.id]).length;
   const nextUnsolved=from=>{ for(let k=1;k<=TESTI.length;k++){ const j=(from+k)%TESTI.length; if(!solved[TESTI[j].id]&&!lost[TESTI[j].id]) return j; } return from; };
-  let i=lost[TESTI[0].id]?nextUnsolved(0):0;
+  let i=(lost[TESTI[0].id]||solved[TESTI[0].id])?nextUnsolved(0):0;
   while(open()>0){
-    if(S.visit<=0){ S.fl.duelCut=1; break; }
+    resumePoint(); if(S.visit<=0){ S.fl.duelCut=1; break; }
     showStatement(i, solved, lost); $('#testiUI').classList.remove('hidden');
     const act=await new Promise(res=>{ $('#tPrev').onclick=()=>{sfx.click();res('prev');}; $('#tNextS').onclick=()=>{sfx.click();res('next');}; $('#tPress').onclick=()=>{sfx.select();res('press');}; $('#tPresent').onclick=()=>{sfx.select();res('present');}; D.testiAct=res; });
     D.testiAct=null; $('#testiUI').classList.add('hidden');
@@ -3547,7 +3547,7 @@ async function chapter3(){
     else { tried[s.id].push(ev); await fpShow('item',ev,async()=>{ await say('me','neutral',presentUm(ev)); await say('chen','angry',WRONG_LINES[S.wrong%3]); }); await loseHeart(); }
   }
   $('#testiBanner').classList.add('hidden'); $('#testiDots').classList.add('hidden'); hideText();
-  if(S.visit>0) await heartLock(); else S.fl.lockSkipped=1;
+  if(S.visit>0){ resumePoint(); await heartLock(); } else S.fl.lockSkipped=1;
   $('#bgCam').classList.remove('dark'); bgFx('motes'); $('#hHearts').classList.add('hidden');
   chapterDone(3);
 }
@@ -4232,12 +4232,12 @@ function acbSortUI(m, i, n){
 async function inhalerTask(){
   const tch=async(e,t)=>{ if(!EXAM()) await say('yeh',e,t); };   // teaching asides: skipped in exam mode (like coach())
   const fb=ok=>{ if(EXAM()){ sfx.select(); toast(T('examNoted')); } else if(ok) sfx.get(); else sfx.error(); };
-  const r={rescue:false, steps:false, spacer:false, order:false, dose:false, stepsSel:[], orderTries:0};
+  const r=((S.seg||(S.seg={})).inhR=S.seg.inhR||{rescue:false, steps:false, spacer:false, order:false, dose:false, stepsSel:[], orderTries:0});
   show('chen','C','neutral');
   try{
     await say('yeh','smug',['在處理這一大堆文件之前——李伯伯，先示範一下您平常怎麼用這兩支吸入器給我們看。','Before the paperwork — Uncle Lee, show us how you use your two puffers.','ก่อนจะจัดการเอกสารกองนี้ ลุงหลี่ลองสาธิตให้ดูหน่อยว่าปกติใช้ยาพ่นสองอันนี้อย่างไร']);
     await say('chen','happy',['吸入器？這個簡單！我用好幾年了。','Puffers? Easy! I\'ve been using them for years.','ยาพ่นเหรอ? ง่ายจะตาย! ลุงใช้มาหลายปีแล้ว']);
-    /* 1 — rescue vs maintenance */
+    if(!S.seg.i1){ ff(false); /* 1 — rescue vs maintenance */
     await say('yeh','neutral',['假設您正在爬樓梯回四樓，突然喘不過氣來——您會拿哪一支？','Say you\'re climbing the stairs to the fourth floor and suddenly can\'t catch your breath — which one do you reach for?','สมมติว่าลุงกำลังขึ้นบันไดไปชั้น 4 แล้วจู่ๆ ก็หายใจไม่ทัน ลุงจะหยิบอันไหน?']);
     await say('chen','smug',['當然是這支綠的！看起來比較高級，一定比較強。藍的那支我每天早上都會吸好幾下啦。','This green one, of course! It looks fancier, so it must be stronger. The blue one I puff a few times every morning anyway.','ก็อันสีเขียวนี่สิ! ดูหรูกว่า ต้องแรงกว่าแน่ๆ ส่วนอันสีฟ้าลุงก็พ่นหลายทีทุกเช้าอยู่แล้ว']);
     hideText();
@@ -4245,7 +4245,8 @@ async function inhalerTask(){
       {timer:25, shuffle:true, id:'inhRescue', label:['他拿起綠色的 Spiolto。你怎麼跟他說？','He grabs the green Spiolto. What do you tell him?','ลุงคว้า Spiolto สีเขียว คุณจะบอกลุงว่าอย่างไร?']});
     r.rescue=c1===0; fb(r.rescue);
     await tch(r.rescue?'happy':'think',[`${r.rescue?'說得好！':''}藍色 Berotec（fenoterol）是短效的「急救」藥，幾分鐘內打開氣管；綠色 Spiolto（tiotropium＋olodaterol）是長效的「保養」藥，要每天固定用，效果慢慢累積。他剛好用反了：每天吸急救藥（難怪藍色那支快用完了），保養藥卻沒好好用。藍色那支越用越兇，就是 COPD 控制不好的警訊，要告訴醫師。`,`${r.rescue?'Well said! ':''}The blue Berotec (fenoterol) is a short-acting rescue drug that opens the airways within minutes; the green Spiolto (tiotropium + olodaterol) is long-acting maintenance — used every day, its effect builds up. He has them back to front: puffing the rescue one daily (no wonder the blue one is nearly empty) while the maintenance one goes unused. Needing the blue one more and more is a warning sign of poorly controlled COPD — the doctor must know.`,`${r.rescue?'พูดได้ดี! ':''}สีฟ้า Berotec (fenoterol) เป็นยาบรรเทาอาการออกฤทธิ์สั้น ขยายหลอดลมได้ในไม่กี่นาที ส่วนสีเขียว Spiolto (tiotropium + olodaterol) เป็นยาควบคุมอาการออกฤทธิ์นาน ต้องใช้ทุกวันเพื่อให้ได้ผลสะสม ลุงใช้สลับกันพอดี: พ่นยาบรรเทาอาการทุกวัน (มิน่าอันสีฟ้าจะหมดแล้ว) แต่ยาควบคุมกลับไม่ได้ใช้ให้ดี ถ้าต้องใช้อันสีฟ้าบ่อยขึ้นเรื่อยๆ คือสัญญาณเตือนว่า COPD คุมไม่อยู่ ต้องแจ้งแพทย์`]);
-    /* 2 — his Berotec demo, then the student shows the right way on a demo inhaler (hands-on) */
+    S.seg.i1=1; saveMid(); }
+    if(!S.seg.i2){ ff(false); /* 2 — his Berotec demo, then the student shows the right way on a demo inhaler (hands-on) */
     await say('yeh','neutral',['那請您用藍色那支示範一次，就像您在家裡那樣。','Then please show us the blue one — exactly as you do at home.','งั้นลองสาธิตอันสีฟ้าให้ดูหน่อย ทำเหมือนที่ลุงทำที่บ้านเลยนะ']);
     await say('chen','happy',['看好了，小老弟！','Watch closely, young comrade!','ดูให้ดีนะ สหายน้อย!']);
     await say('sys','neutral',['（他拔掉蓋子，直接把吸嘴塞進嘴裡，「噗」一聲先按了下去，接著急急吸了一小口氣——立刻嗆咳，把藥吐進衛生紙裡，再把蓋子蓋回去。）','(He pulls off the cap, pops the mouthpiece straight into his mouth, presses — pfft! — then gasps a quick, short breath, coughs at once and spits into a tissue, and puts the cap back on.)','(ลุงถอดฝาออก ยัดปากกระบอกเข้าปากทันที กด "ฟึ่บ" ไปก่อน แล้วค่อยรีบสูดหายใจสั้นๆ ทีหนึ่ง ไอสำลักทันที บ้วนยาลงกระดาษทิชชู แล้วปิดฝากลับ)']);
@@ -4258,12 +4259,15 @@ async function inhalerTask(){
     await tch(m.ok?'happy':'neutral',['正確的定量噴霧吸入器（MDI）：拔蓋 → 搖勻 → 先把氣吐乾淨 → 含住吸嘴 → 開始慢慢吸氣的「同時」按一下 → 繼續慢慢深吸 → 閉氣約 10 秒。他最大的問題是「按」和「吸」對不上，藥都噴在嘴巴和喉嚨，咳一咳就吐掉了。','Correct metered-dose inhaler (MDI) use: cap off → shake → breathe out fully → lips around the mouthpiece → press AS you start a slow breath in → keep breathing in slowly and deeply → hold about 10 s. His big problem is that pressing and breathing don\'t match — the spray lands in his mouth and throat, and he coughs it out.','การใช้ยาพ่นชนิดกดสูด (MDI) ที่ถูกต้อง: ถอดฝา → เขย่า → หายใจออกให้สุด → อมปากกระบอก → กดพร้อมกับเริ่มหายใจเข้าช้าๆ → สูดต่อไปช้าๆ ลึกๆ → กลั้นหายใจราว 10 วินาที ปัญหาใหญ่ของลุงคือจังหวะกดกับหายใจไม่ตรงกัน ยาจึงไปค้างในปากและคอ แล้วไอบ้วนทิ้งหมด']);
     await tch('smug',['像他這樣手和呼吸配合不來的長者，可以加一個「吸藥輔助器（spacer）」：先把藥按進輔助艙，再慢慢吸幾口就好，不用搶時間。教完一定要請他「回覆示教」（teach-back），親眼看到他做對才算數。','For an older person who can\'t coordinate hand and breath, add a spacer: press the puff into the chamber, then take a few slow breaths — no race against the spray. And after teaching, always ask him to show it back (teach-back): it only counts when you see him do it right.','ผู้สูงอายุที่จังหวะมือกับการหายใจไม่ไปด้วยกันแบบลุง ให้ใช้กระบอกช่วยพ่น (spacer): กดยาเข้ากระบอกก่อน แล้วค่อยๆ สูดหายใจช้าๆ สองสามครั้ง ไม่ต้องรีบแข่งกับยา และสอนเสร็จต้องให้ลุงสาธิตกลับ (teach-back) ทุกครั้ง เห็นกับตาว่าทำถูกถึงจะนับ']);
     await say('yeh','neutral',['來，裝上輔助器再做一次——這次「先按、再吸」反而沒關係。','Now fit the spacer and do it again — this time pressing first, then breathing in, is fine.','มา ต่อกระบอกช่วยสูดแล้วลองอีกครั้ง คราวนี้กดก่อนแล้วค่อยสูดก็ไม่เป็นไร']);
+    S.seg.i2=1; saveMid(); }
+    if(!S.seg.i2b){ ff(false);
     hideText();
     const sp=await inhSim('spacer'); r.spacer=sp.ok; r.spacerErrs=sp.errs;
     if(EXAM()){ sfx.select(); toast(T('examNoted')); await sleep(700); }
     else if(sp.ok) splash('gotcha','gold','crit');
     await tch(sp.ok?'happy':'think',['有了輔助器，按和吸不用同時：藥先噴進輔助艙，再慢慢吸。但要在幾秒內吸，而且一次只噴一下。','With a spacer, pressing and breathing don\'t have to match: the puff waits in the chamber while he breathes in slowly. Just breathe in within a few seconds — and one puff at a time.','มีกระบอกช่วยสูดแล้ว การกดกับการสูดไม่ต้องพร้อมกัน ยาจะรออยู่ในกระบอกระหว่างที่ลุงสูดช้าๆ แค่ต้องสูดภายในไม่กี่วินาที และพ่นทีละครั้ง']);
-    /* 3 — Spiolto Respimat, hands-on: turn · open · press while breathing in, twice */
+    S.seg.i2b=1; saveMid(); }
+    if(!S.seg.i3){ ff(false); /* 3 — Spiolto Respimat, hands-on: turn · open · press while breathing in, twice */
     await say('chen','think',['那這支綠的呢？有時候我按了，什麼都沒噴出來！','And this green one? Sometimes I press and nothing comes out at all!','แล้วอันสีเขียวนี่ล่ะ? บางทีลุงกดแล้วไม่มีอะไรออกมาเลย!']);
     await say('yeh','neutral',['綠色這支是「軟霧吸入器」，用法和藍色的不一樣。換你示範一次完整的劑量給他看！','The green one is a soft-mist inhaler — it works differently from the blue one. Show him one full dose yourself!','อันสีเขียวเป็นยาพ่นชนิดละอองฝอย วิธีใช้ต่างจากอันสีฟ้า ลองสาธิตหนึ่งโดสเต็มให้ลุงดู!']);
     hideText();
@@ -4271,7 +4275,8 @@ async function inhalerTask(){
     if(EXAM()){ sfx.select(); toast(T('examNoted')); await sleep(700); }
     else if(o.ok) splash(o.tries===1?'perfect':'gotcha','gold','crit');
     await tch(o.ok?'happy':'think',['Respimat 不用搖，噴出來的是慢慢的軟霧。口訣 T-O-P：轉（Turn）→ 開（Open）→ 按（Press）。「2 噴」就是整套做兩次。他說「按了沒東西出來」，就是因為忘了先把底座轉到「喀」一聲。','The Respimat needs no shaking — it releases a slow, soft mist. Remember T-O-P: Turn → Open → Press. "Two puffs" means doing the whole routine twice. His "I press and nothing comes out" happens when he forgets to turn the base until it clicks.','Respimat ไม่ต้องเขย่า ยาออกมาเป็นละอองฝอยช้าๆ จำง่ายๆ ว่า T-O-P: หมุน (Turn) → เปิด (Open) → กด (Press) "2 พัฟ" คือทำครบทุกขั้นสองรอบ ที่ลุงบอกว่า "กดแล้วไม่มีอะไรออกมา" ก็เพราะลืมหมุนฐานจนได้ยินเสียงคลิกก่อน']);
-    /* 4 — "2 puffs twice a day" on the bag */
+    S.seg.i3=1; saveMid(); }
+    if(!S.seg.i4){ ff(false); /* 4 — "2 puffs twice a day" on the bag */
     await say('yeh','think',['還有一件事：Spiolto 的藥袋上寫的是什麼？','One more thing — what does the Spiolto bag say?','อีกเรื่องหนึ่ง ซองยา Spiolto เขียนว่าอย่างไร?']);
     await say('chen','neutral',['每次 2 噴，一天 2 次，早晚飯前。白紙黑字寫在這裡！','Two puffs, twice a day, before breakfast and dinner. It\'s right here in black and white!','ครั้งละ 2 พัฟ วันละ 2 ครั้ง ก่อนอาหารเช้าและเย็น เขียนไว้ชัดๆ ตรงนี้เลย!']);
     hideText();
@@ -4279,7 +4284,8 @@ async function inhalerTask(){
       {timer:25, shuffle:true, id:'inhDose', label:['藥袋寫「每次 2 噴、每日 2 次」。你怎麼處理？','The bag says "2 puffs, twice a day". What do you do?','ซองเขียนว่า "ครั้งละ 2 พัฟ วันละ 2 ครั้ง" คุณจะทำอย่างไร?']});
     r.dose=c4===0; fb(r.dose);
     await tch(r.dose?'happy':'think',['Spiolto Respimat 是 24 小時長效藥：每天一次、每次 2 噴（每噴 2.5 µg＋2.5 µg）。一天兩次等於劑量加倍——口乾、排尿困難（他有攝護腺肥大！）、心悸的風險都會增加。可能是藥袋印錯，也可能醫師另有考量：藥師的角色是聯絡處方醫師確認，而不是自己改。','Spiolto Respimat is a 24-hour drug: 2 puffs (2.5 µg + 2.5 µg each) once a day. Twice a day doubles the dose — more dry mouth, urinary retention (he has BPH!) and palpitations. It may be a label error or the doctor may have a reason: the pharmacist\'s job is to confirm with the prescriber, not to change it alone.','Spiolto Respimat เป็นยาออกฤทธิ์ 24 ชั่วโมง: วันละครั้ง ครั้งละ 2 พัฟ (พัฟละ 2.5 µg + 2.5 µg) ใช้วันละ 2 ครั้งเท่ากับขนาดยาเพิ่มเป็นสองเท่า เสี่ยงปากแห้ง ปัสสาวะไม่ออก (ลุงมีต่อมลูกหมากโต!) และใจสั่นมากขึ้น อาจเป็นซองพิมพ์ผิด หรือแพทย์อาจมีเหตุผล หน้าที่ของเภสัชกรคือติดต่อแพทย์ผู้สั่งเพื่อยืนยัน ไม่ใช่เปลี่ยนเอง']);
-    /* teach-back */
+    S.seg.i4=1; saveMid(); }
+    ff(false); /* teach-back */
     await say('yeh','happy',['好，李伯伯，換您用綠色那支做一次給我們看——就照剛剛說的。','All right, Uncle Lee — your turn: show us the green one, just as we said.','เอาล่ะ ลุงหลี่ ทีนี้ลุงลองใช้อันสีเขียวให้ดูหน่อย ตามที่เราเพิ่งพูดกัน']);
     await say('chen','happy',['轉……喀！開……吐氣……含住、慢慢吸、按！……一、二、三……憋住……哈！老兵也學得會新操典嘛！','Turn… click! Open… breathe out… lips on, slow breath in, press! …one, two, three… hold it… Ha! An old soldier can still learn a new drill!','หมุน… คลิก! เปิด… หายใจออก… อมไว้ สูดช้าๆ กด! …หนึ่ง สอง สาม… กลั้นไว้… ฮ่า! ทหารแก่ก็ยังฝึกท่าใหม่ได้นะ!']);
   } finally { inhHide(); }
@@ -4295,14 +4301,14 @@ async function chapter4(){
   if(missing.length){ show('wife','C','neutral'); await say('wife','neutral',['老李的藥袋和報告，我把剩下的都翻出來了——他什麼都亂塞！你們一起看吧。','I dug out the rest of his med bags and papers — he stuffs them everywhere! Please take a look.','พี่ค้นซองยากับเอกสารที่เหลือของลุงมาให้หมดแล้ว เขายัดไว้ทุกที่เลย! ดูด้วยกันนะ']); missing.forEach(k=>{ S.evidence.push(k); if(ITEMS[k].labs) S.notes.labsUnlocked=true; }); logEvent({type:'autoBags', items:missing}); hide('wife'); }
   S.notes.labsUnlocked=true;
   await say('yeh','smug',['最後一塊拼圖：把所有藥袋——胸腔科、新陳代謝科、市立醫院皮膚科、吳醫師診所的收據——和檢驗報告全部攤開來，做「藥物整合」。這才是藥師真正的戰場！','The last piece of the puzzle: lay out every bag — chest clinic, endocrine, the City Hospital skin clinic, Dr. Wu\'s receipt — plus the lab report, and reconcile them. This is a pharmacist\'s real battlefield!','จิ๊กซอว์ชิ้นสุดท้าย: กางซองยาทั้งหมด ทั้งแผนกทรวงอก ต่อมไร้ท่อ ผิวหนังที่ รพ.เทศบาล ใบเสร็จคลินิกหมออู๋ และผลแล็บ แล้วทำ "การทบทวนยา" นี่คือสนามรบจริงของเภสัชกร!']);
-  await inhalerTask();
-  await kidneyTask();
+  await part('inh', inhalerTask, true);
+  await part('kid', kidneyTask);
   reveal('P13');
   if(S.fl.kidney&&!EXAM()) await say('yeh','happy',['你在訪談時就問了腎臟的事——很有遠見！','You asked about his kidneys back in the interview — great foresight!','คุณถามเรื่องไตตั้งแต่ตอนสัมภาษณ์ — มองการณ์ไกลมาก!']);
   await say('yeh','angry',['可是看看這 20 種藥……四個地方開的，沒有一位醫師把它們放在一起看過，也沒有人依他的年紀和腎功能檢視過！','But look at these 20 medicines… from four different places — no doctor has ever looked at them together, and nobody has checked them against his age and kidneys!','แต่ดูยา 20 ตัวนี้สิ… จาก 4 ที่ ไม่เคยมีหมอคนไหนดูรวมกัน และไม่มีใครทบทวนตามอายุและการทำงานของไตของลุงเลย!']);
   await say('pilly','shock',['藥袋危機！一共 6 個任務：點選有問題的藥（可以複選），再按「確認診斷」！','Med-bag crisis! 6 missions: tap the problem drugs (several may apply), then press "Confirm"!','วิกฤตซองยา! มี 6 ภารกิจ: แตะเลือกยาที่มีปัญหา (เลือกได้หลายตัว) แล้วกด "ยืนยัน"!']);
-  for(let i=0;i<MISSIONS.length;i++){
-    if(S.visit<=0){ S.fl.mrCut=i; break; }
+  for(let i=S.mr.ans.length;i<MISSIONS.length;i++){
+    resumePoint(); if(S.visit<=0){ S.fl.mrCut=i; break; }
     const m=MISSIONS[i]; hideAll(); hideText();
     const r=m.id==='m2'?await acbSortUI(m,i,MISSIONS.length):await missionUI(m,i,MISSIONS.length);
     S.mr.ans.push({id:m.id, sel:r.sel, perfect:r.perfect, partial:r.partial}); logEvent({type:'medrev', m:m.id, sel:r.sel, perfect:r.perfect, partial:r.partial});
@@ -4315,6 +4321,7 @@ async function chapter4(){
       for(const x of m.x) await say('yeh','neutral',x); }
     reveal(m.p);
   }
+  resumePoint();
   hideAll(); show('chen','C','sad'); show('me','L','neutral'); show('yeh','R','smug');
   await say('chen','shock',['二、二十種藥……我還以為看越多醫生、拿越多藥，就照顧得越好……難怪我老是頭暈、尿不出來、全身又癢……','T-twenty medicines… I thought the more doctors I saw and the more medicine I got, the better I was looked after… no wonder I\'m always dizzy, can\'t pee and itch all over…','ยะ…ยาตั้ง 20 ตัว… ลุงนึกว่ายิ่งหาหมอเยอะ ได้ยาเยอะ ก็ยิ่งได้รับการดูแลดี… มิน่าล่ะถึงเวียนหัวตลอด ปัสสาวะไม่ออก แล้วก็คันไปทั้งตัว…']);
   await say('yeh','smug',['別擔心，我們會把這些整理成「藥事照護建議」，交給您的醫師們。不過在那之前……','Don\'t worry — we\'ll write all this into a pharmaceutical care report for your doctors. But before that…','ไม่ต้องห่วง เราจะสรุปทั้งหมดเป็นข้อเสนอแนะด้านการดูแลเรื่องยาให้แพทย์ของลุง แต่ก่อนอื่น…']);
@@ -4415,16 +4422,16 @@ async function chapter5(){
   await chapterCard(5);
   $('#boss').classList.remove('hidden'); $('#bossBg').innerHTML=Array.from({length:14},(_,i)=>`<div class="fpill" style="left:${i*7.3}%;animation-duration:${8+i%5*2}s;animation-delay:${-i*1.3}s">${['💊','💊','🧴','🦷','🐜','💊','🍚'][i%7]}</div>`).join('');
   $('#bossName').textContent='👿 '+T('bossName');
-  const B=S.boss; B.combo=0; B.alive=[]; B.byFinal=[];
-  const myths=MYTHS.filter(m=>m.p!=='P8'||S.found.P8), mhp={}; myths.forEach(m=>mhp[m.p]=100);
+  const B=S.boss; if(!B.answers.length){ B.combo=0; B.alive=[]; B.byFinal=[]; }
+  const myths=MYTHS.filter(m=>m.p!=='P8'||S.found.P8), mhp={}; myths.forEach(m=>mhp[m.p]=100); B.answers.forEach(a=>{ if(a.p in mhp) mhp[a.p]=a.q===2?0:a.q===1?60:100; });
   const TOT=myths.length*100, hpNow=()=>Object.values(mhp).reduce((a,b)=>a+b,0), setHP=()=>$('#bossHPv').style.width=(hpNow()/TOT*100)+'%'; setHP(); setMonster('laugh');
   const ma=$('#mythAlive'); const drawAlive=()=>{ ma.innerHTML=B.alive.length?`<div class="mh">${esc(T('mythAliveH'))} ${B.alive.length}</div>`+B.alive.map(p=>`<div class="ma${mhp[p]===0?' gone':mhp[p]<100?' weak':''}">${esc(L(MYTH_FX[p].n))}</div>`).join(''):''; }; drawAlive();
-  chenMini('think'); let confusion=0; const setConf=()=>$('#confuse').textContent=confusion?T('confusion')+' '+'❓'.repeat(confusion):''; setConf(); $('#combo').textContent=''; $('#myth').textContent='';
+  chenMini('think'); let confusion=B.answers.filter(a=>a.q<1).length; const setConf=()=>$('#confuse').textContent=confusion?T('confusion')+' '+'❓'.repeat(confusion):''; setConf(); $('#combo').textContent=''; $('#myth').textContent='';
   await say('pilly','shock',['李伯伯腦中的錯誤觀念……變成「迷思大魔王」了！','Uncle Lee\'s misconceptions turned into the Myth Overlord!','ความเชื่อผิดๆ ในหัวลุงหลี่… กลายเป็น "จอมมารความเชื่อผิด" แล้ว!']);
   await say('yeh','smug',[`${nm()}，用正確的衛教卡擊敗它！選最完整、最正確的建議！`,`${nm()}, defeat it with the right counseling cards! Pick the most complete, correct advice!`,`${nm()} ใช้การ์ดคำแนะนำที่ถูกต้องล้มมัน! เลือกคำแนะนำที่ครบและถูกที่สุด!`]);
   await say('pilly','think',T('mythRule'));
   hideText(); setMonster('normal');
-  for(let i=0;i<myths.length;i++){
+  for(let i=B.answers.length;i<myths.length;i++){ resumePoint();
     const m=myths[i]; $('#myth').getAnimations().forEach(a=>a.cancel()); $('#myth').textContent='「'+L(m.m)+'」'; $('#myth').animate([{opacity:0,transform:'scale(.8)'},{opacity:1,transform:'none'}],{duration:350,easing:'cubic-bezier(.2,1.4,.4,1)'}); sfx.slam(); setMonster('normal');
     const card=await bossCards(m); const q=card?card.q:-1;
     B.answers.push({p:m.p, q, text:card?L(card.t):'(timeout)'}); logEvent({type:'boss', p:m.p, q});
@@ -4443,7 +4450,7 @@ async function chapter5(){
   if(B.alive.length) await say('pilly','shock',T('mythLastCall').replace('{n}',B.alive.length));
   else await say('pilly','happy',['最後一擊！用你自己的話幫李伯伯「總結」——讓他記得住！','Final strike! Summarize everything for Uncle Lee in your own words — make it stick!','โจมตีสุดท้าย! สรุปทุกอย่างให้ลุงหลี่ฟังด้วยคำพูดของคุณ — ให้ลุงจำได้!']);
   hideText();
-  const txt=await finalInput(B.alive.slice());
+  resumePoint(); const txt=await finalInput(B.alive.slice());
   S.finalText=txt; S.finalCov=sumCoverage(txt);
   const hit=B.alive.filter(p=>mythHit(txt,p)), pre=hpNow(); B.byFinal=hit; B.alive=B.alive.filter(p=>!hit.includes(p)); hit.forEach(p=>mhp[p]=0);
   logEvent({type:'final', text:txt, cov:S.finalCov, mythsHit:hit, mythsLeft:B.alive.slice()});
@@ -5969,7 +5976,7 @@ function renderTitleBtns(){ const st=badgeStore(), n=BADGES.filter(x=>st[x.id]).
   if(bb) bb.textContent='🏅 '+n+'/'+BADGES.length; if(cb){ cb.textContent=T('chSel'); cb.classList.remove('lock'); } }
 /* chapter practice (open from the start): jump into one chapter with a ready-made state; nothing is recorded */
 function buildPracticeState(ch){
-  S.practice=true; S.sessionId=null; S.student={name:$('#inName').value.trim()||T('you'), sid:''}; S.t0=Date.now(); S.qte=$('#qteToggle').checked; S.visit=CONFIG.VISIT_MIN; S.trust=5;
+  S.practice=true; S.sessionId=null; S.seg={}; S.student={name:$('#inName').value.trim()||T('you'), sid:''}; S.t0=Date.now(); S.qte=$('#qteToggle').checked; S.visit=CONFIG.VISIT_MIN; S.trust=5;
   const F=(ids,c)=>ids.forEach(p=>S.found[p]={t:0,ch:c}), prof=ks=>ks.forEach(k=>S.profile.add(k));
   if(ch>=2){ F(['P5','P7','P10','P11','P12'],1); prof(['dob','body','edu','knee','habits','pmh1','pmh2','dizzy','cc','family']); ['basic','history','body','checkup','family','meds','life'].forEach(k=>S.asked[k]=1); S.first={tries:1,picks:['intro'],ok:true}; S.calc.bmi={ok:true,tries:1,value:22.2}; S.trust=6; S.visit=44; }
   if(ch>=3){ KEY_ITEMS.concat(['endo_bag','report']).forEach(id=>{ if(!S.evidence.includes(id)) S.evidence.push(id); }); S.notes.labsUnlocked=true; S.visit=32; }
@@ -5998,23 +6005,50 @@ function showTitle(){
   $$('.gsel').forEach(b=>{ const keep=S.avatar; S.avatar=b.dataset.av; b.querySelector('.av').innerHTML=charSVG('me','happy'); S.avatar=keep; b.classList.toggle('on',b.dataset.av===S.avatar); });
   applyI18n();
 }
+/* ---------- save anywhere: a save at every question, search, statement, mission, boss card and hands-on task ----------
+   Resuming re-runs that chapter with the saved state: dialogue already seen is fast-forwarded and finished parts are skipped,
+   so the student lands where they left off. Chapter-start saves (and checkpoints) work as before. */
+const RS={ff:false, step:-1, badgeAt:0, bt:0};
+function ff(on){ RS.ff=!!on; }
+function saveMid(){ if(RS.step<1||!S.sessionId||S.practice||S.done) return; saveResume(RS.step, true); savedBadge(); }
+function resumePoint(){ ff(false); saveMid(); }
+async function part(id, fn, keepFF){ const g=S.seg||(S.seg={}); if(g[id]) return; if(!keepFF) ff(false); const r=await fn(); g[id]=1; saveMid(); return r; }
+function savedBadge(){ const now=Date.now(); if(now-RS.badgeAt<12000) return; RS.badgeAt=now;
+  let b=document.getElementById('rsSaved'); const stg=document.getElementById('stage'); if(!stg) return;
+  if(!b){ b=document.createElement('div'); b.id='rsSaved'; stg.appendChild(b); const st=document.createElement('style');
+    st.textContent='#rsSaved{position:absolute;left:50%;top:92px;transform:translateX(-50%);z-index:85;padding:6px 18px;border-radius:99px;background:rgba(17,115,77,.9);color:#fff;font-weight:900;font-size:19px;pointer-events:none;opacity:0;transition:opacity .35s;white-space:nowrap}#rsSaved.on{opacity:1}';
+    document.head.appendChild(st); }
+  b.textContent='💾 '+T('rsSaved'); b.classList.add('on'); clearTimeout(RS.bt); RS.bt=setTimeout(()=>b.classList.remove('on'),1700);
+  if(!S.fl.saveTip){ S.fl.saveTip=1; toast('💾 '+T('rsTip')); } }
+/* fast-forward: skip what was already seen until the first part still to play */
+{ const f=say; say=function(who,e,text,o){ if(RS.ff){ if(CH[who]&&e) emo(who,e); return Promise.resolve(); } return f(who,e,text,o); }; }
+{ const f=chapterCard; chapterCard=async function(n){ if(RS.ff){ D.lastAsk=null; S.chapter=n; hud(); return; } return f(n); }; }
+{ const f=introCard; introCard=async function(w){ if(RS.ff){ S.met[w]=1; return; } return f(w); }; }
+{ const f=splash; splash=async function(){ if(RS.ff) return; return f.apply(this, arguments); }; }
+{ const f=wipe; wipe=async function(fn){ if(RS.ff){ if(fn) await fn(); return; } return f(fn); }; }
+Object.assign(UI,{
+  rsSaved:['已存檔','Saved','บันทึกแล้ว'],
+  rsTip:['遊戲會自動存檔：關掉之後再打開，可以從離開的地方繼續玩','The game saves itself: close it any time and continue from where you left off','เกมบันทึกให้อัตโนมัติ ปิดไปแล้วกลับมาเล่นต่อจากจุดที่ออกได้เลย'],
+  resumedMid:['已從離開的地方繼續 ▶','Continuing from where you left off ▶','เล่นต่อจากจุดที่ออกไปแล้ว ▶'],
+  resumeMidTag:['離開的地方','where you left off','จุดที่ออกไป'],
+});
 /* ---------- story steps · save at the start of every chapter · resume ---------- */
 const STEPS=[()=>prologue(),()=>runCheckpoint('pre'),()=>chapter1(),()=>runCheckpoint('c1'),()=>chapter2(),()=>runCheckpoint('c2'),()=>chapter3(),()=>runCheckpoint('c3'),()=>chapter4(),()=>runCheckpoint('c4'),()=>chapter5(),()=>runCheckpoint('c5'),()=>epilogue(),()=>runCheckpoint('post'),()=>results()];
 const STEP_CH=[0,0,1,1,2,2,3,3,4,4,5,5,6,6,6], RESUME_KEY=CONFIG.STORAGE_KEY+'_resume';
 const IN_HOME=new Set([4,6,8,10]), AFTER_VISIT=11;   // chapters 2–5 need the family's time; when it runs out the visit ends
 const cfgRevNow=()=>(GAME_CFG.meta&&GAME_CFG.meta.rev)||'';
-function saveResume(step){ try{ const s=JSON.parse(JSON.stringify(S,(k,v)=>v instanceof Set?[...v]:v)); localStorage.setItem(RESUME_KEY, JSON.stringify({v:2, step, at:Date.now(), elapsed:realSec(), rev:cfgRevNow(), S:s})); }catch(e){} }
+function saveResume(step){ try{ const s=JSON.parse(JSON.stringify(S,(k,v)=>v instanceof Set?[...v]:v)); localStorage.setItem(RESUME_KEY, JSON.stringify({v:2, step, mid:!!arguments[1], at:Date.now(), elapsed:realSec(), rev:cfgRevNow(), S:s})); }catch(e){} }
 function loadResume(){ try{ const r=JSON.parse(localStorage.getItem(RESUME_KEY)||'null'); if(r&&(r.v===1||r.v===2)&&r.S&&!r.S.done&&!r.S.practice&&r.step>=1&&r.step<STEPS.length-1&&r.rev===cfgRevNow()) return r; }catch(e){} return null; }
 function clearResume(){ try{ localStorage.removeItem(RESUME_KEY); }catch(e){} }
 async function runSteps(from){
   try{ for(let i=from;i<STEPS.length;i++){
-      if(IN_HOME.has(i)&&S.visit<=0&&!S.timeout){ await timeoutEnd(S.chapter); i=AFTER_VISIT; }
-      if(i>=1&&i<STEPS.length-1) saveResume(i); await STEPS[i](); } clearResume(); }
-  catch(e){ console.error(e); toast('⚠️ '+e.message); }
+      if(IN_HOME.has(i)&&S.visit<=0&&!S.timeout){ ff(false); await timeoutEnd(S.chapter); i=AFTER_VISIT; }
+      const mid=RS.ff&&i===from; RS.step=i; if(!mid) S.seg={}; if(i>=1&&i<STEPS.length-1) saveResume(i, mid); await STEPS[i](); ff(false); } clearResume(); }
+  catch(e){ ff(false); console.error(e); toast('⚠️ '+e.message); }
 }
 function renderResume(){ const r=loadResume(), box=$('#resumeBox'); if(!box) return; box.classList.toggle('hidden',!r); $('#tBrief').classList.toggle('hidden',!!r); if(!r) return;
   const mins=Math.max(1,Math.round((Date.now()-r.at)/60000)), ago=mins<90?T('minsAgo').replace('{n}',mins):T('hrsAgo').replace('{n}',Math.round(mins/60)), ch=STEP_CH[r.step];
-  box.innerHTML=`<div class="rq">📌 ${T('resumeQ')}</div><div class="rd"><b>${esc(r.S.student&&r.S.student.name||'?')}</b> · ${esc(r.S.student&&r.S.student.sid||'')} · ${T('resumeAt')}: <b>${T('ch'+ch)} ${T('ch'+ch+'t')}</b> · ${ago}</div>
+  box.innerHTML=`<div class="rq">📌 ${T('resumeQ')}</div><div class="rd"><b>${esc(r.S.student&&r.S.student.name||'?')}</b> · ${esc(r.S.student&&r.S.student.sid||'')} · ${T('resumeAt')}: <b>${T('ch'+ch)} ${T('ch'+ch+'t')}</b>${r.mid?' · '+T('resumeMidTag'):''} · ${ago}</div>
     <div class="ra"><button class="gbtn green" id="btnResume">${T('resumeGo')}</button><button class="sbtn" id="btnDiscard">${T('resumeDel')}</button></div>`;
   $('#btnResume').onclick=()=>resumeGame(r); $('#btnDiscard').onclick=()=>{ clearResume(); sfx.click(); renderResume(); }; }
 async function resumeGame(r){
@@ -6023,7 +6057,7 @@ async function resumeGame(r){
   applyI18n(); applyAudio(); applyMotion(); $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden'); hud();
   logEvent({type:'resume', step:r.step}); saveSession(true);
   if(r.step>=2) await wipe(()=>{ setBg('liv'); hideAll(); hideText(); });
-  toast(T('resumed')); playTheme('calm'); await runSteps(r.step);
+  toast(T(r.mid?'resumedMid':'resumed')); playTheme('calm'); ff(!!r.mid); await runSteps(r.step);
 }
 async function startGame(){
   const name=$('#inName').value.trim(), sid=$('#inSid').value.trim();

@@ -4209,7 +4209,7 @@ async function edLoadPubList(){ const el=$('#pbOnList'); if(!el) return; if(!tea
 function edPublish(b){
   const w=edWork(), dirty=edDirty(), sN=Object.keys(w.settings).filter(k=>w.settings[k]!==''&&w.settings[k]!=null).length;
   const on=!!serverURL(), pend=on&&(dirty||mediaPending()), m=GAME_CFG_BASE.meta||{};
-  const ver=m.rev?esc(m.rev.replace('T',' ').slice(0,16))+(m.online?' ☁️':''):TE('pbOrig');
+  const ver=m.rev?esc(localTS(m.rev))+(m.online?' ☁️':''):TE('pbOrig');
   const known=[...new Set([].concat(Object.keys(SYNC.classes||{}), (ED_ST.pubList||[]).map(c=>c.cls), CFG_REQ_CLASS!=='main'?[CFG_REQ_CLASS]:[]))].filter(c=>c&&c!=='*').sort();
   const dl=`<div class="pubgrid"><button class="ebtn alt" id="pbPlay">${TE('pbPlay')}</button><button class="ebtn big" id="pbDl">${TE('pbDl')}</button></div><p class="ednote">📤 ${TE('pbDlNote')}</p>`;
   b.innerHTML=`<div class="pubsteps">${TE(on?'pbStepsOn':'pbSteps')}</div>
@@ -4317,7 +4317,7 @@ function renderClass(b){
   const all=allSessions(), vers=[...new Set(all.map(s=>s.cfgRev||''))], clss=[...new Set(all.map(s=>s.classCode||'main'))].sort();
   const list=all.filter(s=>(!CLS.fin||s.done)&&(CLS.ver==='__all'||(s.cfgRev||'')===CLS.ver)&&(CLS.mode==='all'||(s.mode||'practice')===CLS.mode)&&(CLS.cls==='__all'||(s.classCode||'main')===CLS.cls));
   const head=`<p class="edintro">${TC('clIntro')}</p><div class="clf"><label><input type="checkbox" id="clFin" ${CLS.fin?'checked':''}> ${TC('clFinished')}</label>
-    <select class="ein" id="clVer" style="max-width:260px"><option value="__all">${TC('clAllVer')}</option>${vers.map(v=>`<option value="${esc(v)}"${CLS.ver===v?' selected':''}>${v?esc(v.replace('T',' ').slice(0,16)):TC('clOrig')}</option>`).join('')}</select>
+    <select class="ein" id="clVer" style="max-width:260px"><option value="__all">${TC('clAllVer')}</option>${vers.map(v=>`<option value="${esc(v)}"${CLS.ver===v?' selected':''}>${v?esc(localTS(v)):TC('clOrig')}</option>`).join('')}</select>
     <select class="ein" id="clMode" style="max-width:180px"><option value="all">${TC('clAllModes')}</option>${['practice','exam'].map(m=>`<option value="${m}"${CLS.mode===m?' selected':''}>${T('mode_'+m)}</option>`).join('')}</select>
     ${clss.length>1||CLS.cls!=='__all'?`<select class="ein" id="clCls" style="max-width:180px"><option value="__all">${T('clAllCls')}</option>${clss.map(c=>`<option value="${esc(c)}"${CLS.cls===c?' selected':''}>🏫 ${esc(c)}</option>`).join('')}</select>`:''}
     <button class="sbtn b" id="clCsv">${TC('clCsv')}</button></div>`;
@@ -4353,6 +4353,8 @@ function bindClass(b,R){
   $('#clCsv').onclick=()=>{ if(!R){ sfx.error(); return; } const rows=[['section','item','percent','n','total']].concat(R.rows.map(r=>[r.sec,KP(String(r.label)).replace(/<[^>]+>/g,''),r.p,r.n,r.d]));
     download('PharmaDetective_class_summary.csv','﻿'+rows.map(r=>r.map(c=>'"'+String(c==null?'':c).replace(/"/g,'""')+'"').join(',')).join('\n'),'text/csv'); };
 }
+/* times are saved in UTC (ISO, 'Z'); show them in this device's own time zone */
+function localTS(s){ if(!s) return ''; const d=new Date(s); if(isNaN(d)) return String(s).replace('T',' ').slice(0,16); const p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; }
 /* =====================================================================
    TEACHER PAGE v2 — six plain-language tabs for instructors:
    🏠 Start · 👥 Students · 📊 Class overview · 📋 Debrief · ✏️ Customise · 🧰 Advanced
@@ -4594,7 +4596,7 @@ function studentCard(s){
   const chT=[0,1,2,3,4,5].map(c=>`${c?TX('chN').replace('{n}',c):TX('ch0')} ${fmt((s.chT||{})[c]||0)}`).join(' · ');
   const pp=s.pp&&Object.keys(s.pp.pre||{}).length?(()=>{ const pre=s.pp.pre||{}, post=s.pp.post||{}, ids=[...new Set(Object.keys(pre).concat(Object.keys(post)))], qt={}; log.forEach(e=>{ if(e.type==='pp') qt[e.qid]=e.q; }); gameQuestions().forEach(x=>{ if(x.cp==='pp') qt[x.id]=LQ(x.q); });
       return `<h4>📊 ${T('ppStat')} ${Object.values(pre).filter(x=>x.ok).length}/${ids.length} → ${Object.values(post).filter(x=>x.ok).length}/${ids.length}</h4>`+ids.map(id=>`<div class="ll">${pre[id]?(pre[id].ok?'✅':'❌'):'·'} → ${post[id]?(post[id].ok?'✅':'❌'):'·'} ${esc(qt[id]||id)}</div>`).join(''); })():'';
-  return `<details class="scard"><summary><div class="s1"><span class="nm">👤 ${esc(nm)}</span><span class="muted">${esc(sid)}</span>${status}${s.mode==='exam'?`<span class="chip">${T('mode_exam')}</span>`:''}${s.classCode&&s.classCode!=='main'?`<span class="chip">🏫 ${esc(s.classCode)}</span>`:''}<span class="muted">${esc((s.updated||'').replace('T',' ').slice(0,16))}</span><span class="mo">${TX('more')} ▾</span></div>
+  return `<details class="scard"><summary><div class="s1"><span class="nm">👤 ${esc(nm)}</span><span class="muted">${esc(sid)}</span>${status}${s.mode==='exam'?`<span class="chip">${T('mode_exam')}</span>`:''}${s.classCode&&s.classCode!=='main'?`<span class="chip">🏫 ${esc(s.classCode)}</span>`:''}<span class="muted">${esc(localTS(s.updated))}</span><span class="mo">${TX('more')} ▾</span></div>
     <div class="s2">${s.rank?`<span>${TX('rank')} <b>${esc(s.rank)}</b></span><span>${TX('score')} <b>${s.score}</b></span>`:''}<span>${TX('found')} <b>${found}/${PROBLEMS.length}</b></span><span>${TX('time')} <b>${fmt(s.realTime||0)}</b></span>${hints?`<span>💡 ${TX('hints')} <b>${hints}</b></span>`:''}${endTxt?`<span>${TX('ending')} <b>${esc(endTxt)}</b></span>`:''}</div>
     ${hands||calcs?`<div class="s3">${hands?`<b>${TX('hands')}</b> ${hands} `:''}${calcs?`<b>${TX('calcs')}</b> ${calcs}`:''}</div>`:''}</summary>
    <div class="in">
@@ -4642,7 +4644,7 @@ function renderClass2(b){
     ${clss.length>1||CLS.cls!=='__all'?`<select class="ein" id="clCls"><option value="__all">${T('clAllCls')}</option>${clss.map(c=>`<option value="${esc(c)}"${CLS.cls===c?' selected':''}>🏫 ${esc(c)}</option>`).join('')}</select>`:''}
     
     <label><input type="checkbox" id="clFin" ${CLS.fin?'checked':''}> ${TC('clFinished')}</label>
-    ${vers.length>1||CLS.ver!=='__all'?`<select class="ein" id="clVer" title="${esc(TX('cVer'))}"><option value="__all">${TX('cVer')}: ${TC('clAllVer')}</option>${vers.map(v=>`<option value="${esc(v)}"${CLS.ver===v?' selected':''}>${v?esc(v.replace('T',' ').slice(0,16)):TC('clOrig')}</option>`).join('')}</select>`:''}
+    ${vers.length>1||CLS.ver!=='__all'?`<select class="ein" id="clVer" title="${esc(TX('cVer'))}"><option value="__all">${TX('cVer')}: ${TC('clAllVer')}</option>${vers.map(v=>`<option value="${esc(v)}"${CLS.ver===v?' selected':''}>${v?esc(localTS(v)):TC('clOrig')}</option>`).join('')}</select>`:''}
     <button class="sbtn b" id="clCsv">${TX('cCsv')}</button></div>`;
   if(!list.length){ b.innerHTML=head+`<p class="edempty">${TX('sNone')}</p>`; bindClass2(b,null); return; }
   const R=classStats(list), H=handsOn(list), sec=(t,h,note)=>`<div class="clsec"><h4>${t}</h4>${note?`<p class="muted" style="margin:-2px 0 6px">${note}</p>`:''}${h}</div>`, rk=['S','A','B','C','D'];
@@ -4716,7 +4718,7 @@ function renderDebrief2(b){
 /* ---------- ✏️ Customise ---------- */
 function pubBar(b){
   const on=!!serverURL(), w=edWork(), pend=on?(edDirty()||mediaPending()):edDirty(), m=GAME_CFG_BASE.meta||{};
-  const ver=m.rev?esc(m.rev.replace('T',' ').slice(0,16)):TX('puOrig');
+  const ver=m.rev?esc(localTS(m.rev)):TX('puOrig');
   const known=[...new Set([].concat(Object.keys(SYNC.classes||{}), (ED_ST.pubList||[]).map(c=>c.cls), CFG_REQ_CLASS!=='main'?[CFG_REQ_CLASS]:[]))].filter(c=>c&&c!=='*'&&c!=='main').sort();
   const el=document.createElement('div'); el.className='tpub'+(pend?' dirty':'');
   el.innerHTML=`<div class="ts">${pend?TX('puDirty'):TX('puClean')}</div>
@@ -5489,7 +5491,7 @@ function sessHTML(s){
   const log=s.log||[]; const free=log.filter(e=>(e.type==='ask'&&e.mode==='free')||e.type==='lockText'||e.type==='final');
   const pres=log.filter(e=>e.type==='present'||e.type==='choice'||e.type==='calc'); const B=s.boss||{answers:[]}; const qn=['❌','🔸','✅'];
   return `<details class="sess"><summary>👤 ${esc(s.student&&s.student.name||'?')} <span class="muted">${esc(s.student&&s.student.sid||'')}</span>
-   <span class="pill">${s.rank?('🏅 '+s.rank+' · '+s.score):(s.progress+'%')}</span><span class="pill">⏱ ${fmt(s.realTime)}</span><span class="pill">⏰ ${s.visitLeft}</span><span class="pill">💗 ${s.trust}</span><span class="pill">💡 ${s.hints}</span><span class="pill">${s.gender==='m'?'♂':'♀'}</span><span class="pill">🚪 ${s.first?(s.first.ok?'✅':'×'+s.first.tries):'—'}</span><span class="pill">🧮 ${['bmi','egfr','crcl'].map(k=>s.calc&&s.calc[k]?(s.calc[k].ok?'✓':'✗'):'·').join('')}</span><span class="pill">✖ ${s.wrong||0}</span><span class="pill">${s.mode==='exam'?'📝':'📘'}</span>${s.classCode&&s.classCode!=='main'?`<span class="pill">🏫 ${esc(s.classCode)}</span>`:''}${s.fromServer?'<span class="pill" title="server">☁️</span>':''}${s.view==='fp'?`<span class="pill" title="${esc(T('view_fpL'))}">👁 1</span>`:''}${s.pat!=null?`<span class="pill">☕ ${s.pat}</span>`:''}${s.hiddenQ?`<span class="pill">🗝️ ${s.hiddenQ.length}</span>`:''}${s.refused?'<span class="pill no">🔒</span>':''}${s.timeout?'<span class="pill no">⏰</span>':''}${s.ending?`<span class="pill">${{best:'🌟',good:'😊',mixed:'😐',bad:'🚑'}[s.ending.tier]||''}</span>`:''}${s.badges&&s.badges.length?`<span class="pill">🏅 ${s.badges.length}</span>`:''}<span class="muted">${esc((s.updated||'').replace('T',' ').slice(0,16))}</span></summary><div class="in">
+   <span class="pill">${s.rank?('🏅 '+s.rank+' · '+s.score):(s.progress+'%')}</span><span class="pill">⏱ ${fmt(s.realTime)}</span><span class="pill">⏰ ${s.visitLeft}</span><span class="pill">💗 ${s.trust}</span><span class="pill">💡 ${s.hints}</span><span class="pill">${s.gender==='m'?'♂':'♀'}</span><span class="pill">🚪 ${s.first?(s.first.ok?'✅':'×'+s.first.tries):'—'}</span><span class="pill">🧮 ${['bmi','egfr','crcl'].map(k=>s.calc&&s.calc[k]?(s.calc[k].ok?'✓':'✗'):'·').join('')}</span><span class="pill">✖ ${s.wrong||0}</span><span class="pill">${s.mode==='exam'?'📝':'📘'}</span>${s.classCode&&s.classCode!=='main'?`<span class="pill">🏫 ${esc(s.classCode)}</span>`:''}${s.fromServer?'<span class="pill" title="server">☁️</span>':''}${s.view==='fp'?`<span class="pill" title="${esc(T('view_fpL'))}">👁 1</span>`:''}${s.pat!=null?`<span class="pill">☕ ${s.pat}</span>`:''}${s.hiddenQ?`<span class="pill">🗝️ ${s.hiddenQ.length}</span>`:''}${s.refused?'<span class="pill no">🔒</span>':''}${s.timeout?'<span class="pill no">⏰</span>':''}${s.ending?`<span class="pill">${{best:'🌟',good:'😊',mixed:'😐',bad:'🚑'}[s.ending.tier]||''}</span>`:''}${s.badges&&s.badges.length?`<span class="pill">🏅 ${s.badges.length}</span>`:''}<span class="muted">${esc(localTS(s.updated))}</span></summary><div class="in">
    <b>${T('tFound')}</b><div>${PROBLEMS.map(p=>`<span class="pill ${s.found&&s.found[p.id]?'ok':'no'}">${p.id} ${s.found&&s.found[p.id]?fmt(s.found[p.id].t):'—'}</span>`).join('')}</div>
    <b>${T('chapterTimes')}</b> <span class="muted">${[0,1,2,3,4,5].map(c=>'Ch'+c+' '+fmt((s.chT||{})[c]||0)).join(' · ')}</span>
    <h4 style="margin-top:8px">${T('tFree')} (${free.length})</h4>${free.map(e=>`<div class="ll free">[${fmt(e.t)}] ${e.type==='final'?'🏁 '+(e.cov||[]).filter(Boolean).length+'/'+RUBRIC_SUM.length:e.type==='lockText'?'💗 '+(e.ok?'✅':'❌'):'✍️ → '+esc(e.intent||'-')+(e.emp?' 💗':'')+(e.blame?' ⚠️':'')+(e.priv?' 🔒':'')} — “${esc(e.text)}”</div>`).join('')||'<p class="muted">—</p>'}
@@ -5627,7 +5629,7 @@ function showChapterSelect(){
   setTimeout(()=>$$('#mCard [data-pch]').forEach(x=>x.onclick=()=>{ const c=+x.dataset.pch; MQ.length=0; nextModal(); practiceChapter(c); }),30);
 }
 function showVerNote(){ const el=$('#verNote'); if(!el) return; const m=GAME_CFG_BASE.meta||{}, parts=[];
-  if(m.note) parts.push('📌 '+esc(m.note)); if(m.rev) parts.push(esc(m.rev.slice(0,10))); if(cfgNorm(GAME_CFG)!==cfgNorm(GAME_CFG_BASE)) parts.push(`<b class="dr">${T('draftBadge')}</b>`);
+  if(m.note) parts.push('📌 '+esc(m.note)); if(m.rev) parts.push(esc(localTS(m.rev).slice(0,10))); if(cfgNorm(GAME_CFG)!==cfgNorm(GAME_CFG_BASE)) parts.push(`<b class="dr">${T('draftBadge')}</b>`);
   el.innerHTML=parts.join(' · '); el.classList.toggle('hidden',!parts.length); }
 function showTitle(){
   setBg('ext'); $('#title').classList.remove('hidden'); renderTitleChars(); $('#qteToggle').checked=(GAME_CFG.settings||{}).qte!==false; showVerNote(); renderModeRow(); renderTitleBtns();

@@ -5026,7 +5026,7 @@ const pfBossOn=()=>{ const b=$('#boss'); return !!b&&!b.classList.contains('hidd
   return f.apply(this, arguments); }; }
 /* =====================================================================
    CHARACTER CUSTOMISER · the student's own pharmacist
-   Hairstyle (12 natural cuts + the two originals), hair colour, skin tone, eye colour and glasses,
+   Hairstyle (7 women's cuts for the ♀ body, 8 men's cuts for the ♂ body, plus each original), hair colour, skin tone, eye colour and glasses,
    saved on this device for each of the two bodies (♀ me / ♂ me2). The default look is the original art.
    Drawing: the original body, face, eyes and expressions are reused; only the hair layers, the colours
    and the glasses change, so every expression and scene keeps working.
@@ -5101,12 +5101,34 @@ const HAIRS={
     const front=lkFill(c,H,bangs)+lkFill(c,H,lock,'sway')+lkFill(c,H,'M276 186 C294 230 276 266 290 306 C302 342 280 376 292 412 C272 398 266 366 270 336 C274 306 262 280 264 246 C266 222 270 202 274 188Z','sway s2')
       +lkShine(c,'M150 124 Q196 98 250 110',7,.5)+lkStrands(c,'M214 94 Q178 114 160 156 M236 100 Q206 120 190 146 M258 116 Q268 142 276 170 M120 260 Q128 300 118 340 M282 260 Q274 300 284 340');
     return {back, bangs, front}; }},
-  /* ♀ short pixie with a long side-swept fringe */
-  pixie:{g:'f', n:['精靈短髮','Pixie cut','พิกซี่'], draw:(c,H,P)=>{
-    const back=`<path d="M200 82 C134 82 106 130 106 198 C106 226 110 248 118 262 L134 250 L266 250 L282 262 C290 248 294 226 294 198 C294 130 266 82 200 82Z" fill="url(#${P}hb)" stroke="${c.hO}" stroke-width="3"/>`;
-    const bangs='M116 222 C108 152 146 90 206 88 C260 88 294 132 288 198 C282 186 278 178 272 172 C266 156 254 142 236 134 L242 156 C226 140 206 134 186 138 L194 156 C176 146 156 152 144 170 C134 186 124 204 116 222Z';
-    const front=lkFill(c,H,bangs)+lkFill(c,H,'M120 196 C114 214 116 232 124 246 L130 236 L132 246 C130 228 132 212 136 200Z')+lkFill(c,H,lkMirror('M120 196 C114 214 116 232 124 246 L130 236 L132 246 C130 228 132 212 136 200Z'))
-      +lkShine(c,'M152 118 Q200 96 252 112',7,.5)+lkStrands(c,'M214 94 Q186 112 168 150 M236 100 Q214 116 200 140 M258 112 Q268 134 276 160 M190 100 Q166 124 150 166');
+  /* ♀ shoulder-length layered cut with see-through curtain bangs and flicked ends */
+  lob:{g:'f', n:['層次鎖骨髮','Layered lob','ประบ่าเลเยอร์'], draw:(c,H,P)=>{
+    const back=`<path class="sway-b" d="M200 80 C126 80 96 134 98 210 C98 280 96 326 90 366 C102 382 120 376 132 388 C142 378 154 384 164 376 L236 376 C246 384 258 378 268 388 C280 376 298 382 310 366 C304 326 302 280 302 210 C304 134 274 80 200 80Z" fill="url(#${P}hb)" stroke="${c.hO}" stroke-width="3"/>`
+      +lkStrands(c,'M108 300 Q104 340 100 366 M292 300 Q296 340 300 366 M126 320 Q124 350 132 380 M274 320 Q276 350 268 380',2,.35);
+    const L='M200 88 C150 88 118 124 116 184 C116 214 120 240 128 266 C132 236 142 210 160 192 C170 200 176 200 180 196 C176 182 180 164 190 146 C196 134 199 118 200 104Z';
+    const bangs=L+' '+lkMirror(L);
+    const lock='M122 202 C108 250 108 318 114 362 C120 380 134 390 150 388 C140 374 134 354 134 330 C134 288 140 248 136 216Z';
+    const front=lkFill(c,H,bangs)+lkFill(c,H,lock,'sway')+lkFill(c,H,lkMirror(lock),'sway s2')
+      +lkShine(c,'M148 128 Q172 104 196 98 M252 128 Q228 104 204 98',7,.5)
+      +lkStrands(c,'M200 92 L200 108 M178 104 Q152 140 142 196 M222 104 Q248 140 258 196 M160 196 Q150 210 144 230 M240 196 Q250 210 256 230 M124 250 Q118 310 128 370 M276 250 Q282 310 272 370');
+    return {back, bangs, front}; }},
+  /* ♀ loose side braid over one shoulder, side-swept fringe */
+  braid:{g:'f', n:['側邊麻花辮','Side braid','เปียข้าง'], draw:(c,H,P)=>{
+    /* hair behind: the right side tucks in behind the ear, the left side gathers into the braid */
+    const back=`<path d="M200 82 C130 82 102 134 104 206 C106 256 112 292 128 322 L196 336 C232 326 262 304 278 274 C292 248 296 226 296 206 C298 134 270 82 200 82Z" fill="url(#${P}hb)" stroke="${c.hO}" stroke-width="3"/>`;
+    const bangs='M118 214 C112 146 150 90 208 88 C262 90 292 134 286 196 C274 162 252 142 224 136 C198 132 174 140 156 160 C140 176 128 196 118 214Z';
+    const sweep='M118 190 C104 236 106 290 122 326 C128 340 138 350 152 354 C162 344 164 332 160 320 C144 292 136 258 138 222 C138 206 134 196 128 190Z';
+    /* the plait: overlapping lobes, drawn bottom-up so each one sits over the next, thinning towards the tie */
+    const N=7, pts=[...Array(N)].map((_,i)=>{ const t=i/(N-1); return {x:150-t*16+Math.sin(t*3)*3, y:356+t*118, rx:23-t*7, ry:16-t*3, a:i%2?30:-30}; });
+    let pl=''; for(let i=N-1;i>=0;i--){ const q=pts[i], x=q.x.toFixed(1), y=q.y.toFixed(1);
+      pl+=`<ellipse cx="${x}" cy="${y}" rx="${q.rx.toFixed(1)}" ry="${q.ry.toFixed(1)}" transform="rotate(${q.a} ${x} ${y})" fill="${H}" stroke="${c.hO}" stroke-width="2.8"/>`
+        +`<path d="M${(q.x-q.rx*.55).toFixed(1)} ${(q.y+(q.a>0?2:-2)).toFixed(1)} Q${x} ${(q.y+(q.a>0?-7:7)).toFixed(1)} ${(q.x+q.rx*.55).toFixed(1)} ${(q.y+(q.a>0?-2:2)).toFixed(1)}" fill="none" stroke="${c.hl}" stroke-width="3" opacity=".5" stroke-linecap="round"/>`; }
+    const e=pts[N-1], tx=e.x, ty=e.y+e.ry-2;
+    const tie=`<rect x="${(tx-10).toFixed(1)}" y="${ty.toFixed(1)}" width="20" height="10" rx="5" fill="#d9546f" stroke="${OUTL}" stroke-width="2"/>`;
+    const tuft=lkFill(c,H,`M${(tx-9).toFixed(1)} ${(ty+9).toFixed(1)} C${(tx-16).toFixed(1)} ${(ty+24).toFixed(1)} ${(tx-11).toFixed(1)} ${(ty+38).toFixed(1)} ${(tx-4).toFixed(1)} ${(ty+46).toFixed(1)} L${tx.toFixed(1)} ${(ty+34).toFixed(1)} L${(tx+5).toFixed(1)} ${(ty+46).toFixed(1)} C${(tx+12).toFixed(1)} ${(ty+36).toFixed(1)} ${(tx+13).toFixed(1)} ${(ty+22).toFixed(1)} ${(tx+9).toFixed(1)} ${(ty+9).toFixed(1)}Z`,'',2.4);
+    const front=`<g class="sway">${tuft}${pl}${tie}</g>`+lkFill(c,H,sweep)+lkFill(c,H,bangs)
+      +lkFill(c,H,'M276 186 C286 222 284 258 274 288 C272 262 270 236 264 210Z','sway s2')
+      +lkShine(c,'M150 120 Q196 96 250 110',7,.5)+lkStrands(c,'M210 94 Q174 114 156 158 M234 100 Q204 120 186 146 M258 116 Q268 140 276 168 M124 220 Q118 270 132 316 M134 232 Q132 280 148 330');
     return {back, bangs, front}; }},
   /* ♂ two-block: soft fringe, short sides */
   twoblock:{g:'m', n:['韓系兩側推','Two-block','ทูบล็อก'], draw:(c,H,P)=>{
@@ -5155,8 +5177,27 @@ const HAIRS={
     const curls=[[150,112],[176,98],[204,94],[232,102],[258,118],[136,146],[164,132],[192,124],[220,126],[248,140],[270,158],[146,170],[176,160],[206,156],[236,164],[262,182]].map(([x,y])=>`M${x-8} ${y+2} q2 -10 10 -8 q8 2 6 10 q-2 6 -8 4`).join(' ');
     const front=lkFill(c,H,bangs)+lkStrands(c,curls,2.4,.5)+lkShine(c,'M160 100 Q196 80 236 92',6,.5)+lkShine(c,'M136 140 q6 -6 12 -4 M196 118 q6 -6 12 -4 M246 132 q6 -6 12 -4',3,.6);
     return {back, bangs, front}; }},
+  /* ♂ curtain hair: centre part, fringe falling to both sides */
+  curtain:{g:'m', n:['中分瀏海','Curtain fringe','ผมม่านแสกกลาง'], draw:(c,H,P)=>{
+    const back=`<path d="M200 80 C134 80 106 128 106 192 C106 218 110 236 116 248 L284 248 C290 236 294 218 294 192 C294 128 266 80 200 80Z" fill="url(#${P}hb)" stroke="${c.hO}" stroke-width="3"/>`;
+    const L='M200 88 C154 86 120 118 114 172 C112 194 114 214 120 230 C126 206 138 190 152 182 C160 198 170 202 178 198 C172 182 174 162 184 144 C192 128 198 112 200 100Z';
+    const bangs=L+' '+lkMirror(L);
+    const front=`<path d="M116 200 C112 222 114 238 122 250 L134 242 C128 226 128 212 132 200Z M284 200 C288 222 286 238 278 250 L266 242 C272 226 272 212 268 200Z" fill="${c.hair[2]}" opacity=".55"/>`
+      +lkFill(c,H,bangs)+lkShine(c,'M150 120 Q174 100 196 96 M250 120 Q226 100 204 96',7,.5)
+      +lkStrands(c,'M200 94 L200 108 M182 104 Q156 132 146 178 M218 104 Q244 132 254 178 M168 112 Q140 140 130 196 M232 112 Q260 140 270 196 M186 132 Q170 160 174 194 M214 132 Q230 160 226 194');
+    return {back, bangs, front}; }},
+  /* ♂ slicked back with a side part, short faded sides */
+  slick:{g:'m', n:['側分油頭','Slick back','เสยเรียบ'], draw:(c,H,P)=>{
+    const back=`<path d="M200 70 C140 68 112 104 110 156 C108 196 112 224 118 242 L282 242 C288 224 292 196 290 156 C288 104 260 68 200 70Z" fill="url(#${P}hb)" stroke="${c.hO}" stroke-width="3"/>`;
+    const bangs='M116 198 C110 130 144 80 200 76 C256 80 290 128 284 198 C278 178 270 164 258 156 C242 148 222 144 200 146 C178 144 158 148 142 156 C130 164 122 178 116 198Z';
+    const front=`<path d="M116 186 C112 212 114 232 122 248 L136 240 C130 222 130 204 134 188Z M284 186 C288 212 286 232 278 248 L264 240 C270 222 270 204 266 188Z" fill="${c.hair[2]}" opacity=".55"/>`
+      +lkFill(c,H,bangs)+`<path d="M156 150 C150 126 156 104 170 86" fill="none" stroke="${c.hO}" stroke-width="2.6" opacity=".8"/>`
+      +lkShine(c,'M178 128 Q196 96 236 82 M206 134 Q228 104 262 104',7,.55)
+      +lkStrands(c,'M170 146 Q176 112 200 88 M188 144 Q198 108 226 86 M208 144 Q220 110 250 96 M230 148 Q244 120 268 116 M250 154 Q262 134 278 136 M146 154 Q140 128 150 104',2.2,.45);
+    return {back, bangs, front}; }},
 };
-const LK_ORDER={me:['orig','long','bob','pony','bun','wavy','pixie','twoblock','sidepart','quiff','crew','wolf','perm'], me2:['orig','twoblock','sidepart','quiff','crew','wolf','perm','long','bob','pony','bun','wavy','pixie']};
+/* women's and men's cuts are separate lists: the ♀ body only offers women's styles, the ♂ body only men's */
+const LK_ORDER={me:['orig','long','lob','bob','wavy','pony','bun','braid'], me2:['orig','twoblock','curtain','sidepart','quiff','slick','crew','wolf','perm']};
 const LK_ORIG={me:['雙馬尾（原本）','Twin tails (original)','แกละแคปซูล (เดิม)'], me2:['蓬鬆亂髮（原本）','Messy (original)','ผมฟู (เดิม)']};
 /* glasses over the eyes (E = eye anchors from the body drawing) */
 const LK_GLASS={
@@ -5166,7 +5207,9 @@ const LK_GLASS={
 };
 /* --- saved looks: one per body, on this device --- */
 const LK_DEF={hair:'orig', hc:'orig', skin:'orig', eye:'orig', gl:'none'};
-const LOOKS=(()=>{ let o={}; try{ o=JSON.parse(localStorage.getItem('phd_look')||'{}')||{}; }catch(e){} return {me:Object.assign({},LK_DEF,o.me||{}), me2:Object.assign({},LK_DEF,o.me2||{})}; })();
+const LOOKS=(()=>{ let o={}; try{ o=JSON.parse(localStorage.getItem('phd_look')||'{}')||{}; }catch(e){}
+  const r={me:Object.assign({},LK_DEF,o.me||{}), me2:Object.assign({},LK_DEF,o.me2||{})};
+  ['me','me2'].forEach(b=>{ if(!LK_ORDER[b].includes(r[b].hair)) r[b].hair='orig'; }); return r; })();
 const lkSaveAll=()=>{ try{ localStorage.setItem('phd_look', JSON.stringify(LOOKS)); }catch(e){} };
 const lkIsDefault=lk=>Object.keys(LK_DEF).every(k=>lk[k]===LK_DEF[k]);
 function lkPal(base, lk){ const o=PAL[base], c=Object.assign({}, o, {hair:o.hair.slice(), iris:o.iris.slice()});
@@ -5177,7 +5220,7 @@ function lkPal(base, lk){ const o=PAL[base], c=Object.assign({}, o, {hair:o.hair
 /* draw the player with a given look (base = 'me' or 'me2') */
 function lkDraw(base, lk, emo, origCharSVG){ const keepP=PAL[base], keepD=DRAW[base]; PAL[base]=lkPal(base, lk);
   DRAW[base]=(e,P)=>{ const d=keepD(e,P), c=PAL[base];
-    if(lk.hair&&lk.hair!=='orig'&&HAIRS[lk.hair]){ const h=HAIRS[lk.hair].draw(c,`url(#${P}h)`,P); d.back=h.back||''; d.bangs=h.bangs||''; d.front=h.front||''; d.mid=h.mid||''; if(base==='me2') d.extraFace=''; if(base==='me') d.post=''; }
+    if(lk.hair&&lk.hair!=='orig'&&HAIRS[lk.hair]&&LK_ORDER[base].includes(lk.hair)){ const h=HAIRS[lk.hair].draw(c,`url(#${P}h)`,P); d.back=h.back||''; d.bangs=h.bangs||''; d.front=h.front||''; d.mid=h.mid||''; if(base==='me2') d.extraFace=''; if(base==='me') d.post=''; }
     const g=LK_GLASS[lk.gl]; if(g) d.acc=(d.acc||'')+g(d.eyes); return d; };
   const keepAv=S.avatar; S.avatar=base;
   try{ return origCharSVG('me', emo); } finally { PAL[base]=keepP; DRAW[base]=keepD; S.avatar=keepAv; } }
@@ -5256,7 +5299,7 @@ function lkRender(){ const ui=$('#lkUI'); if(!ui) return; const base=S.avatar===
   ui.querySelectorAll('[data-gl]').forEach(b=>b.onclick=()=>set('gl', b.dataset.gl));
   ui.querySelector('[data-act="reset"]').onclick=()=>{ Object.assign(lk, LK_DEF); sfx.click(); lkSaveAll(); lkRender(); };
   ui.querySelector('[data-act="rand"]').onclick=()=>{ const pick=a=>a[Math.floor(Math.random()*a.length)];
-    Object.assign(lk, {hair:pick(LK_ORDER[base].slice(1,7)), hc:pick(Object.keys(LK_HC)), skin:pick(Object.keys(LK_SKIN)), eye:pick(Object.keys(LK_EYE)), gl:Math.random()<.3?pick(['round','rect','half']):'none'}); sfx.select(); lkSaveAll(); lkRender(); };
+    Object.assign(lk, {hair:pick(LK_ORDER[base].slice(1)), hc:pick(Object.keys(LK_HC)), skin:pick(Object.keys(LK_SKIN)), eye:pick(Object.keys(LK_EYE)), gl:Math.random()<.3?pick(['round','rect','half']):'none'}); sfx.select(); lkSaveAll(); lkRender(); };
 }
 /* the ✨ button on the title screen */
 function lkButton(){ const t=$('#title'); if(!t) return; let b=$('#lkBtn'); if(!b){ lkCss(); b=document.createElement('button'); b.id='lkBtn'; b.onclick=lkOpen; t.appendChild(b); } b.textContent=L(LKT.btn); }

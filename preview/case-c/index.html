@@ -22,7 +22,7 @@ input,textarea{font-family:var(--font);-webkit-user-select:text;user-select:text
 .layer{position:absolute;inset:0}
 
 /* ---------- background: parallax wrapper → zoom camera → crossfading layers ---------- */
-#bgWrap{position:absolute;inset:-30px;transform:translate(calc(var(--px)*-16px),calc(var(--py)*-10px));transition:transform .6s cubic-bezier(.2,.8,.3,1)}
+#bgWrap{position:absolute;inset:-30px}
 #bgCam{position:absolute;left:30px;top:30px;width:1600px;height:900px;transform-origin:0 0;transition:transform .85s cubic-bezier(.65,0,.25,1),filter .6s}
 #bg{position:absolute;inset:0}
 .bgl{position:absolute;inset:0;opacity:0;transition:opacity .8s ease}
@@ -71,7 +71,7 @@ input,textarea{font-family:var(--font);-webkit-user-select:text;user-select:text
 #syncNote{font-size:13px;font-weight:700;color:#2f7d6b;margin:-4px 0 6px}
 .syncSt{margin-top:10px;text-align:center;font-weight:800;font-size:16px;color:#2f7d6b}
 .syncSt.err{color:#c4572a}
-#chars{transform:translate(calc(var(--px)*10px),calc(var(--py)*4px));transition:transform .6s cubic-bezier(.2,.8,.3,1)}
+#chars{}
 .char{position:absolute;bottom:-14px;width:520px;height:728px;transition:left .6s cubic-bezier(.3,1.15,.5,1),filter .35s,transform .35s cubic-bezier(.3,1.3,.5,1);pointer-events:none;filter:drop-shadow(0 10px 18px rgba(40,20,60,.25))}
 .char .frwrap{position:absolute;inset:0}
 .char .fr{position:absolute;inset:0;transition:opacity .22s ease}
@@ -2276,10 +2276,10 @@ function bgFx(name){
 }
 /* parallax follows the pointer for depth */
 function bindParallax(){
+  /* the scene no longer follows the mouse (it made the picture flicker); only the search torch tracks the pointer */
   $('#stage').addEventListener('pointermove',e=>{
+    if(!$('#stage').classList.contains('searching')) return;
     const p=stagePt(e); $('#torch').style.setProperty('--mx',p.x+'px'); $('#torch').style.setProperty('--my',p.y+'px');
-    if(!S.motion||D.zoomed||GFX.low){ return; }
-    const st=$('#stage').style; st.setProperty('--px',((p.x/1600)-.5)*2); st.setProperty('--py',((p.y/900)-.5)*2);
   });
 }
 /* ---------- characters ---------- */
@@ -4871,7 +4871,7 @@ const TT={
  kBadH:['🔑 存著的收結果密碼不能用了','🔑 The saved results key no longer works','🔑 รหัสรับผลที่บันทึกไว้ใช้ไม่ได้แล้ว'],
  kBadNote:['如果剛在 Cloudflare 換了密碼，在這裡輸入新的密碼；每台電腦都要換一次。學生不受影響。','If the key was just changed in Cloudflare, enter the new one here; do this once on each computer. Students are not affected.','ถ้าเพิ่งเปลี่ยนรหัสใน Cloudflare ให้ใส่รหัสใหม่ที่นี่ ทำครั้งเดียวต่อเครื่อง นักศึกษาไม่ได้รับผลกระทบ'],
  kNote:['向設定系統的人索取，每台電腦輸入一次就好。這不是進老師頁的密碼，也不要給學生。','Ask whoever set up the system; enter it once on each computer. It is not the code for this page, and students must never have it.','ขอจากผู้ดูแลระบบ ใส่ครั้งเดียวต่อเครื่อง รหัสนี้ไม่ใช่รหัสเข้าหน้าอาจารย์ และห้ามให้นักศึกษา'],
- offNote:['這份遊戲沒有連到結果伺服器：學生玩完要按「下載我的報告」把檔案交給你，再到「🧰 進階」打開。','This copy is not connected to a results server: students press "Download my report" and send you the file; open it under 🧰 Advanced.','เกมชุดนี้ไม่ได้เชื่อมกับระบบรับผล นักศึกษาต้องกด "ดาวน์โหลดรายงาน" แล้วส่งไฟล์ให้อาจารย์ เปิดไฟล์ได้ที่แท็บ 🧰 ขั้นสูง'],
+ offNote:['這份遊戲沒有連到結果伺服器，結果只會留在每位學生自己的裝置上。','This copy is not connected to the results server, so results stay on each student\'s own device.','เกมชุดนี้ไม่ได้เชื่อมกับระบบรับผล ผลจึงอยู่ในเครื่องของนักศึกษาแต่ละคนเท่านั้น'],
  /* students */
  sIntro:['點一位學生看細節。可以用姓名或學號搜尋。','Click a student to see the details. Search by name or student ID.','คลิกที่ชื่อเพื่อดูรายละเอียด ค้นหาด้วยชื่อหรือรหัสนักศึกษาได้'],
  sSearch:['🔍 姓名或學號','🔍 Name or student ID','🔍 ชื่อหรือรหัสนักศึกษา'], sCount:['共 {n} 位','{n} students','{n} คน'],
@@ -4905,7 +4905,7 @@ const TT={
  prep:[['想調整遊戲（時間、題目、文字），到「✏️ 調整遊戲」改好後按「📤 傳給學生」；不改也可以直接用。','To adjust the game (time, questions, wording), make the changes in ✏️ Customise and press 📤 Send to students — or use it as it is.','ถ้าอยากปรับเกม (เวลา คำถาม ข้อความ) แก้ที่ ✏️ ปรับเกม แล้วกด 📤 ส่งให้นักศึกษา หรือใช้ตามเดิมเลยก็ได้'],
    ['在「🏠 開始」確認個案是開放的，把班級連結傳給學生。','On 🏠 Start, check that the case is open and send students the class link.','ที่ 🏠 เริ่มต้น ตรวจว่าเปิดเคสอยู่ แล้วส่งลิงก์ของห้องให้นักศึกษา'],
    ['前測、後測和反思題已經內建；想修改就到「✏️ 調整遊戲 → ➕ 自己的題目」。','Pre-test, post-test and reflection questions are built in; to change them go to ✏️ Customise → ➕ Your questions.','มีแบบทดสอบก่อน/หลังเรียนและคำถามสะท้อนคิดในตัว ถ้าจะแก้ ไปที่ ✏️ ปรับเกม → ➕ คำถามของอาจารย์']],
- during:[['每人用自己的電腦或手機玩，結果會自動傳給你（沒有網路時，學生按「下載我的報告」交檔案）。','Each student plays on their own computer or phone and results reach you automatically (without internet, students press "Download my report" and hand in the file).','นักศึกษาเล่นคนละเครื่อง (คอมหรือมือถือ) ผลส่งถึงอาจารย์อัตโนมัติ (ถ้าไม่มีอินเทอร์เน็ต ให้กด "ดาวน์โหลดรายงาน" แล้วส่งไฟล์)'],
+ during:[['每人用自己的電腦或手機玩，結果會自動傳給你。','Each student plays on their own computer or phone and results reach you automatically.','นักศึกษาเล่นคนละเครื่อง (คอมหรือมือถือ) ผลส่งถึงอาจารย์อัตโนมัติ'],
    ['動手做活動有「💡 提示」按鈕，用了幾次會記在結果裡。','The hands-on activities have a 💡 Hint button; how often it was used is recorded.','กิจกรรมลงมือทำมีปุ่ม "💡 คำใบ้" ระบบบันทึกว่าใช้ไปกี่ครั้ง'],
    ['想看進度就到「🏠 開始」按「🔄 載入最新結果」。','To check progress, press 🔄 Get the latest results on 🏠 Start.','อยากดูความคืบหน้า กด 🔄 โหลดผลล่าสุด ที่แท็บ 🏠 เริ่มต้น']],
  after:[['先看下面「這一班的資料」，從 2–3 個最多人漏掉的地方開始。','Look at "This class" below and start from the 2–3 points most students missed.','ดู "ข้อมูลของห้องนี้" ด้านล่าง แล้วเริ่มจาก 2–3 เรื่องที่พลาดกันมากที่สุด'],
@@ -4927,7 +4927,7 @@ const TT={
  setDef:['原本','default','ค่าเดิม'], setGame:['遊戲難度','Difficulty','ความยากของเกม'],
  imgIntro:['可以換成真實的檢驗單和藥袋照片。上傳後記得按「📤 傳給學生」。','You can swap in real lab sheets and medicine-bag photos. After uploading, remember 📤 Send to students.','ใส่รูปใบแล็บหรือซองยาจริงแทนภาพในเกมได้ อัปโหลดแล้วอย่าลืมกด 📤 ส่งให้นักศึกษา'],
  /* advanced */
- aIntro:['平常用不到這一頁：備份、連線和檔案版本都在這裡。','You rarely need this page: backups, connection and file versions live here.','ปกติไม่ต้องใช้หน้านี้ เป็นที่รวมการสำรองข้อมูล การเชื่อมต่อ และไฟล์เกม'],
+ aIntro:['平常用不到這一頁：收結果密碼、備份、刪除結果和老師密碼都在這裡。','You rarely need this page: the results key, backups, deleting results and the instructor code live here.','ปกติไม่ต้องใช้หน้านี้ เป็นที่รวมรหัสรับผล การสำรองผล การลบผล และรหัสเข้าหน้าอาจารย์'],
  aKey:['🔑 收結果密碼','🔑 Results key','🔑 รหัสรับผล'],
  aBackup:['💾 備份學生結果','💾 Back up student results','💾 สำรองผลของนักศึกษา'],
  aExpJ:['⬇️ 下載備份檔（.json）','⬇️ Download a backup file (.json)','⬇️ ดาวน์โหลดไฟล์สำรอง (.json)'], aExpC:['⬇️ 下載作答表（Excel／CSV）','⬇️ Download answers as a table (Excel / CSV)','⬇️ ดาวน์โหลดคำตอบเป็นตาราง (Excel / CSV)'],
@@ -5270,13 +5270,10 @@ async function advPubList(){ const el=$('#aPubList'); if(!el) return; if(!teache
 function renderAdv(b){ const url=serverURL(), key=teacherKey(), s=edWork().settings, cls=Object.entries(SYNC.classes||{}).sort((a,c)=>a[0].localeCompare(c[0]));
   b.innerHTML=`<p class="edintro">${TX('aIntro')}</p>
    ${url?`<div class="tcard"><h3>${TX('aKey')}</h3><p class="tn">${TX('kNote')}</p><div class="trow"><input class="ein" id="aKeyIn" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" value="${esc(key)}" placeholder="••••••••" style="max-width:300px"><button class="sbtn g" id="aKeySave">${T('onSave')}</button></div></div>`:''}
-   <div class="tcard"><h3>${TX('aBackup')}</h3><div class="trow"><button class="sbtn b" id="eJ">${TX('aExpJ')}</button><button class="sbtn b" id="eC">${TX('aExpC')}</button><button class="sbtn g" id="iJ">${TX('aImp')}</button><button class="sbtn r" id="cA">${TX('aClear')}</button></div><p class="tn">${TX('aBackupNote')}</p></div>
+   <div class="tcard"><h3>${TX('aBackup')}</h3><div class="trow"><button class="sbtn b" id="eJ">${TX('aExpJ')}</button><button class="sbtn b" id="eC">${TX('aExpC')}</button></div></div>
    ${url?`<div class="tcard"><h3>${TX('aCls')}</h3>${cls.length?`<table class="tbl">${cls.map(([c,n])=>`<tr><td><b>${esc(c)}</b></td><td>${n} ${TX('nStud')}</td><td><button class="sbtn r" data-dc="${esc(c)}" data-dn="${n}">${T('onDelCls')}</button></td></tr>`).join('')}</table>`:`<p class="tn">${TX('aClsNone')}</p>`}</div>
      <div class="tcard"><h3>${TX('aOnline')}</h3><div id="aPubList" class="muted">…</div><button class="sbtn r" id="pbReset" style="margin-top:8px">${TX('aReset')}</button></div>`:''}
-   <div class="tcard"><h3>${TX('aFile')}</h3><div class="trow"><button class="sbtn b" id="pbDl">${TX('aDl')}</button><button class="sbtn" id="pbExp">${TX('aExpChg')}</button><button class="sbtn" id="pbImp">${TX('aImpChg')}</button></div><p class="tn">${TX('aFileNote')}</p></div>
-   <div class="tcard"><h3>${TX('aConn')}</h3><p class="tn">${TX('aConnNote')}</p>
-     <label class="srow"><span>${TX('aServer')}</span><input class="ein" id="stServer" value="${esc(s.server!=null?s.server:CONFIG.SERVER_URL)}"></label><div class="trow"><button class="sbtn" id="onTest">${T('onTest')}</button><span id="onTestR" class="muted"></span></div>
-     <label class="srow"><span>${TX('aDefCls')}</span><input class="ein" id="stClass" value="${esc(s.classCode||'')}" placeholder="main"></label>
+   <div class="tcard"><h3>🔒 ${TX('aPin')}</h3><p class="tn">${TX('aConnNote')}</p>
      <label class="srow"><span>${TX('aPin')}</span><input class="ein enum" id="stPin" value="${esc(s.TEACHER_PIN||'')}" placeholder="••••"></label><p class="muted">🔒 ${TE('stPinWarn')}</p></div>`;
   const save=()=>{ edSave(); toast(T('saved')); };
   if($('#aKeySave')) $('#aKeySave').onclick=()=>{ setTeacherKey($('#aKeyIn').value); sfx.click(); toast('🔑 '+T('saved')); renderPage(); };
@@ -5284,20 +5281,9 @@ function renderAdv(b){ const url=serverURL(), key=teacherKey(), s=edWork().setti
   $('#eC').onclick=()=>{ const rows=[['session','name','student_id','class','rank','score','time_s','chapter','type','text','detail']];
     allSessions().forEach(s=>(s.log||[]).filter(e=>(e.type==='ask'&&e.mode==='free')||['lockText','final','present','medrev','calc','firstMove','custom','pp','refl','hidden','ending','refused','timeout','patienceOut','inhSim'].includes(e.type)).forEach(e=>rows.push([s.id,s.student&&s.student.name,s.student&&s.student.sid,s.classCode||'main',s.rank,s.score,e.t,e.ch,e.type,(e.type==='custom'||e.type==='pp'||e.type==='refl'?e.ans:e.text)||e.item||(e.sel||[]).join(' | ')||e.tier||e.why||e.id||e.dev||'',e.type==='inhSim'?((e.ok?'OK':'FIX')+' '+(e.errs||[]).join(' ')):e.type==='pp'?(e.phase+' · '+e.q+' · '+(e.ok?'OK':'WRONG')):e.type==='refl'?e.q:e.type==='calc'?(e.id+' try'+e.attempt+' '+JSON.stringify(e.vals)+' = '+e.result+' '+(e.ok?'OK':'WRONG')):e.type==='present'?(e.st+' '+(e.ok?'OK':e.near?'NEAR':'WRONG')):e.type==='custom'?(e.cp+' · '+e.q+' · '+e.pts+'/'+e.max):(e.intent||String(e.ok==null?'':e.ok))])));
     download('PharmaDetective_text_answers.csv','﻿'+rows.map(r=>r.map(c=>'"'+String(c==null?'':c).replace(/"/g,'""')+'"').join(',')).join('\n'),'text/csv'); };
-  $('#iJ').onclick=()=>pickFiles(true,'.json,application/json',async fs=>{ const all=store.get(CONFIG.STORAGE_KEY)||[]; let n=0; for(const f of fs){ try{ [].concat(JSON.parse(await f.text())).forEach(x=>{ if(x&&x.id){ const i=all.findIndex(y=>y.id===x.id); if(i>=0) all[i]=x; else all.push(x); n++; } }); }catch(e){ toast('⚠️ '+f.name); } } store.set(CONFIG.STORAGE_KEY,all); toast(T('imported')+': '+n); P.tab='tSessions'; renderPage(); });
-  $('#cA').onclick=()=>showModal(`<h3>${TX('aClear')}</h3><p>${T('tConfirmClear')}</p><p class="muted">${TX('aBackupNote')}</p>`,[{t:TX('aClear'),cls:'r',fn:()=>{ store.set(CONFIG.STORAGE_KEY,[]); if(P.cur) renderPage(); }},{t:T('cancel'),cls:''}]);
   b.querySelectorAll('[data-dc]').forEach(x=>x.onclick=()=>{ const c=x.dataset.dc;
     showModal(`<h3>${T('onDelCls')}</h3><p>${esc(T('onDelQ').replace('{c}',c).replace('{n}',x.dataset.dn))}</p>`,[{t:T('onDelCls'),cls:'r',fn:async()=>{ const r=await serverDelete(c); if(r.ok){ toast('🗑️ '+r.n); delete SYNC.classes[c]; } else toast('⚠️ '+T('onDown')); renderPage(); }},{t:T('cancel'),cls:''}]); });
   if($('#pbReset')) $('#pbReset').onclick=()=>showModal(`<h3>${TX('aReset')}</h3><p>${TX('aResetQ')}</p>`,[{t:TX('aReset'),cls:'r',fn:()=>{ const w2=edWork(), bk=clone(GAME_CFG_BASE); w2.texts=bk.texts||{}; w2.settings=bk.settings||{}; w2.questions=Array.isArray(bk.questions)?bk.questions:clone(DEFAULT_QUESTIONS); edSave(); renderPage(); }},{t:T('cancel'),cls:''}]);
-  $('#pbDl').onclick=()=>{ const {html,cfg}=buildPublishedHTML(); const t=cfg.meta.rev.replace(/[-:]/g,'').replace('T','_').slice(0,13);
-    download(`PharmaDetective_${CASE_ID.toUpperCase()}_${t}.html`, html, 'text/html'); sfx.fanfare(); showModal(`<div style="font-size:48px">📦</div><h3>${TE('pbDl')}</h3><p>${TE('pbDone')}</p><p class="muted">${TE('pbDlNote')}</p>`); };
-  $('#pbExp').onclick=()=>{ const w2=clone(edWork()); w2.kind='pharma-detective-changes'; download('PharmaDetective_changes.json', JSON.stringify(w2,null,1)); };
-  $('#pbImp').onclick=()=>pickFiles(false,'.json,application/json',async fs=>{ if(!fs[0]) return; try{ const d=JSON.parse(await fs[0].text()); if(!d||(!d.questions&&!d.texts&&!d.settings)) throw 0;
-      const w2=edWork(); const ids=new Set(w2.questions.map(q=>q.id)); (d.questions||[]).forEach(q=>{ if(ids.has(q.id)) q.id=newQ().id; w2.questions.push(q); });
-      Object.assign(w2.texts, d.texts||{}); Object.assign(w2.settings, d.settings||{}); edSave(); toast(TE('pbImported')); renderPage(); }catch(e){ sfx.error(); toast('⚠️ '+TE('pbBad')); } });
-  $('#onTest').onclick=async()=>{ $('#onTestR').textContent='…'; const ok=await serverHealth(); $('#onTestR').textContent=ok?T('onUp'):T('onDown'); };
-  $('#stServer').onchange=e=>{ const v=e.target.value.trim(); if(v===CONFIG.SERVER_URL) delete s.server; else s.server=v; save(); };
-  $('#stClass').onchange=e=>{ const v=normClass(e.target.value); if(v&&v!=='main') s.classCode=v; else delete s.classCode; e.target.value=v; save(); };
   $('#stPin').onchange=e=>{ const v=e.target.value.trim(); if(v) s.TEACHER_PIN=v; else delete s.TEACHER_PIN; save(); };
   if(url) advPubList(); }
 /* editor notes that pointed at the old tab names */

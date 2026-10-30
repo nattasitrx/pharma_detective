@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>藥師偵探 · 請老師確認</title>
+<style>
+:root{--ink:#1d1d24;--muted:#5d5d6b;--line:#d9d9e0;--bg:#f4f4f7;--card:#fff;--acc:#0f6b6b;--acc2:#e6f2f2;--warn:#a5520c;--warnbg:#fff4e6}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink)}
+body{font-family:system-ui,-apple-system,"PingFang TC","Noto Sans TC","Microsoft JhengHei","Leelawadee UI","Thonburi","Noto Sans Thai",sans-serif;font-size:16px;line-height:1.5;padding-bottom:84px}
+.th,i{display:block;font-style:normal;font-size:.78em;color:var(--muted);line-height:1.35;margin-top:1px;font-family:"Leelawadee UI","Thonburi","Noto Sans Thai",system-ui,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+header.top{background:#fff;border-bottom:1px solid var(--line);padding:22px 0 16px;margin-bottom:18px}
+.kick{font-size:13px;font-weight:700;letter-spacing:.06em;color:var(--acc)}
+h1{font-size:26px;line-height:1.25;margin:4px 0 2px}
+.intro{margin:12px 0 0;max-width:860px}
+.intro p{margin:6px 0}
+.namebox{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.namebox input{font:inherit;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;min-width:220px}
+.grp{font-size:20px;font-weight:800;margin:30px 0 10px;padding-left:10px;border-left:5px solid var(--acc)}
+.grp .th{font-weight:400}
+.q{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:0 0 16px;overflow:hidden;scroll-margin-top:12px}
+.qh{display:flex;gap:10px;align-items:flex-start;padding:14px 16px 10px;border-bottom:1px solid var(--line)}
+.code{flex:none;background:var(--ink);color:#fff;font-weight:800;border-radius:7px;padding:2px 9px;font-size:15px;margin-top:2px}
+.qh .zh{font-weight:800;font-size:18px;line-height:1.35}
+.qb{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;padding:14px 16px 16px}
+.q.wide .qb{grid-template-columns:1fr}
+.fig a{display:block}
+.fig img{width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+.fig .cap{font-size:12px;color:var(--muted);margin-top:4px}
+.row{display:grid;grid-template-columns:78px 1fr;gap:8px;margin:0 0 10px}
+.row .lab{font-weight:800;font-size:14px}
+.tb{border-collapse:collapse;width:100%;font-size:14px;margin:4px 0 6px}
+.tb th,.tb td{border:1px solid var(--line);padding:5px 7px;text-align:left;vertical-align:top}
+.tb th{background:#f0f0f4}
+.note{font-size:14px;border-left:3px solid var(--acc);padding:2px 8px;margin:6px 0}
+.choose{border:1.5px solid var(--acc);border-radius:10px;padding:10px 12px;margin-top:10px;background:#fbfefe}
+.choose .lab2{font-weight:800;color:var(--acc);font-size:14px}
+.choose .lab2 .th{display:inline;margin-left:6px}
+label.opt{display:flex;gap:10px;align-items:flex-start;padding:8px 8px;border-radius:8px;cursor:pointer;margin:2px 0}
+label.opt:hover{background:var(--acc2)}
+label.opt input[type=radio]{width:20px;height:20px;margin:2px 0 0;flex:none;accent-color:var(--acc)}
+label.opt.on{background:var(--acc2)}
+.cur{display:inline-block;font-size:12px;border:1px solid var(--muted);color:var(--muted);border-radius:5px;padding:0 5px;margin-left:6px;vertical-align:1px;white-space:nowrap}
+.inl{font:inherit;font-size:15px;padding:4px 8px;border:1.5px solid var(--line);border-radius:6px;margin-top:4px;width:min(100%,280px)}
+textarea{font:inherit;font-size:15px;width:100%;min-height:58px;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;resize:vertical}
+.memo{margin-top:8px}
+.memo .lab3{font-size:13px;font-weight:700;margin-bottom:3px}
+.memo .lab3 .th{display:inline;margin-left:6px}
+.erow{display:grid;grid-template-columns:54px 1fr 250px;gap:12px;padding:12px 16px;border-top:1px solid var(--line);align-items:start}
+.erow:first-child{border-top:none}
+.erow .c{font-weight:800;text-align:center;background:#f0f0f4;border-radius:6px;padding:2px 0}
+.erow .pick label.opt{padding:4px 6px;margin:0}
+.erow .pick input.inl{width:100%}
+.fgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;padding:14px 16px 16px}
+.fbox .h{font-weight:800;font-size:17px}
+.fbox .eg{font-size:13px;color:var(--muted);margin:2px 0 6px}
+.fbox .cases{font-size:14px;margin:4px 0 6px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.fbox .cases input{width:17px;height:17px;accent-color:var(--acc);vertical-align:-3px}
+.fbox textarea{min-height:170px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid var(--line);box-shadow:0 -4px 14px rgba(0,0,0,.06);z-index:10}
+.bar .wrap{display:flex;gap:12px;align-items:center;padding-top:10px;padding-bottom:10px}
+.bar .st{flex:1;font-size:14px;color:var(--muted);min-width:0}
+.bar .st b{color:var(--ink)}
+.bar .st.err{color:var(--warn)}
+.prog{font-size:13px;color:var(--muted);white-space:nowrap}
+button.go{font:inherit;font-weight:800;background:var(--acc);color:#fff;border:none;border-radius:10px;padding:10px 20px;cursor:pointer;white-space:nowrap}
+button.go:disabled{opacity:.5}
+button.ghost{font:inherit;background:#fff;border:1.5px solid var(--line);border-radius:10px;padding:8px 14px;cursor:pointer}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.modal .box{background:#fff;border-radius:14px;max-width:460px;width:100%;padding:22px;text-align:center}
+.modal .big{font-size:40px}
+/* results view */
+.rcard{background:#fff;border:1px solid var(--line);border-radius:14px;margin:0 0 18px;overflow:hidden}
+.rhead{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--line);background:#fafafc}
+.rhead b{font-size:18px}
+.pill{font-size:13px;border-radius:99px;padding:1px 9px;border:1px solid var(--line)}
+.pill.ok{background:#e7f6ec;border-color:#9fd5b0}
+.pill.wait{background:var(--warnbg);border-color:#f0c48e}
+.rt{border-collapse:collapse;width:100%;font-size:14.5px}
+.rt th,.rt td{border-top:1px solid var(--line);padding:8px 12px;text-align:left;vertical-align:top}
+.rt th{background:#f6f6f9;font-size:13px}
+.rt td.code2{font-weight:800;white-space:nowrap}
+.chg{display:inline-block;font-size:12px;font-weight:700;color:var(--warn);background:var(--warnbg);border:1px solid #f0c48e;border-radius:5px;padding:0 6px;margin-left:4px}
+.none{color:var(--muted)}
+.keybox{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:10px}
+.keybox input{font:inherit;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;min-width:260px}
+.msg{margin:10px 0;color:var(--warn)}
+@media (max-width:900px){.qb{grid-template-columns:1fr}.erow{grid-template-columns:44px 1fr}.erow .pick{grid-column:2}.fgrid{grid-template-columns:1fr}}
+@media (max-width:520px){h1{font-size:22px}.row{grid-template-columns:1fr;gap:2px}.bar .prog{display:none}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const D={"Q": [{"code": "Q1", "grp": "all", "t": ["年齡要以哪一份資料為準？", "ยึดอายุจากเอกสารไหน"], "fig": "f1_age.png", "info": [["資料上", "ในเอกสาร", "三個案例藥袋上的年齡，都和收據上的出生日期（換算到調劑日）不一致。", "อายุบนซองยาไม่ตรงกับวันเกิดในใบเสร็จทั้ง 3 เคส (นับอายุถึงวันที่บนซอง)"], ["遊戲目前", "ในเกมตอนนี้", "三個案例做法不同：A 依藥袋（出生日期改為 1959/11/7，但收據圖片仍是 1955）；C 依出生日期（學生用藥袋的 58 歲算 CrCl 會被判錯）；D 依出生日期（藥袋已改成 88）。", "ตอนนี้แต่ละเคสใช้คนละหลัก: A ยึดซอง (รูปใบเสร็จยังเป็น 1955) · C ยึดวันเกิด (นักศึกษาที่ใช้อายุ 58 จากซองจะถูกบอกว่าผิด) · D ยึดวันเกิด (แก้ซองเป็น 88 แล้ว)"]], "extra": "<table class=\"tb\"><tr><th>案例<i>เคส</i></th><th>藥袋年齡<i>อายุบนซอง</i></th><th>收據出生日期（調劑日年齡）<i>วันเกิดในใบเสร็จ (อายุ ณ วันจ่ายยา)</i></th><th>遊戲目前<i>เกมใช้</i></th></tr>\n<tr><td>A 陳伯</td><td>61</td><td>1955/11/07（2021/2/18 時 65 歲）</td><td>61</td></tr>\n<tr><td>C 王太太</td><td>58</td><td>1960/11/07（2022/2/18 時 61 歲）</td><td>61</td></tr>\n<tr><td>D 李伯伯</td><td>85（原圖）</td><td>1933/05/01（2022/4/28 時 88 歲）</td><td>88</td></tr></table>\n<p class=\"note\">不論選哪一個，CKD 分期都不變。<i>ไม่ว่าเลือกแบบไหน ระยะ CKD ไม่เปลี่ยน</i></p>", "opts": [{"id": "birth", "zh": "以收據的出生日期為準：A 改為 65 歲（eGFR ≈ 23、CrCl ≈ 32.3），修改 A、C 藥袋圖片上的年齡", "th": "ยึดวันเกิดในใบเสร็จ: A เป็น 65 ปี แก้อายุบนรูปซองของ A และ C"}, {"id": "bag", "zh": "以藥袋的年齡為準：C 改為 58 歲（eGFR ≈ 52.5、CrCl ≈ 42.8）、D 改回 85 歲（CrCl ≈ 59），修改 A、C 收據上的出生日期", "th": "ยึดอายุบนซอง: C เป็น 58 ปี · D กลับเป็น 85 ปี · แก้วันเกิดในรูปใบเสร็จของ A และ C"}, {"id": "keep", "zh": "維持目前做法（各案例不同），只把 A 收據改成 1959/11/07", "th": "คงแบบปัจจุบัน แค่แก้รูปใบเสร็จ A เป็น 1959", "cur": true}]}, {"code": "A2", "grp": "A", "t": ["Clarinase 的含量是多少？", "Clarinase ความแรงเท่าไร"], "fig": "f2_clarinase.png", "info": [["資料上", "ในเอกสาร", "三個案例的收據都只寫「Clarinase 7 粒，1 天 1 次，7 天」，沒有含量。", "ใบเสร็จทั้ง 3 เคสเขียนแค่ Clarinase 7 เม็ด วันละครั้ง 7 วัน ไม่มีความแรง"], ["遊戲目前", "ในเกมตอนนี้", "視為 loratadine 5 mg + pseudoephedrine 120 mg，每日一次。Case A 重複用藥任務：pseudoephedrine 每日合計 420 mg（Peace 60 + Finska LP 240 + Clarinase 120），超過上限 240 mg。", "ถือเป็น loratadine 5 + pseudoephedrine 120 mg วันละครั้ง ภารกิจยาซ้ำ Case A บอกว่ารวม 420 มก./วัน เกินขีดสูงสุด 240 มก."]], "opts": [{"id": "5_120", "zh": "5 mg／120 mg，每日一次，合計 420 mg", "th": "แบบ 5/120 มก. วันละครั้ง รวม 420 มก.", "cur": true}, {"id": "10_240", "zh": "Clarinase 24 小時錠 10 mg／240 mg，合計 540 mg", "th": "แบบ 24 ชม. 10/240 มก. รวม 540 มก."}]}, {"code": "A3", "grp": "A", "t": ["Ponstan 藥袋用途寫「經血過多」，但病人是男性", "ซอง Ponstan มีข้อบ่งใช้ \"ประจำเดือนมามาก\" แต่ผู้ป่วยเป็นชาย"], "fig": "f3_ponstan.png", "info": [["資料上", "ในเอกสาร", "用途：消炎、解熱、鎮痛、經血過多及其他相關症狀。", "ข้อบ่งใช้บนซอง: ลดอักเสบ ลดไข้ แก้ปวด ประจำเดือนมามาก"], ["遊戲目前", "ในเกมตอนนี้", "任務說明告訴學生：這是藥袋上的通用文字，不是開藥的原因。", "ภารกิจอธิบายว่าเป็นข้อความทั่วไปบนซอง ไม่ใช่เหตุผลที่สั่งยา"]], "opts": [{"id": "keep", "zh": "保留，當作教學點", "th": "เก็บไว้เป็นจุดสอน", "cur": true}, {"id": "remove", "zh": "從圖片刪除「經血過多」", "th": "ลบคำนี้ออกจากรูป"}]}, {"code": "C1", "grp": "C", "t": ["Fosamax Plus 含多少維生素 D？", "Fosamax Plus มีวิตามินดีเท่าไร"], "fig": "f4_fosamax.png", "info": [["資料上", "ในเอกสาร", "B醫院骨科藥袋只寫「FOSAMAX PLUS (Alendronate) 70MG」，沒有維生素 D。", "ซอง รพ.B เขียนแค่ alendronate 70 มก. ไม่มีวิตามินดี"], ["遊戲目前", "ในเกมตอนนี้", "alendronate 70 mg + vitamin D3 2800 IU；和問題 P7（鈣與維生素 D 是否足夠）有關。", "เกมใส่เป็น alendronate 70 มก. + D3 2800 IU เกี่ยวกับปัญหา P7 (แคลเซียม/วิตามินดีพอไหม)"]], "opts": [{"id": "2800", "zh": "70 mg + D3 2800 IU", "th": "70 มก. + D3 2800 IU", "cur": true}, {"id": "5600", "zh": "70 mg + D3 5600 IU", "th": "70 มก. + D3 5600 IU"}, {"id": "none", "zh": "只當作 alendronate，刪除遊戲中的維生素 D", "th": "ถือเป็น alendronate อย่างเดียว เอาวิตามินดีออกจากเกม"}]}, {"code": "C2", "grp": "C", "t": ["微量白蛋白 2.8 可以判定為 A2 嗎？", "ไมโครอัลบูมิน 2.8 สรุปว่าเป็น A2 ได้ไหม"], "fig": "f5_microalb.png", "info": [["資料上", "ในเอกสาร", "MicroALB 2.8（參考值 <1.9），只在 2021/9/20 測一次，沒有單位，也沒有 ACR。", "MicroALB 2.8 (ค่าอ้างอิง <1.9) วัดครั้งเดียว ไม่มีหน่วย ไม่มี ACR"], ["遊戲目前", "ในเกมตอนนี้", "問題 P13 寫「eGFR ≈ 52（G3a）、尿微白蛋白 2.8（A2）」。", "ปัญหา P13 เขียนว่า eGFR ≈ 52 (G3a) ไมโครอัลบูมิน 2.8 (A2)"]], "opts": [{"id": "a2", "zh": "可以，維持 A2", "th": "ได้ คง A2 ไว้", "cur": true}, {"id": "nograde", "zh": "改成只寫「微量白蛋白尿」，不分級", "th": "เขียนแค่ \"มีอัลบูมินในปัสสาวะ\" ไม่ระบุระดับ"}]}, {"code": "C3", "grp": "C", "t": ["Case C 的檢驗數值和 Case A 幾乎相同", "ค่าแล็บ Case C แทบเหมือน Case A"], "fig": "f6_labs_ac.png", "wide": true, "info": [["資料上", "ในเอกสาร", "GLU-AC、HbA1c（7.1/7.8/8.3）、TC、LDL、HDL、MicroALB 都和 Case A 相同；只有 TG（每個值多 100）、Cr、T-score 不同。A醫院藥袋也是同一套（同醫師、領藥號碼 5845、同調劑時間），只少了 Peace。", "GLU, HbA1c, TC, LDL, HDL, MicroALB เท่ากับ Case A ทุกค่า ต่างแค่ TG (มากกว่า 100), Cr, T-score และซอง รพ.A ก็เป็นชุดเดียวกับ Case A"], ["遊戲目前", "ในเกมตอนนี้", "照原圖使用；兩個案例都玩的學生會看到相同的數字。", "ใช้ตามรูป นักศึกษาที่เล่นทั้งสองเคสจะเห็นตัวเลขซ้ำกัน"]], "opts": [{"id": "keep", "zh": "保留（原始教材就是如此）", "th": "คงไว้ (เอกสารต้นฉบับเป็นแบบนี้)", "cur": true}, {"id": "change", "zh": "修改 Case C 的數值（請在備註寫下）", "th": "เปลี่ยนค่าของ Case C (เขียนในหมายเหตุ)"}]}, {"code": "D1", "grp": "D", "t": ["四個藥袋的「每日次數」和「服用時間」不一致", "ซอง 4 ซอง จำนวนครั้งต่อวันไม่ตรงกับเวลากิน"], "fig": "f7_freq.png", "info": [["資料上", "ในเอกสาร", "Galvus MET 每日 2 次／三餐飯前 · Minidiab 每日 2 次／早飯後 · Actibest 每日 3 次、每次 2 粒／晚飯後 · Sketa 每日 3 次／晚飯後。", "Galvus MET วันละ 2 / ก่อน 3 มื้อ · Minidiab วันละ 2 / หลังเช้า · Actibest วันละ 3 / หลังเย็น · Sketa วันละ 3 / หลังเย็น"], ["遊戲目前", "ในเกมตอนนี้", "照藥袋顯示，不當作學生要找的問題（Debrief 手冊有註記）。", "แสดงตามซอง ไม่ได้เป็นปัญหาที่ต้องหา (มีหมายเหตุในคู่มือ debrief)"]], "opts": [{"id": "teach", "zh": "刻意設計：加入成為學生要找的問題", "th": "ตั้งใจ: เพิ่มเป็นปัญหาให้นักศึกษาหา"}, {"id": "typo", "zh": "印刷錯誤：修正圖片（請在備註寫下正確用法）", "th": "พิมพ์ผิด: แก้รูป (เขียนวิธีใช้ที่ถูกในหมายเหตุ)"}, {"id": "keep", "zh": "維持現狀：只顯示、不計分", "th": "คงไว้: แสดงอย่างเดียว ไม่นับคะแนน", "cur": true}]}, {"code": "D2", "grp": "D", "t": ["Spiolto 藥袋寫「每日 2 次、每次 2 噴」是刻意的錯誤嗎？", "Spiolto บนซอง \"วันละ 2 ครั้ง ครั้งละ 2 พ่น\" เป็นข้อผิดที่ตั้งใจไหม"], "fig": "f8_spiolto.png", "info": [["資料上", "ในเอกสาร", "1 支 60 噴，標示「共 28 天份」；但每日 4 噴只夠 15 天（標準劑量每日一次 2 噴可用 30 天）。", "1 หลอด 60 พ่น เขียนว่า 28 วัน แต่วันละ 4 พ่นใช้ได้แค่ 15 วัน (ขนาดมาตรฐานวันละครั้ง 2 พ่นใช้ได้ 30 วัน)"], ["遊戲目前", "ในเกมตอนนี้", "列為問題 P2 的一部分，答案是「與處方醫師聯繫確認」。", "เป็นส่วนหนึ่งของปัญหา P2 เฉลย: ปรึกษาแพทย์ผู้สั่งยา"]], "opts": [{"id": "teach", "zh": "是刻意的錯誤，維持", "th": "ตั้งใจ คงไว้", "cur": true}, {"id": "typo", "zh": "是印刷錯誤：改成每日一次 2 噴，並刪除這一點", "th": "พิมพ์ผิด: แก้เป็นวันละครั้ง 2 พ่น และเอาประเด็นนี้ออก"}]}, {"code": "D3", "grp": "D", "t": ["Royamet 200 mg 是 cimetidine 嗎？", "Royamet 200 mg คือ cimetidine ใช่ไหม"], "fig": "f9_receipt.png", "info": [["遊戲目前", "ในเกมตอนนี้", "視為 cimetidine → 與 Famo（famotidine）重複使用 H2 阻斷劑（P18）。", "ถือเป็น cimetidine → H2 blocker ซ้ำกับ Famo (P18)"]], "opts": [{"id": "yes", "zh": "是", "th": "ใช่", "cur": true}, {"id": "no", "zh": "不是，正確成分：", "th": "ไม่ใช่ ตัวยาที่ถูกคือ", "inp": true}]}, {"code": "D4", "grp": "D", "t": ["Kudona（自費）是 glucosamine 嗎？", "Kudona (จ่ายเอง) คือ glucosamine ใช่ไหม"], "fig": "f9_receipt.png", "info": [["遊戲目前", "ในเกมตอนนี้", "視為 glucosamine sulfate，自費保健食品（P9）。", "ถือเป็น glucosamine sulfate อาหารเสริมจ่ายเงินเอง (P9)"]], "opts": [{"id": "yes", "zh": "是", "th": "ใช่", "cur": true}, {"id": "no", "zh": "不是，正確成分：", "th": "ไม่ใช่ ตัวยาที่ถูกคือ", "inp": true}]}, {"code": "D5", "grp": "D", "t": ["Cr 0.5 是真實數值還是打錯？", "Cr 0.5 เป็นค่าจริงหรือพิมพ์ผิด"], "fig": "f10_cr.png", "info": [["資料上", "ในเอกสาร", "Cr 1.0（2021/11/20）→ 0.5（2022/01/20）→ 0.8（2022/4/22）。", "Cr 1.0 → 0.5 → 0.8"], ["遊戲目前", "ในเกมตอนนี้", "用 0.8 計算：CrCl ≈ 56、eGFR ≈ 85（P13：famotidine 20 mg 每日 2 次劑量過高）。", "ใช้ 0.8 คำนวณ CrCl ≈ 56, eGFR ≈ 85 (P13: famotidine เกินขนาด)"]], "opts": [{"id": "real", "zh": "真實數值，保留", "th": "ค่าจริง คงไว้", "cur": true}, {"id": "typo", "zh": "打字錯誤，改為：", "th": "พิมพ์ผิด แก้เป็น", "inp": true}]}, {"code": "D6", "grp": "D", "t": ["藥袋上的小錯誤要修正嗎？", "แก้จุดเล็กๆ บนซองไหม"], "fig": "f11_minor.png", "info": [["資料上", "ในเอกสาร", "Berotec「總領藥量 11 粒」（吸入劑用「粒」）；胸腔內科多個藥袋的「注意事項」編號是 4–6、7–9、10–12、13–15，不是 1–3。", "Berotec จ่าย \"11 เม็ด\" (หน่วยไม่เข้ากับยาพ่น) · หลายซองเลขข้อหมายเหตุเป็น 4–6, 7–9, 10–12, 13–15 แทน 1–3"], ["遊戲目前", "ในเกมตอนนี้", "照原圖使用，不影響答案。", "ใช้ตามรูป ไม่กระทบเฉลย"]], "opts": [{"id": "fix", "zh": "修正（11 粒 → 1 支；編號改回 1–3）", "th": "แก้ (11 เม็ด → 1 หลอด; เลขข้อเป็น 1–3)"}, {"id": "keep", "zh": "保留原樣", "th": "คงไว้ตามเดิม", "cur": true}]}, {"code": "D7", "grp": "D", "t": ["已經修改的圖片，請確認", "รูปที่แก้ไปแล้ว ขอให้ยืนยัน"], "fig": "f12_fixed.png", "info": [["已修改", "ที่แก้แล้ว", "Case D 藥袋年齡 85 → 88；Dermalin 品項數「3-1」（與 Benamine 重複）→「3-3」；三個案例檢驗報告的 TG／TC 參考值對調更正（TG 35–160、TC 140–200）。", "Case D อายุบนซอง 85 → 88 · Dermalin เลขรายการ 3-1 → 3-3 · ค่าอ้างอิง TG/TC บนใบแล็บทั้ง 3 เคสสลับกลับให้ถูก"]], "opts": [{"id": "agree", "zh": "同意", "th": "เห็นด้วย"}, {"id": "disagree", "zh": "不同意（請在備註說明）", "th": "ไม่เห็นด้วย (เขียนในหมายเหตุ)"}]}], "E": [["e1", "A", "CrCl 用實際體重 90 kg（BMI ≈ 30）算出 34.1，再問學生用實際體重會不會高估（調整體重後 ≈ 29.2）", "CrCl ใช้น้ำหนักจริง 90 กก. ได้ 34.1 แล้วถามว่าประเมินสูงเกินไหม (น้ำหนักปรับ ≈ 29.2)"], ["e2", "A", "Pseudoephedrine 每日上限以 240 mg 計算", "ใช้ขีดสูงสุด pseudoephedrine 240 มก./วัน"], ["e3", "C", "一月因低血糖跌倒（同事的便條）；身高 162 → 158 cm，懷疑脊椎壓迫性骨折；Fosamax 配三合一咖啡後躺回床上；藥盒週三到週五沒吃；骨科醫師請她先看牙", "หกล้มเพราะน้ำตาลต่ำ · ส่วนสูง 162 → 158 · กิน Fosamax กับกาแฟแล้วนอนต่อ · กล่องยาพุธ–ศุกร์เต็ม · หมอให้ตรวจฟันก่อน"], ["e4", "C", "低血糖處理：測 58 → 葡萄糖錠 15–20 g → 等 15 分鐘 → 再測 94 → 吃蘇打餅乾；因為服用 acarbose，給糖果或柳橙汁算錯", "แก้น้ำตาลต่ำ: วัด 58 → กลูโคส 15–20 ก. → รอ 15 นาที → วัด 94 → ขนมปังกรอบ (ลูกอม/น้ำส้มผิดเพราะกิน acarbose)"], ["e5", "C", "Fosamax 服藥後 30 分鐘：不可以躺回床、喝咖啡、吃包子、吃其他藥；可以再喝白開水、坐著看電視、澆花", "30 นาทีหลังกิน Fosamax: ห้ามนอน กาแฟ ซาลาเปา ยาอื่น · ได้: น้ำเปล่า นั่งดูทีวี รดน้ำต้นไม้"], ["e6", "D", "秘密 P8：太太值夜班那天沒人提醒，早上的藥忘了吃，晚上把早晚的藥一起吃（glipizide 兩倍），在公共浴室跌倒", "ความลับ P8: ลืมยาเช้าแล้วกินรวมตอนกลางคืน (glipizide สองเท่า) ล้มในห้องน้ำรวม"], ["e7", "D", "吸入劑步驟：Berotec MDI 8 個步驟；吸藥輔助器在 5 秒內吸入；Respimat 轉–開–壓 2 噴（第 2 噴要先關蓋再轉）", "ขั้นตอนยาพ่น: MDI 8 ขั้น · spacer สูดภายใน 5 วินาที · Respimat หมุน–เปิด–กด 2 พัฟ"], ["e8", "D", "抗膽鹼負擔分類依 ACB scale 與 Beers；Clarinase、Famo、Sketa、Sinbaby 兩種答案都接受", "จัดกลุ่ม anticholinergic ตาม ACB + Beers · 4 ตัวรับได้สองคำตอบ"], ["e9", "C、D", "19 個 DRP 答案是團隊草擬，尚未經老師審閱", "เฉลย DRP 19 ข้อเป็นร่างของทีม ยังไม่ผ่านอาจารย์"]], "F": [["add", "想新增", "อยากเพิ่ม", "例如：新的問題、情節、活動", "เช่น ปัญหา เนื้อเรื่อง หรือกิจกรรมใหม่"], ["adjust", "想調整", "อยากปรับ", "例如：難度、時間、提示、計分", "เช่น ความยาก เวลา คำใบ้ การให้คะแนน"], ["fix", "需要修改", "ต้องแก้", "例如：文字、答案、藥袋或檢驗資料", "เช่น ข้อความ เฉลย ข้อมูลบนซองหรือผลแล็บ"]]};
+const qs=new URLSearchParams(location.search);
+const API=(()=>{ const a=qs.get('api'); return a&&/^http:\/\/localhost(:\d+)?$/.test(a)?a:'https://pharma-detective-api.nattasitrx.workers.dev'; })();
+const CLS='profreview';
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const bi=(zh,th)=>`<span class="zh">${zh}</span><span class="th">${th}</span>`;
+const $=s=>document.querySelector(s);
+const ls={get(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } }, set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }};
+const hm=d=>{ const p=n=>String(n).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; };
+const GRP={all:['三個案例共同','ทั้ง 3 เคส'], A:['Case A 陳伯','Case A ลุงเฉิน'], C:['Case C 王太太','Case C ป้าหวัง'], D:['Case D 李伯伯','Case D ลุงหลี่']};
+
+if(qs.has('results')) resultsView(); else formView();
+
+/* ===================== the form the professor fills in ===================== */
+function formView(){
+  let ID=ls.get('pdrev_id'); if(!ID){ ID='rev-'+Date.now().toString(36)+Math.random().toString(36).slice(2,7); ls.set('pdrev_id',ID); }
+  const A=Object.assign({name:'', q:{}, e:{}, f:{}, done:false}, ls.get('pdrev_ans')||{});
+  let html=`<header class="top"><div class="wrap"><div class="kick">PHARMA DETECTIVE · 藥師偵探</div>
+    <h1>三個案例預覽版：請老師確認</h1><span class="th">ประเด็นให้อาจารย์คอนเฟิร์ม — เวอร์ชันพรีวิว 3 เคส</span>
+    <div class="intro"><p>每題的圖片是原始藥袋、收據或檢驗報告的截圖，黑框是需要確認的地方。請直接點選選項，也可以在「其他／備註」寫下意見。標「目前」的是遊戲現在的做法。<span class="th">รูปมาจากซองยา/ใบเสร็จ/ผลแล็บต้นฉบับ กรอบดำคือจุดที่ต้องคอนเฟิร์ม เลือกคำตอบ หรือเขียนในช่องหมายเหตุ ป้าย "目前" คือแบบที่เกมใช้อยู่ตอนนี้</span></p>
+    <p>答案會<b>自動儲存</b>，可以分幾次填寫；填完請按最下面的「送出」。點圖片可以放大。<span class="th">คำตอบบันทึกอัตโนมัติ ทำทีละส่วนได้ เสร็จแล้วกด "送出" ด้านล่าง กดรูปเพื่อขยาย</span></p>
+    <p>試玩網址：<a href="https://nattasitrx.github.io/pharma_detective/preview/" target="_blank" rel="noopener">nattasitrx.github.io/pharma_detective/preview</a></p></div>
+    <div class="namebox"><label for="nm"><b>您的稱呼</b><span class="th">ชื่อ (ไม่บังคับ)</span></label><input id="nm" maxlength="40" placeholder="例如：王老師" value="${esc(A.name)}"></div></div></header><main class="wrap">`;
+  let g='';
+  D.Q.forEach(q=>{
+    if(q.grp!==g){ g=q.grp; html+=`<div class="grp">${bi(...GRP[g])}</div>`; }
+    const ans=A.q[q.code]||{};
+    const info=q.info.map(r=>`<div class="row"><div class="lab">${bi(r[0],r[1])}</div><div>${bi(r[2],r[3])}</div></div>`).join('');
+    const opts=q.opts.map(o=>`<label class="opt${ans.v===o.id?' on':''}"><input type="radio" name="${q.code}" value="${o.id}"${ans.v===o.id?' checked':''}><div>${o.zh}${o.cur?'<span class="cur">目前 · ตอนนี้</span>':''}<span class="th">${o.th}</span>${o.inp?`<input class="inl" data-inp="${q.code}" maxlength="80" value="${esc(ans.inp||'')}">`:''}</div></label>`).join('');
+    html+=`<section class="q${q.wide?' wide':''}" id="${q.code}"><div class="qh"><span class="code">${q.code}</span><div>${bi(...q.t)}</div></div>
+      <div class="qb"><div class="fig"><a href="img/${q.fig}" target="_blank" rel="noopener"><img src="img/${q.fig}" alt="${esc(q.t[0])}" loading="lazy"></a><div class="cap">點圖片放大 · กดเพื่อขยาย</div></div>
+      <div>${info}${q.extra||''}<div class="choose"><div class="lab2">請選擇<span class="th">โปรดเลือก</span></div>${opts}
+      <div class="memo"><div class="lab3">其他／備註<span class="th">อื่นๆ / หมายเหตุ</span></div><textarea data-note="${q.code}" maxlength="2000">${esc(ans.note||'')}</textarea></div></div></div></div></section>`;
+  });
+  html+=`<div class="grp">${bi('我們自行補充的情節與答案','เนื้อหาที่ทีมแต่งเพิ่มและเฉลย')}</div><section class="q" id="E"><div class="qh"><span class="code">E</span><div>${bi('原始案例資料沒有這些細節，由團隊補充，請確認','เอกสารเคสไม่มีรายละเอียดเหล่านี้ ทีมแต่งเพิ่ม ขอให้อาจารย์ตรวจ')}</div></div><div>`;
+  D.E.forEach(([id,c,zh,th])=>{ const a=A.e[id]||{};
+    html+=`<div class="erow"><div class="c">${c}</div><div>${bi(zh,th)}</div><div class="pick">
+      <label class="opt${a.v==='ok'?' on':''}"><input type="radio" name="${id}" value="ok"${a.v==='ok'?' checked':''}><div>同意<span class="th">เห็นด้วย</span></div></label>
+      <label class="opt${a.v==='fix'?' on':''}"><input type="radio" name="${id}" value="fix"${a.v==='fix'?' checked':''}><div>需修改<span class="th">ต้องแก้</span></div></label>
+      <input class="inl" data-enote="${id}" maxlength="400" placeholder="備註 · หมายเหตุ" value="${esc(a.note||'')}"></div></div>`; });
+  html+=`</div></section><div class="grp">${bi('其他想新增、調整或修改的地方','สิ่งที่อยากเพิ่ม ปรับ หรือแก้เพิ่มเติม')}</div>
+    <section class="q" id="F"><div class="qh"><span class="code">F</span><div>${bi('請直接用中文書寫，任何想法都可以','อาจารย์เขียนเป็นภาษาจีนได้เลย เรื่องอะไรก็ได้')}</div></div><div class="fgrid">`;
+  D.F.forEach(([id,zh,th,ez,et])=>{ const a=A.f[id]||{}, cs=a.cases||[];
+    html+=`<div class="fbox"><div class="h">${bi(zh,th)}</div><div class="eg">${ez}<span class="th">${et}</span></div>
+      <div class="cases">案例<span class="th" style="display:inline">เคส</span>${['A','C','D','全部'].map(c=>`<label><input type="checkbox" data-fcase="${id}" value="${c}"${cs.includes(c)?' checked':''}> ${c}</label>`).join('')}</div>
+      <textarea data-ftext="${id}" maxlength="4000">${esc(a.text||'')}</textarea></div>`; });
+  html+=`</div></section></main>
+    <div class="bar"><div class="wrap"><div class="st" id="st">尚未作答<span class="th">ยังไม่ได้ตอบ</span></div><div class="prog" id="prog"></div><button class="go" id="send">送出 · ส่ง</button></div></div>`;
+  $('#app').innerHTML=html;
+
+  let tSave=null, busy=false, again=false, retry=null;
+  const status=(k,extra)=>{ const el=$('#st'); el.classList.toggle('err',k==='err');
+    el.innerHTML=k==='saving'?'儲存中…<span class="th">กำลังบันทึก</span>':k==='ok'?`<b>✓ 已自動儲存</b> ${extra}${A.done?' · 已送出':''}<span class="th">บันทึกอัตโนมัติแล้ว${A.done?' · ส่งแล้ว':''}</span>`
+      :k==='err'?'⚠ 暫時無法連線，答案先存在這台裝置，稍後會自動重試<span class="th">ยังส่งไม่ได้ เก็บไว้ในเครื่องก่อน จะลองใหม่อัตโนมัติ</span>':'…'; };
+  const progress=()=>{ const n=D.Q.filter(q=>(A.q[q.code]||{}).v).length, e=D.E.filter(r=>(A.e[r[0]]||{}).v).length;
+    $('#prog').textContent=`已回答 ${n}/${D.Q.length} 題 · E ${e}/${D.E.length}`; };
+  async function save(){ if(busy){ again=true; return; } busy=true; status('saving'); clearTimeout(retry);
+    const body={id:ID, classCode:CLS, case:'review', updated:new Date().toISOString(), done:!!A.done, student:{name:A.name||'老師', sid:''}, review:{v:1, q:A.q, e:A.e, f:A.f}};
+    try{ const r=await fetch(API+'/api/submit',{method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(body)}); const j=await r.json(); if(!j||!j.ok) throw new Error('not ok'); status('ok', hm(new Date())); }
+    catch(e){ status('err'); retry=setTimeout(save, 15000); }
+    busy=false; if(again){ again=false; save(); } }
+  const changed=(now)=>{ ls.set('pdrev_ans',A); progress(); clearTimeout(tSave); tSave=setTimeout(save, now?0:1200); status('edit'); };
+  const q=c=>A.q[c]||(A.q[c]={});
+  document.addEventListener('change', ev=>{ const t=ev.target;
+    if(t.type==='radio'){ document.querySelectorAll(`input[name="${t.name}"]`).forEach(x=>x.closest('label').classList.toggle('on',x.checked));
+      if(D.Q.some(x=>x.code===t.name)) q(t.name).v=t.value; else (A.e[t.name]||(A.e[t.name]={})).v=t.value; changed(true); }
+    if(t.dataset.fcase){ const f=A.f[t.dataset.fcase]||(A.f[t.dataset.fcase]={}); f.cases=[...document.querySelectorAll(`input[data-fcase="${t.dataset.fcase}"]:checked`)].map(x=>x.value); changed(true); } });
+  document.addEventListener('input', ev=>{ const t=ev.target;
+    if(t.id==='nm'){ A.name=t.value.trim(); changed(); }
+    else if(t.dataset.note){ q(t.dataset.note).note=t.value; changed(); }
+    else if(t.dataset.inp){ q(t.dataset.inp).inp=t.value; const r=t.closest('label').querySelector('input[type=radio]'); if(r&&!r.checked){ r.checked=true; r.dispatchEvent(new Event('change',{bubbles:true})); } changed(); }
+    else if(t.dataset.enote){ (A.e[t.dataset.enote]||(A.e[t.dataset.enote]={})).note=t.value; changed(); }
+    else if(t.dataset.ftext){ (A.f[t.dataset.ftext]||(A.f[t.dataset.ftext]={})).text=t.value; changed(); } });
+  $('#send').onclick=async()=>{ A.done=true; ls.set('pdrev_ans',A); clearTimeout(tSave); await save();
+    const ok=!$('#st').classList.contains('err'); const m=document.createElement('div'); m.className='modal';
+    m.innerHTML=`<div class="box"><div class="big">${ok?'🙏':'⚠'}</div><h2>${ok?'已送出，謝謝老師！':'暫時無法連線'}</h2><p>${ok?'之後若想修改，直接在這一頁修改即可，會自動更新。':'答案已存在這台裝置，連上網路後會自動送出。'}</p>
+      <span class="th">${ok?'ส่งแล้ว ขอบคุณค่ะ/ครับ แก้ภายหลังได้ในหน้านี้ ระบบจะอัปเดตเอง':'ยังส่งไม่ได้ คำตอบเก็บไว้ในเครื่อง จะส่งเองเมื่อออนไลน์'}</span><p><button class="go">好 · ตกลง</button></p></div>`;
+    document.body.appendChild(m); m.querySelector('button').onclick=()=>m.remove(); };
+  progress(); if(A.updated||Object.keys(A.q).length) status('ok', '');
+  if(Object.keys(A.q).length||Object.keys(A.e).length||A.name) save();
+}
+
+/* ===================== results for the team (needs the results key) ===================== */
+function resultsView(){
+  let key=''; try{ key=sessionStorage.getItem('pdrev_key')||''; }catch(e){}
+  $('#app').innerHTML=`<header class="top"><div class="wrap"><div class="kick">PHARMA DETECTIVE · 藥師偵探</div><h1>老師的回覆</h1><span class="th">คำตอบของอาจารย์</span>
+    <div class="keybox"><input id="key" type="password" placeholder="รหัสรับผล (results key)" value="${esc(key)}" autocomplete="off"><button class="go" id="load">載入 · โหลด</button><button class="ghost" id="copy" disabled>複製文字 · คัดลอกเป็นข้อความ</button></div>
+    <div class="msg" id="msg"></div></div></header><main class="wrap" id="out"></main>`;
+  let last=[];
+  const optOf=(q,id)=>q.opts.find(o=>o.id===id);
+  const curOf=q=>q.opts.find(o=>o.cur);
+  function render(list){
+    if(!list.length){ $('#out').innerHTML='<p class="none">還沒有回覆 · ยังไม่มีคำตอบ</p>'; return; }
+    $('#out').innerHTML=list.map(s=>{ const R=s.review||{}, Aq=R.q||{}, Ae=R.e||{}, Af=R.f||{};
+      const rows=D.Q.map(q=>{ const a=Aq[q.code]||{}, o=optOf(q,a.v), cur=curOf(q);
+        const chg=o&&cur&&o.id!==cur.id?'<span class="chg">要改 · ต้องแก้เกม</span>':'';
+        return `<tr><td class="code2">${q.code}</td><td>${bi(...q.t)}</td><td>${o?`${o.zh}${a.inp?(o.zh.endsWith('：')?'':'：')+esc(a.inp):''}${chg}<span class="th">${o.th}</span>`:'<span class="none">—</span>'}</td><td>${a.note?esc(a.note).replace(/\n/g,'<br>'):'<span class="none">—</span>'}</td></tr>`; }).join('');
+      const erows=D.E.map(([id,c,zh,th])=>{ const a=Ae[id]||{};
+        return `<tr><td class="code2">${c}</td><td>${bi(zh,th)}</td><td>${a.v==='ok'?'同意<span class="th">เห็นด้วย</span>':a.v==='fix'?'需修改<span class="chg">ต้องแก้</span>':'<span class="none">—</span>'}</td><td>${a.note?esc(a.note):'<span class="none">—</span>'}</td></tr>`; }).join('');
+      const fr=D.F.map(([id,zh,th])=>{ const a=Af[id]||{}; return `<tr><td class="code2">F</td><td>${bi(zh,th)}${(a.cases||[]).length?`<span class="th">案例 ${esc(a.cases.join('、'))}</span>`:''}</td><td colspan="2">${a.text?esc(a.text).replace(/\n/g,'<br>'):'<span class="none">—</span>'}</td></tr>`; }).join('');
+      const when=s.updated?hm(new Date(s.updated)):'';
+      return `<div class="rcard"><div class="rhead"><b>${esc((s.student||{}).name||'老師')}</b><span class="pill ${s.done?'ok':'wait'}">${s.done?'已送出 · ส่งแล้ว':'填寫中 · ยังไม่กดส่ง'}</span><span class="pill">更新 ${esc(when)}</span><span class="pill">${esc(s.id)}</span></div>
+        <table class="rt"><tr><th>題</th><th>題目 · หัวข้อ</th><th>選擇 · ที่เลือก</th><th>備註 · หมายเหตุ</th></tr>${rows}${erows}${fr}</table></div>`; }).join('');
+  }
+  function asText(list){ return list.map(s=>{ const R=s.review||{}, Aq=R.q||{}, Ae=R.e||{}, Af=R.f||{}, out=[`${(s.student||{}).name||'老師'} · ${s.updated?hm(new Date(s.updated)):''} · ${s.done?'已送出':'填寫中'}`];
+      D.Q.forEach(q=>{ const a=Aq[q.code]||{}, o=optOf(q,a.v); out.push(`${q.code} ${q.t[0]}\n  選擇：${o?o.zh+(a.inp?(o.zh.endsWith('：')?'':'：')+a.inp:''):'—'}${a.note?'\n  備註：'+a.note:''}`); });
+      D.E.forEach(([id,c,zh])=>{ const a=Ae[id]||{}; out.push(`E(${c}) ${zh}\n  ${a.v==='ok'?'同意':a.v==='fix'?'需修改':'—'}${a.note?'：'+a.note:''}`); });
+      D.F.forEach(([id,zh])=>{ const a=Af[id]||{}; out.push(`F ${zh}${(a.cases||[]).length?'（'+a.cases.join('、')+'）':''}\n  ${a.text||'—'}`); });
+      return out.join('\n'); }).join('\n\n----------\n\n'); }
+  async function load(){ key=$('#key').value.trim(); if(!key){ $('#msg').textContent='請輸入 · ใส่รหัสรับผลก่อน'; return; }
+    try{ sessionStorage.setItem('pdrev_key',key); }catch(e){}
+    $('#msg').textContent='載入中… · กำลังโหลด'; let got=[], after='';
+    try{ while(after!=null){ const r=await fetch(`${API}/api/sessions?class=${CLS}&after=${encodeURIComponent(after)}`,{headers:{'X-Teacher-Key':key}, cache:'no-store'});
+        if(r.status===401){ $('#msg').textContent='รหัสรับผลไม่ถูกต้อง · 金鑰錯誤'; return; } if(!r.ok) throw new Error(r.status);
+        const j=await r.json(); got=got.concat(j.sessions||[]); after=j.next; }
+      last=got.filter(s=>s&&s.case==='review').sort((a,b)=>String(b.updated||'').localeCompare(String(a.updated||'')));
+      $('#msg').textContent=`${last.length} 份回覆 · ${last.length} คำตอบ · ${hm(new Date())}`; $('#copy').disabled=!last.length; render(last); }
+    catch(e){ $('#msg').textContent='ต่อเซิร์ฟเวอร์ไม่ได้ · 無法連線'; } }
+  $('#load').onclick=load; $('#key').onkeydown=e=>{ if(e.key==='Enter') load(); };
+  $('#copy').onclick=async()=>{ const t=asText(last); try{ await navigator.clipboard.writeText(t); $('#msg').textContent='คัดลอกแล้ว · 已複製'; }catch(e){ const ta=document.createElement('textarea'); ta.value=t; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); $('#msg').textContent='คัดลอกแล้ว · 已複製'; }catch(_){} ta.remove(); } };
+  if(key) load();
+}
+</script>
+</body>
+</html>

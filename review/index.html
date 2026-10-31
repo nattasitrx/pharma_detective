@@ -108,7 +108,8 @@ const qs=new URLSearchParams(location.search);
 const API=(()=>{ const a=qs.get('api'); return a&&/^http:\/\/localhost(:\d+)?$/.test(a)?a:'https://pharma-detective-api.nattasitrx.workers.dev'; })();
 const CLS='profreview', RESULTS=qs.has('results');
 const ls={get(k){ try{ return JSON.parse(localStorage.getItem(k)); }catch(e){ return null; } }, set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }};
-let LANG=ls.get(RESULTS?'pdrev_lang_r':'pdrev_lang')||(RESULTS?'th':'zh');
+const EMBED=qs.has('embed') && window.parent!==window;   // opened inside the preview home page
+let LANG=['zh','en','th'].includes(qs.get('lang'))?qs.get('lang'):(ls.get(RESULTS?'pdrev_lang_r':'pdrev_lang')||(RESULTS?'th':'zh'));
 const L=o=>o==null?'':typeof o==='string'?o:(o[LANG]||o.zh||'');
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $=s=>document.querySelector(s);
@@ -175,7 +176,7 @@ function formView(){
   let tSave=null, busy=false, again=false, retry=null, lastSaved=null, lastErr=false;
   function render(){
     let h=topbar()+`<header class="top"><div class="wrap"><h1>${t('title')}</h1><div class="intro"><p>${t('i1')}</p><p>${t('i2')}</p>
-      <p>${t('play')}：<a href="https://nattasitrx.github.io/pharma_detective/preview/" target="_blank" rel="noopener">nattasitrx.github.io/pharma_detective/preview</a></p></div></div></header><main class="wrap">`;
+      ${EMBED?'':`<p>${t('play')}：<a href="https://nattasitrx.github.io/pharma_detective/preview/" target="_blank" rel="noopener">nattasitrx.github.io/pharma_detective/preview</a></p>`}</div></div></header><main class="wrap">`;
     let g='';
     D.Q.forEach(q=>{
       if(q.grp!==g){ g=q.grp; h+=`<div class="grp">${t('g_'+g)}</div>`; }
@@ -211,7 +212,7 @@ function formView(){
     try{ const r=await fetch(API+'/api/submit',{method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(body)}); const j=await r.json(); if(!j||!j.ok) throw new Error('not ok'); lastSaved=new Date(); status('ok'); if(A.done&&ls.get('pdrev_mail')) notify(); }
     catch(e){ status('err'); retry=setTimeout(save, 15000); }
     busy=false; if(again){ again=false; save(); } }
-  const changed=now=>{ ls.set('pdrev_ans',A); progress(); clearTimeout(tSave); tSave=setTimeout(save, now?0:1200); };
+  const changed=now=>{ ls.set('pdrev_ans',A); progress(); if(EMBED) try{ parent.postMessage({pdrev:'progress'}, location.origin); }catch(e){} clearTimeout(tSave); tSave=setTimeout(save, now?0:1200); };
   const q=c=>A.q[c]||(A.q[c]={});
   document.addEventListener('change', ev=>{ const x=ev.target;
     if(x.type==='radio'){ document.querySelectorAll(`input[name="${x.name}"]`).forEach(y=>y.closest('label').classList.toggle('on',y.checked));
@@ -231,7 +232,7 @@ function formView(){
     if(!lastErr) notify(); else ls.set('pdrev_mail',1);
     const ok=!lastErr, m=document.createElement('div'); m.className='modal';
     m.innerHTML=`<div class="box"><div class="big">${ok?'🙏':'⚠'}</div><h2>${t(ok?'thx':'off')}</h2><p>${t(ok?'thx2':'off2')}</p><p><button class="go">${t('okb')}</button></p></div>`;
-    document.body.appendChild(m); m.querySelector('button').onclick=()=>m.remove(); }
+    document.body.appendChild(m); m.querySelector('button').onclick=()=>{ m.remove(); if(EMBED&&ok) try{ parent.postMessage({pdrev:'done'}, location.origin); }catch(e){} }; }
   render();
   if(Object.keys(A.q).length||Object.keys(A.e).length) save();
 }

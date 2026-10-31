@@ -146,6 +146,23 @@ const t=(k,v)=>{ let s=L(U[k]); if(v) Object.keys(v).forEach(x=>s=s.replace('{'+
 function topbar(){ return `<div class="topbar"><div class="wrap"><div class="brand">${t('brand')}</div><div class="langs">${[['zh','中文'],['en','English'],['th','ไทย']].map(([k,n])=>`<button data-lang="${k}" class="${LANG===k?'on':''}">${n}</button>`).join('')}</div></div></div>`; }
 function bindLangs(render){ document.querySelectorAll('[data-lang]').forEach(b=>b.onclick=()=>{ LANG=b.dataset.lang; ls.set(RESULTS?'pdrev_lang_r':'pdrev_lang',LANG); document.documentElement.lang=LANG==='zh'?'zh-Hant':LANG; const y=scrollY; render(); scrollTo(0,y); }); }
 const refsHTML=ids=>ids&&ids.length?`<div class="refs"><b>${t('refs')}</b>${ids.map(id=>{ const r=D.REF[id]; return r?`<a href="${r.u}" target="_blank" rel="noopener">${esc(r.l)}</a>`:''; }).join('')}</div>`:'';
+const optOf=(q,id)=>q.opts.find(o=>o.id===id), curOf=q=>q.opts.find(o=>o.cur);
+const join=(o,a)=>L(o.t)+(a.inp?((L(o.t).match(/[：:]$/))?' ':(LANG==='zh'?'：':': '))+a.inp:'');
+/* e-mail to the team when the professor presses Send (FormSubmit relay; needs a one-time activation from that inbox) */
+const MAIL_URL=(()=>{ const m=qs.get('mail'); if(m&&/^http:\/\/localhost(:\d+)?\//.test(m)) return m; return 'https://formsubmit.co/ajax/'+['nattasitrx','gmail.com'].join('@'); })();
+const RES_URL='https://nattasitrx.github.io/pharma_detective/review/?results';
+function mailBody(A){ const keep=LANG; LANG='th';
+  try{ const n=D.Q.filter(q=>(A.q[q.code]||{}).v).length+D.E.filter(r=>(A.e[r.id]||{}).v).length, m=D.Q.length+D.E.length;
+    let chg=0; const rows={};
+    D.Q.forEach(q=>{ const a=A.q[q.code]||{}, o=optOf(q,a.v), cur=curOf(q); if(!o&&!a.note) return;
+      const c=o&&cur&&o.id!==cur.id; if(c) chg++;
+      rows[`${q.code} ${L(q.t)}`]=(o?join(o,a):'—')+(c?'  ⚠ ต้องแก้เกม':'')+(a.note?`  | หมายเหตุ: ${a.note}`:''); });
+    D.E.forEach((r,i)=>{ const a=A.e[r.id]||{}; if(!a.v&&!a.note) return; if(a.v==='fix') chg++;
+      rows[`E${i+1} (${r.c}) ${L(r.t)}`.slice(0,140)]=(a.v==='ok'?'เห็นด้วย':a.v==='fix'?'ต้องแก้  ⚠':'—')+(a.note?`  | ${a.note}`:''); });
+    D.F.forEach(f=>{ const a=A.f[f.id]||{}; if(!a.text) return; rows[`F ${L(f.t)}${(a.cases||[]).length?' ('+a.cases.join(', ')+')':''}`]=a.text; });
+    return Object.assign({_subject:`✅ อาจารย์กดส่งแบบคอนเฟิร์มแล้ว (ตอบ ${n}/${m} ข้อ) · Pharma Detective`, _template:'table', _captcha:'false',
+      'เวลา':hm(new Date()), 'ตอบแล้ว':`${n}/${m} ข้อ`, 'ข้อที่อาจารย์อยากให้แก้เกม':`${chg} ข้อ`, 'ดูผลเต็ม':RES_URL, 'ภาษาที่อาจารย์ใช้':{zh:'中文',en:'English',th:'ไทย'}[keep]||keep}, rows);
+  } finally { LANG=keep; } }
 const ageHTML=()=>{ const A=D.AGE; return `<table class="tb"><tr>${A.head.map(h=>`<th>${L(h)}</th>`).join('')}</tr>${A.rows.map(r=>`<tr>${r.map(c=>`<td>${esc(L(c))}</td>`).join('')}</tr>`).join('')}</table><p class="note">${L(A.note)}</p>`; };
 
 document.documentElement.lang=LANG==='zh'?'zh-Hant':LANG;
@@ -191,7 +208,7 @@ function formView(){
   function progress(){ const n=D.Q.filter(q=>(A.q[q.code]||{}).v).length+D.E.filter(r=>(A.e[r.id]||{}).v).length, m=D.Q.length+D.E.length; const el=$('#prog'); if(el) el.textContent=t('prog',{n,m}); }
   async function save(){ if(busy){ again=true; return; } busy=true; status('saving'); clearTimeout(retry);
     const body={id:ID, classCode:CLS, case:'review', updated:new Date().toISOString(), done:!!A.done, lang:LANG, student:{name:'老師', sid:''}, review:{v:2, q:A.q, e:A.e, f:A.f}};
-    try{ const r=await fetch(API+'/api/submit',{method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(body)}); const j=await r.json(); if(!j||!j.ok) throw new Error('not ok'); lastSaved=new Date(); status('ok'); }
+    try{ const r=await fetch(API+'/api/submit',{method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(body)}); const j=await r.json(); if(!j||!j.ok) throw new Error('not ok'); lastSaved=new Date(); status('ok'); if(A.done&&ls.get('pdrev_mail')) notify(); }
     catch(e){ status('err'); retry=setTimeout(save, 15000); }
     busy=false; if(again){ again=false; save(); } }
   const changed=now=>{ ls.set('pdrev_ans',A); progress(); clearTimeout(tSave); tSave=setTimeout(save, now?0:1200); };
@@ -205,7 +222,13 @@ function formView(){
     else if(x.dataset.inp){ q(x.dataset.inp).inp=x.value; const r=x.closest('label').querySelector('input[type=radio]'); if(r&&!r.checked){ r.checked=true; r.dispatchEvent(new Event('change',{bubbles:true})); } changed(); }
     else if(x.dataset.enote){ (A.e[x.dataset.enote]||(A.e[x.dataset.enote]={})).note=x.value; changed(); }
     else if(x.dataset.ftext){ (A.f[x.dataset.ftext]||(A.f[x.dataset.ftext]={})).text=x.value; changed(); } });
+  let mailing=false;
+  async function notify(){ ls.set('pdrev_mail',1); if(mailing) return; mailing=true;
+    try{ const r=await fetch(MAIL_URL,{method:'POST', headers:{'Content-Type':'application/json','Accept':'application/json'}, body:JSON.stringify(mailBody(A))}); if(!r.ok) throw new Error(r.status); ls.set('pdrev_mail',null); }
+    catch(e){ /* stays pending; tried again after the next successful save */ }
+    mailing=false; }
   async function sendNow(){ A.done=true; ls.set('pdrev_ans',A); clearTimeout(tSave); await save();
+    if(!lastErr) notify(); else ls.set('pdrev_mail',1);
     const ok=!lastErr, m=document.createElement('div'); m.className='modal';
     m.innerHTML=`<div class="box"><div class="big">${ok?'🙏':'⚠'}</div><h2>${t(ok?'thx':'off')}</h2><p>${t(ok?'thx2':'off2')}</p><p><button class="go">${t('okb')}</button></p></div>`;
     document.body.appendChild(m); m.querySelector('button').onclick=()=>m.remove(); }
@@ -217,8 +240,6 @@ function formView(){
 function resultsView(){
   let key=''; try{ key=sessionStorage.getItem('pdrev_key')||''; }catch(e){}
   let last=[], msg='';
-  const optOf=(q,id)=>q.opts.find(o=>o.id===id), curOf=q=>q.opts.find(o=>o.cur);
-  const join=(o,a)=>L(o.t)+(a.inp?((L(o.t).match(/[：:]$/))?' ':(LANG==='zh'?'：':': '))+a.inp:'');
   function render(){
     let h=topbar()+`<header class="top"><div class="wrap"><h1>${t('rTitle')}</h1>
       <div class="keybox"><input id="key" type="password" placeholder="${t('key')}" value="${esc(key)}" autocomplete="off"><button class="go" id="load">${t('load')}</button><button class="ghost" id="copy"${last.length?'':' disabled'}>${t('copy')}</button></div>

@@ -145,9 +145,9 @@ const T={
 Object.assign(T,{
   rvBadge:['📝 請老師幫忙確認','📝 Please help us check','📝 ฝากอาจารย์ช่วยคอนเฟิร์ม'],
   rvT:['老師，麻煩您幫忙看一下這裡 🙏','Professor, could you please check a few things? 🙏','ฝากอาจารย์ช่วยดูตรงนี้หน่อย 🙏'],
-  rvP:['遊戲裡有些地方是我們從藥袋、收據改編，或自己補充的，需要老師確認。每一題都附原始圖片，點選答案就好。大約 10–15 分鐘，會自動儲存，可以分幾次填。','Some details in the games were adapted from the medicine bags and receipts, or added by us, and need your confirmation. Each question shows the original picture; just tap an answer. About 10–15 minutes; it saves automatically, so you can do it in parts.','บางจุดในเกมเราดัดแปลงจากซองยาและใบเสร็จ หรือแต่งเพิ่มเอง ต้องให้อาจารย์คอนเฟิร์ม ทุกข้อมีรูปต้นฉบับ แค่กดเลือกคำตอบ ประมาณ 10–15 นาที บันทึกอัตโนมัติ ทำทีละส่วนได้'],
+  rvP:['遊戲裡有些地方是我們從藥袋、收據改編，或自己補充的，需要老師確認。每一題都附原始圖片，點選答案就好。大約 15 分鐘，會自動儲存，可以分幾次填。','Some details in the games were adapted from the medicine bags and receipts, or added by us, and need your confirmation. Each question shows the original picture; just tap an answer. About 15 minutes; it saves automatically, so you can do it in parts.','บางจุดในเกมเราดัดแปลงจากซองยาและใบเสร็จ หรือแต่งเพิ่มเอง ต้องให้อาจารย์คอนเฟิร์ม ทุกข้อมีรูปต้นฉบับ แค่กดเลือกคำตอบ ประมาณ 15 นาที บันทึกอัตโนมัติ ทำทีละส่วนได้'],
   rvGo:['📝 開始確認','📝 Start','📝 เริ่มเลย'], rvGoOn:['📝 繼續確認','📝 Continue','📝 ทำต่อ'], rvOpen:['📝 打開確認表','📝 Open the form','📝 เปิดแบบคอนเฟิร์ม'], rvLater:['先玩遊戲','Play the games first','เล่นเกมก่อน'],
-  rvBar:['13 題附圖片 + 8 項補充內容，約 10–15 分鐘','13 picture questions + 8 added details, about 10–15 minutes','13 ข้อพร้อมรูป + 8 เนื้อหาที่แต่งเพิ่ม ประมาณ 10–15 นาที'],
+  rvBar:['16 題附圖片 + 8 項補充內容，約 15 分鐘','16 picture questions + 8 added details, about 15 minutes','16 ข้อพร้อมรูป + 8 เนื้อหาที่แต่งเพิ่ม ประมาณ 15 นาที'],
   rvProg:['已回答 {n}/{m} 題，還沒送出','{n}/{m} answered, not sent yet','ตอบแล้ว {n}/{m} ข้อ ยังไม่ได้กดส่ง'],
   rvDone:['✅ 已送出，謝謝老師！還可以再打開修改','✅ Sent, thank you! You can still open it to make changes.','✅ ส่งแล้ว ขอบคุณอาจารย์ ยังเปิดแก้ไขได้'],
   rvNew:['↗ 新分頁','↗ New tab','↗ แท็บใหม่'], rvThx:['謝謝老師！已收到 🙏','Thank you! Received 🙏','ขอบคุณอาจารย์ ได้รับแล้ว 🙏'],
@@ -284,7 +284,7 @@ document.getElementById('pinIn').onkeydown=e=>{ if(e.key==='Enter') pinOk(); };
 const _render=render; render=function(){ _render(); renderHub(); renderRv(); };
 
 /* ===== review form for the professor (../review/): pop-up on arrival until it is sent; opens inside this page ===== */
-const RV_TOTAL=21, RV_URL='../review/';
+const RV_TOTAL=24, RV_URL='../review/';
 const sget=k=>{ try{ return sessionStorage.getItem(k); }catch(e){ return null; } }, sput=(k,v)=>{ try{ sessionStorage.setItem(k,v); }catch(e){} };
 function rvState(){ try{ const a=JSON.parse(get('pdrev_ans')||'null')||{}, has=o=>Object.values(o||{}).filter(x=>x&&x.v).length; return {n:has(a.q)+has(a.e), done:!!a.done}; }catch(e){ return {n:0, done:false}; } }
 function renderRv(){ const b=document.getElementById('rvb'); if(!b) return; const st=rvState();

@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>藥師偵探 · Pharma Detective</title>
 <meta name="description" content="Home-care pharmacy mystery games for pharmacy students: choose a case.">
+<meta name="author" content="Nattasit Rattanaphanit">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;700&family=Noto+Sans+TC:wght@500;700;900&display=swap" rel="stylesheet">
 <style>
@@ -47,6 +49,8 @@ h1{margin:8px 0 0;font-weight:900;font-size:clamp(40px,7vw,72px);line-height:1.0
 .card.c .play{background:linear-gradient(90deg,#3cc3b4,#1f9a8c);box-shadow:0 5px 0 #146b61}
 .card.d .play{background:linear-gradient(90deg,#f0a24a,#d97a1c);box-shadow:0 5px 0 #9a520e}
 footer{margin-top:26px;padding:14px 18px;border-radius:18px;background:rgba(255,255,255,.75);font-size:14px;line-height:1.6;color:var(--muted)}
+.credit{margin:12px 4px 0;font-size:13px;line-height:1.6;color:#5a5478;text-align:center}
+.credit a{color:#3d4fb8}
 footer code{background:#fff;padding:1px 6px;border-radius:6px;color:var(--ink);font-size:13px;word-break:break-all}
 .top{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
 .tbtn{font:inherit;font-weight:900;font-size:16px;padding:9px 18px;border-radius:99px;border:none;background:var(--navy);color:#ffe07a;cursor:pointer;box-shadow:0 4px 0 #161a45}
@@ -122,6 +126,7 @@ footer code{background:#fff;padding:1px 6px;border-radius:6px;color:var(--ink);f
   <section class="hub" id="hub" hidden></section>
   <main class="grid" id="cases"></main>
   <footer data-t="foot"></footer>
+  <p class="credit" data-t="credit"></p>
 </div>
 <div class="pin" id="pin" hidden><div class="box"><div style="font-size:46px">👩‍🏫</div><h3 data-t="pinT"></h3><input id="pinIn" type="password" inputmode="numeric" autocomplete="off"><div class="row"><button class="b p" id="pinOk" data-t="ok"></button><button class="b" id="pinNo" data-t="cancel"></button></div></div></div>
 <div class="rvm" id="rvm" hidden role="dialog" aria-modal="true"><div class="box"><div style="font-size:48px">📝</div><h3 data-t="rvT"></h3><p data-t="rvP"></p><div class="row"><button class="b p" id="rvGo"></button><button class="b" id="rvLater" data-t="rvLater"></button></div></div></div>
@@ -133,6 +138,7 @@ const T={
   lead:['選一個案例開始居家訪視吧！','Choose a case and start the home visit!','เลือกเคสแล้วเริ่มเยี่ยมบ้านกันเลย!'],
   cls:['班級','Class','ห้อง'], play:['開始 ▶','Play ▶','เล่น ▶'], first:['第一次玩建議從這裡開始','New? Start here','เล่นครั้งแรกแนะนำเคสนี้'],
   going:['📌 有進行中的遊戲','📌 Game in progress','📌 มีเกมที่เล่นค้าง'], shut:['🔒 尚未開放','🔒 Not open yet','🔒 ยังไม่เปิด'], done:['✅ 已破關','✅ Cleared','✅ เล่นจบแล้ว'], case:['案例','Case','เคส'],
+  credit:['案例：陳崇鈺 教授（高雄醫學大學 藥學系）· 製作：Nattasit Rattanaphanit · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener license">CC BY-NC-SA 4.0</a>','Cases: Prof. Chung-Yu Chen (陳崇鈺), School of Pharmacy, Kaohsiung Medical University · Made by Nattasit Rattanaphanit · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener license">CC BY-NC-SA 4.0</a>','เคส: Prof. Chung-Yu Chen (陳崇鈺) School of Pharmacy, Kaohsiung Medical University · ผู้สร้าง: Nattasit Rattanaphanit · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener license">CC BY-NC-SA 4.0</a>'],
   foot:['👩‍🏫 老師：按右上角「老師」打開後台，可以開關案例、看結果、調整遊戲。','👩‍🏫 Instructors: press "Instructor" at the top right to open or close cases, see results and customise the games.','👩‍🏫 อาจารย์: กดปุ่ม "หน้าอาจารย์" มุมขวาบน เพื่อเปิด/ปิดเคส ดูผล และปรับเกม'],
 };
 /* the professor's review form */
@@ -197,7 +203,7 @@ function inProgress(c){ try{ const r=JSON.parse(get(c.save+'_resume')||'null'); 
 function render(){
   const i=LANGS.indexOf(lang);
   document.documentElement.lang=lang==='zh'?'zh-Hant':lang;
-  document.querySelectorAll('[data-t]').forEach(e=>{ const v=T[e.dataset.t][i]; if(e.dataset.t==='foot') e.innerHTML=v; else e.textContent=v; });
+  document.querySelectorAll('[data-t]').forEach(e=>{ const v=T[e.dataset.t][i]; if(e.dataset.t==='foot'||e.dataset.t==='credit') e.innerHTML=v; else e.textContent=v; });
   document.querySelectorAll('.langs button').forEach(b=>b.classList.toggle('on',b.dataset.l===lang));
   const cb=document.getElementById('cls'); cb.hidden=!cls; cb.textContent='🏫 '+T.cls[i]+': '+cls;
   document.getElementById('cases').innerHTML=CASES.map(c=>{

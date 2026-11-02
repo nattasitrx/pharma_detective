@@ -1,11 +1,12 @@
 # License
 
 **Pharma Detective (藥師偵探)**
-© 2026 Nattasit Rattanaphanit
+© 2026 Nattasit Rattanaphanit (ณัฐสิทธิ์ รัตนพาณิชย์)
 
-- **Game design & development:** Nattasit Rattanaphanit
+- **Game design & development:** Nattasit Rattanaphanit (ณัฐสิทธิ์ รัตนพาณิชย์)
 - **Case materials:** Prof. Chung-Yu Chen (陳崇鈺), School of Pharmacy, Kaohsiung Medical University. They were adapted into this game with permission.
 - **Affiliation:** Prof. Chung-Yu Chen's research team, School of Pharmacy, Kaohsiung Medical University
+- **Contact:** nattasitrx@gmail.com. Write here with questions or feedback, or to ask about uses beyond this license.
 
 This work is licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0)](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 

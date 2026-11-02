@@ -138,7 +138,7 @@ const T={
   lead:['選一個案例開始居家訪視吧！','Choose a case and start the home visit!','เลือกเคสแล้วเริ่มเยี่ยมบ้านกันเลย!'],
   cls:['班級','Class','ห้อง'], play:['開始 ▶','Play ▶','เล่น ▶'], first:['第一次玩建議從這裡開始','New? Start here','เล่นครั้งแรกแนะนำเคสนี้'],
   going:['📌 有進行中的遊戲','📌 Game in progress','📌 มีเกมที่เล่นค้าง'], shut:['🔒 尚未開放','🔒 Not open yet','🔒 ยังไม่เปิด'], done:['✅ 已破關','✅ Cleared','✅ เล่นจบแล้ว'], case:['案例','Case','เคส'],
-  credit:['案例：陳崇鈺 教授（高雄醫學大學 藥學系）· 製作：Nattasit Rattanaphanit · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener license">CC BY-NC-SA 4.0</a>','Cases: Prof. Chung-Yu Chen (陳崇鈺), School of Pharmacy, Kaohsiung Medical University · Made by Nattasit Rattanaphanit · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener license">CC BY-NC-SA 4.0</a>','เคส: Prof. Chung-Yu Chen (陳崇鈺) School of Pharmacy, Kaohsiung Medical University · ผู้สร้าง: Nattasit Rattanaphanit · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener license">CC BY-NC-SA 4.0</a>'],
+  credit:['案例：陳崇鈺 教授（高雄醫學大學 藥學系）· 製作：Nattasit Rattanaphanit · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener license">CC BY-NC-SA 4.0</a> · {mail}','Cases: Prof. Chung-Yu Chen (陳崇鈺), School of Pharmacy, Kaohsiung Medical University · Made by Nattasit Rattanaphanit · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener license">CC BY-NC-SA 4.0</a> · {mail}','เคส: Prof. Chung-Yu Chen (陳崇鈺) School of Pharmacy, Kaohsiung Medical University · ผู้สร้าง: ณัฐสิทธิ์ รัตนพาณิชย์ · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener license">CC BY-NC-SA 4.0</a> · {mail}'],
   foot:['👩‍🏫 老師：按右上角「老師」打開後台，可以開關案例、看結果、調整遊戲。','👩‍🏫 Instructors: press "Instructor" at the top right to open or close cases, see results and customise the games.','👩‍🏫 อาจารย์: กดปุ่ม "หน้าอาจารย์" มุมขวาบน เพื่อเปิด/ปิดเคส ดูผล และปรับเกม'],
 };
 /* the professor's review form */
@@ -203,7 +203,7 @@ function inProgress(c){ try{ const r=JSON.parse(get(c.save+'_resume')||'null'); 
 function render(){
   const i=LANGS.indexOf(lang);
   document.documentElement.lang=lang==='zh'?'zh-Hant':lang;
-  document.querySelectorAll('[data-t]').forEach(e=>{ const v=T[e.dataset.t][i]; if(e.dataset.t==='foot'||e.dataset.t==='credit') e.innerHTML=v; else e.textContent=v; });
+  document.querySelectorAll('[data-t]').forEach(e=>{ const v=T[e.dataset.t][i]; if(e.dataset.t==='credit'){ const m=['nattasitrx','gmail.com'].join('@'); e.innerHTML=v.replace('{mail}',`<a href="mailto:${m}">✉ ${['聯絡','Contact','ติดต่อ'][i]}</a>`); } else if(e.dataset.t==='foot') e.innerHTML=v; else e.textContent=v; });
   document.querySelectorAll('.langs button').forEach(b=>b.classList.toggle('on',b.dataset.l===lang));
   const cb=document.getElementById('cls'); cb.hidden=!cls; cb.textContent='🏫 '+T.cls[i]+': '+cls;
   document.getElementById('cases').innerHTML=CASES.map(c=>{

@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="google" content="notranslate">
 <meta name="author" content="Nattasit Rattanaphanit">
-<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>藥師偵探：王太太的秘密 · Pharma Detective</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -5902,32 +5901,28 @@ function mnButton(){ const row=$('#btnChSel')&&$('#btnChSel').parentElement; if(
   b.textContent=L(MNT.btn); }
 { const f=showTitle; showTitle=function(){ const r=f.apply(this, arguments); mnButton(); return r; }; }
 { const f=applyI18n; applyI18n=function(){ const r=f.apply(this, arguments); if($('#btnNotes')) mnButton(); return r; }; }
-/* ---------- credits & licence: one small line on the title screen, the details in a card ---------- */
+/* ---------- credits & terms of use: one small line on the title screen, the details in a card ----------
+   The case owner chose no open licence: the game is for teaching in this course only. */
 const LIC={
-  url:'https://creativecommons.org/licenses/by-nc-sa/4.0/',
-  line:['ⓘ 案例：陳崇鈺 教授（高雄醫學大學）· 製作：Nattasit Rattanaphanit · CC BY-NC-SA 4.0',
-        'ⓘ Cases: Prof. Chung-Yu Chen (Kaohsiung Medical University) · Made by Nattasit Rattanaphanit · CC BY-NC-SA 4.0',
-        'ⓘ เคส: Prof. Chung-Yu Chen (Kaohsiung Medical University) · ผู้สร้าง: ณัฐสิทธิ์ รัตนพาณิชย์ · CC BY-NC-SA 4.0'],
-  h:['關於與授權','About & licence','เกี่ยวกับเกมและสัญญาอนุญาต'],
+  line:['ⓘ 案例：陳崇鈺 教授（高雄醫學大學）· 製作：Nattasit Rattanaphanit · 僅供本課程教學使用',
+        'ⓘ Cases: Prof. Chung-Yu Chen (Kaohsiung Medical University) · Made by Nattasit Rattanaphanit · For teaching in this course only',
+        'ⓘ เคส: Prof. Chung-Yu Chen (Kaohsiung Medical University) · ผู้สร้าง: ณัฐสิทธิ์ รัตนพาณิชย์ · ใช้สอนในรายวิชานี้เท่านั้น'],
+  h:['關於與使用說明','About & terms of use','เกี่ยวกับเกมและเงื่อนไขการใช้'],
   rows:[
     [['遊戲設計與製作','Game design & development','ออกแบบและพัฒนาเกม'], ['Nattasit Rattanaphanit','Nattasit Rattanaphanit','ณัฐสิทธิ์ รัตนพาณิชย์ (Nattasit Rattanaphanit)']],
     [['案例提供','Case materials','ที่มาของเคส'], ['陳崇鈺 教授（Prof. Chung-Yu Chen），高雄醫學大學 藥學系。經同意改編為遊戲。',
        'Prof. Chung-Yu Chen (陳崇鈺), School of Pharmacy, Kaohsiung Medical University. Adapted into this game with permission.',
-       'Prof. Chung-Yu Chen (陳崇鈺) School of Pharmacy, Kaohsiung Medical University ดัดแปลงเป็นเกมโดยได้รับอนุญาต']],
+       'Prof. Chung-Yu Chen (陳崇鈺) School of Pharmacy, Kaohsiung Medical University ดัดแปลงเป็นเกมโดยได้รับอนุญาต'], '@prof'],
     [['所屬單位','Affiliation','สังกัด'], ['高雄醫學大學 藥學系 陳崇鈺教授研究團隊','Prof. Chung-Yu Chen\'s research team, School of Pharmacy, Kaohsiung Medical University','ทีมวิจัยของ Prof. Chung-Yu Chen, School of Pharmacy, Kaohsiung Medical University']],
+    [['使用範圍','Use','การนำไปใช้'], ['© 2026 Nattasit Rattanaphanit。案例內容版權屬於陳崇鈺教授。僅供本課程教學使用；如需轉載、改作或在其他課程使用，請先來信取得同意。',
+       '© 2026 Nattasit Rattanaphanit. The case content belongs to Prof. Chung-Yu Chen. For teaching in this course only; to copy, adapt or use it elsewhere, please write first and ask for permission.',
+       '© 2026 ณัฐสิทธิ์ รัตนพาณิชย์ เนื้อหาเคสเป็นของ Prof. Chung-Yu Chen ใช้สอนในรายวิชานี้เท่านั้น ถ้าจะคัดลอก ดัดแปลง หรือนำไปใช้ที่อื่น กรุณาติดต่อขออนุญาตก่อน']],
     [['聯絡','Contact','ติดต่อ'], '@mail'],
-    [['授權','Licence','สัญญาอนุญาต'], ['本作品採用 <a>創用 CC 姓名標示─非商業性─相同方式分享 4.0 國際</a> 授權條款（CC BY-NC-SA 4.0）。',
-       'This work is licensed under the <a>Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License</a> (CC BY-NC-SA 4.0).',
-       'ผลงานนี้ใช้ <a>สัญญาอนุญาตครีเอทีฟคอมมอนส์ แสดงที่มา-ไม่ใช้เพื่อการค้า-อนุญาตแบบเดียวกัน 4.0 นานาชาติ</a> (CC BY-NC-SA 4.0)']],
-    [['這代表','In short','สรุปคือ'], ['可以為非商業目的分享、改作；需標示出處，改作後也要用相同授權分享。',
-       'You may share and adapt it for non-commercial purposes, as long as you give credit and share your adaptations under the same licence.',
-       'แชร์และดัดแปลงได้เพื่อจุดประสงค์ที่ไม่ใช่การค้า ต้องให้เครดิต และงานที่ดัดแปลงต้องใช้สัญญาอนุญาตเดียวกัน']],
-    [['引用方式','How to credit','วิธีให้เครดิต'], ['「藥師偵探 Pharma Detective」，Nattasit Rattanaphanit 製作；案例：陳崇鈺 教授（高雄醫學大學）；CC BY-NC-SA 4.0',
-       '"Pharma Detective" by Nattasit Rattanaphanit; cases by Prof. Chung-Yu Chen (Kaohsiung Medical University); CC BY-NC-SA 4.0',
-       '"Pharma Detective" โดย ณัฐสิทธิ์ รัตนพาณิชย์ (Nattasit Rattanaphanit); เคสโดย Prof. Chung-Yu Chen (Kaohsiung Medical University); CC BY-NC-SA 4.0']],
   ],
-  mailT:['有問題、建議，或想在授權範圍以外使用，請來信：','Questions, feedback, or uses beyond this licence:','สอบถาม แจ้งปัญหา หรือขอใช้นอกเหนือสัญญาอนุญาต:'],
+  mailT:['遊戲相關問題或建議：','Questions or feedback about the game:','สอบถามหรือแนะนำเรื่องเกม:'],
+  profT:['案例聯絡：','Contact for the cases:','ติดต่อเรื่องเคส:'],
   mail:()=>['nattasitrx','gmail.com'].join('@'),
+  prof:()=>['jk2975525','kmu.edu.tw'].join('@'),
   note:['僅供教學使用，不構成醫療建議。案例經改編，人名與部分情節為虛構。文中藥品商品名屬於各自的權利人。',
         'For teaching only; not medical advice. The cases are adapted, and names and some story details are fictional. Medicine brand names belong to their owners.',
         'ใช้เพื่อการเรียนการสอนเท่านั้น ไม่ใช่คำแนะนำทางการแพทย์ เคสถูกดัดแปลง ชื่อคนและเนื้อเรื่องบางส่วนเป็นเรื่องแต่ง ชื่อการค้าของยาเป็นของเจ้าของสิทธิ์']
@@ -5942,16 +5937,14 @@ function licCss(){ if($('#licCss')) return; const s=document.createElement('styl
 #mCard.lic .lr:first-of-type{border-top:none}
 #mCard.lic .lr b{color:#6a5a8a;font-size:14px}
 #mCard.lic .lr a{color:#3d5bd9}
+#mCard.lic .lr .sub{display:block;margin-top:2px;font-size:14px}
 #mCard.lic .ln{margin:10px 0 0;padding:8px 10px;border-radius:12px;background:#f6f3fc;color:#5a4a7a;font-size:13.5px;line-height:1.5}
-#mCard.lic .cc{display:block;margin:12px auto 0;width:88px;height:31px}
 @media (max-width:560px){#mCard.lic .lr{grid-template-columns:1fr;gap:2px}}`; document.head.appendChild(s); }
 function licOpen(){ licCss(); sfx.click();
-  const a=`<a href="${LIC.url}" target="_blank" rel="noopener license">`;
-  const val=v=>{ if(v==='@mail'){ const m=LIC.mail(); return `${esc(L(LIC.mailT))} <a href="mailto:${m}">${m}</a>`; } return L(v).includes('<a>')?L(v).replace('<a>',a):esc(L(v)); };
-  const rows=LIC.rows.map(([k,v])=>`<div class="lr"><b>${esc(L(k))}</b><div>${val(v)}</div></div>`).join('');
-  showModal(`<h3>${esc(L(LIC.h))}</h3>${rows}<p class="ln">${esc(L(LIC.note))}</p>${a}<img class="cc" alt="CC BY-NC-SA 4.0" src="data:image/svg+xml,${encodeURIComponent(LIC_BADGE)}"></a>`, null, null, 'lic'); }
-/* the standard "by-nc-sa" button, drawn here so nothing is loaded from elsewhere */
-const LIC_BADGE=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 88 31"><rect width="88" height="31" rx="3" fill="#aab2ab"/><rect x="1" y="1" width="86" height="29" rx="2" fill="#000"/><rect x="28" y="1" width="58" height="20" fill="#aab2ab"/><circle cx="15.5" cy="15.5" r="12" fill="#fff" stroke="#000" stroke-width="2"/><text x="15.5" y="20" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="12" text-anchor="middle">cc</text><text x="57" y="15" font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="9" text-anchor="middle">BY NC SA</text><text x="57" y="28" font-family="Arial,Helvetica,sans-serif" font-size="7" fill="#fff" text-anchor="middle">4.0</text></svg>`;
+  const mail=(t,m)=>`${esc(L(t))} <a href="mailto:${m}">${m}</a>`;
+  const val=v=>v==='@mail'?mail(LIC.mailT, LIC.mail()):esc(L(v));
+  const rows=LIC.rows.map(([k,v,x])=>`<div class="lr"><b>${esc(L(k))}</b><div>${val(v)}${x==='@prof'?`<span class="sub">${mail(LIC.profT, LIC.prof())}</span>`:''}</div></div>`).join('');
+  showModal(`<h3>${esc(L(LIC.h))}</h3>${rows}<p class="ln">${esc(L(LIC.note))}</p>`, null, null, 'lic'); }
 function licButton(){ const t=$('#title'); if(!t) return; licCss(); let b=$('#licBtn'); if(!b){ b=document.createElement('button'); b.id='licBtn'; b.onclick=licOpen; t.appendChild(b); } b.textContent=L(LIC.line); }
 { const f=showTitle; showTitle=function(){ const r=f.apply(this, arguments); licButton(); return r; }; }
 { const f=applyI18n; applyI18n=function(){ const r=f.apply(this, arguments); if($('#licBtn')) licButton(); return r; }; }

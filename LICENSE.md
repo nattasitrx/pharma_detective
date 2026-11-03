@@ -1,24 +1,22 @@
-# License
+# Terms of use
 
 **Pharma Detective (藥師偵探)**
-© 2026 Nattasit Rattanaphanit (ณัฐสิทธิ์ รัตนพาณิชย์)
+© 2026 Nattasit Rattanaphanit (ณัฐสิทธิ์ รัตนพาณิชย์). All rights reserved.
 
 - **Game design & development:** Nattasit Rattanaphanit (ณัฐสิทธิ์ รัตนพาณิชย์)
-- **Case materials:** Prof. Chung-Yu Chen (陳崇鈺), School of Pharmacy, Kaohsiung Medical University. They were adapted into this game with permission.
+- **Case materials:** Prof. Chung-Yu Chen (陳崇鈺), School of Pharmacy, Kaohsiung Medical University. They were adapted into this game with permission. The case content belongs to Prof. Chen.
 - **Affiliation:** Prof. Chung-Yu Chen's research team, School of Pharmacy, Kaohsiung Medical University
-- **Contact:** nattasitrx@gmail.com. Write here with questions or feedback, or to ask about uses beyond this license.
 
-This work is licensed under the [Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0)](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+This game is for teaching in this course only. It is not released under an open license. If you want to copy it, adapt it or use it elsewhere, please write first and ask for permission.
 
-You may share and adapt this work for non-commercial purposes. You must give appropriate credit, and you must share any adaptations under the same license.
+## Contact
 
-## How to credit
-
-> "Pharma Detective" by Nattasit Rattanaphanit; cases by Prof. Chung-Yu Chen (Kaohsiung Medical University); licensed under CC BY-NC-SA 4.0.
+- About the game: nattasitrx@gmail.com
+- About the cases: Prof. Chung-Yu Chen, jk2975525@kmu.edu.tw
 
 ## Notes
 
 - This game is for teaching only and is not medical advice.
 - The patient cases are adapted. Names and some story details are fictional.
-- Medicine brand names and trademarks belong to their owners and are not covered by this license.
+- Medicine brand names and trademarks belong to their owners.
 - The fonts are loaded from Google Fonts under their own licenses.

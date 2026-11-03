@@ -3788,6 +3788,7 @@ const SIMX={
   shakeHint:['把吸入器上下拖動來搖勻','drag the inhaler up and down to shake it','ลากยาพ่นขึ้นลงเพื่อเขย่า'],
   ctrl:['操作：拖動＝移動／搖　點蓋子＝開／關　按住藥罐或按鈕再滑開＝邊按邊吸　右邊按鈕＝按住','Controls: drag = move / shake · tap the cap · press the canister or button and slide = press while breathing in · side buttons = press and hold','วิธีควบคุม: ลาก = ย้าย/เขย่า · แตะฝา · กดกระป๋องหรือปุ่มแล้วลาก = กดพร้อมหายใจเข้า · ปุ่มด้านข้าง = กดค้าง'],
   capFirst:['先拔蓋子','Cap off first','ถอดฝาก่อน'],
+  scoreT:['技術評分','Technique score','คะแนนเทคนิค'], scoreNote:['分數以第一次示範為準','The score counts your first demonstration','คะแนนนับจากการสาธิตครั้งแรก'],
 };
 const SIM_STEPS={
   mdi:[['cap',['拔掉蓋子','Cap off','ถอดฝาครอบ'],'🧢'],['shake',['上下搖勻（4 下）','Shake it (4×)','เขย่า (4 ครั้ง)'],'👋'],['out',['離開吸嘴，把氣吐乾淨','Breathe out fully, away from it','หายใจออกให้สุด ห่างจากกระบอก'],'😮‍💨'],
@@ -3821,6 +3822,26 @@ const SIM_ERR={
   twoPuff:['一次只噴 1 下進輔助艙，吸完再噴下一下','One puff into the spacer at a time — breathe it in before the next','พ่นเข้ากระบอกทีละ 1 พัฟ สูดเสร็จก่อนค่อยพ่นครั้งต่อไป'],
   late:['噴進輔助艙後等太久：藥霧會沉到管壁上，要馬上吸','Waited too long after the puff — the mist settles on the walls; breathe in right away','รอนานเกินไปหลังพ่นเข้ากระบอก ละอองยาเกาะผนัง ต้องสูดทันที'],
 };
+/* ---- technique score (asked for by the course professor): 8 checklist steps per inhaler.
+   A step scores if the FIRST demonstration has no mistake on it; each hint costs 1 point. ---- */
+const INH_STEP_OF={capOn:'cap',capShut:'open',noShake:'shake',noOut:'out',outIn:'out',air:'lips',early:'press',twoPuff:'press',noDose:'press',onePuff:'press',fast:'slow',short:'slow',late:'slow',noHold:'hold',noRecap:'recap',noClose:'close',openTurn:'turn',noTurn:'turn',noSpacer:'attach'};
+const INH_FLOW_OF={cap:'cap',shake:'shake',attach:'attach',out:'out',lips:'mouth',press:'press',slow:'in',hold:'hold',recap:'recap',turn:'turn',open:'open',close:'close'};   // checklist step → simulator action
+/* a step is lost if a mistake was made on it, or if it was never done (ever = the actions done in this demonstration) */
+function inhScore(dev, errs, hints, ever){ const st=SIM_STEPS[dev].map(x=>x[0]), done=ever?new Set(ever):null,
+    bad=st.filter(k=>(errs||[]).some(e=>INH_STEP_OF[e]===k)||(done&&!done.has(INH_FLOW_OF[k]))), ok=st.length-bad.length;
+  return {ok, max:st.length, hints:hints||0, pts:Math.max(0,ok-(hints||0)), bad}; }
+const INH_DV=[['mdi','🔵'],['spacer','🫙'],['resp','🟢']], INH_PT=10;      // 10 game points per checklist step
+const INH_T={tab:['吸入器衛教','Inhaler teaching','สอนใช้ยาพ่น'], tot:['吸入器技術總分','Inhaler technique total','คะแนนเทคนิคยาพ่นรวม'],
+  h:['親手示範三種吸入器，每種 8 個步驟。第一次示範就做對的步驟才得分；每用一次提示扣 1 分。每 1 分＝遊戲分數 +10。','You demonstrated three inhalers, 8 steps each. A step scores only if it was right in your first demonstration; each hint costs 1 point. Each point = +10 game score.','สาธิตยาพ่น 3 แบบด้วยตัวเอง แบบละ 8 ขั้นตอน ได้คะแนนเฉพาะขั้นที่ทำถูกในการสาธิตครั้งแรก ใช้คำใบ้หนึ่งครั้งหัก 1 คะแนน · 1 คะแนน = +10 คะแนนเกม']};
+function inhTotal(){ const sc=(S.inh&&S.inh.sc)||{}; return INH_DV.reduce((a,[d])=>a+((sc[d]&&sc[d].pts)||0),0); }
+function inhMax(){ return INH_DV.reduce((a,[d])=>a+SIM_STEPS[d].length,0); }
+function inhPoints(){ const i=S.inh; if(!i) return 0; return (i.rescue?25:0)+(i.sc?inhTotal()*INH_PT:[i.steps,i.order,i.dose].filter(Boolean).length*25); }
+function inhPane(){ const sc=(S.inh&&S.inh.sc)||{};
+  return `<style>.ihgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.ihc{background:#fff;border-radius:14px;padding:10px 12px;box-shadow:inset 0 0 0 2px #e6dff5}.ihc b{font-size:15px}.ihc .ihs{font-size:26px;font-weight:900;color:#2b6b2b;margin:2px 0 4px}.ihc .ihs small{font-size:14px;color:#a8620e}.ihc ul{margin:0;padding:0;list-style:none}.ihc li{font-size:14px;line-height:1.45}.ihc li.no{color:#b3261e;font-weight:800}</style>
+    <p class="muted" style="margin:0 0 8px;font-size:14px">${esc(L(INH_T.h))}</p><div class="ihgrid">${INH_DV.map(([d])=>{ const r=sc[d];
+      if(!r) return `<div class="ihc"><b>${esc(L(SIMX.hdr[d]))}</b><div class="ihs">—</div></div>`;
+      return `<div class="ihc"><b>${esc(L(SIMX.hdr[d]))}</b><div class="ihs">${r.pts}/${r.max}${r.hints?` <small>💡 −${r.hints}</small>`:''}</div><ul>${SIM_STEPS[d].map(([k,l])=>`<li class="${r.bad.includes(k)?'no':'ok'}">${r.bad.includes(k)?'❌':'✅'} ${esc(L(l))}</li>`).join('')}</ul></div>`; }).join('')}</div>
+    <p style="font-weight:900;margin:10px 0 0;font-size:17px">${esc(L(INH_T.tot))}: ${inhTotal()}/${inhMax()} → +${inhTotal()*INH_PT}</p>`; }
 const SIM_O='#3a2e22';
 function simDevSVG(dev){
   const O=SIM_O;
@@ -3990,6 +4011,10 @@ function inhSim(dev){
 #isim .is-sum .card{width:min(760px,92%);background:#fff;border-radius:22px;padding:18px 24px;box-shadow:0 0 0 4px #8c9a3e,0 12px 30px rgba(0,0,0,.2)}
 #isim .is-sum h3{margin:0 0 10px;font-family:var(--tc);font-size:28px}
 #isim .is-sum li{font-size:19px;line-height:1.45;margin:4px 0;font-weight:700}
+#isim .is-score{margin:0 0 8px;padding:8px 12px;border-radius:14px;background:#f3faf0;box-shadow:inset 0 0 0 2px #cfe8c4}
+#isim .is-score b{font-size:22px;color:#2b6b2b}#isim .is-score small{font-size:15px;color:#a8620e;font-weight:800;margin-left:6px}
+#isim .is-score ul{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;margin:6px 0 0;padding:0;list-style:none}
+#isim .is-score li{font-size:16px;margin:1px 0;font-weight:700}#isim .is-score li.no{color:#b3261e}
 #isim .is-sum .act{display:flex;gap:12px;justify-content:flex-end;margin-top:12px}
 #isim [data-p]{cursor:pointer}
 #isim .sd-cap{transition:opacity .3s}
@@ -4029,16 +4054,16 @@ function inhSim(dev){
     const svg=$('#simSvg'), devG=$('#simDevG'), fx=$('#simFx'), bench=$('#simBench');
     const MOUTH={x:516,y:296}, SOCK=326, HOME={mdi:{x:250,y:430}, spacer:{x:170,y:250}, resp:{x:250,y:178}}[dev], SP_HOME={x:540,y:480};
     const WIN=ex?(dev==='resp'?3.4:3.0):(dev==='resp'?4.0:3.5), INHALE=7.0;   // seconds: a slow 7-second breath; the press must land in its first part
-    let tries=0, allErrs=[], firstErrs=null, finished=false, raf=0, s, timers=[], hintsN=0, idleT=0;
+    let tries=0, allErrs=[], firstErrs=null, firstSc=null, hint0=0, finished=false, raf=0, s, timers=[], hintsN=0, idleT=0;
     const later=(fn,ms)=>{ const t=setTimeout(()=>{ if(!finished) fn(); },ms); timers.push(t); return t; };
     const reset=()=>{ timers.forEach(clearTimeout); timers=[]; cancelAnimationFrame(raf);
       s={capOn:dev!=='resp', capOpen:false, shaken:false, attached:false, exhaled:false, atMouth:false, inhaling:false, t0:0, pressed:false, good:false, held:false,
-         turned:false, chamber:0, chamberN:0, puffs:0, puffNo:1, lungs:.55, busy:false, pos:{...HOME}, sp:{...SP_HOME}, done:new Set(), errs:new Set(), bubT:0, hintOn:null, hinted:new Set(), last:null, miss:0};
-      devG.innerHTML=simDevSVG(dev); wire(); draw(); guide(); idle(); };
+         turned:false, chamber:0, chamberN:0, puffs:0, puffNo:1, lungs:.55, busy:false, ever:new Set(), pos:{...HOME}, sp:{...SP_HOME}, done:new Set(), errs:new Set(), bubT:0, hintOn:null, hinted:new Set(), last:null, miss:0};
+      hint0=hintsN; devG.innerHTML=simDevSVG(dev); wire(); draw(); guide(); idle(); };
     const nudge=on=>{ const b=$('#simHintBtn'); if(b) b.classList.toggle('nudge',!!on); };
     const idle=()=>{ clearTimeout(idleT); if(!ex) idleT=later(()=>nudge(1),15000); };
     const err=(k,soft)=>{ if(!s.errs.has(k)){ s.errs.add(k); if(!ex&&!soft) toast('⚠️ '+L(SIM_ERR[k])); } sfx.error(); if(++s.miss>=2) nudge(1); };
-    const mark=k=>{ if(!s.done.has(k)){ s.last=k; s.miss=0; nudge(0); idle(); } s.done.add(k); guide(); };
+    const mark=k=>{ s.ever.add(k); if(!s.done.has(k)){ s.last=k; s.miss=0; nudge(0); idle(); } s.done.add(k); guide(); };
     const unmark=(...ks)=>{ ks.forEach(k=>s.done.delete(k)); guide(); };
     const bub=(t,ms)=>{ const b=svg.querySelector('.sd-bub'); b.textContent=t; clearTimeout(s.bubT); s.bubT=setTimeout(()=>{ b.textContent=''; },ms||1600); };
     const hint=t=>{ $('#simHint').textContent=t||''; };
@@ -4171,15 +4196,17 @@ function inhSim(dev){
       if(dev==='resp'){ if(!s.puffs&&!s.good) err('noDose',1); else if(s.puffs<2) err('onePuff',1); if(s.capOpen) err('noClose',1); }
       else { if(!s.good) err('noDose',1); else if(dev==='mdi'&&!s.capOn) err('noRecap',1); }
       const errs=[...s.errs]; tries++; if(!firstErrs) firstErrs=errs.slice(); allErrs=errs; const ok=!errs.length;
-      logEvent({type:'inhSim', dev, errs, ok, try:tries, puffs:s.puffs, good:s.good?1:0, hints:hintsN});
-      if(ex){ sfx.select(); setTimeout(()=>{ typeof audioDuck==='function'&&audioDuck(0); host.classList.add('hidden'); host.innerHTML=''; res({ok, errs, firstErrs, tries, hints:0}); },500); return; }
+      const sc=inhScore(dev, errs, hintsN-hint0, [...s.ever]); if(!firstSc) firstSc=sc;
+      logEvent({type:'inhSim', dev, errs, ok, try:tries, puffs:s.puffs, good:s.good?1:0, hints:hintsN, pts:sc.pts, steps:sc.ok, max:sc.max});
+      if(ex){ sfx.select(); setTimeout(()=>{ typeof audioDuck==='function'&&audioDuck(0); host.classList.add('hidden'); host.innerHTML=''; res({ok, errs, firstErrs, tries, hints:0, score:firstSc}); },500); return; }
       if(ok) sfx.get(); else sfx.error();
       const sum=document.createElement('div'); sum.className='is-sum';
-      sum.innerHTML=`<div class="card"><h3>${ok?'🎉 '+esc(L(SIMX.perfect)):'🔧 '+esc(L(SIMX.fixes))}</h3>${ok?'':`<ul>${errs.map(k=>`<li>${esc(L(SIM_ERR[k]))}</li>`).join('')}</ul>`}${hintsN?`<p class="is-hn">💡 ${esc(L(FLOWX.hintsUsed))}: ${hintsN}</p>`:''}
+      const shown=tries>1?firstSc:sc;
+      sum.innerHTML=`<div class="card"><h3>${ok?'🎉 '+esc(L(SIMX.perfect)):'🔧 '+esc(L(SIMX.fixes))}</h3><div class="is-score"><b>📋 ${esc(L(SIMX.scoreT))} ${shown.pts}/${shown.max}</b>${shown.hints?`<small>💡 −${shown.hints}</small>`:''}${tries>1?`<small>${esc(L(SIMX.scoreNote))}</small>`:''}<ul>${SIM_STEPS[dev].map(([k,l])=>`<li class="${shown.bad.includes(k)?'no':'ok'}">${shown.bad.includes(k)?'❌':'✅'} ${esc(L(l))}</li>`).join('')}</ul></div>${ok?'':`<ul>${errs.map(k=>`<li>${esc(L(SIM_ERR[k]))}</li>`).join('')}</ul>`}${hintsN?`<p class="is-hn">💡 ${esc(L(FLOWX.hintsUsed))}: ${hintsN}</p>`:''}
         <div class="act">${ok||tries>=2?'':`<button class="gbtn gray" id="simAgain">${esc(L(SIMX.again))}</button>`}<button class="gbtn green" id="simCont">${esc(L(SIMX.cont))}</button></div></div>`;
       bench.appendChild(sum);
       const a=$('#simAgain'); if(a) a.onclick=()=>{ sfx.click(); sum.remove(); finished=false; reset(); };
-      $('#simCont').onclick=()=>{ sfx.click(); typeof audioDuck==='function'&&audioDuck(0); host.classList.add('hidden'); host.innerHTML=''; res({ok, errs:allErrs, firstErrs, tries, hints:hintsN}); }; }
+      $('#simCont').onclick=()=>{ sfx.click(); typeof audioDuck==='function'&&audioDuck(0); host.classList.add('hidden'); host.innerHTML=''; res({ok, errs:allErrs, firstErrs, tries, hints:hintsN, score:firstSc}); }; }
     reset();
   });
 }
@@ -4269,7 +4296,7 @@ async function inhalerTask(){
     await say('chen','embarrassed',['咳……這藥每次都苦苦的，大半都吐到衛生紙上了。','*cough*… it always tastes awful — most of it ends up in the tissue.','แค่ก… ยานี่ขมทุกที ส่วนใหญ่ก็บ้วนลงทิชชูหมด']);
     await say('yeh','smug',['看出問題了嗎？這是示範用的吸入器——你親手做一次正確的給他看！','Spot the problems? Here\'s a demo inhaler — show him the right way with your own hands!','เห็นปัญหาไหม? นี่คือยาพ่นตัวอย่าง ลองสาธิตวิธีที่ถูกให้ลุงดูด้วยมือคุณเอง!']);
     hideText();
-    const m=await inhSim('mdi'); r.steps=m.ok; r.stepsSel=m.firstErrs; r.mdiErrs=m.errs; r.mdiTries=m.tries;
+    const m=await inhSim('mdi'); r.steps=m.ok; r.stepsSel=m.firstErrs; r.mdiErrs=m.errs; r.mdiTries=m.tries; (r.sc=r.sc||{}).mdi=m.score;
     if(EXAM()){ sfx.select(); toast(T('examNoted')); await sleep(700); }
     else if(m.ok) splash(m.tries===1?'perfect':'gotcha','gold','crit');
     await tch(m.ok?'happy':'neutral',['正確的定量噴霧吸入器（MDI）：拔蓋 → 搖勻 → 先把氣吐乾淨 → 含住吸嘴 → 開始慢慢吸氣的「同時」按一下 → 繼續慢慢深吸 → 閉氣約 10 秒。他最大的問題是「按」和「吸」對不上，藥都噴在嘴巴和喉嚨，咳一咳就吐掉了。','Correct metered-dose inhaler (MDI) use: cap off → shake → breathe out fully → lips around the mouthpiece → press AS you start a slow breath in → keep breathing in slowly and deeply → hold about 10 s. His big problem is that pressing and breathing don\'t match — the spray lands in his mouth and throat, and he coughs it out.','การใช้ยาพ่นชนิดกดสูด (MDI) ที่ถูกต้อง: ถอดฝา → เขย่า → หายใจออกให้สุด → อมปากกระบอก → กดพร้อมกับเริ่มหายใจเข้าช้าๆ → สูดต่อไปช้าๆ ลึกๆ → กลั้นหายใจราว 10 วินาที ปัญหาใหญ่ของลุงคือจังหวะกดกับหายใจไม่ตรงกัน ยาจึงไปค้างในปากและคอ แล้วไอบ้วนทิ้งหมด']);
@@ -4278,7 +4305,7 @@ async function inhalerTask(){
     S.seg.i2=1; saveMid(); }
     if(!S.seg.i2b){ ff(false);
     hideText();
-    const sp=await inhSim('spacer'); r.spacer=sp.ok; r.spacerErrs=sp.errs;
+    const sp=await inhSim('spacer'); r.spacer=sp.ok; r.spacerErrs=sp.errs; (r.sc=r.sc||{}).spacer=sp.score;
     if(EXAM()){ sfx.select(); toast(T('examNoted')); await sleep(700); }
     else if(sp.ok) splash('gotcha','gold','crit');
     await tch(sp.ok?'happy':'think',['有了輔助器，按和吸不用同時：藥先噴進輔助艙，再慢慢吸。但要在幾秒內吸，而且一次只噴一下。','With a spacer, pressing and breathing don\'t have to match: the puff waits in the chamber while he breathes in slowly. Just breathe in within a few seconds — and one puff at a time.','มีกระบอกช่วยสูดแล้ว การกดกับการสูดไม่ต้องพร้อมกัน ยาจะรออยู่ในกระบอกระหว่างที่ลุงสูดช้าๆ แค่ต้องสูดภายในไม่กี่วินาที และพ่นทีละครั้ง']);
@@ -4287,7 +4314,7 @@ async function inhalerTask(){
     await say('chen','think',['那這支綠的呢？有時候我按了，什麼都沒噴出來！','And this green one? Sometimes I press and nothing comes out at all!','แล้วอันสีเขียวนี่ล่ะ? บางทีลุงกดแล้วไม่มีอะไรออกมาเลย!']);
     await say('yeh','neutral',['綠色這支是「軟霧吸入器」，用法和藍色的不一樣。換你示範一次完整的劑量給他看！','The green one is a soft-mist inhaler — it works differently from the blue one. Show him one full dose yourself!','อันสีเขียวเป็นยาพ่นชนิดละอองฝอย วิธีใช้ต่างจากอันสีฟ้า ลองสาธิตหนึ่งโดสเต็มให้ลุงดู!']);
     hideText();
-    const o=await inhSim('resp'); r.order=o.ok; r.orderTries=o.tries; r.respErrs=o.errs;
+    const o=await inhSim('resp'); r.order=o.ok; r.orderTries=o.tries; r.respErrs=o.errs; (r.sc=r.sc||{}).resp=o.score;
     if(EXAM()){ sfx.select(); toast(T('examNoted')); await sleep(700); }
     else if(o.ok) splash(o.tries===1?'perfect':'gotcha','gold','crit');
     await tch(o.ok?'happy':'think',['Respimat 不用搖，噴出來的是慢慢的軟霧。口訣 T-O-P：轉（Turn）→ 開（Open）→ 按（Press）。「2 噴」就是整套做兩次。他說「按了沒東西出來」，就是因為忘了先把底座轉到「喀」一聲。','The Respimat needs no shaking — it releases a slow, soft mist. Remember T-O-P: Turn → Open → Press. "Two puffs" means doing the whole routine twice. His "I press and nothing comes out" happens when he forgets to turn the base until it clicks.','Respimat ไม่ต้องเขย่า ยาออกมาเป็นละอองฝอยช้าๆ จำง่ายๆ ว่า T-O-P: หมุน (Turn) → เปิด (Open) → กด (Press) "2 พัฟ" คือทำครบทุกขั้นสองรอบ ที่ลุงบอกว่า "กดแล้วไม่มีอะไรออกมา" ก็เพราะลืมหมุนฐานจนได้ยินเสียงคลิกก่อน']);
@@ -4608,7 +4635,7 @@ function computeScore(){
   const B=S.boss, bonus=Object.keys(ITEMS).filter(k=>!ITEMS[k].req&&hasEv(k)).length, cov=S.finalCov.filter(Boolean).length;
   let sc=1000+Math.max(0,S.visit)*15+Math.min(0,S.visit)*20+S.hearts*80+S.trust*40+B.crit*120+B.ok*40-B.miss*60+B.maxCombo*20+bonus*60-S.hints*80-S.resets*200+cov*60-S.wrong*20
     -mythsAlive().length*150+(B.byFinal||[]).length*60
-    +S.mr.perfect*150+S.mr.partial*60-S.mr.wrong*40+(S.mr.egfr?100:0)+(S.inh?[S.inh.rescue,S.inh.steps,S.inh.order,S.inh.dose].filter(Boolean).length*25:0)
+    +S.mr.perfect*150+S.mr.partial*60-S.mr.wrong*40+(S.mr.egfr?100:0)+inhPoints()
     +(S.custom?S.custom.score:0)+(S.first&&S.first.ok?100:0)+(S.calc.acb&&S.calc.acb.ok?60:0)+(S.calc.crcl&&S.calc.crcl.ok?80:0)+(S.calc.crTrap?40:0)
     +FOLLOW1.filter(f=>S.asked[f.id]).length*25+S.hiddenQ.length*40+(S.fl.adh?60:0)-(S.refused?150:0)-(S.timeout?300:0);
   const rt=realSec(); if(rt<25*60) sc+=200; else if(rt<35*60) sc+=100;
@@ -4631,13 +4658,13 @@ async function results(){
   $('#results').innerHTML=`<div class="rpanel"><div class="row" style="justify-content:space-between;align-items:flex-start;flex-wrap:nowrap"><div><div class="hint" style="font-size:20px;font-weight:900">${T('rank')}</div><div class="rank">${S.rank}</div></div>
     <div style="flex:1;padding:18px 18px 0"><p style="font-size:21px;font-weight:900;color:#7a5a12;margin:0 0 8px">「${esc(L(cmt))}」</p><div class="row" style="gap:8px">${S.ending?`<span class="pill" style="font-size:16px">${T('endStat')}: ${T('end_'+S.ending.tier)}</span>`:''}<span class="pill" style="font-size:16px">${T('mode_'+S.mode)}</span>${S.timeout?`<span class="pill no" style="font-size:16px">⏰ ${T('timeoutStat')}</span>`:''}${S.refused?`<span class="pill no" style="font-size:16px">🔒 ${T('refusedStat')}</span>`:''}</div></div>
     <div style="display:flex;gap:0"><div style="width:120px;height:168px">${charSVG('me',S.rank==='S'||S.rank==='A'?'happy':'smug')}</div><div style="width:136px;height:190px;margin-top:-16px">${charSVG('yeh',S.rank==='S'||S.rank==='A'?'happy':'smug')}</div></div></div>
-    <div class="rtabs">${[['sum','📊 '+T('score')],['prob','🔎 '+T('tProblems')+` ${nFound}/${PROBLEMS.length}`],['bdg','🏅 '+T('badgeT')+` ${bd.earned.length}${bd.fresh.length?' ✨':''}`]].map(([k,t],i)=>`<button class="rtab${i?'':' on'}" data-rt="${k}">${t}</button>`).join('')}</div>
+    <div class="rtabs">${[['sum','📊 '+T('score')],['prob','🔎 '+T('tProblems')+` ${nFound}/${PROBLEMS.length}`],...(S.inh&&S.inh.sc?[['inh','🫁 '+esc(L(INH_T.tab))+` ${inhTotal()}/${inhMax()}`]]:[]),['bdg','🏅 '+T('badgeT')+` ${bd.earned.length}${bd.fresh.length?' ✨':''}`]].map(([k,t],i)=>`<button class="rtab${i?'':' on'}" data-rt="${k}">${t}</button>`).join('')}</div>
     <div class="rpane" data-rp="sum"><div class="rstats"><div><span>${T('score')}</span> ${S.score}</div><div><span>${T('realTime')}</span> ${fmt(realSec())}</div><div><span>${T('visitLeft')}</span> ${S.visit} ${T('min')}</div><div><span>${T('trustEnd')}</span> ${S.trust}/10</div>
-    <div><span>${T('heartsLeft')}</span> ${S.hearts}</div><div><span>${T('bossAcc')}</span> ${acc}%</div><div><span>${T('mythLeftStat')}</span> 👿 ${mythsAlive().length}</div><div><span>${T('maxCombo')}</span> ${B.maxCombo}</div><div><span>${T('bonusEv')}</span> ${bonus}/4</div><div><span>${T('hintsUsed')}</span> ${S.hints}</div><div><span>${T('mrStat')}</span> ${S.mr.perfect}/6${S.mr.egfr?' · eGFR ✓':''}${S.inh?' · 🫁 '+[S.inh.rescue,S.inh.steps,S.inh.order,S.inh.dose].filter(Boolean).length+'/4':''}</div>
-    <div><span>${T('firstMoveT')}</span> ${S.first?(S.first.ok?'✅':'🔁 ×'+S.first.tries):'—'}</div><div><span>${T('calcStat')}</span> ${['egfr','crcl'].map(k=>S.calc[k]?(S.calc[k].ok?'✅':'📘'):'—').join(' ')}</div><div><span>🖐️ ${esc(L(['實作','Hands-on','ลงมือทำ']))}</span> ${S.inh?['🔵'+(S.inh.steps?'✅':'📘'),'🫙'+(S.inh.spacer?'✅':'📘'),'🟢'+(S.inh.order?'✅':'📘')].join(' '):'—'} · 🧠${S.calc.acb?(S.calc.acb.ok?'✅':'📘'):'—'}</div>
+    <div><span>${T('heartsLeft')}</span> ${S.hearts}</div><div><span>${T('bossAcc')}</span> ${acc}%</div><div><span>${T('mythLeftStat')}</span> 👿 ${mythsAlive().length}</div><div><span>${T('maxCombo')}</span> ${B.maxCombo}</div><div><span>${T('bonusEv')}</span> ${bonus}/4</div><div><span>${T('hintsUsed')}</span> ${S.hints}</div><div><span>${T('mrStat')}</span> ${S.mr.perfect}/${MISSIONS.length}${S.mr.egfr?' · eGFR ✓':''}${S.inh&&S.inh.sc?' · 🫁 '+inhTotal()+'/'+inhMax():''}</div>
+    <div><span>${T('firstMoveT')}</span> ${S.first?(S.first.ok?'✅':'🔁 ×'+S.first.tries):'—'}</div><div><span>${T('calcStat')}</span> ${['egfr','crcl'].map(k=>S.calc[k]?(S.calc[k].ok?'✅':'📘'):'—').join(' ')}</div><div><span>🖐️ ${esc(L(['實作','Hands-on','ลงมือทำ']))}</span> ${S.inh?(S.inh.sc?INH_DV.map(([d,ic])=>ic+(S.inh.sc[d]?S.inh.sc[d].pts:'—')+'/8').join(' '):['🔵'+(S.inh.steps?'✅':'📘'),'🫙'+(S.inh.spacer?'✅':'📘'),'🟢'+(S.inh.order?'✅':'📘')].join(' ')):'—'} · 🧠${S.calc.acb?(S.calc.acb.ok?'✅':'📘'):'—'}</div>
     <div><span>${T('patStat')}</span> ☕${S.pat} · ↪${fuN}/${FOLLOW1.length} · 🗝️${S.hiddenQ.length}/3</div>${S.custom.max?`<div><span>${T('cqStat')}</span> ${S.custom.score}/${S.custom.max}</div>`:''}${ppN?`<div><span>${T('ppStat')}</span> ${ppPre}/${ppN} → <b style="color:#0a7a0a">${ppPost}/${ppN}</b></div>`:''}
     <div style="grid-column:1/4"><span>${T('chapterTimes')}</span> ${[1,2,3,4,5].map(c=>fmt(S.chT[c]||0)).join(' · ')}</div></div>${gateHTML}</div>
-    <div class="rpane hidden" data-rp="prob"><div class="plist">${PROBLEMS.map(p=>`<div>${S.found[p.id]?'✅':'⬜'} ${p.icon} <b>${esc(L(p.t))}</b><div class="muted" style="font-size:13px;line-height:1.35">${esc(L(p.d))}</div></div>`).join('')}</div></div>
+    ${S.inh&&S.inh.sc?`<div class="rpane hidden" data-rp="inh">${inhPane()}</div>`:''}<div class="rpane hidden" data-rp="prob"><div class="plist">${PROBLEMS.map(p=>`<div>${S.found[p.id]?'✅':'⬜'} ${p.icon} <b>${esc(L(p.t))}</b><div class="muted" style="font-size:13px;line-height:1.35">${esc(L(p.d))}</div></div>`).join('')}</div></div>
     <div class="rpane hidden" data-rp="bdg">${S.ending?`<div class="rbadges">${(S.ending.items||[]).map(it=>{ const o=epiOutcomes().find(x=>x.k===it.k); const x=o?(it.ok?o.g:o.b):null; return x?`<span class="pill ${it.ok?'ok':'no'}" style="font-size:15px">${x[0]} ${esc(L(x[1]))}</span>`:''; }).join('')}</div>`:''}
       <div class="rbadges">${bd.earned.length?BADGES.filter(b=>bd.earned.includes(b.id)).map(b=>badgeChip(b,newSet.has(b.id))).join(''):`<span class="muted">—</span>`}</div><div style="margin-top:10px">${badgeGridHTML()}</div></div>
     <div class="row" style="margin-top:14px;justify-content:center"><button class="gbtn blue" id="rRep">${T('report')}</button><button class="gbtn green" id="rCase">📁 ${T('caseFile')}</button><button class="gbtn" id="rAgain">${T('again')}</button></div><div class="syncSt hidden"></div></div>`;
@@ -5152,7 +5179,7 @@ const CL={
  clPatOut:['☕ 耐心用完、訪談被迫結束','☕ Ran out of patience (interview cut short)','☕ ความอดทนหมด (การสัมภาษณ์ถูกตัดจบ)'], clRefused:['🔒 李伯伯沒說出秘密','🔒 Uncle Lee kept his secret','🔒 ลุงไม่ยอมเล่าความลับ'], clTimeout:['⏰ 時間到、拜訪提早結束','⏰ Time ran out — visit ended early','⏰ หมดเวลา — การเยี่ยมจบก่อนกำหนด'],
  clEnding:['兩週後的結局','Two-week outcome','ผลลัพธ์ 2 สัปดาห์ต่อมา'], clFollow:['↪ 追問與隱藏提問','↪ Follow-ups & hidden questions','↪ คำถามต่อและคำถามลับ'], clHidden:['🗝️ 隱藏提問','🗝️ Hidden question','🗝️ คำถามลับ'],
  clMode:['模式','Mode','โหมด'], clAllModes:['全部模式','All modes','ทุกโหมด'],
- clBmiClass:['抗膽鹼負擔分類','Anticholinergic-load sort','จัดกลุ่มภาระต้านโคลิเนอร์จิก'], clInhM:['藍色 MDI 親手示範','Blue MDI, hands-on','MDI สีฟ้า ลงมือ'], clInhR:['綠色 Respimat 親手示範','Green Respimat, hands-on','Respimat สีเขียว ลงมือ'], clCkd:['CKD 分期','CKD staging','ระยะ CKD'], clObese:['「正常」Cr 的陷阱','The "normal creatinine" trap','กับดัก Cr "ปกติ"'],
+ clBmiClass:['抗膽鹼負擔分類','Anticholinergic-load sort','จัดกลุ่มภาระต้านโคลิเนอร์จิก'], clInhM:['藍色 MDI 親手示範','Blue MDI, hands-on','MDI สีฟ้า ลงมือ'], clInhS:['MDI＋輔助器 親手示範','MDI + spacer, hands-on','MDI + กระบอกช่วยสูด ลงมือ'], clInhPts:['吸入器技術評分（全班合計／滿分）','Inhaler technique score (class total / maximum)','คะแนนเทคนิคยาพ่น (รวมทั้งชั้น / เต็ม)'], clInhR:['綠色 Respimat 親手示範','Green Respimat, hands-on','Respimat สีเขียว ลงมือ'], clCkd:['CKD 分期','CKD staging','ระยะ CKD'], clObese:['「正常」Cr 的陷阱','The "normal creatinine" trap','กับดัก Cr "ปกติ"'],
 };
 const TC=k=>CL[k]?(CL[k][LI()]||CL[k][0]):UI[k]?T(k):TE(k);
 const CLS={fin:false, ver:'__all', mode:'all', cls:'__all'};
@@ -5173,7 +5200,7 @@ function classStats(list){
   R.calc={}; ['egfr','crcl'].forEach(k=>{ const has=list.filter(s=>s.calc&&s.calc[k]); R.calc[k]={n:has.filter(s=>s.calc[k].ok&&s.calc[k].tries===1).length, d:has.length}; row('calc',k.toUpperCase(),R.calc[k].n,R.calc[k].d); });
   R.calcWrong={}; list.forEach(s=>(s.log||[]).filter(e=>e.type==='calc'&&!e.ok).forEach(e=>{ const k=e.id+'|'+Object.entries(e.vals||{}).sort((x,y)=>x[0]<y[0]?-1:1).map(([a,b])=>a+'='+b).join(', '); R.calcWrong[k]=(R.calcWrong[k]||0)+1; }));
   const bc=list.filter(s=>s.calc&&s.calc.acb), ih=k=>list.filter(s=>(s.log||[]).some(e=>e.type==='inhaler')).map(s=>(s.log||[]).filter(e=>e.type==='inhaler').pop()), ck=list.filter(s=>(s.log||[]).some(e=>e.type==='egfr')), ob=list.filter(s=>s.calc&&'crTrap' in s.calc);
-  R.concept=[[TC('clBmiClass'),bc.filter(s=>s.calc.acb.ok).length,bc.length],[TC('clInhM'),ih().filter(e=>e.steps).length,ih().length],[TC('clInhR'),ih().filter(e=>e.order).length,ih().length],[TC('clCkd'),ck.filter(s=>(s.log||[]).find(e=>e.type==='egfr').ok).length,ck.length],[TC('clObese'),ob.filter(s=>s.calc.crTrap).length,ob.length]];
+  R.concept=[[TC('clBmiClass'),bc.filter(s=>s.calc.acb.ok).length,bc.length],[TC('clInhM'),ih().filter(e=>e.steps).length,ih().length],[TC('clInhS'),ih().filter(e=>e.spacer).length,ih().length],[TC('clInhR'),ih().filter(e=>e.order).length,ih().length],...(ih().some(e=>e.sc)?[[TC('clInhPts'),ih().filter(e=>e.sc).reduce((a,e)=>a+['mdi','spacer','resp'].reduce((b,d)=>b+((e.sc[d]&&e.sc[d].pts)||0),0),0),ih().filter(e=>e.sc).length*24]]:[]),[TC('clCkd'),ck.filter(s=>(s.log||[]).find(e=>e.type==='egfr').ok).length,ck.length],[TC('clObese'),ob.filter(s=>s.calc.crTrap).length,ob.length]];
   R.concept.forEach(([l,n,d])=>row('concept',l,n,d));
   R.mr=MISSIONS.map(m=>{ const a=list.map(s=>(s.mr&&s.mr.ans||[]).find(x=>x.id===m.id)).filter(Boolean); return {m, p:a.filter(x=>x.perfect).length, h:a.filter(x=>!x.perfect&&x.partial).length, w:a.filter(x=>!x.perfect&&!x.partial).length, d:a.length}; });
   R.mr.forEach(x=>row('mr',`${L(x.m.tag)} · ${KP(L(x.m.q)).slice(0,40)}…`,x.p,x.d));
@@ -5470,7 +5497,7 @@ const STU={q:'', cls:'__all', mode:'all', st:'all', sort:'new'};
 function studentCard(s){
   const nm=s.student&&s.student.name||'?', sid=s.student&&s.student.sid||'', found=Object.keys(s.found||{}).length, B=s.boss||{answers:[]}, log=s.log||[], qn=['❌','🔸','✅'];
   const calcChip=k=>{ const c=s.calc&&s.calc[k]; if(!c) return ''; const first=HANDS_KEYS.includes(k)?c.ok:c.ok&&c.tries===1, late=!first&&c.ok; return `<span class="chip ${first?'ok':late?'ex':'no'}">${esc(L(TT.hk[k]))} ${first?'✓':late?'✓ ×'+c.tries:'✗'}</span>`; };
-  const inhChip=dev=>{ const f=inhFirst(s,dev); return f?`<span class="chip ${f.ok?'ok':'no'}">${esc(L(TT.hk[dev]))} ${f.ok?'✓':'✗'}</span>`:''; };
+  const inhChip=dev=>{ const f=inhFirst(s,dev); return f?`<span class="chip ${f.ok?'ok':'no'}">${esc(L(TT.hk[dev]))} ${f.pts!=null?f.pts+'/'+(f.max||8):f.ok?'✓':'✗'}</span>`:''; };
   const hands=HANDS_KEYS.map(calcChip).join('')+INH_DEVS.map(inhChip).join(''), calcs=CALC_KEYS.map(calcChip).join(''), hints=hintsOf(s);
   const status=s.done?`<span class="chip ok">${TX('done')}</span>`:`<span class="chip ex">${TX('playing').replace('{p}',s.progress||0)}</span>`;
   const endTxt=s.ending?({best:'🌟',good:'😊',mixed:'😐',bad:'🚑'}[s.ending.tier]||'')+' '+T('end_'+s.ending.tier).replace(/^\S+\s/,''):'';
@@ -5479,7 +5506,7 @@ function studentCard(s){
   const handsDet=[...HANDS_KEYS, ...CALC_KEYS].filter(k=>s.calc&&s.calc[k]).map(k=>{ const c=s.calc[k], isH=HANDS_KEYS.includes(k);
       return `<div class="ll">${c.ok?'✅':'❌'} <b>${esc(L(TT.hk[k]))}</b> — ${c.ok?(isH||c.tries===1?TX('ok'):TX('tries').replace('{n}',c.tries)):TX('wrongC')}${c.value!=null?` · ${esc(String(c.value))}`:''}${c.hints?` · 💡 ${c.hints}`:''}</div>`+(c.errs||[]).map(e=>`<div class="err">• ${esc(errText(e))}</div>`).join(''); }).join('')
     +INH_DEVS.map(dev=>{ const all=log.filter(e=>e.type==='inhSim'&&e.dev===dev); if(!all.length) return ''; const f=all[0], last=all[all.length-1];
-      return `<div class="ll">${f.ok?'✅':'❌'} <b>${esc(L(TT.hk[dev]))}</b> — ${f.ok?TX('ok'):last.ok?TX('tries').replace('{n}',last.try||all.length):TX('wrongC')}${f.hints?` · 💡 ${f.hints}`:''}</div>`+(f.errs||[]).map(e=>`<div class="err">• ${esc(errText(e))}</div>`).join(''); }).join('');
+      return `<div class="ll">${f.ok?'✅':'❌'} <b>${esc(L(TT.hk[dev]))}</b>${f.pts!=null?` <b>📋 ${f.pts}/${f.max||8}</b>`:''} — ${f.ok?TX('ok'):last.ok?TX('tries').replace('{n}',last.try||all.length):TX('wrongC')}${f.hints?` · 💡 ${f.hints}`:''}</div>`+(f.errs||[]).map(e=>`<div class="err">• ${esc(errText(e))}</div>`).join(''); }).join('');
   const chT=[0,1,2,3,4,5].map(c=>`${c?TX('chN').replace('{n}',c):TX('ch0')} ${fmt((s.chT||{})[c]||0)}`).join(' · ');
   const pp=s.pp&&Object.keys(s.pp.pre||{}).length?(()=>{ const pre=s.pp.pre||{}, post=s.pp.post||{}, ids=[...new Set(Object.keys(pre).concat(Object.keys(post)))], qt={}; log.forEach(e=>{ if(e.type==='pp') qt[e.qid]=e.q; }); gameQuestions().forEach(x=>{ if(x.cp==='pp') qt[x.id]=LQ(x.q); });
       return `<h4>📊 ${T('ppStat')} ${Object.values(pre).filter(x=>x.ok).length}/${ids.length} → ${Object.values(post).filter(x=>x.ok).length}/${ids.length}</h4>`+ids.map(id=>`<div class="ll">${pre[id]?(pre[id].ok?'✅':'❌'):'·'} → ${post[id]?(post[id].ok?'✅':'❌'):'·'} ${esc(qt[id]||id)}</div>`).join(''); })():'';

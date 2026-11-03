@@ -3786,7 +3786,7 @@ const SIMX={
   click:['喀！','Click!','คลิก!'], loaded:['已上膛','loaded','พร้อมพ่น'], cough:['咳咳！','*cough*','แค่กๆ!'],
   nothing:['……什麼都沒噴出來','…nothing came out','…ไม่มีอะไรออกมา'], examNote:['照你教病人的方式，自己完整做一次。','Do it exactly as you would teach a patient.','ทำให้ครบเหมือนที่คุณจะสอนผู้ป่วย'],
   shakeHint:['把吸入器上下拖動來搖勻','drag the inhaler up and down to shake it','ลากยาพ่นขึ้นลงเพื่อเขย่า'],
-  ctrl:['操作：拖動＝移動／搖　點蓋子＝開／關　按住藥罐或按鈕再滑開＝邊按邊吸　右邊按鈕＝按住','Controls: drag = move / shake · tap the cap · press the canister or button and slide = press while breathing in · side buttons = press and hold','วิธีควบคุม: ลาก = ย้าย/เขย่า · แตะฝา · กดกระป๋องหรือปุ่มแล้วลาก = กดพร้อมหายใจเข้า · ปุ่มด้านข้าง = กดค้าง'],
+  ctrl:['操作：拖動＝移動／搖　點蓋子＝開／關　按住藥罐或按鈕再滑開＝邊按邊吸　右邊按鈕＝點一下','Controls: drag = move / shake · tap the cap · press the canister or button and slide = press while breathing in · side buttons = tap','วิธีควบคุม: ลาก = ย้าย/เขย่า · แตะฝา · กดกระป๋องหรือปุ่มแล้วลาก = กดพร้อมหายใจเข้า · ปุ่มด้านข้าง = แตะ'],
   capFirst:['先拔蓋子','Cap off first','ถอดฝาก่อน'],
   scoreT:['技術評分','Technique score','คะแนนเทคนิค'], scoreNote:['分數以第一次示範為準','The score counts your first demonstration','คะแนนนับจากการสาธิตครั้งแรก'],
 };
@@ -3810,7 +3810,7 @@ const SIM_ERR={
   early:['先按了才吸（跟李伯伯一樣）：藥打到喉嚨，咳出來了','Pressed first, breathed later (just like Uncle Lee) — the spray hit the throat','กดก่อนแล้วค่อยสูด (เหมือนลุงหลี่) ยาไปกระแทกคอแล้วไอออกหมด'],
   fast:['吸太快：藥撞在喉嚨，要慢慢吸 3–5 秒','Breathed in too fast — the drug hits the throat; take 3–5 s','สูดเร็วเกินไป ยาไปติดคอ ต้องสูดช้าๆ 3–5 วินาที'],
   short:['吸太短：要一口氣慢慢吸到底','Breath too short — keep breathing in until the lungs are full','สูดสั้นไป ต้องสูดช้าๆ จนเต็มปอด'],
-  noHold:['閉氣不夠久：要閉氣約 10 秒，藥才留在肺裡','Breath-hold too short — hold about 10 s so the drug settles in the lungs','กลั้นหายใจไม่นานพอ ต้องกลั้นราว 10 วินาทีให้ยาค้างในปอด'],
+  noHold:['沒有閉氣：吸完藥要閉氣約 10 秒，藥才留在肺裡','No breath-hold — after the dose, hold the breath about 10 s so the drug settles in the lungs','ไม่ได้กลั้นหายใจ หลังสูดยาต้องกลั้นราว 10 วินาทีให้ยาค้างในปอด'],
   noRecap:['用完沒蓋回蓋子','Cap not put back afterwards','ใช้เสร็จไม่ปิดฝาครอบ'],
   noDose:['還沒有成功吸進一劑藥','No dose actually reached the lungs','ยังไม่มียาเข้าปอดสักโดส'],
   openTurn:['蓋子打開才轉：要蓋著轉到「喀」一聲，再打開','Turned with the cap open — turn with the cap CLOSED until it clicks, then open','หมุนตอนเปิดฝา ต้องปิดฝาไว้แล้วหมุนจนคลิก แล้วค่อยเปิด'],
@@ -3933,7 +3933,7 @@ Object.assign(SIM_ERR,{
 });
 const FLOWX={
   shake:['👋 搖一搖','👋 Shake','👋 เขย่า'], out:['😮‍💨 吐氣','😮‍💨 Breathe out','😮‍💨 หายใจออก'], inn:['🌬️ 慢慢吸氣','🌬️ Breathe in slowly','🌬️ สูดหายใจช้าๆ'], hold:['🤐 閉氣','🤐 Hold breath','🤐 กลั้นหายใจ'],
-  ph:['按住不放','press & hold','กดค้างไว้'], step:['第 {i}/{n} 步','Step {i}/{n}','ขั้นที่ {i}/{n}'], now:['就是現在！','NOW!','ตอนนี้!'],
+  ph:['點一下','tap','แตะ'], step:['第 {i}/{n} 步','Step {i}/{n}','ขั้นที่ {i}/{n}'], now:['就是現在！','NOW!','ตอนนี้!'],
   exam:['照你教病人的方式，完整示範一次——沒有提示。','Demonstrate it the way you would teach a patient — no hints.','สาธิตให้ครบเหมือนที่สอนผู้ป่วย — ไม่มีคำใบ้'],
   finish:['✅ 示範完成','✅ Finish','✅ จบการสาธิต'], breath:['吸氣','Breath in','หายใจเข้า'], keep:['繼續按住，吐到肺空為止','Keep holding until the lungs are empty','กดค้างต่อจนปอดว่าง'],
   mouthFirst:['先把吸嘴放進嘴裡','Mouthpiece in first','อมปากกระบอกก่อน'], nothingHold:['還沒吸到藥，先不用閉氣','No dose in yet — nothing to hold','ยังไม่มียาเข้าไป ยังไม่ต้องกลั้น'],
@@ -3944,6 +3944,7 @@ const FLOWX={
   puff2:['第 2 噴：整套再做一次！','Puff 2: the whole routine once more!','พัฟที่ 2: ทำทั้งชุดอีกรอบ!'],
   hintB:['💡 提示','💡 Hint','💡 คำใบ้'], next:['下一步呢？','what next?','ต่อไปทำอะไร?'], hintsUsed:['用了提示','Hints used','ใช้คำใบ้'],
   takeOut:['先從嘴裡拿出來','Take it out of his mouth first','เอาออกจากปากก่อน'], outAway:['別對著吸嘴吐氣！先拿開再吐','Not into the mouthpiece! Take it out, then breathe out','อย่าหายใจออกใส่ปากกระบอก! เอาออกก่อนแล้วค่อยหายใจออก'],
+  holdNow:['嘴巴閉緊，點「閉氣」數到 10','Lips closed — tap "Hold breath" and count to 10','ปิดปากให้สนิท แตะ "กลั้นหายใจ" นับถึง 10'],
   puffOut:['（還沒閉氣就拿出來，一口氣吐掉了）','(taken out before holding — the breath came straight out)','(เอาออกก่อนกลั้นหายใจ ลมหายใจออกมาหมด)'],
   how:{mdi:['點吸入器的部位來操作（蓋子、藥罐、吸入器本身），右邊的按鈕控制李伯伯的呼吸。照你教病人的順序做；卡住了就按「💡 提示」。','Tap parts of the inhaler (cap, canister, the inhaler itself); the buttons on the right control Uncle Lee\'s breathing. Do it in the order you\'d teach a patient — stuck? Tap "💡 Hint".','แตะส่วนต่างๆ ของยาพ่น (ฝา กระป๋องยา ตัวยาพ่น) ปุ่มด้านขวาใช้ควบคุมการหายใจของลุง ทำตามลำดับที่จะสอนผู้ป่วย ถ้าติดอยู่ แตะ "💡 คำใบ้"'],
     spacer:['點吸入器、藥罐和輔助器來操作，右邊的按鈕控制呼吸。照你教病人的順序做；卡住了就按「💡 提示」。','Tap the inhaler, its canister and the spacer; the buttons on the right control breathing. Do it in the order you\'d teach a patient — stuck? Tap "💡 Hint".','แตะยาพ่น กระป๋องยา และกระบอกช่วยสูด ปุ่มด้านขวาใช้ควบคุมการหายใจ ทำตามลำดับที่จะสอนผู้ป่วย ถ้าติดอยู่ แตะ "💡 คำใบ้"'],
@@ -3958,11 +3959,11 @@ const FLOW_T={
   cap:['點一下藍色蓋子，把它拔掉','Tap the blue cap to take it off','แตะฝาสีน้ำเงินเพื่อถอดออก','🧢'],
   shake:['按「搖一搖」：每一噴前都要搖勻','Press "Shake" — shake well before every puff','กด "เขย่า" — ต้องเขย่าก่อนพ่นทุกครั้ง','👋'],
   attach:['點輔助器，把吸入器插進去','Tap the spacer to fit the inhaler into it','แตะกระบอกช่วยสูดเพื่อเสียบยาพ่นเข้าไป','🔌'],
-  out:['按住「吐氣」，吐到肺空（臉別對著吸嘴）','Press and hold "Breathe out" until the lungs are empty (face away from the mouthpiece)','กดค้าง "หายใจออก" จนปอดว่าง (หันหน้าออกจากปากกระบอก)','😮‍💨'],
+  out:['點「吐氣」，把氣吐乾淨（臉別對著吸嘴）','Tap "Breathe out" to empty the lungs (face away from the mouthpiece)','แตะ "หายใจออก" ให้ลมออกจนสุด (หันหน้าออกจากปากกระบอก)','😮‍💨'],
   mouth:{mdi:['點吸入器：吸嘴放進嘴裡、嘴唇包緊','Tap the inhaler: mouthpiece in, lips sealed','แตะยาพ่น: อมปากกระบอก ปิดริมฝีปากให้สนิท','👄'], spacer:['點輔助器：含住它的吸嘴','Tap the spacer: lips around its mouthpiece','แตะกระบอกช่วยสูด: อมปากกระบอกของมัน','👄'], resp:['點吸入器：含住吸嘴，別擋住通氣孔','Tap the inhaler: lips on, air vents uncovered','แตะยาพ่น: อมปากกระบอก อย่าบังรูอากาศ','👄']},
   in:{mdi:['按「慢慢吸氣」——氣一開始吸，就要按藥罐！','Press "Breathe in slowly" — then press the canister as soon as the breath starts!','กด "สูดหายใจช้าๆ" — แล้วกดกระป๋องยาทันทีที่เริ่มสูด!','🌬️'], spacer:['馬上按「慢慢吸氣」，把輔助艙裡的藥霧吸進去','Right away, press "Breathe in slowly" to breathe the mist in','รีบกด "สูดหายใจช้าๆ" สูดละอองยาในกระบอกเข้าไป','🌬️'], resp:['按「慢慢吸氣」——氣一開始吸，就按綠色按鈕！','Press "Breathe in slowly" — then press the green button as soon as the breath starts!','กด "สูดหายใจช้าๆ" — แล้วกดปุ่มสีเขียวทันทีที่เริ่มสูด!','🌬️']},
   press:{mdi:['就是現在！點藥罐按下去','Now! Tap the canister to press it','ตอนนี้เลย! แตะกระป๋องยาเพื่อกด','👆'], spacer:['點藥罐按 1 下：藥霧噴進輔助艙','Tap the canister once — the puff fills the chamber','แตะกระป๋องยา 1 ครั้ง ละอองยาจะเข้าไปในกระบอก','👆'], resp:['就是現在！點灰色按鈕','Now! Tap the grey dose button','ตอนนี้เลย! แตะปุ่มสีเทา','👆']},
-  hold:['按住「閉氣」，數到 10','Press and hold "Hold breath" to a count of 10','กดค้าง "กลั้นหายใจ" นับถึง 10','🤐'],
+  hold:['點「閉氣」數到 10：含著吸入器，或拿出來閉緊嘴巴都可以','Tap "Hold breath" for a count of 10 — with the mouthpiece still in, or taken out with lips closed','แตะ "กลั้นหายใจ" นับถึง 10 จะอมไว้หรือเอาออกแล้วปิดปากให้สนิทก็ได้','🤐'],
   recap:['點蓋子，把它蓋回去','Tap the cap to put it back on','แตะฝาเพื่อปิดกลับ','🧢'],
   remove:{mdi:['閉完氣，點吸入器把它從嘴裡拿出來','Breath held — tap the inhaler to take it out of his mouth','กลั้นหายใจแล้ว แตะยาพ่นเพื่อเอาออกจากปาก','👋'], spacer:['閉完氣，點輔助器把它從嘴裡拿出來','Breath held — tap the spacer to take it out of his mouth','กลั้นหายใจแล้ว แตะกระบอกช่วยสูดเพื่อเอาออกจากปาก','👋'], resp:['閉完氣，點吸入器把它從嘴裡拿出來（下一噴要先蓋上、再轉底座）','Breath held — tap the inhaler to take it out of his mouth (the next puff starts with the cap closed and a turn)','กลั้นหายใจแล้ว แตะยาพ่นเพื่อเอาออกจากปาก (พัฟต่อไปต้องปิดฝาแล้วหมุนฐานใหม่)','👋']},
   turn:['蓋子蓋著，點透明底座：轉半圈到「喀」','Cap closed: tap the clear base to turn it until it clicks','ปิดฝาไว้ แตะฐานใสเพื่อหมุนจนได้ยินเสียงคลิก','🔄'],
@@ -4119,9 +4120,9 @@ function inhSim(dev){
     function tapCap(){ if(s.busy||finished) return;
       if(s.atMouth){ bub(L(FLOWX.takeOut)); sfx.error(); return; }
       if(dev==='resp'){ if(!s.capOpen){ s.capOpen=true; sfx.capOff(); draw(); mark('open'); return; }
-        s.capOpen=false; sfx.capOn(); draw(); if(s.good&&s.held){ mark('close'); endPuff(); } else unmark('open'); return; }
+        s.capOpen=false; sfx.capOn(); draw(); if(s.good){ if(holdIv) holdDone(); if(!s.held) err('noHold',1); mark('close'); endPuff(); } else unmark('open'); return; }
       if(s.capOn){ s.capOn=false; sfx.capOff(); draw(); mark('cap'); return; }
-      s.capOn=true; sfx.capOn(); draw(); if(dev==='mdi'&&s.good){ if(!s.held) err('noHold',1); mark('recap'); later(()=>finish(),700); } }
+      s.capOn=true; sfx.capOn(); draw(); if(dev==='mdi'&&s.good){ if(holdIv) holdDone(); if(!s.held) err('noHold',1); mark('recap'); later(()=>finish(),700); } }
     function tapBase(){ if(s.busy||finished||dev!=='resp') return; if(s.atMouth){ bub(L(FLOWX.takeOut)); sfx.error(); return; } if(s.capOpen) err('openTurn');
       const st=devG.querySelector('.sd-stripes'); st.animate([{transform:'translateY(0)'},{transform:'translateY(14px)'},{transform:'translateY(-6px)'},{transform:'translateY(0)'}],{duration:500}); sfx.ratchet(); bub(L(SIMX.click),900); s.turned=true; mark('turn'); }
     function tapBody(){ if(s.busy||finished) return;
@@ -4132,18 +4133,20 @@ function inhSim(dev){
       const get=dev==='spacer'?()=>s.sp:()=>s.pos, set=dev==='spacer'?p=>{ s.sp=p; }:p=>{ s.pos=p; };
       tween(get,set,MOUTH,480,()=>{ s.atMouth=true; draw(); sfx.select(); mark('mouth'); }); }
     function takeOut(){ if(s.inhaling) return;
-      if(s.good&&!s.held){ err('noHold'); s.held=true; bub(L(FLOWX.puffOut),1800); }
-      s.lungs=Math.min(s.lungs,.5); away(); sfx.sigh();
-      if(s.good){ mark('hold'); mark('remove'); if(dev==='spacer') later(()=>finish(),700); }
-      else unmark('mouth','in','press'); }
+      away();
+      if(s.good){ mark('remove');   // hold-then-remove and remove-then-hold (lips closed) are both correct
+        if(s.held){ s.lungs=Math.min(s.lungs,.5); sfx.sigh(); if(dev==='spacer') later(()=>finish(),700); }
+        else if(!holdIv&&!ex) hint(L(FLOWX.holdNow)); }
+      else { s.lungs=Math.min(s.lungs,.5); sfx.sigh(); unmark('mouth','in','press'); } }
     function away(){ const get=dev==='spacer'?()=>s.sp:()=>s.pos, set=dev==='spacer'?p=>{ s.sp=p; }:p=>{ s.pos=p; }; s.atMouth=false; tween(get,set,dev==='spacer'?SP_HOME:HOME,420); }
-    // breathe out: press and hold
-    let outIv=0;
+    // breathe out: one tap (or press and hold)
+    let outIv=0, outAuto=false;
+    const stopOut=()=>{ clearInterval(outIv); outIv=0; outAuto=false; if(s.outH){ s.outH.stop(.25); s.outH=null; } $('#simOut').classList.remove('on'); bench.classList.remove('face-open'); $('#simOut .pg').style.width='0';
+      if(s.exhaled) mark('out'); };
     const outDown=()=>{ if(s.busy||finished||s.inhaling) return; if(s.atMouth){ err('outIn'); bub(L(FLOWX.outAway),1800); return; } $('#simOut').classList.add('on'); bench.classList.add('face-open');
-      clearInterval(outIv); s.outH&&s.outH.stop(.1); s.outH=sfxLoop('out',{sec:Math.max(.6,(s.lungs-.12)/.009*.06)});
-      outIv=setInterval(()=>{ s.lungs=Math.max(.06,s.lungs-.009); draw(); $('#simOut .pg').style.width=Math.round((1-(s.lungs-.06)/.94)*100)+'%'; if(s.lungs<=.12){ if(!s.exhaled&&s.outH) s.outH.ramp('gain',.03,.35); s.exhaled=true; } },60); };
-    const outUp=()=>{ if(!outIv) return; clearInterval(outIv); outIv=0; if(s.outH){ s.outH.stop(.25); s.outH=null; } $('#simOut').classList.remove('on'); bench.classList.remove('face-open'); $('#simOut .pg').style.width='0';
-      if(s.exhaled) mark('out'); else if(!ex) hint(L(FLOWX.keep)); };
+      if(outIv) return; outAuto=false; s.outH&&s.outH.stop(.1); s.outH=sfxLoop('out',{sec:Math.max(.6,(s.lungs-.12)/.009*.06)});
+      outIv=setInterval(()=>{ s.lungs=Math.max(.06,s.lungs-.009); draw(); $('#simOut .pg').style.width=Math.round((1-(s.lungs-.06)/.94)*100)+'%'; if(s.lungs<=.12){ if(!s.exhaled&&s.outH) s.outH.ramp('gain',.03,.35); s.exhaled=true; if(outAuto) stopOut(); } },60); };
+    const outUp=()=>{ if(!outIv) return; if(s.exhaled) stopOut(); else outAuto=true; };   // a short tap keeps going until the lungs are empty
     // breathe in: automatic slow breath; press must land early in it
     function breatheIn(){ if(s.busy||finished||s.inhaling) return;
       if(!s.atMouth){ bub(L(FLOWX.mouthFirst)); sfx.error(); return; }
@@ -4174,13 +4177,14 @@ function inhSim(dev){
     function failPuff(){ // the dose is lost: back away and start that puff again
       s.good=false; s.exhaled=false; s.pressed=false; s.chamberN=0; s.turned=dev==='resp'?false:s.turned; if(dev!=='resp') s.shaken=false;
       later(()=>{ if(s.atMouth) away(); unmark(...(dev==='resp'?['turn','out','mouth','in','press']:['shake','out','mouth','in','press'])); if(!ex) hint(L(dev==='resp'?FLOWX.redoR:FLOWX.redo)); },900); }
-    // hold breath: press and hold to a count of 10
+    // hold breath: one tap counts to 10
     let holdIv=0, holdN=0;
-    const holdDown=()=>{ if(s.busy||finished||s.inhaling) return; if(!s.good){ bub(L(FLOWX.nothingHold)); return; } if(s.held) return;
-      $('#simHold').classList.add('on'); holdN=0; const cnt=svg.querySelector('.sd-count'); clearInterval(holdIv);
-      holdIv=setInterval(()=>{ holdN++; cnt.textContent=holdN; $('#simHold .pg').style.width=Math.min(100,holdN*10)+'%'; sfx.tock(holdN); if(holdN>=10){ holdUp(); } },420); };
-    const holdUp=()=>{ if(!holdIv) return; clearInterval(holdIv); holdIv=0; $('#simHold').classList.remove('on'); setTimeout(()=>{ svg.querySelector('.sd-count').textContent=''; $('#simHold .pg').style.width='0'; },500);
-      if(holdN<10) err('noHold'); s.held=true; mark('hold'); draw(); };
+    const holdDown=()=>{ if(s.busy||finished||s.inhaling) return; if(!s.good){ bub(L(FLOWX.nothingHold)); return; } if(s.held||holdIv) return;
+      $('#simHold').classList.add('on'); holdN=0; const cnt=svg.querySelector('.sd-count');
+      holdIv=setInterval(()=>{ holdN++; cnt.textContent=holdN; $('#simHold .pg').style.width=Math.min(100,holdN*10)+'%'; sfx.tock(holdN); if(holdN>=10) holdDone(); },420); };
+    const holdUp=()=>{};   // releasing early is not counted against them: the count carries on to 10
+    const holdDone=()=>{ if(!holdIv) return; clearInterval(holdIv); holdIv=0; $('#simHold').classList.remove('on'); setTimeout(()=>{ svg.querySelector('.sd-count').textContent=''; $('#simHold .pg').style.width='0'; },500);
+      s.held=true; mark('hold'); if(!s.atMouth){ s.lungs=Math.min(s.lungs,.5); sfx.sigh(); if(dev==='spacer'&&s.good) later(()=>finish(),700); } draw(); };
     function endPuff(){ s.puffs++; if(s.puffs<2){ s.puffNo=2; s.good=false; s.held=false; s.exhaled=false; s.turned=false; s.done=new Set(); s.last=null; s.hintOn=null; bub(L(FLOWX.puff2),1800); guide(); } else later(()=>finish(),600); }
     function wire(){
       devG.querySelectorAll('.sd-cap').forEach(e=>e.addEventListener('click',ev=>{ ev.stopPropagation(); tapCap(); }));
@@ -4193,6 +4197,7 @@ function inhSim(dev){
     hb($('#simOut'),outDown,outUp); hb($('#simHold'),holdDown,holdUp);
     $('#simDone').onclick=()=>{ if(!finished) finish(); };
     function finish(){ if(finished) return; finished=true; timers.forEach(clearTimeout); cancelAnimationFrame(raf); clearInterval(outIv); clearInterval(holdIv); [s.outH,s.inH].forEach(h=>h&&h.stop(.2)); s.outH=s.inH=null; $('#simHand').classList.add('hidden');
+      if(s.good&&!s.held&&!holdIv) err('noHold',1);
       if(dev==='resp'){ if(!s.puffs&&!s.good) err('noDose',1); else if(s.puffs<2) err('onePuff',1); if(s.capOpen) err('noClose',1); }
       else { if(!s.good) err('noDose',1); else if(dev==='mdi'&&!s.capOn) err('noRecap',1); }
       const errs=[...s.errs]; tries++; if(!firstErrs) firstErrs=errs.slice(); allErrs=errs; const ok=!errs.length;

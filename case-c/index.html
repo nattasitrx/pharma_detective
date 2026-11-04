@@ -5901,8 +5901,8 @@ function mnButton(){ const row=$('#btnChSel')&&$('#btnChSel').parentElement; if(
    The case owner chose no open licence: the game is for teaching in this course only. */
 const LIC={
   line:['ⓘ 案例：陳崇鈺 教授（高雄醫學大學）· 製作：Nattasit Rattanaphanit · 僅供本課程教學使用',
-        'ⓘ Cases: Prof. Chung-Yu Chen (Kaohsiung Medical University) · Made by Nattasit Rattanaphanit · For teaching in this course only',
-        'ⓘ เคส: Prof. Chung-Yu Chen (Kaohsiung Medical University) · ผู้สร้าง: ณัฐสิทธิ์ รัตนพาณิชย์ · ใช้สอนในรายวิชานี้เท่านั้น'],
+        'ⓘ Cases: Prof. Chung-Yu Chen (KMU) · Made by Nattasit Rattanaphanit · Course use only',
+        'ⓘ เคส: Prof. Chung-Yu Chen (KMU) · ผู้สร้าง: ณัฐสิทธิ์ รัตนพาณิชย์ · ใช้สอนในวิชานี้เท่านั้น'],
   h:['關於與使用說明','About & terms of use','เกี่ยวกับเกมและเงื่อนไขการใช้'],
   rows:[
     [['遊戲設計與製作','Game design & development','ออกแบบและพัฒนาเกม'], ['Nattasit Rattanaphanit','Nattasit Rattanaphanit','ณัฐสิทธิ์ รัตนพาณิชย์ (Nattasit Rattanaphanit)']],
@@ -5924,9 +5924,9 @@ const LIC={
         'ใช้เพื่อการเรียนการสอนเท่านั้น ไม่ใช่คำแนะนำทางการแพทย์ เคสถูกดัดแปลง ชื่อคนและเนื้อเรื่องบางส่วนเป็นเรื่องแต่ง ชื่อการค้าของยาเป็นของเจ้าของสิทธิ์']
 };
 function licCss(){ if($('#licCss')) return; const s=document.createElement('style'); s.id='licCss'; s.textContent=`
-#licBtn{position:absolute;right:24px;bottom:8px;z-index:4;max-width:900px;padding:5px 14px;border:none;border-radius:99px;background:rgba(255,255,255,.82);color:#4a3a6a;font-family:var(--tc);font-weight:700;font-size:15px;line-height:1.35;text-align:left;cursor:pointer;box-shadow:0 2px 8px rgba(40,20,60,.18)}
+#licBtn{position:absolute;right:24px;bottom:8px;z-index:4;max-width:740px;padding:5px 14px;border:none;border-radius:99px;background:rgba(255,255,255,.82);color:#4a3a6a;font-family:var(--tc);font-weight:700;font-size:14px;line-height:1.35;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;box-shadow:0 2px 8px rgba(40,20,60,.18)}
 #licBtn:hover{background:#fff}
-#verNote:not(.hidden) ~ #licBtn{right:auto;left:800px;max-width:540px}
+#verNote:not(.hidden) ~ #licBtn{right:auto;left:800px;max-width:520px}
 #mCard.lic{width:min(640px,100%);text-align:left}
 #mCard.lic h3{margin:0 0 10px;text-align:center;font-size:22px}
 #mCard.lic .lr{display:grid;grid-template-columns:118px 1fr;gap:10px;padding:8px 0;border-top:1px dashed #e2dcef;font-size:15px;line-height:1.55}

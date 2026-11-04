@@ -84,28 +84,7 @@ footer code{background:#fff;padding:1px 6px;border-radius:6px;color:var(--ink);f
 .hub .lk code{background:#fff;border-radius:8px;padding:6px 8px;font-size:13px;word-break:break-all}
 @media (max-width:620px){.hub .lk .ln{grid-template-columns:1fr auto}.hub .lk .ln b{grid-column:1/-1;margin-top:6px}.hub{padding:14px}}
 .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:70;background:#2a2140;color:#fff;font-weight:800;padding:10px 18px;border-radius:99px;box-shadow:0 8px 24px rgba(0,0,0,.3)}
-/* review form for the professor: a banner, a pop-up on arrival, and the form itself in a full-screen panel */
-.rvb{display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;margin:0 0 20px;padding:14px 18px;border-radius:22px;background:#fffbe8;box-shadow:0 0 0 4px #fff,0 0 0 8px #ffd77a,0 12px 28px rgba(60,30,90,.18)}
-.rvb .ic{font-size:34px;line-height:1}
-.rvb .tx{flex:1;min-width:200px}
-.rvb .tx b{display:block;font-size:19px;font-weight:900;color:#2a1a6a}
-.rvb .tx span{font-size:14px;font-weight:700;color:#7a5a10}
-.rvb.done{background:#effbf5;box-shadow:0 0 0 4px #fff,0 0 0 8px #9fdfc0,0 12px 28px rgba(60,30,90,.12)}
-.rvb.done .tx span{color:#11734d}
-.rvb .b{font-size:16px;padding:10px 20px}
-.rvm[hidden],.rvx[hidden],.rvb[hidden]{display:none}
-.rvm{position:fixed;inset:0;z-index:62;background:rgba(20,12,40,.55);display:flex;align-items:center;justify-content:center;padding:16px}
-.rvm .box{width:min(460px,100%);background:#fff;border-radius:24px;padding:22px 22px 20px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.35)}
-.rvm h3{margin:6px 0 8px;font-size:22px;line-height:1.35;color:#2a1a6a}
-.rvm p{margin:0 0 6px;line-height:1.6;color:#4a4060;font-size:15.5px;text-align:left}
-.rvm .row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:14px}
-.rvm .b{font-size:17px;padding:11px 22px}
-.rvx{position:fixed;inset:0;z-index:65;background:#fff;display:flex;flex-direction:column}
-.rvx .rvh{display:flex;align-items:center;gap:8px;padding:8px 10px 8px 14px;background:var(--navy);color:#ffe07a;font-weight:900}
-.rvx .rvh .sp{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.rvx .rvh a.b{text-decoration:none}
-.rvx iframe{flex:1;width:100%;border:0;background:#f4f4f7}
-@media (max-width:520px){h1{-webkit-text-stroke:5px var(--pink2)}.rvx .rvh a.b{display:none}.body h2{font-size:20px}}
+@media (max-width:520px){h1{-webkit-text-stroke:5px var(--pink2)}.body h2{font-size:20px}}
 @media (prefers-reduced-motion:reduce){.card{transition:none}}
 </style>
 </head>
@@ -121,15 +100,12 @@ footer code{background:#fff;padding:1px 6px;border-radius:6px;color:var(--ink);f
     <div class="top"><div class="langs" role="group" aria-label="Language"><button data-l="zh">中文</button><button data-l="en">English</button><button data-l="th">ไทย</button></div>
       <button class="tbtn" id="tOpen" data-t="tBtn"></button></div>
   </header>
-  <section class="rvb" id="rvb" hidden></section>
   <section class="hub" id="hub" hidden></section>
   <main class="grid" id="cases"></main>
   <footer data-t="foot"></footer>
   <p class="credit" data-t="credit"></p>
 </div>
 <div class="pin" id="pin" hidden><div class="box"><div style="font-size:46px">👩‍🏫</div><h3 data-t="pinT"></h3><input id="pinIn" type="password" inputmode="numeric" autocomplete="off"><div class="row"><button class="b p" id="pinOk" data-t="ok"></button><button class="b" id="pinNo" data-t="cancel"></button></div></div></div>
-<div class="rvm" id="rvm" hidden role="dialog" aria-modal="true"><div class="box"><div style="font-size:48px">📝</div><h3 data-t="rvT"></h3><p data-t="rvP"></p><div class="row"><button class="b p" id="rvGo"></button><button class="b" id="rvLater" data-t="rvLater"></button></div></div></div>
-<div class="rvx" id="rvx" hidden><div class="rvh"><span class="sp" data-t="rvBadge"></span><a class="b" id="rvNew" target="_blank" rel="noopener" data-t="rvNew"></a><button class="b p" id="rvX" data-t="close"></button></div><iframe id="rvf" title="Review"></iframe></div>
 <script>
 const T={
   ribbon:['居家藥事照護 × 推理冒險','Home-care pharmacy × Mystery adventure','เภสัชกรรมเยี่ยมบ้าน × ผจญภัยไขปริศนา'],
@@ -140,17 +116,6 @@ const T={
   credit:['案例：陳崇鈺 教授（高雄醫學大學 藥學系）· 製作：Nattasit Rattanaphanit · {use} · {mail}','Cases: Prof. Chung-Yu Chen (陳崇鈺), School of Pharmacy, Kaohsiung Medical University · Made by Nattasit Rattanaphanit · {use} · {mail}','เคส: Prof. Chung-Yu Chen (陳崇鈺) School of Pharmacy, Kaohsiung Medical University · ผู้สร้าง: ณัฐสิทธิ์ รัตนพาณิชย์ · {use} · {mail}'],
   foot:['👩‍🏫 老師：按右上角「老師」打開後台，可以開關案例、看結果、調整遊戲。','👩‍🏫 Instructors: press "Instructor" at the top right to open or close cases, see results and customise the games.','👩‍🏫 อาจารย์: กดปุ่ม "หน้าอาจารย์" มุมขวาบน เพื่อเปิด/ปิดเคส ดูผล และปรับเกม'],
 };
-/* the professor's review form */
-Object.assign(T,{
-  rvBadge:['📝 請老師幫忙確認','📝 Please help us check','📝 ฝากอาจารย์ช่วยคอนเฟิร์ม'],
-  rvT:['老師，麻煩您幫忙看一下這裡 🙏','Professor, could you please check a few things? 🙏','ฝากอาจารย์ช่วยดูตรงนี้หน่อย 🙏'],
-  rvP:['遊戲裡有些地方是我們從藥袋、收據改編，或自己補充的，需要老師確認。每一題都附原始圖片，點選答案就好。大約 15 分鐘，會自動儲存，可以分幾次填。','Some details in the games were adapted from the medicine bags and receipts, or added by us, and need your confirmation. Each question shows the original picture; just tap an answer. About 15 minutes; it saves automatically, so you can do it in parts.','บางจุดในเกมเราดัดแปลงจากซองยาและใบเสร็จ หรือแต่งเพิ่มเอง ต้องให้อาจารย์คอนเฟิร์ม ทุกข้อมีรูปต้นฉบับ แค่กดเลือกคำตอบ ประมาณ 15 นาที บันทึกอัตโนมัติ ทำทีละส่วนได้'],
-  rvGo:['📝 開始確認','📝 Start','📝 เริ่มเลย'], rvGoOn:['📝 繼續確認','📝 Continue','📝 ทำต่อ'], rvOpen:['📝 打開確認表','📝 Open the form','📝 เปิดแบบคอนเฟิร์ม'], rvLater:['先玩遊戲','Play the games first','เล่นเกมก่อน'],
-  rvBar:['16 題附圖片 + 8 項補充內容，約 15 分鐘','16 picture questions + 8 added details, about 15 minutes','16 ข้อพร้อมรูป + 8 เนื้อหาที่แต่งเพิ่ม ประมาณ 15 นาที'],
-  rvProg:['已回答 {n}/{m} 題，還沒送出','{n}/{m} answered, not sent yet','ตอบแล้ว {n}/{m} ข้อ ยังไม่ได้กดส่ง'],
-  rvDone:['✅ 已送出，謝謝老師！還可以再打開修改','✅ Sent, thank you! You can still open it to make changes.','✅ ส่งแล้ว ขอบคุณอาจารย์ ยังเปิดแก้ไขได้'],
-  rvNew:['↗ 新分頁','↗ New tab','↗ แท็บใหม่'], rvThx:['謝謝老師！已收到 🙏','Thank you! Received 🙏','ขอบคุณอาจารย์ ได้รับแล้ว 🙏'],
-});
 /* instructor page texts */
 Object.assign(T,{
   tBtn:['👩‍🏫 老師','👩‍🏫 Instructor','👩‍🏫 หน้าอาจารย์'], pinT:['輸入老師密碼','Enter the instructor code','กรอกรหัสอาจารย์'], ok:['確定','OK','ตกลง'], cancel:['取消','Cancel','ยกเลิก'], wrong:['密碼不對','Wrong code','รหัสไม่ถูกต้อง'],
@@ -280,30 +245,8 @@ function renderHub(){ const h=document.getElementById('hub'); h.hidden=!HUB.on; 
 document.getElementById('tOpen').onclick=hubEnter;
 document.getElementById('pinOk').onclick=pinOk; document.getElementById('pinNo').onclick=()=>{ document.getElementById('pin').hidden=true; };
 document.getElementById('pinIn').onkeydown=e=>{ if(e.key==='Enter') pinOk(); };
-const _render=render; render=function(){ _render(); renderHub(); renderRv(); };
+const _render=render; render=function(){ _render(); renderHub(); };
 
-/* ===== review form for the professor (../review/): pop-up on arrival until it is sent; opens inside this page ===== */
-const RV_TOTAL=24, RV_URL='../review/';
-const sget=k=>{ try{ return sessionStorage.getItem(k); }catch(e){ return null; } }, sput=(k,v)=>{ try{ sessionStorage.setItem(k,v); }catch(e){} };
-function rvState(){ try{ const a=JSON.parse(get('pdrev_ans')||'null')||{}, has=o=>Object.values(o||{}).filter(x=>x&&x.v).length; return {n:has(a.q)+has(a.e), done:!!a.done}; }catch(e){ return {n:0, done:false}; } }
-function renderRv(){ const b=document.getElementById('rvb'); if(!b) return; const st=rvState();
-  b.hidden=false; b.classList.toggle('done',st.done);
-  b.innerHTML=`<div class="ic">${st.done?'✅':'📝'}</div><div class="tx"><b>${esc(L('rvBadge').replace(/^📝 /,''))}</b><span>${esc(st.done?L('rvDone'):st.n?L('rvProg').replace('{n}',st.n).replace('{m}',RV_TOTAL):L('rvBar'))}</span></div><button class="b ${st.done?'g':'p'}" id="rvOpen">${esc(st.done?L('rvOpen'):st.n?L('rvGoOn'):L('rvGo'))}</button>`;
-  document.getElementById('rvOpen').onclick=rvOpen;
-  document.getElementById('rvGo').textContent=L(st.n?'rvGoOn':'rvGo'); }
-function rvSrc(){ return RV_URL+'?embed=1&lang='+lang; }
-function rvOpen(){ document.getElementById('rvm').hidden=true; const x=document.getElementById('rvx'), f=document.getElementById('rvf');
-  if(f.dataset.lang!==lang){ f.src=rvSrc(); f.dataset.lang=lang; }
-  document.getElementById('rvNew').href=RV_URL+'?lang='+lang; x.hidden=false; document.documentElement.style.overflow='hidden'; }
-function rvClose(){ document.getElementById('rvx').hidden=true; document.documentElement.style.overflow=''; renderRv(); }
-function rvLater(){ document.getElementById('rvm').hidden=true; sput('pdrev_later','1'); }
-document.getElementById('rvGo').onclick=rvOpen; document.getElementById('rvLater').onclick=rvLater; document.getElementById('rvX').onclick=rvClose;
-addEventListener('keydown',e=>{ if(e.key==='Escape'){ if(!document.getElementById('rvm').hidden) rvLater(); } });
-addEventListener('message',e=>{ if(e.origin!==location.origin||!e.data||!e.data.pdrev) return; if(e.data.pdrev==='done'){ rvClose(); toast(L('rvThx')); } else renderRv(); });
-addEventListener('pageshow',e=>{ if(e.persisted) renderRv(); });
-if(!direct){ renderRv();
-  if(qs.has('review')) rvOpen();
-  else if(!qs.get('teacher')&&!rvState().done&&!sget('pdrev_later')) setTimeout(()=>{ if(document.getElementById('rvx').hidden&&document.getElementById('pin').hidden) document.getElementById('rvm').hidden=false; },700); }
 if(!direct){ loadPins(); if(qs.get('teacher')) hubEnter(); }
 </script>
 </body>

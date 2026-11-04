@@ -1,0 +1,101 @@
+<body>
+<script id="gameConfig" type="application/json">{}</script>
+<div id="stage">
+  <div id="bgWrap"><div id="bgCam"><div id="bg"></div></div></div>
+  <div id="bgfx" class="layer"></div>
+  <div id="torch"></div>
+  <div id="boss" class="hidden"><div id="bossBg"></div><div id="bossName"></div><div id="bossHP"><i id="bossHPv"></i></div><div id="monster"></div>
+    <div id="chenMini"></div><div id="confuse"></div><div id="combo"></div><div id="bossTimer"></div><div id="mythAlive"></div><div id="myth"></div><div id="bossCards"></div></div>
+  <div id="chars" class="layer" style="pointer-events:none"></div>
+  <div id="fpHand"></div>
+  <div id="locks" class="hidden"></div>
+  <div id="pilly" class="hidden"></div>
+  <div id="hud" class="hidden">
+    <div class="chip" id="hChap"></div>
+    <div class="chip" id="hMode"></div>
+    <div class="chip" id="hClock" title="Visit time">⏰ <b id="hClockV">60</b><span id="hClockU"></span></div>
+    <div class="chip" id="hTrust" title="Trust">💗 <div class="bar"><i id="hTrustBar"></i></div></div>
+    <div class="chip hidden" id="hHearts"></div>
+    <div class="chip" id="hProg" title="Problems">🔎 <span id="hProgV">0/19</span><div class="bar"><i id="hProgBar"></i></div></div>
+    <div class="spacer"></div>
+    <button class="ibtn" id="bCase" title="Case file">📁</button>
+    <button class="ibtn" id="bLog" title="Log">📜</button>
+    <button class="ibtn" id="bMenu" title="Menu">⚙️</button>
+  </div>
+  <div id="testiBanner" class="hidden"><div id="testiTitle"></div></div>
+  <div id="testiDots" class="hidden"></div>
+  <div id="testiUI" class="hidden">
+    <button class="gbtn gray" id="tPrev">◀</button>
+    <button class="gbtn blue" id="tPress"></button>
+    <button class="gbtn gold" id="tPresent"></button>
+    <button class="gbtn gray" id="tNextS">▶</button>
+  </div>
+  <div id="tray" class="hidden"><h3><span id="trayTitle"></span><button class="gbtn gray" id="trayClose">✕</button></h3><div id="trayClaim" class="hidden"></div><div id="trayItems"></div></div>
+  <div id="board" class="hidden">
+    <h3><span id="boardTitle"></span><button class="gbtn green hidden" id="boardNext"></button></h3>
+    <div id="patRow"></div>
+    <div id="cards"></div>
+    <div id="freeRow"><textarea id="freeIn"></textarea><button class="gbtn blue" id="freeSend"></button></div>
+    <div class="hint" id="freeHint"></div>
+  </div>
+  <button class="gbtn gray hidden" id="zoomBack"></button>
+  <div id="zoomLbl" class="hidden"></div>
+  <div id="searchHud" class="hidden">
+    <div class="chip">🔍 ×<b id="sChargeV">16</b></div>
+    <div class="chip" id="bagChip">🎒 <span id="sKeyV">0/7</span></div>
+    <button class="gbtn gold" id="sHint"></button>
+    <button class="gbtn green hidden" id="sDone"></button>
+  </div>
+  <div id="choices" class="hidden"></div>
+  <div id="inputBox" class="hidden"><h3 id="inTitle"></h3><div id="inChips" class="hidden"></div><textarea id="inText"></textarea><div class="row"><span class="hint" id="inHint"></span><button class="gbtn blue" id="inSend"></button></div></div>
+  <div id="tbox" class="hidden"><div id="tName"></div><button id="tEdit" class="hidden" title="✏️">✏️</button><div id="tAsk" class="hidden"></div><div id="tText"></div><div id="tNext">▼</div></div>
+  <div id="finalBox" class="hidden">
+    <div class="fhead"><h3 id="fTitle"></h3><div id="fCov"></div></div>
+    <p id="fSub"></p>
+    <div class="fgrid"><div id="fSteps"></div>
+      <div class="fright"><div id="fFmt"></div><textarea id="fText"></textarea><div id="fWarn" class="hidden"></div>
+        <div class="row"><span class="hint" id="fCount"></span><button class="gbtn blue" id="fSend"></button></div></div></div>
+  </div>
+  <div id="calcBox" class="hidden">
+    <div class="chead"><h3 id="cTitle"></h3><span id="cTries"></span></div>
+    <p id="cIntro"></p>
+    <div class="cclues"><div class="cl" id="cCluesLbl"></div><div id="cChips"></div></div>
+    <div class="cmain"><div class="cleft"><div id="cFormula"></div><div id="cNote"></div><div id="cLcd"><span class="eq">=</span><span id="cRes">—</span><span id="cUnit"></span></div><div id="cMsg"></div></div><div id="cPad"></div></div>
+    <div class="row"><span class="hint" id="cHint"></span><button class="gbtn blue" id="cGo"></button></div>
+  </div>
+  <div id="cqBox" class="hidden"><div class="cqcard"><div class="cqhead"><span id="cqWho"></span><span id="cqNum"></span></div><div id="cqQ"></div><div id="cqImg"></div><div id="cqBody"></div><div id="cqFb"></div><div class="cqfoot"><span id="cqTimer"></span><button class="gbtn blue" id="cqGo"></button></div></div></div>
+  <div id="getCard" class="hidden"><div class="rays"></div><div class="gcard" id="gcard"></div></div>
+  <div id="title" class="hidden">
+    <a id="caseBack" class="hidden" data-i18n="caseBack"></a>
+    <div id="verNote" class="hidden"></div>
+    <div id="titleChars"></div>
+    <div id="logo"><span class="sub" data-i18n="ribbon"></span><h1 data-i18n="t1"></h1><h2 data-i18n="t2"></h2></div>
+    <div id="tPanel">
+      <div class="row" style="justify-content:space-between"><div class="langs"><button class="lbtn" data-lang="zh">中文</button><button class="lbtn" data-lang="en">English</button><button class="lbtn" data-lang="th">ไทย</button></div>
+        <span><button class="sbtn" id="viewBtn"></button><button class="sbtn" id="gfxBtn"></button><button class="sbtn" id="btnTeacher" data-i18n="teacherBtn"></button></span></div>
+      <div class="grid"><label><span data-i18n="stuName"></span><input id="inName" maxlength="40" autocomplete="off"></label><label><span data-i18n="stuId"></span><input id="inSid" maxlength="30" autocomplete="off"></label></div>
+      <div id="syncNote" class="hidden"></div>
+      <div class="avrow"><span class="lbl" data-i18n="chooseAv"></span><button class="gsel on" data-av="me" data-g="f"><span class="av"></span><span class="gl">♀ <span data-i18n="female"></span></span></button><button class="gsel" data-av="me2" data-g="m"><span class="av"></span><span class="gl">♂ <span data-i18n="male"></span></span></button>
+        <span class="spacer"></span><label class="qtel"><input type="checkbox" id="qteToggle" checked> <span data-i18n="qteOpt"></span></label></div>
+      <div class="moderow"><span class="lbl" data-i18n="modeLbl"></span><button class="msel" data-mode="practice"></button><button class="msel" data-mode="exam"></button><span id="modeHelp"></span></div>
+      <div id="resumeBox" class="hidden"></div>
+      <div id="tBrief" data-i18n-html="brief"></div>
+      <div class="row" style="margin-top:12px;justify-content:flex-end"><div class="tbtns"><button class="sbtn" id="btnBadges"></button><button class="sbtn" id="btnChSel"></button></div><button class="gbtn" id="btnStart" style="font-size:30px;padding:14px 46px" data-i18n="start"></button></div>
+    </div>
+    <div id="lockBox" class="hidden"><div class="langs"><button class="lbtn" data-lang="zh">中文</button><button class="lbtn" data-lang="en">English</button><button class="lbtn" data-lang="th">ไทย</button></div>
+      <div class="lk-ic">🔒</div><h3 data-i18n="lockH"></h3><p data-i18n="lockP"></p>
+      <div class="lk-alt"><button class="sbtn" id="lockTeacher" data-i18n="teacherBtn"></button></div></div>
+  </div>
+  <div id="results" class="hidden"></div>
+  <div id="introHost"></div>
+  <div id="wipe"></div>
+  <div id="flash"></div>
+  <div id="splash"></div>
+  <div id="chapterHost"></div>
+</div>
+<div id="page" class="hidden"><div class="pcard"><div class="phead"><div id="pTitle"></div><div id="pTabs"></div><button id="pClose">✕</button></div><div id="pBody"></div></div></div>
+<div id="modal" class="hidden"><div id="mCard"></div></div>
+<div id="toasts"></div>
+<div id="rotate">📱 ↻<br>請將手機橫放 · Rotate your phone · หมุนโทรศัพท์เป็นแนวนอน</div>
+<input type="file" id="fileIn" class="hidden">
+

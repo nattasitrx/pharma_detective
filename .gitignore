@@ -1,0 +1,21 @@
+# build outputs
+build/
+site/
+site_t/
+site_o/
+site_test/
+allg.js
+main_all.js
+# intermediate files made by the scripts
+cd/c_orig.html
+cd/d_orig.html
+cd/d_orig_preacb.html
+cd/*_work.html
+cd/*_all.js
+review/index.html
+# tests
+t15/
+cf/*.db
+cf/*.log
+cf/pids.txt
+__pycache__/

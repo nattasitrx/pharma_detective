@@ -6396,6 +6396,11 @@ const HST={ btn:['📜 我的紀錄','📜 My past games','📜 ประวั�
   first:['🚪 進門第一步','🚪 First move','🚪 ก้าวแรกในบ้าน'], choice:['☑️ 選擇','☑️ Choices','☑️ ตัวเลือก'], calc:['🧮 計算與實作','🧮 Calculations & hands-on','🧮 คำนวณและลงมือ'],
   key:['正確答案','Answer','คำตอบ'], final:['🏁 最後的總結衛教','🏁 Your closing summary','🏁 สรุปคำแนะนำตอนท้าย'], fb:['💌 我的意見','💌 My feedback','💌 ความเห็นของฉัน'],
   nothing:['這一場還沒有這部分的紀錄。','Nothing recorded here for this game yet.','เกมนี้ยังไม่มีบันทึกส่วนนี้'],
+  tDoc:['📁 案件資料','📁 Case documents','📁 เอกสารในคดี'],
+  docLocked:['玩完這一場，就能在這裡看所有案件資料：病人資料、證物、藥袋和檢驗報告。','Finish this game to open all the case documents here: patient profile, evidence, medicine bags and lab results.','เล่นรอบนี้ให้จบก่อน แล้วจะเปิดดูเอกสารทั้งหมดได้ที่นี่: ข้อมูลผู้ป่วย หลักฐาน ซองยา และผลแล็บ'],
+  dProf:['🪪 病人資料','🪪 Patient profile','🪪 ข้อมูลผู้ป่วย'], dEv:['🔍 證物','🔍 Evidence','🔍 หลักฐาน'], dMeds:['💊 藥袋','💊 Medicine bags','💊 ซองยา'], dLabs:['🧪 檢驗報告','🧪 Lab results','🧪 ผลแล็บ'],
+  dFound:['✅ 這一場有找到','✅ Found this game','✅ รอบนี้เจอแล้ว'], dMiss:['這一場沒找到','Not found this game','รอบนี้ไม่ได้เจอ'],
+  dZoom:['點圖片可以放大','Tap a picture to enlarge it','แตะรูปเพื่อขยาย'], dPics:['原始文件','Original documents','เอกสารต้นฉบับ'],
   close:['✕ 關閉','✕ Close','✕ ปิด'], ro:['只在這台裝置上；換手機或電腦就看不到。','Kept on this device only; another phone or computer won\'t have it.','เก็บไว้ในเครื่องนี้เท่านั้น เปลี่ยนเครื่องจะไม่เห็น'] };
 const HS={id:null, tab:'sum'};
 const hsT=k=>L(HST[k]);
@@ -6409,7 +6414,7 @@ const hsDrug=id=>{ const d=(typeof DRUGS!=='undefined')&&DRUGS.find(x=>x.id===id
 const hsQ=v=>esc(KP(Array.isArray(v)?L(v):String(v==null?'':v)));
 function hsCss(){ if($('#hsCss')) return; const st=document.createElement('style'); st.id='hsCss'; st.textContent=`
 #hsUI{position:fixed;inset:0;z-index:240;background:rgba(15,10,35,.62);display:flex;align-items:center;justify-content:center;padding:12px}
-#hsUI .card{width:min(1040px,100%);height:min(760px,100%);display:flex;flex-direction:column;border-radius:24px;overflow:hidden;background:#fff;box-shadow:0 0 0 5px #fff,0 0 0 10px #c8b4ff,0 20px 50px rgba(0,0,0,.5);animation:enterC .3s}
+#hsUI .card{position:relative;width:min(1040px,100%);height:min(760px,100%);display:flex;flex-direction:column;border-radius:24px;overflow:hidden;background:#fff;box-shadow:0 0 0 5px #fff,0 0 0 10px #c8b4ff,0 20px 50px rgba(0,0,0,.5);animation:enterC .3s}
 #hsUI .hd{display:flex;align-items:center;gap:10px;padding:9px 14px;background:linear-gradient(90deg,#7a5cff,#d45cff);color:#fff}
 #hsUI .hd b{font-size:19px;font-weight:900;flex:1}
 #hsUI .hd .x{width:34px;height:34px;border-radius:50%;background:#fff;color:#6a3ad6;font-weight:900;font-size:18px}
@@ -6437,6 +6442,27 @@ function hsCss(){ if($('#hsCss')) return; const st=document.createElement('style
 #hsUI .ft .ro{flex:1;color:#7a7090;font-size:12.5px;min-width:180px}
 #hsUI .ft button{padding:8px 16px;border-radius:99px;font-weight:900;font-size:14.5px;background:#f1edfb;color:#4a3a7a}
 @media (max-height:460px){#hsUI .card{height:100%}#hsUI .bd{padding:8px 12px 12px}}
+#hsUI .dnav{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 6px}
+#hsUI .dnav a{padding:4px 12px;border-radius:99px;background:#f7f4ff;color:#4a3a7a;font-weight:800;font-size:13.5px;text-decoration:none;cursor:pointer}
+#hsUI .kv{display:grid;grid-template-columns:minmax(110px,190px) 1fr;gap:4px 12px;background:#faf9fd;border-radius:14px;padding:10px 12px}
+#hsUI .kv b{color:#6a5a8a;font-size:13.5px}
+#hsUI .dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+#hsUI .dcard{background:#faf9fd;border-radius:14px;padding:10px 12px;box-shadow:inset 0 0 0 1px #eee8f8;font-size:14px;line-height:1.5}
+#hsUI .dcard.miss{opacity:.62}
+#hsUI .dcard .dh{display:flex;gap:8px;align-items:center;margin-bottom:4px}
+#hsUI .dcard .dh b{font-size:15px}
+#hsUI .dcard .tag{font-size:12px;font-weight:800;color:#1d6b45}
+#hsUI .dcard.miss .tag{color:#8a7090}
+#hsUI .dcard img.z{max-height:90px;max-width:100%;border-radius:8px;margin:6px 6px 0 0;cursor:zoom-in;box-shadow:0 0 0 2px #e6dcf5}
+#hsUI .bag{display:flex;flex-direction:column}
+#hsUI .bag img.z{max-height:none;width:100%;height:150px;object-fit:cover;object-position:top;margin:0 0 6px}
+#hsUI .ltbl{border-collapse:collapse;font-size:13.5px;width:100%}
+#hsUI .ltbl th{background:#f1edfb;color:#3a2a7a;text-align:left;padding:6px 8px;white-space:nowrap}
+#hsUI .ltbl td{border-top:1px solid #eee8f8;padding:6px 8px}
+#hsUI .wrapx{overflow-x:auto}
+#hsUI img.z{max-width:100%;cursor:zoom-in}
+#hsZoom{position:absolute;inset:0;z-index:5;background:rgba(15,10,35,.86);display:flex;align-items:center;justify-content:center;padding:14px;cursor:zoom-out}
+#hsZoom img{max-width:100%;max-height:100%;border-radius:10px;background:#fff}
 #btnHist{position:absolute;right:28px;top:22px;z-index:3;padding:10px 22px;border-radius:99px;background:rgba(255,255,255,.92);color:#5a3a9a;font-weight:900;font-size:24px;box-shadow:0 0 0 4px #fff,0 6px 16px rgba(40,20,60,.25);cursor:pointer}
 #btnHist:hover{transform:translateY(-2px)}
 #title.locked #btnHist{display:none}
@@ -6497,22 +6523,43 @@ function hsAns(s){ const ok=s.done||s.mode!=='exam', mk=(o,p)=>!ok?'':o?'✅':p?
   if((s.refl||[]).length) sec('💭 '+esc(T('reflT')), s.refl.map(a=>row(`<b>${esc(KP(a.q))}</b><span class="sm" style="white-space:pre-wrap">“${esc(a.ans)}”</span>`)).join(''));
   if(s.fb&&typeof fbHTML==='function') sec(hsT('fb'), fbHTML(s.fb));
   return out.length?(ok?'':`<p class="muted">${hsT('examHid')}</p>`)+out.join(''):`<p class="msg">${hsT('nothing')}</p>`; }
+function hsDocs(s){ if(!s.done) return `<p class="msg">${hsT('docLocked')}</p>`;
+  const ev=new Set(s.evidence||[]), img=src=>`<img class="z" src="${esc(src)}" alt="">`, out=[];
+  const sec=(id,h,body)=>{ if(body) out.push(`<h4 id="hsd_${id}">${hsT(h)}</h4>${body}`); };
+  if(typeof PROFILE!=='undefined') sec('prof','dProf',`<div class="kv">${PROFILE.map(f=>`<b>${hsQ(f.l)}</b><span>${hsQ(f.v)}</span>`).join('')}</div>`);
+  if(typeof ITEMS!=='undefined'){ const ids=Object.keys(ITEMS).sort((a,b)=>(ev.has(b)-ev.has(a)));
+    sec('ev','dEv',`<div class="dgrid">${ids.map(id=>{ const it=ITEMS[id], has=ev.has(id), pics=typeof itemImages==='function'?itemImages(id):[];
+      return `<div class="dcard${has?'':' miss'}"><div class="dh">${typeof itemIcon==='function'?itemIcon(id,40):''}<div><b>${hsQ(it.n)}</b><div class="tag">${hsT(has?'dFound':'dMiss')}</div></div></div>
+        ${it.loc?`<div class="muted">📍 ${hsQ(it.loc)}</div>`:''}${it.d?`<div>${hsQ(it.d)}</div>`:''}${pics.map(img).join('')}</div>`; }).join('')}</div>`); }
+  if(typeof DRUGS!=='undefined') sec('meds','dMeds',`<div class="dgrid">${DRUGS.map(d=>`<div class="dcard bag">${IMG[d.img]?img(IMG[d.img]):''}<b>${esc(d.n)}</b><span class="muted">${esc(d.g||'')}</span>
+      <div>${d.sig?hsQ(d.sig):''}</div><div class="muted">${d.cls?hsQ(d.cls):''}${typeof SRC!=='undefined'&&SRC[d.src]?' · '+hsQ(SRC[d.src]):''}</div></div>`).join('')}</div>`);
+  if(typeof LABS2!=='undefined'){ const pics=typeof labImages==='function'?labImages():[];
+    sec('labs','dLabs',`<div class="wrapx"><table class="ltbl"><tr><th>${esc(T('labItem'))}</th><th>${esc(T('labRef'))}</th>${(typeof LAB_DATES!=='undefined'?LAB_DATES:[]).map(d=>`<th>${esc(d)}</th>`).join('')}</tr>
+      ${LABS2.map(r=>`<tr><td><b>${esc(r.item)}</b> <span class="muted">${esc(r.unit||'')}</span></td><td>${esc(r.ref||'')}</td>${(r.v||[]).map(v=>{ const vv=Array.isArray(v)?L(v):String(v); const c=r.f==='H'&&vv!=='—'?'#d0203e':r.f==='L'?'#2856b8':'inherit'; return `<td style="font-weight:700;color:${c}">${esc(vv)}</td>`; }).join('')}</tr>`).join('')}</table></div>
+      ${pics.length?`<h5>${hsT('dPics')}</h5><div>${pics.map(img).join('')}</div>`:''}`); }
+  if(!out.length) return `<p class="msg">${hsT('nothing')}</p>`;
+  return `<div class="dnav">${['prof','ev','meds','labs'].filter(k=>out.some(h=>h.includes('id="hsd_'+k+'"'))).map(k=>`<a data-hj="${k}">${hsT({prof:'dProf',ev:'dEv',meds:'dMeds',labs:'dLabs'}[k])}</a>`).join('')}</div>
+    <p class="muted" style="margin:0 0 4px">${hsT('dZoom')}</p>${out.join('')}`; }
+function hsZoom(src){ const card=$('#hsUI .card'); if(!card) return; let z=$('#hsZoom'); if(z) z.remove();
+  z=document.createElement('div'); z.id='hsZoom'; z.innerHTML=`<img src="${esc(src)}" alt="">`; z.onclick=()=>z.remove(); card.appendChild(z); sfx.click(); }
 function hsOpen(){ hsCss(); sfx.paper(); let ui=$('#hsUI'); if(!ui){ ui=document.createElement('div'); ui.id='hsUI'; document.body.appendChild(ui); } HS.tab='sum'; hsRender(); }
 function hsClose(){ const ui=$('#hsUI'); if(ui) ui.remove(); sfx.click(); }
-document.addEventListener('keydown', e=>{ if(e.key==='Escape'&&$('#hsUI')){ e.stopPropagation(); hsClose(); } }, true);
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'&&$('#hsUI')){ e.stopPropagation(); const z=$('#hsZoom'); if(z) z.remove(); else hsClose(); } }, true);
 function hsRender(){ const ui=$('#hsUI'); if(!ui) return; const games=hsGames();
   const s=games.find(g=>g.id===HS.id)||games[0]; HS.id=s?s.id:null;
   const body=!s?`<p class="msg">${hsT('none')}</p>`:
     `<div class="gp">${games.length>1?`${hsT('pick')} <select id="hsPick">${games.map(g=>`<option value="${esc(g.id)}"${g.id===s.id?' selected':''}>${esc(hsLabel(g))}</option>`).join('')}</select>`:esc(hsLabel(s))}</div>
-     <div class="tabs">${[['sum','tSum'],['ask','tAsk'],['ans','tAns']].map(([k,l])=>`<button data-ht="${k}" class="${HS.tab===k?'on':''}">${hsT(l)}</button>`).join('')}</div>
-     <div id="hsBody">${HS.tab==='ask'?hsAsk(s):HS.tab==='ans'?hsAns(s):hsSum(s)}</div>`;
+     <div class="tabs">${[['sum','tSum'],['ask','tAsk'],['ans','tAns'],['doc','tDoc']].map(([k,l])=>`<button data-ht="${k}" class="${HS.tab===k?'on':''}">${hsT(l)}</button>`).join('')}</div>
+     <div id="hsBody">${HS.tab==='ask'?hsAsk(s):HS.tab==='ans'?hsAns(s):HS.tab==='doc'?hsDocs(s):hsSum(s)}</div>`;
   if(!ui.querySelector('.card')){ ui.innerHTML=`<div class="card" role="dialog" aria-modal="true"><div class="hd"><b></b><button class="x" aria-label="close">✕</button></div><div class="bd"></div>
     <div class="ft"><span class="ro"></span><button id="hsX"></button></div></div>`;
     ui.querySelector('.hd .x').onclick=hsClose; $('#hsX').onclick=hsClose; ui.onclick=e=>{ if(e.target===ui) hsClose(); }; }
   ui.querySelector('.hd b').textContent=hsT('title'); ui.querySelector('.ft .ro').textContent=hsT('ro'); $('#hsX').textContent=hsT('close');
   const bd=ui.querySelector('.bd'); bd.innerHTML=body;
   const p=$('#hsPick'); if(p) p.onchange=e=>{ HS.id=e.target.value; sfx.click(); hsRender(); };
-  ui.querySelectorAll('[data-ht]').forEach(b=>b.onclick=()=>{ HS.tab=b.dataset.ht; sfx.click(); hsRender(); bd.scrollTop=0; }); }
+  ui.querySelectorAll('[data-ht]').forEach(b=>b.onclick=()=>{ HS.tab=b.dataset.ht; sfx.click(); hsRender(); bd.scrollTop=0; });
+  bd.querySelectorAll('img.z').forEach(i=>i.onclick=()=>hsZoom(i.getAttribute('src')));
+  bd.querySelectorAll('[data-hj]').forEach(x=>x.onclick=()=>{ const h=$('#hsd_'+x.dataset.hj); if(h) h.scrollIntoView({block:'start', behavior:'smooth'}); }); }
 /* the 📜 pill sits at the top right of the title screen, left of "Choose a case" when that is shown */
 function hsPlace(){ const b=$('#btnHist'), cb=$('#caseBack'); if(!b) return; b.style.right=(cb&&!cb.classList.contains('hidden')&&cb.offsetWidth?28+cb.offsetWidth+16:28)+'px'; }
 function hsButton(){ const t=$('#title'); if(!t) return; hsCss(); let b=$('#btnHist');

@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="google" content="notranslate">
+<meta name="author" content="Nattasit Rattanaphanit">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>藥師偵探：陳伯的秘密 · Pharma Detective</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1867,9 +1868,10 @@ const Tone=(()=>{
   class Volume extends Node{ constructor(db){ super(); this.volume.value=db||0; } }
   class Filter{ constructor(f,type){ this.f=ctx.createBiquadFilter(); if(typeof f==='object'){ this.f.type=f.type||'lowpass'; this.f.frequency.value=f.frequency||1000; if(f.Q) this.f.Q.value=f.Q; } else { this.f.type=type||'lowpass'; this.f.frequency.value=f; } this.input=this.output=this.f; }
     connect(d){ this.f.connect(d.input||d); return this; } }
-  class Synth extends Node{ constructor(o){ super(); o=o||{}; this.oscillator={type:(o.oscillator&&o.oscillator.type)||'triangle'}; this.envelope=Object.assign({attack:.005,decay:.1,sustain:.3,release:1},o.envelope||{}); }
-    triggerAttackRelease(n,d,t,vel){ t=t==null?ctx.currentTime:t; const D=dur(d), o=ctx.createOscillator(), g=ctx.createGain(); o.type=this.oscillator.type; o.frequency.value=freq(n);
-      o.connect(g); g.connect(this.output); const end=adsr(g.gain,t,D,this.envelope,(vel==null?1:vel)*.7); o.start(t); o.stop(end); o.onended=()=>{ try{ g.disconnect(); }catch(e){} }; return this; } }
+  class Synth extends Node{ constructor(o){ super(); o=o||{}; this.oscillator={type:(o.oscillator&&o.oscillator.type)||'triangle'}; this.envelope=Object.assign({attack:.005,decay:.1,sustain:.3,release:1},o.envelope||{}); this.detune=o.detune||0; }
+    triggerAttackRelease(n,d,t,vel){ t=t==null?ctx.currentTime:t; const D=dur(d), g=ctx.createGain(), f=freq(n), os=[];
+      for(const dt of this.detune?[-this.detune,this.detune]:[0]){ const o=ctx.createOscillator(); o.type=this.oscillator.type; o.frequency.value=f; o.detune.value=dt; o.connect(g); os.push(o); }
+      g.connect(this.output); const end=adsr(g.gain,t,D,this.envelope,(vel==null?1:vel)*.7/(os.length>1?1.4:1)); os.forEach(o=>{ o.start(t); o.stop(end); }); os[0].onended=()=>{ try{ g.disconnect(); }catch(e){} }; return this; } }
   class FMSynth extends Node{ constructor(o){ super(); o=o||{}; this.h=o.harmonicity||3; this.mi=o.modulationIndex||10; this.envelope=Object.assign({attack:.01,decay:.2,sustain:.3,release:.5},o.envelope||{}); this.menv=Object.assign({attack:.01,decay:.2,sustain:.3,release:.5},o.modulationEnvelope||{}); }
     triggerAttackRelease(n,d,t,vel){ t=t==null?ctx.currentTime:t; const D=dur(d), f=freq(n), c=ctx.createOscillator(), m=ctx.createOscillator(), mg=ctx.createGain(), g=ctx.createGain();
       c.frequency.value=f; m.frequency.value=f*this.h; m.connect(mg); mg.connect(c.frequency); c.connect(g); g.connect(this.output);
@@ -1891,6 +1893,28 @@ const Tone=(()=>{
     triggerAttackRelease(n,d,t,vel){ t=t==null?ctx.currentTime:t; const D=dur(d), f=freq(n), o=ctx.createOscillator(), g=ctx.createGain(); o.type='sine';
       o.frequency.setValueAtTime(f*this.oct,t); o.frequency.exponentialRampToValueAtTime(Math.max(20,f),t+this.pd); o.connect(g); g.connect(this.output);
       const end=adsr(g.gain,t,D,this.envelope,(vel==null?1:vel)*.9); o.start(t); o.stop(end); o.onended=()=>{ try{ g.disconnect(); }catch(e){} }; return this; } }
+  /* room reverb: decaying stereo noise impulse; wet/dry mix */
+  class Reverb extends Node{ constructor(sec,wet){ super(); sec=sec||2; wet=wet==null?.3:wet; const i=ctx.createGain(), dry=ctx.createGain(), wg=ctx.createGain(), cv=ctx.createConvolver(), len=Math.floor(ctx.sampleRate*sec), b=ctx.createBuffer(2,len,ctx.sampleRate);
+      for(let c=0;c<2;c++){ const x=b.getChannelData(c); for(let k=0;k<len;k++) x[k]=(Math.random()*2-1)*Math.pow(1-k/len,3.2); }
+      cv.buffer=b; dry.gain.value=1-wet*.4; wg.gain.value=wet; i.connect(dry); i.connect(cv); cv.connect(wg); dry.connect(this.output); wg.connect(this.output); this.input=i; } }
+  const dst=d=>d.input||d;
+  /* filtered noise burst: {type, filter, freq, Q, gain, attack, decay, at, dest, sweep:[to,sec]} */
+  function burst(o){ const t=o.at==null?ctx.currentTime:o.at, s=ctx.createBufferSource(), f=ctx.createBiquadFilter(), g=ctx.createGain(); s.buffer=noiseBuf(o.type||'white');
+    f.type=o.filter||'bandpass'; f.frequency.setValueAtTime(o.freq||2000,t); f.Q.value=o.Q==null?1:o.Q; if(o.sweep) f.frequency.exponentialRampToValueAtTime(o.sweep[0],t+o.sweep[1]);
+    const a=o.attack||.003, dc=o.decay||.08; g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(o.gain||.4,t+a); g.gain.exponentialRampToValueAtTime(.0001,t+a+dc);
+    s.connect(f); f.connect(g); g.connect(dst(o.dest)); s.start(t,Math.random()*1.5); s.stop(t+a+dc+.05); s.onended=()=>{ try{ g.disconnect(); }catch(e){} }; }
+  /* pitched blip with a glide: {type, from, to, dur, gain, attack, at, dest} */
+  function glide(o){ const t=o.at==null?ctx.currentTime:o.at, os=ctx.createOscillator(), g=ctx.createGain(); os.type=o.type||'sine';
+    os.frequency.setValueAtTime(o.from,t); os.frequency.exponentialRampToValueAtTime(Math.max(20,o.to||o.from),t+o.dur); const a=o.attack||.006;
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(o.gain||.3,t+a); g.gain.exponentialRampToValueAtTime(.0001,t+a+o.dur+(o.tail||.04));
+    os.connect(g); g.connect(dst(o.dest)); os.start(t); os.stop(t+a+o.dur+(o.tail||.04)+.05); os.onended=()=>{ try{ g.disconnect(); }catch(e){} }; }
+  /* sustained filtered noise you can shape while it plays (breathing, pouring): returns {ramp(what,to,sec), stop(release)} */
+  function loopNoise(o){ const t=ctx.currentTime, s=ctx.createBufferSource(), f=ctx.createBiquadFilter(), g=ctx.createGain(); s.buffer=noiseBuf(o.type||'pink'); s.loop=true;
+    f.type=o.filter||'bandpass'; f.frequency.value=o.freq||1000; f.Q.value=o.Q==null?1:o.Q; s.connect(f); f.connect(g); g.connect(dst(o.dest));
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(o.gain||.3,t+(o.attack||.12)); s.start(t,Math.random()*1.5); let done=false;
+    const set=(p,to,sec)=>{ const n=ctx.currentTime; p.cancelScheduledValues(n); p.setValueAtTime(p.value,n); p.linearRampToValueAtTime(to,n+Math.max(.02,sec)); };
+    return { ramp(w,to,sec){ if(!done) set(w==='freq'?f.frequency:g.gain,to,sec); },
+      stop(r){ if(done) return; done=true; r=r==null?.2:r; set(g.gain,0,r); s.stop(ctx.currentTime+r+.05); s.onended=()=>{ try{ g.disconnect(); }catch(e){} }; } }; }
   class Sequence{ constructor(cb,ev,sub){ this.cb=cb; this.ev=ev; this.sub=sub; this.i=0; this.next=null; }
     start(){ this.i=0; this.next=Transport.state==='started'?ctx.currentTime+.05:null; Transport._seqs.add(this); return this; }
     stop(){ Transport._seqs.delete(this); return this; } dispose(){ this.stop(); } }
@@ -1901,7 +1925,7 @@ const Tone=(()=>{
   Transport.start=off=>{ if(!ctx) return; const o=typeof off==='string'?(parseFloat(off.replace('+',''))||0):(off||0); Transport.state='started'; Transport._t0=ctx.currentTime+o;
     Transport._seqs.forEach(s=>{ s.next=Transport._t0; s.i=0; }); if(!Transport._timer) Transport._timer=setInterval(tick,30); tick(); };
   Transport.stop=()=>{ Transport.state='stopped'; };
-  const api={ Transport, Volume, Filter, Synth, FMSynth, PolySynth, NoiseSynth, MembraneSynth, Sequence,
+  const api={ Transport, Volume, Filter, Synth, FMSynth, PolySynth, NoiseSynth, MembraneSynth, Sequence, Reverb, burst, glide, loopNoise,
     now:()=>ctx?ctx.currentTime:0,
     async start(){ if(!ctx){ const AC=window.AudioContext||window.webkitAudioContext; if(!AC) throw new Error('no WebAudio'); ctx=new AC();
         const comp=ctx.createDynamicsCompressor(); comp.threshold.value=-10; comp.ratio.value=4; out=ctx.createGain(); out.gain.value=1.25; out.connect(comp); comp.connect(ctx.destination);
@@ -1999,32 +2023,72 @@ async function audioStart(){
     AU.kick=new Tone.MembraneSynth({pitchDecay:.03,octaves:6,envelope:{attack:.001,decay:.25,sustain:0}}).connect(AU.bgmBus); AU.kick.volume.value=-4;
     AU.hat=new Tone.NoiseSynth({noise:{type:'white'},envelope:{attack:.001,decay:.04,sustain:0}}).connect(new Tone.Filter(7000,'highpass').connect(AU.bgmBus)); AU.hat.volume.value=-16;
     AU.snare=new Tone.NoiseSynth({noise:{type:'pink'},envelope:{attack:.001,decay:.13,sustain:0}}).connect(AU.bgmBus); AU.snare.volume.value=-12;
-    AU.ok=true; applyAudio(); if(AU.want) playTheme(AU.want,true);
+    audioV2(); AU.ok=true; applyAudio(); if(AU.want) playTheme(AU.want,true);
   }catch(e){ console.warn('audio',e); }
 }
 function applyAudio(){ if(!AU.ok) return; AU.sfxBus.mute=!S.sound; AU.bgmBus.mute=!S.music; }
+/* ---- v2 sound: warm, cozy "home visit" palette — electric piano, soft strings, pizzicato, flute, vibes, brushes; room reverb ---- */
+function audioV2(){
+  const V=(x,v)=>{ x.volume.value=v; return x; };
+  AU.bgmVerb=new Tone.Reverb(2.6,.34).connect(AU.bgmBus); AU.sfxVerb=new Tone.Reverb(1.5,.25).connect(AU.sfxBus);
+  const lpK=new Tone.Filter(2600,'lowpass').connect(AU.bgmVerb), lpS=new Tone.Filter(1250,'lowpass').connect(AU.bgmVerb), lpB=new Tone.Filter(700,'lowpass').connect(AU.bgmBus);
+  AU.ep=V(new Tone.PolySynth(Tone.FMSynth,{harmonicity:1,modulationIndex:1.5,envelope:{attack:.004,decay:1.1,sustain:.14,release:.8},modulationEnvelope:{attack:.002,decay:.45,sustain:.06,release:.4}}).connect(lpK),-9);
+  AU.flute=V(new Tone.Synth({oscillator:{type:'sine'},envelope:{attack:.05,decay:.25,sustain:.6,release:.3}}).connect(AU.bgmVerb),-9);
+  AU.vib=V(new Tone.PolySynth(Tone.FMSynth,{harmonicity:4,modulationIndex:1.1,envelope:{attack:.002,decay:1.3,sustain:0,release:1},modulationEnvelope:{attack:.002,decay:.3,sustain:0,release:.3}}).connect(AU.bgmVerb),-11);
+  AU.pluck=V(new Tone.Synth({oscillator:{type:'triangle'},envelope:{attack:.002,decay:.22,sustain:0,release:.12}}).connect(lpK),-7);
+  AU.strings=V(new Tone.PolySynth(Tone.Synth,{oscillator:{type:'sawtooth'},detune:9,envelope:{attack:.7,decay:.8,sustain:.7,release:1.4}}).connect(lpS),-19);
+  AU.stab2=V(new Tone.PolySynth(Tone.Synth,{oscillator:{type:'sawtooth'},detune:7,envelope:{attack:.01,decay:.28,sustain:0,release:.25}}).connect(lpS),-13);
+  AU.bass2=V(new Tone.Synth({oscillator:{type:'triangle'},envelope:{attack:.005,decay:.35,sustain:.25,release:.18}}).connect(lpB),1);
+  AU.kick2=V(new Tone.MembraneSynth({pitchDecay:.04,octaves:4,envelope:{attack:.001,decay:.28,sustain:0}}).connect(AU.bgmBus),-9);
+  AU.shk=V(new Tone.NoiseSynth({noise:{type:'white'},envelope:{attack:.008,decay:.06,sustain:0}}).connect(new Tone.Filter(6500,'highpass').connect(AU.bgmBus)),-21);
+  AU.rim=V(new Tone.NoiseSynth({noise:{type:'pink'},envelope:{attack:.001,decay:.035,sustain:0}}).connect(new Tone.Filter({frequency:1700,type:'bandpass',Q:2.2}).connect(AU.bgmVerb)),-8);
+  AU.brush=V(new Tone.NoiseSynth({noise:{type:'pink'},envelope:{attack:.004,decay:.2,sustain:0}}).connect(new Tone.Filter({frequency:1300,type:'bandpass',Q:.7}).connect(AU.bgmVerb)),-14);
+  /* SFX voices */
+  AU.mar=V(new Tone.PolySynth(Tone.FMSynth,{harmonicity:4,modulationIndex:.9,envelope:{attack:.001,decay:.35,sustain:0,release:.3},modulationEnvelope:{attack:.001,decay:.12,sustain:0,release:.1}}).connect(AU.sfxVerb),-8);
+  AU.chime=V(new Tone.PolySynth(Tone.FMSynth,{harmonicity:3.01,modulationIndex:3,envelope:{attack:.001,decay:.9,sustain:0,release:.8},modulationEnvelope:{attack:.001,decay:.3,sustain:0,release:.3}}).connect(AU.sfxVerb),-12);
+  AU.soft=V(new Tone.Synth({oscillator:{type:'triangle'},envelope:{attack:.004,decay:.22,sustain:.05,release:.15}}).connect(new Tone.Filter(1400,'lowpass').connect(AU.sfxBus)),-2);
+  AU.blip.oscillator.type='triangle'; AU.blip.volume.value=-16; AU.bgmBus.volume.value=-17;
+}
+const mfreq=(n,semi)=>{ const m=/^([A-G])(#|b)?(-?\d)$/.exec(n); const S={C:0,D:2,E:4,F:5,G:7,A:9,B:11}; const midi=(+m[3]+1)*12+S[m[1]]+(m[2]==='#'?1:m[2]==='b'?-1:0)+(semi||0); return 440*Math.pow(2,(midi-69)/12); };
+/* chords: [notes, bass]; patterns: 16 steps per bar (x = hit); melodies: "note:sixteenths" tokens, "-" = rest */
 const THEMES={
-  calm:{bpm:100, lw:'triangle', lead:['E5','G5','A5','G5','E5',null,'D5','C5','D5',null,'E5','G5','A5',null,'G5',null,'A5','C6','A5','G5','F5',null,'E5','D5','E5',null,'D5',null,'G4',null,null,null],
-    bass:['C2','G2','A1','E2','F1','C2','G1','D2'], ch:[['C4','E4','G4'],['A3','C4','E4'],['F3','A3','C4'],['G3','B3','D4']]},
-  mystery:{bpm:84, lw:'sine', lead:['A4',null,'C5',null,'E5',null,'D5',null,'C5',null,'B4',null,'A4',null,null,null,'G4',null,'B4',null,'D5',null,'C5',null,'B4',null,'G#4',null,'E4',null,null,null],
-    bass:['A1','E2','F1','C2','G1','D2','E1','B1'], ch:[['A3','C4','E4'],['F3','A3','C4'],['G3','B3','D4'],['E3','G#3','B3']]},
-  tense:{bpm:128, lw:'square', lead:['E5','E5',null,'E5','F5',null,'E5','D5','C5','C5',null,'C5','D5',null,'C5','B4','A4',null,'C5',null,'E5',null,'A5',null,'G#5',null,'E5',null,'B4',null,null,null],
-    bass:['A1','A2','A1','A2','F1','F2','F1','F2'], ch:[['A3','C4','E4'],['F3','A3','C4'],['D3','F3','A3'],['E3','G#3','B3']], drums:1},
-  boss:{bpm:152, lw:'square', lead:['E5',null,'G5','B5','A5',null,'G5',null,'F#5',null,'G5','A5','B5',null,null,null,'C6',null,'B5','A5','G5',null,'A5',null,'B5',null,'E5',null,'F#5','G5','F#5',null],
-    bass:['E2','E2','E2','E2','C2','C2','D2','D2'], ch:[['E3','G3','B3'],['C3','E3','G3'],['D3','F#3','A3'],['B2','D#3','F#3']], drums:2},
-  win:{bpm:112, lw:'triangle', lead:['C5','E5','G5','C6',null,'G5','C6',null,'A5','F5','A5','C6',null,'B5','G5',null,'C5','E5','G5','C6',null,'D6','E6',null,'D6','C6','B5','G5','C6',null,null,null],
-    bass:['C2','G2','F1','C2','A1','E2','G1','D2'], ch:[['C4','E4','G4'],['F3','A3','C4'],['A3','C4','E4'],['G3','B3','D4']]},
+  calm:{bpm:88, chords:[[['E3','G3','B3','D4'],'C2'],[['E3','G3','C4','D4'],'A1'],[['F3','A3','C4','E4'],'D2'],[['F3','A3','B3','E4'],'G1']],
+    keys:'x..x..x...x..x..', bass:'R.....F.R..R..F.', k:'x.....x...x.....', r:'....x.......x...', h:'x.x.x.x.x.x.x.x.', lead:'flute',
+    mel:'E5:4 G5:2 A5:2 G5:4 -:4 | E5:3 D5:1 C5:4 -:8 | D5:2 E5:2 F5:4 A5:4 G5:4 | F5:2 E5:2 D5:8 -:4 | E5:4 G5:2 A5:2 C6:4 B5:2 A5:2 | G5:6 E5:2 -:8 | F5:2 A5:2 G5:2 F5:2 E5:4 D5:4 | C5:8 -:8'},
+  mystery:{bpm:76, chords:[[['C4','E4','G4','B4'],'A1'],[['C4','E4','A4'],'F1'],[['F3','A3','C4','E4'],'D2'],[['G#3','D4','F4'],'E1']],
+    pad:1, arp:'x.x.x.x.x.x.x.x.', bass:'R.......R...F...', k:'x.......x.......', r:'x...x...x...x...', lead:'vib',
+    mel:'-:8 E5:4 C5:4 | -:4 A4:4 B4:4 C5:4 | D5:6 C5:2 A4:8 | B4:4 G#4:4 E4:8 | -:8 A5:4 E5:4 | F5:6 E5:2 C5:8 | D5:4 F5:4 E5:4 C5:4 | B4:8 -:8'},
+  tense:{bpm:112, chords:[[['A3','C4','E4'],'A1'],[['A3','C4','F4'],'F1'],[['A3','D4','F4'],'D2'],[['G#3','B3','E4'],'E1']],
+    pad:1, arp:'x.x.x.x.x.x.x.x.', bass:'R.R.R.R.R.R.R.R.', k:'x...x...x...x...', s:'....x.......x...', h:'xxxxxxxxxxxxxxxx', lead:'pluck',
+    mel:'E5:2 -:2 E5:2 F5:2 E5:4 -:4 | C5:2 -:2 C5:2 D5:2 C5:4 -:4 | D5:2 -:2 F5:2 A5:2 G5:4 F5:4 | E5:8 G#4:4 B4:4'},
+  boss:{bpm:132, chords:[[['E3','G3','B3'],'E1'],[['E3','G3','C4'],'C2'],[['F#3','A3','D4'],'D2'],[['D#3','F#3','A3','B3'],'B1']],
+    stab:'x..x..x.x..x..x.', pad:1, bass:'R.RRR.R.R.RRR.O.', k:'x.....x.x.......', s:'....x.......x...', h:'x.x.x.x.x.x.x.x.', lead:'vib',
+    mel:'E5:2 G5:2 B5:4 A5:2 G5:2 F#5:4 | G5:2 E5:2 C5:4 -:4 E5:4 | F#5:2 A5:2 D6:4 C6:2 B5:2 A5:4 | B5:8 D#5:4 F#5:4'},
+  win:{bpm:100, chords:[[['E3','G3','C4','D4'],'C2'],[['D3','G3','B3'],'G1'],[['E3','G3','C4'],'A1'],[['F3','A3','C4','E4'],'F1'],[['E3','G3','C4','D4'],'C2'],[['F3','A3','C4','E4'],'F1'],[['F3','G3','B3','D4'],'G1'],[['E3','G3','C4','E4'],'C2']],
+    keys:'x..x..x...x.x...', arp:'....x.x.....x.x.', bass:'R.....F.R...F...', k:'x.......x.x.....', r:'....x.......x...', h:'x.x.x.x.x.x.x.x.', lead:'flute',
+    mel:'E5:2 G5:2 C6:4 B5:2 G5:2 E5:4 | D5:2 G5:2 B5:4 A5:4 G5:4 | C6:4 B5:2 A5:2 E5:8 | F5:2 A5:2 C6:4 A5:4 F5:4 | G5:4 E5:4 C6:8 | A5:4 C6:4 F5:8 | G5:2 A5:2 B5:4 D6:8 | C6:12 -:4'},
 };
+function prepTheme(th){ const pat=x=>x?[...x].map(c=>c==='x'||c==='R'||c==='F'||c==='O'?c:null):null;
+  const mel=[]; (th.mel||'').split('|').forEach(bar=>{ const row=Array(16).fill(null); let p=0; bar.trim().split(/\s+/).forEach(tok=>{ const [n,d]=tok.split(':'); if(n!=='-'&&p<16) row[p]=[n,+d]; p+=+d; }); mel.push(...row); });
+  const bars=Math.max(th.chords.length, mel.length/16||0);
+  return {len:bars*16, mel, keys:pat(th.keys), arp:pat(th.arp), stab:pat(th.stab), bass:pat(th.bass), k:pat(th.k), s:pat(th.s), h:pat(th.h), r:pat(th.r)}; }
+function musicStep(th,P,t,i){ const bar=Math.floor(i/16), st=i%16, ch=th.chords[bar%th.chords.length], n=ch[0], six=60/Tone.Transport.bpm.value/4, vr=()=>.42+Math.random()*.16;
+  if(st===0&&th.pad) AU.strings.triggerAttackRelease(n,six*16,t,.32);
+  if(P.keys&&P.keys[st]) AU.ep.triggerAttackRelease(n,six*3,t,vr());
+  if(P.stab&&P.stab[st]) AU.stab2.triggerAttackRelease(n.map(x=>mfreq(x,12)),six*2,t,vr());
+  if(P.arp&&P.arp[st]){ const k=Math.floor(st/2)%(n.length*2-2||1), j=k<n.length?k:n.length*2-2-k; AU.pluck.triggerAttackRelease(mfreq(n[j],12),six*2,t,.45); }
+  const b=P.bass&&P.bass[st]; if(b) AU.bass2.triggerAttackRelease(mfreq(ch[1],b==='F'?7:b==='O'?12:0),six*(th.bpm>110?1.6:3),t,.75);
+  if(P.k&&P.k[st]) AU.kick2.triggerAttackRelease('C1','8n',t,.8);
+  if(P.s&&P.s[st]) AU.brush.triggerAttackRelease('16n',t,.8);
+  if(P.h&&P.h[st]) AU.shk.triggerAttackRelease('32n',t,st%4===0?.9:st%2?.35:.6);
+  if(P.r&&P.r[st]) AU.rim.triggerAttackRelease('32n',t,.7);
+  const m=P.mel.length&&P.mel[i%P.mel.length]; if(m){ const inst=th.lead==='vib'?AU.vib:th.lead==='pluck'?AU.pluck:AU.flute; inst.triggerAttackRelease(m[0],six*m[1]*(th.lead==='flute'?.92:1),t,.55); } }
 function playTheme(name, force){
   AU.want=name; if(!AU.ok) return; if(AU.theme===name&&!force) return; AU.theme=name;
   try{
     Tone.Transport.stop(); AU.seqs.forEach(s=>{ try{s.stop(); s.dispose();}catch(e){} }); AU.seqs=[]; Tone.Transport.position=0;
-    const th=THEMES[name]; Tone.Transport.bpm.value=th.bpm*(S.visit<=10&&name!=='win'?1.12:1); AU.lead.oscillator.type=th.lw; AU.lead.volume.value=th.lw==='square'?-12:-3;
-    AU.seqs.push(new Tone.Sequence((t,n)=>{ if(n) AU.lead.triggerAttackRelease(n,'8n',t,.55); }, th.lead, '8n').start(0));
-    AU.seqs.push(new Tone.Sequence((t,n)=>{ AU.bass.triggerAttackRelease(n,'8n',t,.7); }, th.bass, th.drums?'8n':'2n').start(0));
-    AU.seqs.push(new Tone.Sequence((t,i)=>{ AU.pad.triggerAttackRelease(th.ch[i],'1m',t,.3); }, [0,1,2,3], '1m').start(0));
-    if(th.drums){ const k=[1,0,0,0,1,0,0,0], sn=th.drums>1?[0,0,1,0,0,0,1,0]:[0,0,0,0,1,0,0,0];
-      AU.seqs.push(new Tone.Sequence((t,i)=>{ if(k[i]) AU.kick.triggerAttackRelease('C1','8n',t); if(sn[i]) AU.snare.triggerAttackRelease('16n',t); AU.hat.triggerAttackRelease('32n',t,i%2?.4:.8); }, [0,1,2,3,4,5,6,7], '8n').start(0)); }
+    const th=THEMES[name], P=th._p||(th._p=prepTheme(th)); Tone.Transport.bpm.value=th.bpm*(S.visit<=10&&name!=='win'?1.12:1);
+    AU.seqs.push(new Tone.Sequence((t,i)=>{ try{ musicStep(th,P,t,i); }catch(e){} }, [...Array(P.len).keys()], '16n').start(0));
     Tone.Transport.start('+0.05');
   }catch(e){ console.warn('theme',e); }
 }
@@ -2063,6 +2127,54 @@ const SFX={
   sneeze(){ AU.paper.triggerAttackRelease(.25,at('paper')); AU.cough.triggerAttackRelease(.2,at('cough',.38)); },
   fanfare(){ ['C5','E5','G5','C6','G5','C6','E6'].forEach((n,i)=>AU.bell.triggerAttackRelease([n],'16n',at('bell',i*.12),.7)); AU.bell.triggerAttackRelease(['C5','E5','G5','C6'],'2n',at('bell',.9),.6); },
 };
+/* ---- v2 effects: softer UI sounds and physical sounds for the hands-on games ---- */
+const FXD=()=>AU.sfxBus;
+Object.assign(SFX,{
+  click(){ Tone.burst({type:'white',filter:'bandpass',freq:3200,Q:2.5,gain:.55,decay:.022,at:at('ck'),dest:FXD()}); AU.mar.triggerAttackRelease(['G6'],'64n',at('mar'),.32); },
+  pop(){ Tone.glide({type:'sine',from:520,to:1180,dur:.07,gain:.3,at:at('pop'),dest:FXD()}); },
+  select(){ AU.mar.triggerAttackRelease(['E5'],'16n',at('mar'),.55); AU.mar.triggerAttackRelease(['B5'],'16n',at('mar',.07),.45); },
+  error(){ AU.soft.triggerAttackRelease('E4','16n',at('soft'),.32); AU.soft.triggerAttackRelease('C4','8n',at('soft',.13),.32); },
+  get(){ ['C6','E6','G6','C7'].forEach((n,i)=>AU.chime.triggerAttackRelease([n],'16n',at('chime',i*.07),.6)); },
+  problem(){ ['G5','C6','E6'].forEach((n,i)=>AU.chime.triggerAttackRelease([n],'16n',at('chime',i*.08),.65)); AU.chime.triggerAttackRelease(['C6','E6','G6'],'4n',at('chime',.28),.5); },
+  heal(){ ['C5','E5','G5'].forEach((n,i)=>AU.mar.triggerAttackRelease([n],'32n',at('mar',i*.06),.5)); },
+  tick(){ AU.tk=!AU.tk; Tone.burst({type:'white',filter:'highpass',freq:4200,Q:.7,gain:.22,decay:.016,at:at('tick'),dest:FXD()}); AU.mar.triggerAttackRelease([AU.tk?'C7':'G6'],'64n',at('mar'),.1); },
+  whoosh(){ Tone.burst({type:'pink',filter:'bandpass',freq:500,Q:.8,gain:.6,attack:.12,decay:.35,sweep:[2600,.45],at:at('wh'),dest:FXD()}); },
+  trustUp(){ AU.mar.triggerAttackRelease(['G5'],'32n',at('mar'),.5); AU.mar.triggerAttackRelease(['D6'],'16n',at('mar',.1),.5); },
+  trustDown(){ AU.soft.triggerAttackRelease('E4','16n',at('soft'),.6); AU.soft.triggerAttackRelease('C4','8n',at('soft',.14),.6); },
+  heartLose(){ AU.soft.triggerAttackRelease('A3','16n',at('soft'),.85); AU.soft.triggerAttackRelease('E3','8n',at('soft',.12),.85); },
+  cough(n){ n=n||2; for(let i=0;i<n;i++){ const t=at('cough',i*.34); AU.thump.triggerAttackRelease('A1','32n',t,.45);
+    Tone.burst({type:'white',filter:'bandpass',freq:780,Q:1.1,gain:.85,attack:.004,decay:.17,sweep:[460,.17],at:t,dest:FXD()}); Tone.burst({type:'pink',filter:'lowpass',freq:1500,gain:.35,decay:.24,at:t+.03,dest:FXD()}); } },
+  /* hands-on games */
+  shake(i){ const t=at('shk'); Tone.burst({type:'white',filter:'bandpass',freq:i%2?2300:2900,Q:1.8,gain:1,decay:.06,at:t,dest:FXD()}); Tone.burst({type:'pink',filter:'bandpass',freq:650,Q:1.5,gain:.6,attack:.01,decay:.1,at:t,dest:FXD()}); AU.mar.triggerAttackRelease([i%2?'D7':'A6'],'64n',t+.01,.15); },
+  capOff(){ const t=at('cap'); Tone.glide({type:'sine',from:300,to:900,dur:.05,gain:.35,at:t,dest:FXD()}); Tone.burst({type:'white',filter:'highpass',freq:3000,gain:.3,decay:.03,at:t,dest:FXD()}); },
+  capOn(){ const t=at('cap'); Tone.burst({type:'white',filter:'bandpass',freq:1800,Q:2,gain:.5,decay:.04,at:t,dest:FXD()}); Tone.glide({type:'triangle',from:700,to:420,dur:.05,gain:.25,at:t,dest:FXD()}); },
+  ratchet(){ for(let k=0;k<5;k++) Tone.burst({type:'white',filter:'bandpass',freq:3400,Q:3,gain:.48,decay:.014,at:at('rt',k*.06),dest:FXD()});
+    Tone.burst({type:'white',filter:'bandpass',freq:2200,Q:2,gain:.85,decay:.03,at:at('rt',.34),dest:FXD()}); AU.mar.triggerAttackRelease(['C6'],'64n',at('mar',.34),.3); },
+  puff(){ const t=at('pf'); Tone.burst({type:'white',filter:'highpass',freq:2200,Q:.6,gain:.4,attack:.004,decay:.32,at:t,dest:FXD()}); Tone.burst({type:'white',filter:'bandpass',freq:5200,Q:1.5,gain:.2,decay:.18,at:t,dest:FXD()}); AU.thump.triggerAttackRelease('G3','64n',t,.15); },
+  mist(){ const t=at('pf'); Tone.burst({type:'white',filter:'bandpass',freq:2600,Q:2,gain:.8,decay:.02,at:t,dest:FXD()}); Tone.burst({type:'pink',filter:'bandpass',freq:3600,Q:.6,gain:.95,attack:.06,decay:1.3,at:t+.02,dest:FXD()}); },
+  clack(){ const t=at('ck'); Tone.burst({type:'white',filter:'bandpass',freq:1500,Q:1.5,gain:1,decay:.045,at:t,dest:FXD()}); Tone.burst({type:'pink',filter:'bandpass',freq:380,Q:4,gain:1,decay:.22,at:t,dest:FXD()}); },
+  tock(n){ AU.mar.triggerAttackRelease([n>=10?'G5':'C5'],'32n',at('mar'),n>=10?.6:.35); },
+  sigh(){ Tone.burst({type:'pink',filter:'bandpass',freq:620,Q:.6,gain:.7,attack:.15,decay:.75,sweep:[380,.9],at:at('br'),dest:FXD()}); },
+  gulp(){ const t=at('gl'); Tone.glide({type:'sine',from:330,to:105,dur:.13,gain:.32,at:t,dest:FXD()}); Tone.burst({type:'pink',filter:'lowpass',freq:650,gain:.2,decay:.08,at:t+.02,dest:FXD()}); Tone.glide({type:'sine',from:260,to:95,dur:.1,gain:.2,at:t+.28,dest:FXD()}); },
+  beep(){ [0,.16].forEach(o=>Tone.glide({type:'sine',from:2350,to:2350,dur:.07,gain:.2,attack:.003,at:at('bp',o),dest:FXD()})); },
+  chew(){ for(let k=0;k<4;k++) Tone.burst({type:'white',filter:'bandpass',freq:1400+Math.random()*900,Q:1,gain:.8,decay:.05,at:at('chw',k*.13+Math.random()*.03),dest:FXD()}); },
+  crunch(){ for(let k=0;k<6;k++) Tone.burst({type:'white',filter:'bandpass',freq:1100+Math.random()*1600,Q:1,gain:.9,decay:.06,at:at('chw',k*.09+Math.random()*.03),dest:FXD()}); },
+  sip(){ const t=at('gl'); Tone.burst({type:'pink',filter:'bandpass',freq:1800,Q:1.2,gain:.3,attack:.04,decay:.25,at:t,dest:FXD()}); Tone.glide({type:'sine',from:300,to:120,dur:.1,gain:.26,at:t+.3,dest:FXD()}); },
+});
+/* sustained sounds that follow the player's hold: breathing out / in, pouring. Returns a handle {ramp, stop} or null when sound is off. */
+function sfxLoop(kind, o){ if(!AU.ok||!S.sound) return null; o=o||{};
+  try{
+    if(kind==='out'){ const h=Tone.loopNoise({type:'pink',filter:'bandpass',freq:700,Q:.6,gain:.65,attack:.18,dest:FXD()}); h.ramp('freq',380,o.sec||3); return h; }
+    if(kind==='in'){ const h=Tone.loopNoise({type:'pink',filter:'bandpass',freq:1100,Q:1.3,gain:.05,attack:.25,dest:FXD()}); h.ramp('gain',.5,1); h.ramp('freq',2300,o.sec||5); return h; }
+    if(kind==='pour'){ const h=Tone.loopNoise({type:'white',filter:'bandpass',freq:950,Q:2.2,gain:.35,attack:.05,dest:FXD()});
+      const iv=setInterval(()=>{ try{ const f=650+Math.random()*900; Tone.glide({type:'sine',from:f,to:f*1.6,dur:.04,gain:.12,dest:FXD()}); }catch(e){} },55);
+      return {ramp:h.ramp, stop(r){ clearInterval(iv); h.stop(r); }}; }
+  }catch(e){}
+  return null; }
+/* lower the music while a hands-on game is open, so its sounds come through */
+function audioDuck(on){ if(!AU.ok) return; try{ const g=AU.bgmBus.output.gain, n=Tone.now(), to=Math.pow(10,(AU.bgmBus.volume.value-(on?9:0))/20)*(AU.bgmBus.mute?0:1);
+  g.cancelScheduledValues(n); g.setValueAtTime(g.value,n); g.linearRampToValueAtTime(to,n+.6); }catch(e){} }
+
 /* =====================================================================
    VISUAL-NOVEL ENGINE (promise based: await say(...), await choose(...))
    with fluid layer: crossfading emotions, lip-sync, idle motion, parallax
@@ -2401,7 +2513,7 @@ function calcPanel(cfg){
   });
 }
 /* ---------- the three calculations used in the story ---------- */
-const CLUE_AGE={v:'61', l:['年齡（歲）','Age (years)','อายุ (ปี)']},
+const CLUE_AGE={v:'65', l:['年齡（歲）','Age (years)','อายุ (ปี)']},
       CLUE_HT={v:'173', l:['身高（cm）','Height (cm)','ส่วนสูง (ซม.)']}, CLUE_WT={v:'90', l:['體重（kg）','Weight (kg)','น้ำหนัก (กก.)']},
       CLUE_CR={v:'2.9', l:['肌酸酐 mg/dL（最新 2021/02/18）','Creatinine mg/dL (latest, 18 Feb 2021)','ครีเอตินิน mg/dL (ล่าสุด 18 ก.พ. 2021)']},
       CLUE_A1C={v:'8.3', l:['HbA1c（%）','HbA1c (%)','HbA1c (%)']};
@@ -4472,7 +4584,7 @@ const STU={q:'', cls:'__all', mode:'all', st:'all', sort:'new'};
 function studentCard(s){
   const nm=s.student&&s.student.name||'?', sid=s.student&&s.student.sid||'', found=Object.keys(s.found||{}).length, B=s.boss||{answers:[]}, log=s.log||[], qn=['❌','🔸','✅'];
   const calcChip=k=>{ const c=s.calc&&s.calc[k]; if(!c) return ''; const first=HANDS_KEYS.includes(k)?c.ok:c.ok&&c.tries===1, late=!first&&c.ok; return `<span class="chip ${first?'ok':late?'ex':'no'}">${esc(L(TT.hk[k]))} ${first?'✓':late?'✓ ×'+c.tries:'✗'}</span>`; };
-  const inhChip=dev=>{ const f=inhFirst(s,dev); return f?`<span class="chip ${f.ok?'ok':'no'}">${esc(L(TT.hk[dev]))} ${f.ok?'✓':'✗'}</span>`:''; };
+  const inhChip=dev=>{ const f=inhFirst(s,dev); return f?`<span class="chip ${f.ok?'ok':'no'}">${esc(L(TT.hk[dev]))} ${f.pts!=null?f.pts+'/'+(f.max||8):f.ok?'✓':'✗'}</span>`:''; };
   const hands=HANDS_KEYS.map(calcChip).join('')+INH_DEVS.map(inhChip).join(''), calcs=CALC_KEYS.map(calcChip).join(''), hints=hintsOf(s);
   const status=s.done?`<span class="chip ok">${TX('done')}</span>`:`<span class="chip ex">${TX('playing').replace('{p}',s.progress||0)}</span>`;
   const endTxt=s.ending?({best:'🌟',good:'😊',mixed:'😐',bad:'🚑'}[s.ending.tier]||'')+' '+T('end_'+s.ending.tier).replace(/^\S+\s/,''):'';
@@ -4481,7 +4593,7 @@ function studentCard(s){
   const handsDet=[...HANDS_KEYS, ...CALC_KEYS].filter(k=>s.calc&&s.calc[k]).map(k=>{ const c=s.calc[k], isH=HANDS_KEYS.includes(k);
       return `<div class="ll">${c.ok?'✅':'❌'} <b>${esc(L(TT.hk[k]))}</b> — ${c.ok?(isH||c.tries===1?TX('ok'):TX('tries').replace('{n}',c.tries)):TX('wrongC')}${c.value!=null?` · ${esc(String(c.value))}`:''}${c.hints?` · 💡 ${c.hints}`:''}</div>`+(c.errs||[]).map(e=>`<div class="err">• ${esc(errText(e))}</div>`).join(''); }).join('')
     +INH_DEVS.map(dev=>{ const all=log.filter(e=>e.type==='inhSim'&&e.dev===dev); if(!all.length) return ''; const f=all[0], last=all[all.length-1];
-      return `<div class="ll">${f.ok?'✅':'❌'} <b>${esc(L(TT.hk[dev]))}</b> — ${f.ok?TX('ok'):last.ok?TX('tries').replace('{n}',last.try||all.length):TX('wrongC')}${f.hints?` · 💡 ${f.hints}`:''}</div>`+(f.errs||[]).map(e=>`<div class="err">• ${esc(errText(e))}</div>`).join(''); }).join('');
+      return `<div class="ll">${f.ok?'✅':'❌'} <b>${esc(L(TT.hk[dev]))}</b>${f.pts!=null?` <b>📋 ${f.pts}/${f.max||8}</b>`:''} — ${f.ok?TX('ok'):last.ok?TX('tries').replace('{n}',last.try||all.length):TX('wrongC')}${f.hints?` · 💡 ${f.hints}`:''}</div>`+(f.errs||[]).map(e=>`<div class="err">• ${esc(errText(e))}</div>`).join(''); }).join('');
   const chT=[0,1,2,3,4,5].map(c=>`${c?TX('chN').replace('{n}',c):TX('ch0')} ${fmt((s.chT||{})[c]||0)}`).join(' · ');
   const pp=s.pp&&Object.keys(s.pp.pre||{}).length?(()=>{ const pre=s.pp.pre||{}, post=s.pp.post||{}, ids=[...new Set(Object.keys(pre).concat(Object.keys(post)))], qt={}; log.forEach(e=>{ if(e.type==='pp') qt[e.qid]=e.q; }); gameQuestions().forEach(x=>{ if(x.cp==='pp') qt[x.id]=LQ(x.q); });
       return `<h4>📊 ${T('ppStat')} ${Object.values(pre).filter(x=>x.ok).length}/${ids.length} → ${Object.values(post).filter(x=>x.ok).length}/${ids.length}</h4>`+ids.map(id=>`<div class="ll">${pre[id]?(pre[id].ok?'✅':'❌'):'·'} → ${post[id]?(post[id].ok?'✅':'❌'):'·'} ${esc(qt[id]||id)}</div>`).join(''); })():'';
@@ -5196,6 +5308,455 @@ function lkRender(){ const ui=$('#lkUI'); if(!ui) return; const base=S.avatar===
 function lkButton(){ const t=$('#title'); if(!t) return; let b=$('#lkBtn'); if(!b){ lkCss(); b=document.createElement('button'); b.id='lkBtn'; b.onclick=lkOpen; t.appendChild(b); } b.textContent=L(LKT.btn); }
 { const f=showTitle; showTitle=function(){ const r=f.apply(this, arguments); lkButton(); return r; }; }
 { const f=applyI18n; applyI18n=function(){ const r=f.apply(this, arguments); if($('#lkBtn')) $('#lkBtn').textContent=L(LKT.btn); return r; }; }
+/* =====================================================================
+   📝 MY NOTES on the title screen — read the drug notes and free notes without starting the game
+   Every game saved on this device (this case) keeps its notes in the session list; this window lists the games
+   that have notes, shows the drug table / by-group view / free notes read-only, and can print or save them as a PDF.
+   Editing stays in the game (📁 Case file → 📝), so the notes never get out of step with a game in progress.
+   ===================================================================== */
+const MNT={ btn:['📝 我的筆記','📝 My notes','📝 โน้ตของฉัน'], title:['📝 我的筆記','📝 My notes','📝 โน้ตของฉัน'],
+  pick:['哪一場遊戲的筆記：','Notes from which game:','โน้ตจากเกมไหน:'],
+  done:['已破關','finished','เล่นจบแล้ว'], playing:['進行中','in progress','ยังเล่นไม่จบ'],
+  none:['這台裝置上還沒有筆記。在遊戲中打開「📁 案件檔案 → 📝 筆記」寫下的內容，會出現在這裡。','No notes on this device yet. What you write in the game under 📁 Case file → 📝 Notes shows up here.','ยังไม่มีโน้ตในเครื่องนี้ ที่จดไว้ในเกม (📁 แฟ้มคดี → 📝 โน้ต) จะมาขึ้นที่นี่'],
+  empty:['這一場還沒有寫這一類的筆記。','Nothing written here in this game yet.','เกมนี้ยังไม่ได้จดส่วนนี้'],
+  ro:['這裡只能看；要修改請進遊戲：📁 案件檔案 → 📝 筆記。','Read-only here — to edit, open the game: 📁 Case file → 📝 Notes.','หน้านี้ดูได้อย่างเดียว ถ้าจะแก้ให้เข้าเกม: 📁 แฟ้มคดี → 📝 โน้ต'],
+  print:['🖨️ 列印 / 存成 PDF','🖨️ Print / save as PDF','🖨️ พิมพ์ / บันทึกเป็น PDF'], close:['✕ 關閉','✕ Close','✕ ปิด'],
+  popup:['瀏覽器擋住了列印視窗，請允許彈出視窗後再試一次。','The browser blocked the print window — allow pop-ups and try again.','เบราว์เซอร์บล็อกหน้าต่างพิมพ์ อนุญาตป๊อปอัปแล้วลองใหม่'] };
+const MNS={id:null, sub:'drugs'};
+const mnTxt=v=>String(v==null?'':v).trim();
+/* one game's notes, older formats included: [{id, n, g, sig, img, src, own, grp, note}], free memo */
+function mnRead(s){ const n=s&&s.notes||{}, dn=n.drugs||{}, own=n.own||[], groups=n.groups||[];
+  const rows=Object.entries(dn).map(([id,x])=>{ x=x||{};
+      const note=mnTxt(x.note!=null?x.note:[x.warn,x.more].map(mnTxt).filter(Boolean).join(' · ')), grp=mnTxt(x.grp||(groups.find(g=>(g.ids||[]).includes(id))||{}).name);
+      const d=DRUGS.find(z=>z.id===id), o=own.find(z=>z.id===id); if(!d&&!o) return null;
+      return Object.assign({}, d||{id, n:o.n, own:true}, {grp, note}); })
+    .filter(r=>r&&(r.note||r.grp));
+  own.forEach(o=>{ if(!rows.some(r=>r.id===o.id)) rows.push({id:o.id, n:o.n, own:true, grp:'', note:''}); });
+  return {rows, memo:mnTxt(n.memo)}; }
+const mnHas=s=>{ const r=mnRead(s); return r.rows.length>0||!!r.memo; };
+function mnGames(){ const all=(store.get(CONFIG.STORAGE_KEY)||[]).filter(s=>s&&s.id&&mnHas(s));
+  return all.sort((a,b)=>String(b.updated||'').localeCompare(String(a.updated||''))); }
+const mnWhen=s=>{ try{ return new Date(s.updated||s.created).toLocaleString(S.lang==='zh'?'zh-TW':S.lang==='th'?'th-TH':'en-GB',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } };
+const mnLabel=s=>`${esc(s.student&&s.student.name||'?')} · ${esc(mnWhen(s))} · ${s.done?L(MNT.done)+(s.rank?' ('+esc(s.rank)+')':''):L(MNT.playing)+(s.chapter?' · '+T('ch'+Math.min(5,s.chapter)):'')}`;
+const mnThumb=d=>d.own?`<span class="own">📝</span>`:(IMG[d.img]?`<img class="th" src="${IMG[d.img]}" alt="">`:'');
+function mnCss(){ if($('#mnCss')) return; const st=document.createElement('style'); st.id='mnCss'; st.textContent=`
+#mnUI{position:fixed;inset:0;z-index:240;background:rgba(15,10,35,.62);display:flex;align-items:center;justify-content:center;padding:12px}
+#mnUI .card{width:min(1040px,100%);height:min(720px,100%);display:flex;flex-direction:column;border-radius:24px;overflow:hidden;background:#fff;box-shadow:0 0 0 5px #fff,0 0 0 10px #a9c8ff,0 20px 50px rgba(0,0,0,.5);animation:enterC .3s}
+#mnUI .hd{display:flex;align-items:center;gap:10px;padding:9px 14px;background:linear-gradient(90deg,#4f8cff,#7a6bff);color:#fff}
+#mnUI .hd b{font-size:19px;font-weight:900;flex:1}
+#mnUI .hd .x{width:34px;height:34px;border-radius:50%;background:#fff;color:#3a5ad6;font-weight:900;font-size:18px}
+#mnUI .bd{flex:1;overflow:auto;padding:12px 16px 16px;-webkit-overflow-scrolling:touch}
+#mnUI .gp{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;font-weight:800;color:#3a3a6a;font-size:14.5px}
+#mnUI .gp select{font:inherit;font-weight:700;padding:6px 10px;border-radius:12px;border:2px solid #d6e0ff;background:#f7f9ff;max-width:100%}
+#mnUI .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+#mnUI .tabs button{padding:7px 16px;border-radius:99px;font-weight:800;font-size:15px;background:#eef2fb;color:#3a4a7a}
+#mnUI .tabs button.on{background:#3a5ad6;color:#fff}
+#mnUI .wrap{overflow-x:auto}
+#mnUI table{width:100%;border-collapse:collapse;font-size:14.5px}
+#mnUI th{background:#eef2fb;color:#2a3a6a;text-align:left;padding:7px 8px;font-size:13.5px;white-space:nowrap}
+#mnUI td{border-top:1px solid #e6ebf6;padding:7px 8px;vertical-align:top}
+#mnUI td.nt{white-space:pre-wrap;min-width:180px}
+#mnUI .th{width:44px;height:44px;object-fit:cover;border-radius:8px;background:#f4f1fa}
+#mnUI .own{font-size:22px}
+#mnUI .muted{color:#8a8aa0;font-size:12.5px}
+#mnUI .gt{display:inline-block;padding:2px 10px;border-radius:99px;background:#eaf1ff;color:#2a4a9a;font-weight:800;font-size:13px}
+#mnUI .gbox{border-radius:16px;background:#f7faff;box-shadow:inset 0 0 0 2px #d6e4ff;padding:10px 12px;margin-bottom:10px}
+#mnUI .gbox.loose{background:#fffaf0;box-shadow:inset 0 0 0 2px #ffe3a8}
+#mnUI .gbox h4{margin:0 0 6px;font-size:16px;color:#1f3a7a}
+#mnUI .memo{white-space:pre-wrap;background:#fffdf3;border-radius:14px;box-shadow:inset 0 0 0 2px #f3e3a8;padding:12px 14px;font-size:15.5px;line-height:1.6;min-height:120px}
+#mnUI .msg{color:#5a5070;font-size:15px;line-height:1.6;padding:18px 6px}
+#mnUI .ft{display:flex;gap:8px;align-items:center;padding:8px 14px;border-top:1px solid #edf0f8;flex-wrap:wrap}
+#mnUI .ft .ro{flex:1;color:#7a7090;font-size:12.5px;min-width:180px}
+#mnUI .ft button{padding:8px 16px;border-radius:99px;font-weight:900;font-size:14.5px;background:#eef2fb;color:#3a4a7a}
+@media (max-height:460px){#mnUI .card{height:100%}#mnUI .bd{padding:8px 12px 12px}}
+`; document.head.appendChild(st); }
+function mnTable(r){ if(!r.rows.length) return `<p class="msg">${L(MNT.empty)}</p>`;
+  const rows=r.rows.slice().sort((a,b)=>(a.grp||'~').localeCompare(b.grp||'~'));
+  return `<div class="wrap"><table><tr><th></th><th>${MX('cDrug')}</th><th>${MX('cSig')}</th><th>${MX('cGrp')}</th><th>${MX('cNote')}</th></tr>${rows.map(d=>`<tr><td>${mnThumb(d)}</td><td><b>${esc(d.n)}</b>${d.g?`<br><span class="muted">${esc(d.g)}</span>`:''}${d.own?`<br><span class="muted">${MX('own')}</span>`:''}</td><td>${d.sig?esc(L(d.sig)):''}</td><td>${d.grp?`<span class="gt">${esc(d.grp)}</span>`:'<span class="muted">—</span>'}</td><td class="nt">${esc(d.note)||'<span class="muted">—</span>'}</td></tr>`).join('')}</table></div>`; }
+function mnGroups(r){ const gs=[...new Set(r.rows.map(d=>d.grp).filter(Boolean))].sort((a,b)=>a.localeCompare(b)), loose=r.rows.filter(d=>!d.grp);
+  if(!gs.length&&!loose.length) return `<p class="msg">${L(MNT.empty)}</p>`;
+  const box=(name,list,isL)=>`<div class="gbox${isL?' loose':''}"><h4>${isL?'📥':'🗂'} ${esc(name)} <span class="muted">· ${MX('nDrugs').replace('{n}',list.length)}</span></h4><div class="wrap"><table>${list.map(d=>`<tr><td style="width:52px">${mnThumb(d)}</td><td style="width:32%"><b>${esc(d.n)}</b>${d.g?`<br><span class="muted">${esc(d.g)}</span>`:''}</td><td class="nt">${esc(d.note)||'<span class="muted">—</span>'}</td></tr>`).join('')}</table></div></div>`;
+  return (gs.length?'':`<p class="msg" style="padding:0 0 8px">${MX('gNone')}</p>`)+gs.map(g=>box(g, r.rows.filter(d=>d.grp===g))).join('')+(loose.length?box(MX('loose'), loose, true):''); }
+function mnOpen(){ mnCss(); sfx.paper(); let ui=$('#mnUI'); if(!ui){ ui=document.createElement('div'); ui.id='mnUI'; document.body.appendChild(ui); } mnRender(); }
+function mnClose(){ const ui=$('#mnUI'); if(ui) ui.remove(); sfx.click(); }
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'&&$('#mnUI')){ e.stopPropagation(); mnClose(); } }, true);
+function mnRender(){ const ui=$('#mnUI'); if(!ui) return; const games=mnGames();
+  let s=games.find(g=>g.id===MNS.id)||games[0]; MNS.id=s?s.id:null;
+  const r=s?mnRead(s):null;
+  const body=!s?`<p class="msg">${L(MNT.none)}</p>`:
+    `${games.length>1?`<div class="gp">${L(MNT.pick)} <select id="mnPick">${games.map(g=>`<option value="${esc(g.id)}"${g.id===s.id?' selected':''}>${mnLabel(g)}</option>`).join('')}</select></div>`:`<div class="gp">${mnLabel(s)}</div>`}
+     <div class="tabs">${['drugs','groups','free'].map(k=>`<button data-mt="${k}" class="${MNS.sub===k?'on':''}">${MX(k==='drugs'?'mDrugs':k==='groups'?'mGroups':'mFree')}</button>`).join('')}</div>
+     ${MNS.sub==='groups'?mnGroups(r):MNS.sub==='free'?(r.memo?`<div class="memo">${esc(r.memo)}</div>`:`<p class="msg">${L(MNT.empty)}</p>`):mnTable(r)}`;
+  ui.innerHTML=`<div class="card"><div class="hd"><b>${L(MNT.title)}</b><button class="x" aria-label="close">✕</button></div><div class="bd">${body}</div>
+    <div class="ft"><span class="ro">${s?L(MNT.ro):''}</span>${s?`<button data-act="print">${L(MNT.print)}</button>`:''}<button data-act="close">${L(MNT.close)}</button></div></div>`;
+  ui.querySelector('.x').onclick=mnClose; ui.querySelector('[data-act="close"]').onclick=mnClose; ui.onclick=e=>{ if(e.target===ui) mnClose(); };
+  const pk=$('#mnPick'); if(pk) pk.onchange=()=>{ MNS.id=pk.value; sfx.click(); mnRender(); };
+  ui.querySelectorAll('[data-mt]').forEach(b=>b.onclick=()=>{ MNS.sub=b.dataset.mt; sfx.click(); mnRender(); });
+  const pr=ui.querySelector('[data-act="print"]'); if(pr) pr.onclick=()=>mnPrint(s); }
+/* a clean page with all three parts, for printing or saving as a PDF */
+function mnPrint(s){ const r=mnRead(s), w=window.open('', '_blank'); if(!w){ toast(L(MNT.popup)); return; }
+  const rows=r.rows.slice().sort((a,b)=>(a.grp||'~').localeCompare(b.grp||'~'));
+  const title=`${L(MNT.title).replace(/^📝\s*/,'')} — ${esc(document.title)}`;
+  w.document.write(`<!doctype html><html lang="${document.documentElement.lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${title}</title>
+<style>body{font-family:system-ui,-apple-system,"Noto Sans Thai","Noto Sans TC",sans-serif;margin:24px;color:#1d1d2b}h1{font-size:20px;margin:0 0 4px}.sub{color:#666;font-size:13px;margin-bottom:16px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-bottom:18px}th,td{border:1px solid #ccd;padding:6px 8px;text-align:left;vertical-align:top}th{background:#eef2fb}td.nt{white-space:pre-wrap}
+h2{font-size:16px;margin:18px 0 8px}.memo{white-space:pre-wrap;border:1px solid #ccd;border-radius:8px;padding:10px 12px;font-size:14px;line-height:1.6}.g{color:#666;font-size:12px}
+@media print{body{margin:10mm}}</style></head><body>
+<h1>${title}</h1><div class="sub">${mnLabel(s)}</div>
+<h2>${MX('mDrugs')}</h2>${rows.length?`<table><tr><th>${MX('cDrug')}</th><th>${MX('cSig')}</th><th>${MX('cGrp')}</th><th>${MX('cNote')}</th></tr>${rows.map(d=>`<tr><td><b>${esc(d.n)}</b>${d.g?`<div class="g">${esc(d.g)}</div>`:''}</td><td>${d.sig?esc(L(d.sig)):''}</td><td>${esc(d.grp)||'—'}</td><td class="nt">${esc(d.note)||'—'}</td></tr>`).join('')}</table>`:`<p>${L(MNT.empty)}</p>`}
+<h2>${MX('mFree')}</h2>${r.memo?`<div class="memo">${esc(r.memo)}</div>`:`<p>${L(MNT.empty)}</p>`}
+<script>setTimeout(function(){ try{ window.focus(); window.print(); }catch(e){} }, 300);<\/script></body></html>`);
+  w.document.close(); }
+/* the 📝 button sits with 🏅 and 📚 under the start card */
+function mnButton(){ const row=$('#btnChSel')&&$('#btnChSel').parentElement; if(!row) return; let b=$('#btnNotes');
+  if(!b){ b=document.createElement('button'); b.id='btnNotes'; b.className='sbtn'; b.onclick=mnOpen; row.insertBefore(b, $('#btnChSel')); }
+  b.textContent=L(MNT.btn); }
+{ const f=showTitle; showTitle=function(){ const r=f.apply(this, arguments); mnButton(); return r; }; }
+{ const f=applyI18n; applyI18n=function(){ const r=f.apply(this, arguments); if($('#btnNotes')) mnButton(); return r; }; }
+/* ---------- credits & terms of use: one small line on the title screen, the details in a card ----------
+   The case owner chose no open licence: the game is for teaching in this course only. */
+const LIC={
+  line:['ⓘ 案例：陳崇鈺 教授（高雄醫學大學）· 製作：Nattasit Rattanaphanit · 僅供本課程教學使用',
+        'ⓘ Cases: Prof. Chung-Yu Chen (Kaohsiung Medical University) · Made by Nattasit Rattanaphanit · For teaching in this course only',
+        'ⓘ เคส: Prof. Chung-Yu Chen (Kaohsiung Medical University) · ผู้สร้าง: ณัฐสิทธิ์ รัตนพาณิชย์ · ใช้สอนในรายวิชานี้เท่านั้น'],
+  h:['關於與使用說明','About & terms of use','เกี่ยวกับเกมและเงื่อนไขการใช้'],
+  rows:[
+    [['遊戲設計與製作','Game design & development','ออกแบบและพัฒนาเกม'], ['Nattasit Rattanaphanit','Nattasit Rattanaphanit','ณัฐสิทธิ์ รัตนพาณิชย์ (Nattasit Rattanaphanit)']],
+    [['案例提供','Case materials','ที่มาของเคส'], ['陳崇鈺 教授（Prof. Chung-Yu Chen），高雄醫學大學 藥學系。經同意改編為遊戲。',
+       'Prof. Chung-Yu Chen (陳崇鈺), School of Pharmacy, Kaohsiung Medical University. Adapted into this game with permission.',
+       'Prof. Chung-Yu Chen (陳崇鈺) School of Pharmacy, Kaohsiung Medical University ดัดแปลงเป็นเกมโดยได้รับอนุญาต'], '@prof'],
+    [['所屬單位','Affiliation','สังกัด'], ['高雄醫學大學 藥學系 陳崇鈺教授研究團隊','Prof. Chung-Yu Chen\'s research team, School of Pharmacy, Kaohsiung Medical University','ทีมวิจัยของ Prof. Chung-Yu Chen, School of Pharmacy, Kaohsiung Medical University']],
+    [['使用範圍','Use','การนำไปใช้'], ['© 2026 Nattasit Rattanaphanit。案例內容版權屬於陳崇鈺教授。僅供本課程教學使用；如需轉載、改作或在其他課程使用，請先來信取得同意。',
+       '© 2026 Nattasit Rattanaphanit. The case content belongs to Prof. Chung-Yu Chen. For teaching in this course only; to copy, adapt or use it elsewhere, please write first and ask for permission.',
+       '© 2026 ณัฐสิทธิ์ รัตนพาณิชย์ เนื้อหาเคสเป็นของ Prof. Chung-Yu Chen ใช้สอนในรายวิชานี้เท่านั้น ถ้าจะคัดลอก ดัดแปลง หรือนำไปใช้ที่อื่น กรุณาติดต่อขออนุญาตก่อน']],
+    [['聯絡','Contact','ติดต่อ'], '@mail'],
+  ],
+  mailT:['遊戲相關問題或建議：','Questions or feedback about the game:','สอบถามหรือแนะนำเรื่องเกม:'],
+  profT:['案例聯絡：','Contact for the cases:','ติดต่อเรื่องเคส:'],
+  mail:()=>['nattasitrx','gmail.com'].join('@'),
+  prof:()=>['jk2975525','kmu.edu.tw'].join('@'),
+  note:['僅供教學使用，不構成醫療建議。案例經改編，人名與部分情節為虛構。文中藥品商品名屬於各自的權利人。',
+        'For teaching only; not medical advice. The cases are adapted, and names and some story details are fictional. Medicine brand names belong to their owners.',
+        'ใช้เพื่อการเรียนการสอนเท่านั้น ไม่ใช่คำแนะนำทางการแพทย์ เคสถูกดัดแปลง ชื่อคนและเนื้อเรื่องบางส่วนเป็นเรื่องแต่ง ชื่อการค้าของยาเป็นของเจ้าของสิทธิ์']
+};
+function licCss(){ if($('#licCss')) return; const s=document.createElement('style'); s.id='licCss'; s.textContent=`
+#licBtn{position:absolute;right:24px;bottom:8px;z-index:4;max-width:900px;padding:5px 14px;border:none;border-radius:99px;background:rgba(255,255,255,.82);color:#4a3a6a;font-family:var(--tc);font-weight:700;font-size:15px;line-height:1.35;text-align:left;cursor:pointer;box-shadow:0 2px 8px rgba(40,20,60,.18)}
+#licBtn:hover{background:#fff}
+#verNote:not(.hidden) ~ #licBtn{right:auto;left:800px;max-width:540px}
+#mCard.lic{width:min(640px,100%);text-align:left}
+#mCard.lic h3{margin:0 0 10px;text-align:center;font-size:22px}
+#mCard.lic .lr{display:grid;grid-template-columns:118px 1fr;gap:10px;padding:8px 0;border-top:1px dashed #e2dcef;font-size:15px;line-height:1.55}
+#mCard.lic .lr:first-of-type{border-top:none}
+#mCard.lic .lr b{color:#6a5a8a;font-size:14px}
+#mCard.lic .lr a{color:#3d5bd9}
+#mCard.lic .lr .sub{display:block;margin-top:2px;font-size:14px}
+#mCard.lic .ln{margin:10px 0 0;padding:8px 10px;border-radius:12px;background:#f6f3fc;color:#5a4a7a;font-size:13.5px;line-height:1.5}
+@media (max-width:560px){#mCard.lic .lr{grid-template-columns:1fr;gap:2px}}`; document.head.appendChild(s); }
+function licOpen(){ licCss(); sfx.click();
+  const mail=(t,m)=>`${esc(L(t))} <a href="mailto:${m}">${m}</a>`;
+  const val=v=>v==='@mail'?mail(LIC.mailT, LIC.mail()):esc(L(v));
+  const rows=LIC.rows.map(([k,v,x])=>`<div class="lr"><b>${esc(L(k))}</b><div>${val(v)}${x==='@prof'?`<span class="sub">${mail(LIC.profT, LIC.prof())}</span>`:''}</div></div>`).join('');
+  showModal(`<h3>${esc(L(LIC.h))}</h3>${rows}<p class="ln">${esc(L(LIC.note))}</p>`, null, null, 'lic'); }
+function licButton(){ const t=$('#title'); if(!t) return; licCss(); let b=$('#licBtn'); if(!b){ b=document.createElement('button'); b.id='licBtn'; b.onclick=licOpen; t.appendChild(b); } b.textContent=L(LIC.line); }
+{ const f=showTitle; showTitle=function(){ const r=f.apply(this, arguments); licButton(); return r; }; }
+{ const f=applyI18n; applyI18n=function(){ const r=f.apply(this, arguments); if($('#licBtn')) licButton(); return r; }; }
+/* =====================================================================
+   📜 MY ROUNDS on the title screen — every game of this case played on this device:
+   how it went, what you asked and what you answered. Read-only, built from the saved session list.
+   Missed problems stay hidden until a game is finished; right/wrong marks of an unfinished EXAM stay hidden too.
+   ===================================================================== */
+const HST={ btn:['📜 我的紀錄','📜 My past games','📜 ประวัติการเล่น'], title:['📜 我玩過的紀錄','📜 My past games','📜 ประวัติการเล่นของฉัน'],
+  pick:['哪一場：','Which game:','เกมไหน:'],
+  none:['這台裝置上還沒有玩過的紀錄。按「開始」玩一場，回來這裡就看得到。','No games on this device yet. Play one, then come back here.','ยังไม่มีประวัติในเครื่องนี้ เล่นสักเกมแล้วกลับมาดูที่นี่ได้'],
+  tSum:['📊 總覽','📊 Overview','📊 ภาพรวม'], tAsk:['💬 我問了什麼','💬 What I asked','💬 ที่ถามไป'], tAns:['✍️ 我答了什麼','✍️ What I answered','✍️ ที่ตอบไป'],
+  done:['✅ 已破關','✅ Finished','✅ เล่นจบแล้ว'], playing:['⏳ 還沒玩完','⏳ Not finished','⏳ ยังเล่นไม่จบ'],
+  time:['時間','Time','เวลา'], found:['找到的問題','Problems found','ปัญหาที่เจอ'], mode:['模式','Mode','โหมด'], ending:['結局','Ending','ตอนจบ'],
+  hints:['用了提示','Hints used','ใช้คำใบ้'], asked:['提問','Questions asked','ถามไป'], items:['🔍 搜到的證物','🔍 Evidence found','🔍 หลักฐานที่ค้นเจอ'],
+  probs:['🧩 問題清單','🧩 Problems','🧩 รายการปัญหา'], missedN:['還沒找到 {n} 個（玩完才會顯示是哪些）','{n} not found yet (shown once you finish)','ยังไม่เจออีก {n} ข้อ (จะแสดงเมื่อเล่นจบ)'],
+  examHid:['考試還沒結束：對錯要玩完才會顯示。','Exam not finished: right and wrong show once you finish.','การสอบยังไม่จบ: ถูก/ผิดจะแสดงเมื่อเล่นจบ'],
+  card:['提問卡','Question card','การ์ดคำถาม'], typed:['自己打的','Typed','พิมพ์เอง'], press:['追問','Pressed','ถามจี้'], heart:['心鎖','Heart lock','กุญแจหัวใจ'],
+  first:['🚪 進門第一步','🚪 First move','🚪 ก้าวแรกในบ้าน'], choice:['☑️ 選擇','☑️ Choices','☑️ ตัวเลือก'], calc:['🧮 計算與實作','🧮 Calculations & hands-on','🧮 คำนวณและลงมือ'],
+  key:['正確答案','Answer','คำตอบ'], final:['🏁 最後的總結衛教','🏁 Your closing summary','🏁 สรุปคำแนะนำตอนท้าย'], fb:['💌 我的意見','💌 My feedback','💌 ความเห็นของฉัน'],
+  nothing:['這一場還沒有這部分的紀錄。','Nothing recorded here for this game yet.','เกมนี้ยังไม่มีบันทึกส่วนนี้'],
+  tDoc:['📁 案件資料','📁 Case documents','📁 เอกสารในคดี'],
+  docLocked:['玩完這一場，就能在這裡看所有案件資料：病人資料、證物、藥袋和檢驗報告。','Finish this game to open all the case documents here: patient profile, evidence, medicine bags and lab results.','เล่นรอบนี้ให้จบก่อน แล้วจะเปิดดูเอกสารทั้งหมดได้ที่นี่: ข้อมูลผู้ป่วย หลักฐาน ซองยา และผลแล็บ'],
+  dProf:['🪪 病人資料','🪪 Patient profile','🪪 ข้อมูลผู้ป่วย'], dEv:['🔍 證物','🔍 Evidence','🔍 หลักฐาน'], dMeds:['💊 藥袋','💊 Medicine bags','💊 ซองยา'], dLabs:['🧪 檢驗報告','🧪 Lab results','🧪 ผลแล็บ'],
+  dFound:['✅ 這一場有找到','✅ Found this game','✅ รอบนี้เจอแล้ว'], dMiss:['這一場沒找到','Not found this game','รอบนี้ไม่ได้เจอ'],
+  dZoom:['點圖片可以放大','Tap a picture to enlarge it','แตะรูปเพื่อขยาย'], dPics:['原始文件','Original documents','เอกสารต้นฉบับ'],
+  close:['✕ 關閉','✕ Close','✕ ปิด'], ro:['只在這台裝置上；換手機或電腦就看不到。','Kept on this device only; another phone or computer won\'t have it.','เก็บไว้ในเครื่องนี้เท่านั้น เปลี่ยนเครื่องจะไม่เห็น'] };
+const HS={id:null, tab:'sum'};
+const hsT=k=>L(HST[k]);
+function hsGames(){ return (store.get(CONFIG.STORAGE_KEY)||[]).filter(s=>s&&s.id&&(s.log||[]).length)
+  .sort((a,b)=>String(b.updated||b.created||'').localeCompare(String(a.updated||a.created||''))); }
+const hsWhen=s=>{ try{ return new Date(s.created||s.updated).toLocaleString(S.lang==='zh'?'zh-TW':S.lang==='th'?'th-TH':'en-GB',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}); }catch(e){ return ''; } };
+const hsLabel=s=>`${hsWhen(s)} · ${s.student&&s.student.name||'?'} · ${s.done?hsT('done')+(s.rank?' '+s.rank:''):hsT('playing')}`;
+const hsCh=c=>T('ch'+Math.max(0,Math.min(5,+c||0)));
+const hsItem=id=>{ const it=(typeof ITEMS!=='undefined')&&ITEMS[id]; return it?L(it.n):String(id||''); };
+const hsDrug=id=>{ const d=(typeof DRUGS!=='undefined')&&DRUGS.find(x=>x.id===id); return d?d.n:String(id||''); };
+const hsQ=v=>esc(KP(Array.isArray(v)?L(v):String(v==null?'':v)));
+function hsCss(){ if($('#hsCss')) return; const st=document.createElement('style'); st.id='hsCss'; st.textContent=`
+#hsUI{position:fixed;inset:0;z-index:240;background:rgba(15,10,35,.62);display:flex;align-items:center;justify-content:center;padding:12px}
+#hsUI .card{position:relative;width:min(1040px,100%);height:min(760px,100%);display:flex;flex-direction:column;border-radius:24px;overflow:hidden;background:#fff;box-shadow:0 0 0 5px #fff,0 0 0 10px #c8b4ff,0 20px 50px rgba(0,0,0,.5);animation:enterC .3s}
+#hsUI .hd{display:flex;align-items:center;gap:10px;padding:9px 14px;background:linear-gradient(90deg,#7a5cff,#d45cff);color:#fff}
+#hsUI .hd b{font-size:19px;font-weight:900;flex:1}
+#hsUI .hd .x{width:34px;height:34px;border-radius:50%;background:#fff;color:#6a3ad6;font-weight:900;font-size:18px}
+#hsUI .bd{flex:1;overflow:auto;padding:12px 16px 16px;-webkit-overflow-scrolling:touch;font-size:15px;line-height:1.55;color:#2a2140}
+#hsUI .gp{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px;font-weight:800;color:#3a3a6a;font-size:14.5px}
+#hsUI .gp select{font:inherit;font-weight:700;padding:6px 10px;border-radius:12px;border:2px solid #e2d8ff;background:#faf8ff;max-width:100%}
+#hsUI .tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+#hsUI .tabs button{padding:7px 16px;border-radius:99px;font-weight:800;font-size:15px;background:#f1edfb;color:#4a3a7a}
+#hsUI .tabs button.on{background:#6a3ad6;color:#fff}
+#hsUI .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:12px}
+#hsUI .tiles div{background:#f7f4ff;border-radius:14px;padding:8px 12px}
+#hsUI .tiles b{display:block;font-size:20px;font-weight:900;color:#3a2a7a}
+#hsUI .tiles span{font-size:12.5px;color:#7a7090;font-weight:700}
+#hsUI h4{margin:14px 0 6px;font-size:16px;color:#4a2aa0}
+#hsUI h5{margin:12px 0 4px;font-size:13.5px;color:#8a7aa8;font-weight:900;letter-spacing:.02em}
+#hsUI .hrow{padding:6px 10px;border-radius:12px;background:#faf9fd;margin:4px 0;box-shadow:inset 0 0 0 1px #eee8f8}
+#hsUI .hrow .mk{font-weight:900;margin-right:4px}
+#hsUI .hrow .sm{display:block;font-size:13px;color:#7a7090;margin-top:2px}
+#hsUI .hrow.tx{white-space:pre-wrap}
+#hsUI .pill{display:inline-block;margin:3px 4px 3px 0;padding:4px 10px;border-radius:99px;font-size:13.5px;font-weight:700;background:#eef9f2;color:#1d6b45}
+#hsUI .pill.no{background:#fdf0f1;color:#a33a48}
+#hsUI .muted{color:#8a8aa0;font-size:13px}
+#hsUI .msg{color:#5a5070;font-size:15px;line-height:1.6;padding:18px 6px}
+#hsUI .ft{display:flex;gap:8px;align-items:center;padding:8px 14px;border-top:1px solid #edf0f8;flex-wrap:wrap}
+#hsUI .ft .ro{flex:1;color:#7a7090;font-size:12.5px;min-width:180px}
+#hsUI .ft button{padding:8px 16px;border-radius:99px;font-weight:900;font-size:14.5px;background:#f1edfb;color:#4a3a7a}
+@media (max-height:460px){#hsUI .card{height:100%}#hsUI .bd{padding:8px 12px 12px}}
+#hsUI .dnav{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 6px}
+#hsUI .dnav a{padding:4px 12px;border-radius:99px;background:#f7f4ff;color:#4a3a7a;font-weight:800;font-size:13.5px;text-decoration:none;cursor:pointer}
+#hsUI .kv{display:grid;grid-template-columns:minmax(110px,190px) 1fr;gap:4px 12px;background:#faf9fd;border-radius:14px;padding:10px 12px}
+#hsUI .kv b{color:#6a5a8a;font-size:13.5px}
+#hsUI .dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+#hsUI .dcard{background:#faf9fd;border-radius:14px;padding:10px 12px;box-shadow:inset 0 0 0 1px #eee8f8;font-size:14px;line-height:1.5}
+#hsUI .dcard.miss{opacity:.62}
+#hsUI .dcard .dh{display:flex;gap:8px;align-items:center;margin-bottom:4px}
+#hsUI .dcard .dh b{font-size:15px}
+#hsUI .dcard .tag{font-size:12px;font-weight:800;color:#1d6b45}
+#hsUI .dcard.miss .tag{color:#8a7090}
+#hsUI .dcard img.z{max-height:90px;max-width:100%;border-radius:8px;margin:6px 6px 0 0;cursor:zoom-in;box-shadow:0 0 0 2px #e6dcf5}
+#hsUI .bag{display:flex;flex-direction:column}
+#hsUI .bag img.z{max-height:none;width:100%;height:150px;object-fit:cover;object-position:top;margin:0 0 6px}
+#hsUI .ltbl{border-collapse:collapse;font-size:13.5px;width:100%}
+#hsUI .ltbl th{background:#f1edfb;color:#3a2a7a;text-align:left;padding:6px 8px;white-space:nowrap}
+#hsUI .ltbl td{border-top:1px solid #eee8f8;padding:6px 8px}
+#hsUI .wrapx{overflow-x:auto}
+#hsUI img.z{max-width:100%;cursor:zoom-in}
+#hsZoom{position:absolute;inset:0;z-index:5;background:rgba(15,10,35,.86);display:flex;align-items:center;justify-content:center;padding:14px;cursor:zoom-out}
+#hsZoom img{max-width:100%;max-height:100%;border-radius:10px;background:#fff}
+#btnHist{position:absolute;right:28px;top:22px;z-index:3;padding:10px 22px;border-radius:99px;background:rgba(255,255,255,.92);color:#5a3a9a;font-weight:900;font-size:24px;box-shadow:0 0 0 4px #fff,0 6px 16px rgba(40,20,60,.25);cursor:pointer}
+#btnHist:hover{transform:translateY(-2px)}
+#title.locked #btnHist{display:none}
+`; document.head.appendChild(st); }
+/* ---------- overview ---------- */
+function hsSum(s){ const found=Object.keys(s.found||{}), log=s.log||[], asks=log.filter(e=>e.type==='ask').length, reveal=s.done;
+  const hints=typeof hintsOf==='function'?hintsOf(s):0, end=s.ending&&s.ending.tier?T('end_'+s.ending.tier):'';
+  const tiles=[[s.done?hsT('done'):hsT('playing')+(s.chapter!=null?' · '+hsCh(s.chapter):''),''],
+    s.rank?[s.rank+' · '+(s.score||0),T('rank')+' · '+T('score')]:null, [fmt(s.realTime||0),hsT('time')], [found.length+'/'+PROBLEMS.length,hsT('found')],
+    [String(asks),hsT('asked')], [T('mode_'+(s.mode==='exam'?'exam':'practice')),hsT('mode')], end?[end,hsT('ending')]:null, hints?[String(hints),hsT('hints')]:null].filter(Boolean);
+  const items=[...new Set(log.filter(e=>e.type==='item').map(e=>e.item))];
+  const pp=s.pp&&s.pp.pre&&Object.keys(s.pp.pre).length?(()=>{ const pre=Object.values(s.pp.pre), post=Object.values(s.pp.post||{});
+    return `<div class="hrow">📊 ${esc(T('ppStat'))}: <b>${pre.filter(x=>x.ok).length}/${pre.length}</b>${post.length?` → <b>${post.filter(x=>x.ok).length}/${post.length}</b>`:''}</div>`; })():'';
+  return `<div class="tiles">${tiles.map(([v,l])=>`<div><b>${esc(v)}</b>${l?`<span>${esc(l)}</span>`:''}</div>`).join('')}</div>${pp}
+    <h4>${hsT('probs')}</h4><div>${PROBLEMS.filter(p=>s.found&&s.found[p.id]).map(p=>`<span class="pill">${p.icon} ${esc(KP(L(p.t)))}</span>`).join('')}
+      ${reveal?PROBLEMS.filter(p=>!(s.found&&s.found[p.id])).map(p=>`<span class="pill no">${p.icon} ${esc(KP(L(p.t)))}</span>`).join(''):''}</div>
+    ${!reveal&&found.length<PROBLEMS.length?`<p class="muted">${esc(hsT('missedN').replace('{n}',PROBLEMS.length-found.length))}</p>`:''}
+    ${items.length?`<h4>${hsT('items')}</h4><div>${items.map(i=>`<span class="pill" style="background:#f1f4ff;color:#2a3a7a">${esc(hsItem(i))}</span>`).join('')}</div>`:''}`; }
+/* ---------- what I asked: interview, the contradiction duel, the heart lock (in order, by chapter) ---------- */
+function hsAsk(s){ const ok=s.done||s.mode!=='exam', mk=(o,n)=>!ok?'':o?'✅':n?'🔸':'❌';
+  const st=id=>{ const t=(typeof TESTI!=='undefined')&&TESTI.find(x=>x.id===id); return t?hsQ(t.st):esc(id); };
+  const rows=(s.log||[]).map(e=>{
+    if(e.type==='ask'&&e.mode==='card'){ const t=typeof topicById==='function'&&topicById(e.topic); return [e.ch,`<span class="mk">💬</span>${t?hsQ(t.q):esc(e.topic)}<span class="sm">${t&&t.ico?t.ico+' ':''}${t?hsQ(t.l):''} · ${hsT('card')}</span>`]; }
+    if(e.type==='ask') return [e.ch,`<span class="mk">⌨️</span>“${esc(e.text)}”<span class="sm">${hsT('typed')}</span>`];
+    if(e.type==='press') return [e.ch,`<span class="mk">🗣️</span>${hsT('press')}: ${st(e.st)}`];
+    if(e.type==='present'&&e.st!=='lock') return [e.ch,`<span class="mk">📂</span>${st(e.st)}<span class="sm">← ${esc(hsItem(e.item))} ${mk(e.ok,e.near)}</span>`];
+    if(e.type==='present') return [e.ch,`<span class="mk">💗</span>${hsT('heart')} ← ${esc(hsItem(e.item))} ${mk(e.ok,e.near)}`];
+    if(e.type==='lockText') return [e.ch,`<span class="mk">💗</span>“${esc(e.text)}” ${mk(e.ok)}<span class="sm">${hsT('heart')}</span>`];
+    return null; }).filter(Boolean);
+  if(!rows.length) return `<p class="msg">${hsT('nothing')}</p>`;
+  let last=null; return (ok?'':`<p class="muted">${hsT('examHid')}</p>`)+rows.map(([c,h])=>{ const head=c!==last?`<h5>${esc(hsCh(c))}</h5>`:''; last=c; return head+`<div class="hrow">${h}</div>`; }).join(''); }
+/* ---------- what I answered ---------- */
+function hsAns(s){ const ok=s.done||s.mode!=='exam', mk=(o,p)=>!ok?'':o?'✅':p?'🔸':'❌', log=s.log||[], out=[];
+  const sec=(h,body)=>{ if(body) out.push(`<h4>${h}</h4>${body}`); }, row=(h,cls)=>`<div class="hrow${cls?' '+cls:''}">${h}</div>`;
+  if(s.first&&s.first.picks&&s.first.picks.length&&typeof FIRST_MOVES!=='undefined')
+    sec(hsT('first'), s.first.picks.map(k=>{ const f=FIRST_MOVES.find(x=>x.k===k); return row(`${mk(k==='intro')} ${f?hsQ(f.t):k==='timeout'?'⏰':esc(k)}`); }).join(''));
+  const isFirst=t=>typeof FIRST_MOVES!=='undefined'&&FIRST_MOVES.some(f=>(f.t||[]).includes(t));
+  sec(hsT('choice'), log.filter(e=>e.type==='choice'&&!isFirst(e.text)).map(e=>row(`${e.q?`<span class="sm" style="margin:0 0 3px">${esc(e.q)}</span>`:''}☑️ ${esc(e.text)}`)).join(''));
+  const HK={bmiClass:['BMI 分級','BMI class','ระดับ BMI'], crclAdj:['CrCl（調整體重）','CrCl (adjusted weight)','CrCl (น้ำหนักปรับ)'], crclObese:['肥胖時用哪個體重算 CrCl','Which weight for CrCl in obesity','อ้วนแล้วใช้น้ำหนักไหนคำนวณ CrCl'], crTrap:['Cr「正常」的陷阱','The "normal creatinine" trap','กับดัก Cr "ปกติ"']};
+  const calc=[], C=s.calc||{}, hk=k=>typeof TT!=='undefined'&&TT.hk&&TT.hk[k]?L(TT.hk[k]):HK[k]?L(HK[k]):k, er=k=>typeof errText==='function'?errText(k):k;
+  Object.keys(C).forEach(k=>{ const c=C[k]; if(c==null) return;
+    if(typeof c!=='object'){ calc.push(row(`${mk(c)} ${esc(hk(k))}`)); return; }
+    calc.push(row(`${mk(c.ok)} <b>${esc(hk(k))}</b>${c.value!=null?` = ${esc(String(c.value))}`:''}${c.tries>1?` <span class="muted">×${c.tries}</span>`:''}${c.hints?` <span class="muted">💡${c.hints}</span>`:''}`
+      +(ok?(c.errs||[]).map(e=>`<span class="sm">• ${esc(er(e))}</span>`).join(''):''))); });
+  (typeof INH_DEVS!=='undefined'?INH_DEVS:[]).forEach(dev=>{ const f=log.filter(e=>e.type==='inhSim'&&e.dev===dev)[0]; if(!f) return;
+    calc.push(row(`${mk(f.ok)} <b>${esc(hk(dev))}</b>${f.pts!=null?` 📋 ${f.pts}/${f.max||8}`:''}`+(ok?(f.errs||[]).map(e=>`<span class="sm">• ${esc(er(e))}</span>`).join(''):''))); });
+  sec(hsT('calc'), calc.join(''));
+  if(s.mr&&(s.mr.ans||[]).length&&typeof MISSIONS!=='undefined') sec(esc(T('tMR')), s.mr.ans.map(a=>{ const m=MISSIONS.find(x=>x.id===a.id);
+    return row(`${mk(a.perfect,a.partial)} ${m?hsQ(m.q):esc(a.id)}<span class="sm">→ ${(a.sel||[]).map(hsDrug).map(esc).join(', ')||'—'}</span>${s.done&&m&&!a.perfect?`<span class="sm">${hsT('key')}: ${(m.ans||[]).map(hsDrug).map(esc).join(', ')}</span>`:''}`); }).join(''));
+  const B=s.boss&&s.boss.answers||[]; if(B.length) sec(esc(T('tBoss')), B.map(a=>{ const m=(typeof MYTHS!=='undefined')&&MYTHS.find(x=>x.p===a.p);
+    return row(`${ok?(['❌','🔸','✅'][a.q]||'⏰'):''} ${m?'「'+hsQ(m.m)+'」':''}<span class="sm">→ ${esc(a.text)}</span>`); }).join(''));
+  const fin=log.filter(e=>e.type==='final').pop(); if(fin&&fin.text) sec(hsT('final'), row(esc(fin.text),'tx'));
+  if(s.pp&&(Object.keys(s.pp.pre||{}).length||Object.keys(s.pp.post||{}).length)){ const qt={}; log.forEach(e=>{ if(e.type==='pp') qt[e.qid]=e.q; });
+    const ids=[...new Set(Object.keys(s.pp.pre||{}).concat(Object.keys(s.pp.post||{})))];
+    sec('📊 '+esc(T('ppStat')), ids.map(id=>{ const a=(s.pp.pre||{})[id], b=(s.pp.post||{})[id];
+      return row(`${esc(KP(qt[id]||id))}${a?`<span class="sm">${esc(T('ppPre'))}: ${a.ok?'✅':'❌'} ${esc(a.ans||'')}</span>`:''}${b?`<span class="sm">${esc(T('ppPost'))}: ${b.ok?'✅':'❌'} ${esc(b.ans||'')}</span>`:''}`); }).join('')); }
+  if(s.custom&&(s.custom.list||[]).length) sec('➕ '+esc(typeof TE==='function'?TE('tCustom'):''), s.custom.list.map(a=>row(`${a.kind==='text'&&!a.auto?'📝':mk(a.ok,a.partial)} <b>${esc(KP(a.q))}</b><span class="sm">→ “${esc(a.ans)}”</span>`)).join(''));
+  if((s.refl||[]).length) sec('💭 '+esc(T('reflT')), s.refl.map(a=>row(`<b>${esc(KP(a.q))}</b><span class="sm" style="white-space:pre-wrap">“${esc(a.ans)}”</span>`)).join(''));
+  if(s.fb&&typeof fbHTML==='function') sec(hsT('fb'), fbHTML(s.fb));
+  return out.length?(ok?'':`<p class="muted">${hsT('examHid')}</p>`)+out.join(''):`<p class="msg">${hsT('nothing')}</p>`; }
+function hsDocs(s){ if(!s.done) return `<p class="msg">${hsT('docLocked')}</p>`;
+  const ev=new Set(s.evidence||[]), img=src=>`<img class="z" src="${esc(src)}" alt="">`, out=[];
+  const sec=(id,h,body)=>{ if(body) out.push(`<h4 id="hsd_${id}">${hsT(h)}</h4>${body}`); };
+  if(typeof PROFILE!=='undefined') sec('prof','dProf',`<div class="kv">${PROFILE.map(f=>`<b>${hsQ(f.l)}</b><span>${hsQ(f.v)}</span>`).join('')}</div>`);
+  if(typeof ITEMS!=='undefined'){ const ids=Object.keys(ITEMS).sort((a,b)=>(ev.has(b)-ev.has(a)));
+    sec('ev','dEv',`<div class="dgrid">${ids.map(id=>{ const it=ITEMS[id], has=ev.has(id), pics=typeof itemImages==='function'?itemImages(id):[];
+      return `<div class="dcard${has?'':' miss'}"><div class="dh">${typeof itemIcon==='function'?itemIcon(id,40):''}<div><b>${hsQ(it.n)}</b><div class="tag">${hsT(has?'dFound':'dMiss')}</div></div></div>
+        ${it.loc?`<div class="muted">📍 ${hsQ(it.loc)}</div>`:''}${it.d?`<div>${hsQ(it.d)}</div>`:''}${pics.map(img).join('')}</div>`; }).join('')}</div>`); }
+  if(typeof DRUGS!=='undefined') sec('meds','dMeds',`<div class="dgrid">${DRUGS.map(d=>`<div class="dcard bag">${IMG[d.img]?img(IMG[d.img]):''}<b>${esc(d.n)}</b><span class="muted">${esc(d.g||'')}</span>
+      <div>${d.sig?hsQ(d.sig):''}</div><div class="muted">${d.cls?hsQ(d.cls):''}${typeof SRC!=='undefined'&&SRC[d.src]?' · '+hsQ(SRC[d.src]):''}</div></div>`).join('')}</div>`);
+  if(typeof LABS2!=='undefined'){ const pics=typeof labImages==='function'?labImages():[];
+    sec('labs','dLabs',`<div class="wrapx"><table class="ltbl"><tr><th>${esc(T('labItem'))}</th><th>${esc(T('labRef'))}</th>${(typeof LAB_DATES!=='undefined'?LAB_DATES:[]).map(d=>`<th>${esc(d)}</th>`).join('')}</tr>
+      ${LABS2.map(r=>`<tr><td><b>${esc(r.item)}</b> <span class="muted">${esc(r.unit||'')}</span></td><td>${esc(r.ref||'')}</td>${(r.v||[]).map(v=>{ const vv=Array.isArray(v)?L(v):String(v); const c=r.f==='H'&&vv!=='—'?'#d0203e':r.f==='L'?'#2856b8':'inherit'; return `<td style="font-weight:700;color:${c}">${esc(vv)}</td>`; }).join('')}</tr>`).join('')}</table></div>
+      ${pics.length?`<h5>${hsT('dPics')}</h5><div>${pics.map(img).join('')}</div>`:''}`); }
+  if(!out.length) return `<p class="msg">${hsT('nothing')}</p>`;
+  return `<div class="dnav">${['prof','ev','meds','labs'].filter(k=>out.some(h=>h.includes('id="hsd_'+k+'"'))).map(k=>`<a data-hj="${k}">${hsT({prof:'dProf',ev:'dEv',meds:'dMeds',labs:'dLabs'}[k])}</a>`).join('')}</div>
+    <p class="muted" style="margin:0 0 4px">${hsT('dZoom')}</p>${out.join('')}`; }
+function hsZoom(src){ const card=$('#hsUI .card'); if(!card) return; let z=$('#hsZoom'); if(z) z.remove();
+  z=document.createElement('div'); z.id='hsZoom'; z.innerHTML=`<img src="${esc(src)}" alt="">`; z.onclick=()=>z.remove(); card.appendChild(z); sfx.click(); }
+function hsOpen(){ hsCss(); sfx.paper(); let ui=$('#hsUI'); if(!ui){ ui=document.createElement('div'); ui.id='hsUI'; document.body.appendChild(ui); } HS.tab='sum'; hsRender(); }
+function hsClose(){ const ui=$('#hsUI'); if(ui) ui.remove(); sfx.click(); }
+document.addEventListener('keydown', e=>{ if(e.key==='Escape'&&$('#hsUI')){ e.stopPropagation(); const z=$('#hsZoom'); if(z) z.remove(); else hsClose(); } }, true);
+function hsRender(){ const ui=$('#hsUI'); if(!ui) return; const games=hsGames();
+  const s=games.find(g=>g.id===HS.id)||games[0]; HS.id=s?s.id:null;
+  const body=!s?`<p class="msg">${hsT('none')}</p>`:
+    `<div class="gp">${games.length>1?`${hsT('pick')} <select id="hsPick">${games.map(g=>`<option value="${esc(g.id)}"${g.id===s.id?' selected':''}>${esc(hsLabel(g))}</option>`).join('')}</select>`:esc(hsLabel(s))}</div>
+     <div class="tabs">${[['sum','tSum'],['ask','tAsk'],['ans','tAns'],['doc','tDoc']].map(([k,l])=>`<button data-ht="${k}" class="${HS.tab===k?'on':''}">${hsT(l)}</button>`).join('')}</div>
+     <div id="hsBody">${HS.tab==='ask'?hsAsk(s):HS.tab==='ans'?hsAns(s):HS.tab==='doc'?hsDocs(s):hsSum(s)}</div>`;
+  if(!ui.querySelector('.card')){ ui.innerHTML=`<div class="card" role="dialog" aria-modal="true"><div class="hd"><b></b><button class="x" aria-label="close">✕</button></div><div class="bd"></div>
+    <div class="ft"><span class="ro"></span><button id="hsX"></button></div></div>`;
+    ui.querySelector('.hd .x').onclick=hsClose; $('#hsX').onclick=hsClose; ui.onclick=e=>{ if(e.target===ui) hsClose(); }; }
+  ui.querySelector('.hd b').textContent=hsT('title'); ui.querySelector('.ft .ro').textContent=hsT('ro'); $('#hsX').textContent=hsT('close');
+  const bd=ui.querySelector('.bd'); bd.innerHTML=body;
+  const p=$('#hsPick'); if(p) p.onchange=e=>{ HS.id=e.target.value; sfx.click(); hsRender(); };
+  ui.querySelectorAll('[data-ht]').forEach(b=>b.onclick=()=>{ HS.tab=b.dataset.ht; sfx.click(); hsRender(); bd.scrollTop=0; });
+  bd.querySelectorAll('img.z').forEach(i=>i.onclick=()=>hsZoom(i.getAttribute('src')));
+  bd.querySelectorAll('[data-hj]').forEach(x=>x.onclick=()=>{ const h=$('#hsd_'+x.dataset.hj); if(h) h.scrollIntoView({block:'start', behavior:'smooth'}); }); }
+/* the 📜 pill sits at the top right of the title screen, left of "Choose a case" when that is shown */
+function hsPlace(){ const b=$('#btnHist'), cb=$('#caseBack'); if(!b) return; b.style.right=(cb&&!cb.classList.contains('hidden')&&cb.offsetWidth?28+cb.offsetWidth+16:28)+'px'; }
+function hsButton(){ const t=$('#title'); if(!t) return; hsCss(); let b=$('#btnHist');
+  if(!b){ b=document.createElement('button'); b.id='btnHist'; b.onclick=hsOpen; t.appendChild(b); }
+  b.textContent=hsT('btn'); hsPlace(); setTimeout(hsPlace,60); setTimeout(hsPlace,600); }
+{ const f=showTitle; showTitle=function(){ const r=f.apply(this, arguments); hsButton(); return r; }; }
+{ const f=applyI18n; applyI18n=function(){ const r=f.apply(this, arguments); if($('#btnHist')) hsButton(); if($('#hsUI')) hsRender(); return r; }; }
+/* a choice is logged with the line that asked it (older games have no such line) */
+let HS_LAST=null, HS_CHQ=null;   // the last line said, and the question label a choice may carry
+{ const f=say; say=function(who, e, text){ HS_LAST=text; return f.apply(this, arguments); }; }
+{ const f=choose; choose=function(opts, o){ HS_CHQ=o&&o.label||null; return f.apply(this, arguments); }; }
+{ const f=logEvent; logEvent=function(o){ const q=o&&o.type==='choice'&&o.q==null?(HS_CHQ||HS_LAST):null;
+    if(q){ try{ o.q=KP(Array.isArray(q)?L(q):String(q)).slice(0,240); }catch(e){} } return f.apply(this, arguments); }; }
+/* =====================================================================
+   💌 A QUICK SECRET QUESTION at the very end (after the reflection questions): how was the game,
+   what kind of game next, and any comments. Everything is optional and unscored; "Skip" leaves no record.
+   Stored in the session as fb = {rate, next[], other, comment, at}; shown in My past games and on the instructor pages.
+   ===================================================================== */
+const FBT={ head:['💌 偷偷問一下','💌 A quick secret question','💌 ขอแอบถามหน่อย'],
+  note:['不計分；做遊戲的人和老師會讀你寫的內容。每一題都可以不填。','Not scored — the game makers and your instructor will read it. Every part is optional.','ไม่คิดคะแนน คนทำเกมกับอาจารย์จะได้อ่าน ทุกข้อไม่ตอบก็ได้'],
+  pilly:['快結束了！走之前偷偷問你一下 🤫 不計分，想答多少都可以～','Almost done! Before you go, a quick secret question 🤫 It doesn\'t count — answer as much as you like~','ใกล้จบแล้ว! ก่อนไปขอแอบถามหน่อย 🤫 ไม่คิดคะแนน ตอบแค่ไหนก็ได้~'],
+  thx:['收到了！謝謝你，我們會認真看 💖','Got it — thank you! We\'ll read every word 💖','ได้รับแล้ว ขอบคุณมาก! เราจะอ่านทุกคำเลย 💖'],
+  rateQ:['這個遊戲玩起來怎麼樣？','How was this game for you?','เกมนี้เป็นยังไงบ้าง?'],
+  rates:[['😫','很無聊','Boring','น่าเบื่อ'],['😕','普通偏無聊','Meh','งั้นๆ'],['😐','還可以','OK','พอได้'],['🙂','好玩','Fun','สนุก'],['😍','超好玩','Loved it','สนุกมาก']],
+  nextQ:['如果有下一個遊戲，你想玩哪一種？（可以複選）','If there\'s a next game, what kind would you like? (pick any)','ถ้ามีเกมต่อไป อยากได้แนวไหน? (เลือกได้หลายข้อ)'],
+  genres:[
+    {k:'home', ic:'🏠', t:['再來一個居家訪視推理案','Another home-visit mystery like this','เคสสืบสวนเยี่ยมบ้านแบบนี้อีก']},
+    {k:'ward', ic:'🏥', t:['醫院病房：跟醫療團隊一起查房','Hospital ward rounds with the care team','วอร์ดโรงพยาบาล ราวด์กับทีมแพทย์']},
+    {k:'shop', ic:'💊', t:['社區藥局櫃檯：客人一個接一個','Community pharmacy counter, one customer after another','เคาน์เตอร์ร้านยา ลูกค้าเดินเข้ามาเรื่อยๆ']},
+    {k:'er', ic:'🚑', t:['急診：跟時間賽跑','Emergency room: a race against time','ห้องฉุกเฉิน แข่งกับเวลา']},
+    {k:'talk', ic:'🗣️', t:['溝通練習：難搞的病人和家屬','Talking with difficult patients and families','ฝึกคุยกับผู้ป่วยและญาติที่รับมือยาก']},
+    {k:'escape', ic:'🧩', t:['藥學密室逃脫解謎','Pharmacy escape-room puzzles','ไขปริศนาหนีออกจากห้องธีมเภสัช']},
+    {k:'battle', ic:'⚔️', t:['跟同學對戰的搶答','A quiz battle against classmates','ควิซแข่งกับเพื่อนในห้อง']} ],
+  otherPh:['其他想法？（可以不填）','Another idea? (optional)','ไอเดียอื่น? (ไม่ใส่ก็ได้)'],
+  cmtQ:['對這個遊戲有什麼建議或想吐槽的嗎？','Any suggestions or complaints about this game?','มีข้อติชมหรือข้อเสนอแนะเรื่องเกมนี้ไหม?'],
+  cmtPh:['哪裡好玩、哪裡卡住、哪裡想改……都可以寫（可以不填）','What was fun, where you got stuck, what to change… (optional)','ตรงไหนสนุก ติดตรงไหน อยากให้แก้อะไร… เขียนได้หมด (ไม่ใส่ก็ได้)'],
+  send:['送出 💌','Send 💌','ส่ง 💌'], skip:['跳過','Skip','ข้าม'],
+  /* instructor pages */
+  cls:['💌 學生意見回饋','💌 Student feedback','💌 ความเห็นจากนักศึกษา'], clsNote:['{n} 人回答（不計分，可以跳過）','{n} answered (optional, unscored)','ตอบ {n} คน (ไม่บังคับ ไม่คิดคะแนน)'],
+  avg:['平均','Average','เฉลี่ย'], fun:['好玩程度','How fun','ความสนุก'], nextH:['想玩的下一款','Next game wanted','เกมต่อไปที่อยากได้'], cmtH:['建議與想法','Comments & ideas','ข้อติชมและไอเดีย'],
+  other:['其他','Other','อื่นๆ'], none:['還沒有人回答。','No answers yet.','ยังไม่มีใครตอบ'] };
+const FB_GEN=k=>FBT.genres.find(g=>g.k===k);
+/* the record of THIS game (kept with the session id, so a new game in the same page never inherits it) */
+const fbOf=s=>s&&s.fb&&typeof s.fb==='object'?s.fb:null;
+function fbHTML(fb){ if(!fb) return ''; const r=FBT.rates[(fb.rate||0)-1], g=(fb.next||[]).map(FB_GEN).filter(Boolean);
+  return (r?`<div class="ll hrow">${r[0]} <b>${esc(r[LI()+1])}</b> <span class="muted">(${fb.rate}/5)</span></div>`:'')
+    +(g.length||fb.other?`<div class="ll hrow">🎮 ${g.map(x=>x.ic+' '+esc(L(x.t))).join(' · ')}${fb.other?`${g.length?' · ':''}${esc(L(FBT.other))}: “${esc(fb.other)}”`:''}</div>`:'')
+    +(fb.comment?`<div class="ll hrow free" style="white-space:pre-wrap">💬 “${esc(fb.comment)}”</div>`:''); }
+function fbCss(){ if($('#fbCss')) return; const st=document.createElement('style'); st.id='fbCss'; st.textContent=`
+#fbBox{position:absolute;inset:0;z-index:96;display:flex;align-items:flex-start;justify-content:center;padding-top:40px;background:rgba(20,14,45,.35)}
+#fbBox .cqcard{box-shadow:0 0 0 5px #fff,0 0 0 10px #e05cb0,0 20px 50px rgba(0,0,0,.4);max-height:840px}
+#fbBox .cqhead{color:#b0307a}
+#fbBox .fbn{font-size:16px;font-weight:700;color:#8a83a3;margin:2px 0 10px}
+#fbBox .fbq{font-size:22px;font-weight:900;color:#2a2140;margin:14px 0 8px}
+#fbBox .fbr{display:flex;gap:10px}
+#fbBox .fbr button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border-radius:18px;background:#fff;box-shadow:inset 0 0 0 3px #eadff2;font-size:16px;font-weight:800;color:#5a4a7a}
+#fbBox .fbr button b{font-size:40px;line-height:1.1}
+#fbBox .fbr button.on{box-shadow:inset 0 0 0 4px #e05cb0;background:#fff0f8;color:#b0307a}
+#fbBox .fbg{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#fbBox .fbg button{display:flex;gap:10px;align-items:center;text-align:left;padding:10px 14px;border-radius:16px;background:#fff;box-shadow:inset 0 0 0 3px #e6dcef;font-size:19px;font-weight:700;color:#2a2140}
+#fbBox .fbg button i{font-style:normal;font-size:26px}
+#fbBox .fbg button.on{box-shadow:inset 0 0 0 4px #3d7bff;background:#f0f6ff}
+#fbBox input,#fbBox textarea{width:100%;border:none;border-radius:16px;padding:10px 14px;font-size:19px;font-family:inherit;background:#f8f5ff;box-shadow:inset 0 0 0 3px #e2d8ff;outline:none}
+#fbBox input{margin-top:8px}
+#fbBox textarea{height:96px;resize:none}
+#fbBox .cqfoot{display:flex;gap:12px;justify-content:flex-end;align-items:center;margin-top:14px}
+#fbBox .cqfoot .sk{padding:10px 24px;border-radius:99px;background:#f1eef8;color:#6a5a8a;font-weight:900;font-size:19px}
+`; document.head.appendChild(st); }
+function askFeedback(){ return new Promise(res=>{ fbCss(); const host=$('#cqBox')&&$('#cqBox').parentElement||$('#stage'); if(!host){ res(null); return; }
+  let box=$('#fbBox'); if(box) box.remove(); box=document.createElement('div'); box.id='fbBox'; host.appendChild(box);
+  const A={rate:0, next:new Set()};
+  box.innerHTML=`<div class="cqcard"><div class="cqhead"><span><span class="cqi">💌</span>${esc(L(FBT.head).replace(/^💌\s*/,''))}</span></div><div class="fbn">${esc(L(FBT.note))}</div>
+    <div class="fbq">${esc(L(FBT.rateQ))}</div><div class="fbr">${FBT.rates.map((r,i)=>`<button data-r="${i+1}"><b>${r[0]}</b>${esc(r[LI()+1])}</button>`).join('')}</div>
+    <div class="fbq">${esc(L(FBT.nextQ))}</div><div class="fbg">${FBT.genres.map(g=>`<button data-g="${g.k}"><i>${g.ic}</i><span>${esc(L(g.t))}</span></button>`).join('')}</div>
+    <input id="fbOther" maxlength="200" placeholder="${esc(L(FBT.otherPh))}">
+    <div class="fbq">${esc(L(FBT.cmtQ))}</div><textarea id="fbCmt" maxlength="2000" placeholder="${esc(L(FBT.cmtPh))}"></textarea>
+    <div class="cqfoot"><button class="sk" id="fbSkip">${esc(L(FBT.skip))}</button><button class="gbtn blue" id="fbSend">${esc(L(FBT.send))}</button></div></div>`;
+  box.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{ const v=+b.dataset.r; A.rate=A.rate===v?0:v; sfx.select(); box.querySelectorAll('[data-r]').forEach(x=>x.classList.toggle('on',+x.dataset.r===A.rate)); });
+  box.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{ const k=b.dataset.g; A.next.has(k)?A.next.delete(k):A.next.add(k); sfx.select(); b.classList.toggle('on',A.next.has(k)); });
+  box.querySelectorAll('input,textarea').forEach(x=>x.addEventListener('keydown',e=>e.stopPropagation()));
+  const finish=fb=>{ box.remove(); res(fb); };
+  $('#fbSkip').onclick=()=>{ sfx.click(); finish(null); };
+  $('#fbSend').onclick=()=>{ const other=$('#fbOther').value.trim().slice(0,200), comment=$('#fbCmt').value.trim().slice(0,2000);
+    if(!A.rate&&!A.next.size&&!other&&!comment){ sfx.click(); finish(null); return; }
+    sfx.get(); finish({rate:A.rate||null, next:FBT.genres.map(g=>g.k).filter(k=>A.next.has(k)), other, comment, at:new Date().toISOString()}); };
+}); }
+/* after the reflection questions of the last checkpoint */
+{ const f=runCheckpoint; runCheckpoint=async function(cp){ const r=await f.apply(this, arguments);
+    if(cp==='post'&&!S.practice&&S.sessionId&&!(S.fb&&S.fb.sid===S.sessionId)){
+      hideText(); await say('pilly','happy',FBT.pilly); hideText(); if(typeof pillyHide==='function') pillyHide();
+      const fb=await askFeedback();
+      if(fb){ S.fb=Object.assign({sid:S.sessionId}, fb); logEvent(Object.assign({type:'fb'}, fb)); saveSession(true); hideText(); await say('pilly','happy',FBT.thx); hideText(); }
+      else { S.fb={sid:S.sessionId, skipped:true}; logEvent({type:'fb', skipped:true}); } }
+    return r; }; }
+{ const f=snapshot; snapshot=function(){ const o=f.apply(this, arguments);
+    if(S.fb&&S.fb.sid===o.id&&!S.fb.skipped){ const {rate,next,other,comment,at}=S.fb; o.fb={rate,next,other,comment,at}; } return o; }; }
+/* instructor pages: the student's own card, and a section in the class overview (neutral bars: a share, not a grade) */
+const fbBar=(l,n,d)=>cbar2(l,n,d).replace(/<i class="[a-z]*" style="/,'<i style="background:#a78bfa;');
+{ const f=studentCard; studentCard=function(s){ const h=f.apply(this, arguments), fb=fbOf(s); if(!fb) return h;
+    const mark='<details style="margin-top:10px">', i=h.lastIndexOf(mark); const add=`<h4>${esc(L(FBT.cls))}</h4>${fbHTML(fb)}`;
+    return i<0?h:h.slice(0,i)+add+h.slice(i); }; }
+{ const f=renderClass2; renderClass2=function(b){ const r=f.apply(this, arguments);
+  try{ const more=b.querySelector('details.more'); if(!more) return r;
+    const list=allSessions().filter(s=>(!CLS.fin||s.done)&&(CLS.ver==='__all'||(s.cfgRev||'')===CLS.ver)&&(CLS.mode==='all'||(s.mode||'practice')===CLS.mode)&&(CLS.cls==='__all'||(s.classCode||'main')===CLS.cls));
+    const got=list.filter(s=>fbOf(s)), n=got.length, rated=got.filter(s=>s.fb.rate), who=s=>esc(s.student&&s.student.name||'?');
+    let h=`<div class="clsec"><h4>${esc(L(FBT.cls))}</h4><p class="muted" style="margin:-2px 0 6px">${esc(L(FBT.clsNote).replace('{n}',n))}</p>`;
+    if(!n) h+=`<p class="muted">${esc(L(FBT.none))}</p>`;
+    else { if(rated.length){ const avg=rated.reduce((a,s)=>a+s.fb.rate,0)/rated.length;
+        h+=`<h5>${esc(L(FBT.fun))} · ${esc(L(FBT.avg))} ${avg.toFixed(1)}/5</h5>`+FBT.rates.map((x,i)=>fbBar(x[0]+' '+esc(x[LI()+1]), rated.filter(s=>s.fb.rate===i+1).length, rated.length)).join(''); }
+      const cnt=FBT.genres.map(g=>[g, got.filter(s=>(s.fb.next||[]).includes(g.k)).length]).filter(x=>x[1]).sort((a,c)=>c[1]-a[1]);
+      if(cnt.length) h+=`<h5>${esc(L(FBT.nextH))}</h5>`+cnt.map(([g,k])=>fbBar(g.ic+' '+esc(L(g.t)), k, n)).join('');
+      const txt=got.filter(s=>s.fb.other||s.fb.comment);
+      if(txt.length) h+=`<h5>${esc(L(FBT.cmtH))}</h5>`+txt.map(s=>`<div class="refl"><b>${who(s)}</b>：${s.fb.other?`🎮 ${esc(s.fb.other)}${s.fb.comment?'<br>':''}`:''}${s.fb.comment?`💬 ${esc(s.fb.comment)}`:''}</div>`).join(''); }
+    more.insertAdjacentHTML('beforebegin', h+'</div>'); }catch(e){}
+  return r; }; }
 /* =====================================================================
    PAGES (outside the stage): case file · settings · instructor dashboard
    ===================================================================== */

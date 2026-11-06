@@ -842,6 +842,10 @@ html[lang=en] #logo h1{font-size:76px;letter-spacing:2px}
 /* translation extensions (e.g. Immersive Translate) inject translated copies and "error / tap to retry" tags into every text block;
    the page already opts out with translate="no", this hides anything that still gets injected so the game layout stays intact */
 [class*="immersive-translate"]:not(html):not(body),[data-immersive-translate-translation-element-mark]{display:none!important}
+
+/* Outlined titles: browsers without paint-order on HTML text draw the outline over the letters. A plain fill copy on top keeps the outline outside the letters everywhere. */
+:where(#splash .s,#intro .nm,#logo h1,#logo h2,.rank){position:relative}
+#splash .s::after,#intro .nm::after,#logo h1::after,#logo h2::after,.rank::after{content:attr(data-txt);position:absolute;inset:0;-webkit-text-stroke:0;text-shadow:none;pointer-events:none}
 </style>
 </head>
 <body>
@@ -6073,6 +6077,9 @@ function bindUI(){
   bindUI(); applyView(); initSync(); initCaseBack(); showTitle(); initLock(); gfxWatch(); cfgRefresh();
   window.__PD__={S, D, CH, ED_ST, edWork, askCustom, MISSIONS, DRUGS, ZONES, reveal, addEvidence, openPage, startGame, advance, HOTSPOTS, onHotspot, zoomTo, camReset, computeScore, FOLLOW1, BADGES, DEFAULT_QUESTIONS, practiceChapter, epiOutcomes};
 })();
+</script>
+<script>/* keep data-txt in step with the outlined titles (see ::after rule) */
+(()=>{const SEL='#splash .s,#intro .nm,#logo h1,#logo h2,.rank';let q=0;const sync=()=>{q=0;document.querySelectorAll(SEL).forEach(e=>{const t=e.textContent;if(e.dataset.txt!==t)e.dataset.txt=t;});};new MutationObserver(()=>{if(!q){q=1;requestAnimationFrame(sync);}}).observe(document.body,{subtree:true,childList:true,characterData:true});sync();})();
 </script>
 </body>
 </html>

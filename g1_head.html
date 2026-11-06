@@ -842,5 +842,9 @@ html[lang=en] #logo h1{font-size:76px;letter-spacing:2px}
 /* translation extensions (e.g. Immersive Translate) inject translated copies and "error / tap to retry" tags into every text block;
    the page already opts out with translate="no", this hides anything that still gets injected so the game layout stays intact */
 [class*="immersive-translate"]:not(html):not(body),[data-immersive-translate-translation-element-mark]{display:none!important}
+
+/* Outlined titles: browsers without paint-order on HTML text draw the outline over the letters. A plain fill copy on top keeps the outline outside the letters everywhere. */
+:where(#splash .s,#intro .nm,#logo h1,#logo h2,.rank){position:relative}
+#splash .s::after,#intro .nm::after,#logo h1::after,#logo h2::after,.rank::after{content:attr(data-txt);position:absolute;inset:0;-webkit-text-stroke:0;text-shadow:none;pointer-events:none}
 </style>
 </head>

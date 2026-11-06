@@ -2,8 +2,9 @@
 
 > **ภาษาไทยสั้นๆ:** branch นี้เก็บไฟล์ต้นฉบับและสคริปต์ที่ใช้สร้างเกม ส่วนเว็บที่ใช้จริงอยู่ใน branch `main`
 > ถ้าจะสร้างใหม่ ให้รัน 3 คำสั่งในหัวข้อ "Rebuild" แล้วคัดลอกไฟล์ที่ได้ไปไว้ใน `main`
-> ไฟล์ที่สร้างจาก branch นี้ (ณ 4 พ.ย. 2026) ตรงกับที่ deploy อยู่ทุกไบต์
+> ไฟล์ที่สร้างจาก branch นี้ (ณ 7 พ.ย. 2026) ตรงกับที่ deploy อยู่ทุกไบต์
 > ถ้าจะแก้เนื้อหาเคส ให้อ่านหัวข้อ "Where the content lives" กับ "Rules" ก่อน
+> **ถ้าแก้ไฟล์บนเว็บ (branch `main`) ตรงๆ ต้องแก้ที่ branch นี้ด้วย** ไม่อย่างนั้นการสร้างใหม่ครั้งถัดไปจะทับสิ่งที่แก้ไว้
 
 This branch holds everything needed to rebuild the game files on `main`. Nothing here is served to
 students. The live site is on `main` (GitHub Pages):
@@ -29,7 +30,7 @@ bash rebuild_cd.sh                  # Cases C and D (merge, see below) + Case A 
 python3 mk_main.py build/main.html  # the main link: Case A on the current engine, ORIGINAL content (age 61)
 ```
 
-Where the outputs went on 4 Nov 2026:
+Where the outputs went (4–7 Nov 2026):
 
 - `site/case-a|c|d/index.html` were copied to `main:preview/case-a|c|d/index.html`.
 - `build/main.html` was copied to `main:index.html`.
@@ -55,8 +56,10 @@ built on an older Case A, kept as `cd/a_base.html`. `rebuild_cd.sh` builds them 
    It then renames the storage keys to each case's own.
 3. `mk_resume.py` adds save-anywhere to all three.
 4. `mk_main.py` reverses `fix_a_age.py`, which changed the age 61 → 65 (birth date from the receipt). It also
-   puts back the eight age-61 bag pictures from `assets/case_a_bags_age61.json`. That gives the main link the
-   original Case A content on the current engine. **Don't run `fix_a_age.py` again: it is already applied.**
+   puts back the eight age-61 bag pictures from `assets/case_a_bags_age61.json`. It also sets the eGFR/CrCl age
+   chip back to 61; that chip is set outside `fix_a_age.py` and showed 65 on the main link from 4 to 7 Nov 2026.
+   Finally it adds `assets/main_regrade_age_chip.js`, so the instructor pages regrade attempts that were marked
+   wrong only because of that chip. That gives the main link the original Case A content on the current engine. **Don't run `fix_a_age.py` again: it is already applied.**
    `mk_main.py` only reads its list of edits.
 
 ## Where the content lives
@@ -89,6 +92,8 @@ Pictures: `imgsrc.py` reads and replaces the base64 images (`get(case, key)`, `p
   them into C and D.
 - **Case C / D content** is edited in its own case file. Don't change the same lines on both sides (engine and
   case file): the conflict is resolved to the engine side and the case edit is lost.
+- **Edits made straight to the live HTML on `main` must be copied here too.** Otherwise the next rebuild undoes them.
+  After any change, rebuild and check that the outputs match the files on `main` byte for byte (`cmp`).
 - Keep all three languages in every text: `['中文','English','ไทย']`.
 - The instructor results key is a Cloudflare secret (`TEACHER_KEY`). Never put it in any file.
 

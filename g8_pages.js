@@ -288,5 +288,8 @@ function bindUI(){
   window.__PD__={S, D, CH, ED_ST, edWork, askCustom, MISSIONS, DRUGS, ZONES, reveal, addEvidence, openPage, startGame, advance, HOTSPOTS, onHotspot, zoomTo, camReset, computeScore, FOLLOW1, BADGES, DEFAULT_QUESTIONS, practiceChapter, epiOutcomes};
 })();
 </script>
+<script>/* keep data-txt in step with the outlined titles (see ::after rule) */
+(()=>{const SEL='#splash .s,#intro .nm,#logo h1,#logo h2,.rank';let q=0;const sync=()=>{q=0;document.querySelectorAll(SEL).forEach(e=>{const t=e.textContent;if(e.dataset.txt!==t)e.dataset.txt=t;});};new MutationObserver(()=>{if(!q){q=1;requestAnimationFrame(sync);}}).observe(document.body,{subtree:true,childList:true,characterData:true});sync();})();
+</script>
 </body>
 </html>

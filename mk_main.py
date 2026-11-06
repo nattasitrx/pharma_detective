@@ -16,6 +16,13 @@ for k in BAGS:
     pat = re.compile(r"(\b" + k + r":')(data:image/png;base64,[A-Za-z0-9+/=]+)(')")
     assert len(pat.findall(s)) == 1, (k, len(pat.findall(s)))
     s = pat.sub(lambda m: m.group(1) + OLD_BAGS[k] + m.group(3), s, count=1)
+# the eGFR/CrCl age chip is set outside fix_a_age.py: put it back to 61 (it showed 65 on the main link 4–7 Nov 2026)
+a = "const CLUE_AGE={v:'65',"; assert s.count(a) == 1, 'age chip'; s = s.replace(a, "const CLUE_AGE={v:'61',")
+# instructor pages regrade eGFR/CrCl attempts that were wrong only because the chip said 65 (see the comment in the inserted code)
+REGRADE = open(f'{SP}/assets/main_regrade_age_chip.js', encoding='utf-8').read()
+a = "function allSessions(){"; assert s.count(a) == 1; s = s.replace(a, REGRADE + a)
+a = "  return [...m.values()].sort((a,b)=>(b.updated||'').localeCompare(a.updated||'')); }"
+assert s.count(a) == 1; s = s.replace(a, "  return [...m.values()].map(fixAgeChip).sort((a,b)=>(b.updated||'').localeCompare(a.updated||'')); }")
 for bad in ['65 歲・雜貨店老闆', '(140-65)', 'age:65', '1955/11/7（65']:
     assert bad not in s, bad
 open(sys.argv[1], 'w', encoding='utf-8').write(s)

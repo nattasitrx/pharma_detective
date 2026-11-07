@@ -39,6 +39,7 @@ const MRV={ ok:['✅ 全部正確！','✅ All correct!','✅ ถูกทั้
   lOkA:['放對籃子','Right basket','ใส่ถูกตะกร้า'], lBadA:['放錯籃子','Wrong basket','ใส่ผิดตะกร้า'], ans:['正確答案','Answer','คำตอบที่ถูก'], why:['💡 解說','💡 Why','💡 คำอธิบาย'] };
 function mrVerdict(m, r){ return new Promise(res=>{
   const host=$('#medrev'); if(!host){ res(); return; }
+  document.querySelectorAll('#stage .pfound').forEach(e=>e.remove());   // a 'problem found' pop-up from the last mission would cover the verdict
   const side=host.querySelector('.mr-side'), act=host.querySelector('.mr-act'), acb=!!host.querySelector('.acard');
   const has=c=>!!host.querySelector('.dcard.'+c+',.acard.'+c), k=r.perfect?'ok':r.partial?'part':'bad';
   const dot=(c,bg,t)=>`<span><i style="background:${bg}">${c}</i>${esc(L(t))}</span>`;

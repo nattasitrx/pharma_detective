@@ -82,12 +82,12 @@ const ED={
 const DQ=(id,q,opts,ex)=>({id, kind:'single', cp:'pp', who:'sys', q, img:'', opts:opts.map((t,i)=>({t, ok:i===0})), ex, pts:0, timer:0, kw:'', kwMin:1, ans:'', tol:'', unit:'', clues:[], formula:['','',''], off:false});
 const DR=(id,q)=>({id, kind:'text', cp:'refl', who:'yeh', q, img:'', opts:[], ex:['','',''], pts:0, timer:0, kw:'', kwMin:1, ans:'', tol:'', unit:'', clues:[], formula:['','',''], off:false});
 const DEFAULT_QUESTIONS=[
- DQ('pp_door',['到病人家做居家訪視，進門後「第一件事」最適合做什麼？','On a home visit, what is the best FIRST thing to do after entering the home?','เมื่อไปเยี่ยมบ้านผู้ป่วย สิ่ง "แรก" ที่ควรทำหลังเข้าบ้านคืออะไร?'],[
+ Object.assign(DQ('pp_door',['到病人家做居家訪視，進門後「第一件事」最適合做什麼？','On a home visit, what is the best FIRST thing to do after entering the home?','เมื่อไปเยี่ยมบ้านผู้ป่วย สิ่ง "แรก" ที่ควรทำหลังเข้าบ้านคืออะไร?'],[
   ['向病人問好、自我介紹，說明來意與時間並取得同意','Greet him, introduce yourself, explain why and how long, ask his consent','ทักทาย แนะนำตัว บอกจุดประสงค์และเวลา แล้วขอความยินยอมจากผู้ป่วย'],
   ['先檢查屋內所有藥品，掌握病人每天實際的用藥','Check every medicine in the house first to see what he really takes','ตรวจยาทั้งหมดในบ้านก่อน เพื่อดูว่าผู้ป่วยใช้ยาอะไรจริงในแต่ละวัน'],
   ['先請家屬到一旁，私下了解病人平常的服藥習慣','Take the family member aside first and ask how he takes his pills','ขอคุยกับญาติเป็นการส่วนตัวก่อน เพื่อทราบพฤติกรรมการกินยาของผู้ป่วย'],
   ['馬上開始問用藥史，把握有限的拜訪時間不浪費','Start the medication history at once so no visit time is wasted','เริ่มซักประวัติการใช้ยาทันที เพื่อไม่ให้เสียเวลาเยี่ยมที่มีจำกัด']],
-  ['居家訪視時藥師是「客人」：先建立關係、說明目的並取得同意，之後才問診、經同意看藥、邀請家屬參與。','In a home visit the pharmacist is a guest: build rapport, explain the purpose and get consent first — then interview, look at medicines with permission and involve the family.','ในการเยี่ยมบ้าน เภสัชกรเป็น "แขก" ต้องสร้างสัมพันธภาพ บอกจุดประสงค์ และขอความยินยอมก่อน จากนั้นจึงซักประวัติ ขออนุญาตดูยา และชวนญาติร่วมคุย']),
+  ['居家訪視時藥師是「客人」：先建立關係、說明目的並取得同意，之後才問診、經同意看藥、邀請家屬參與。','In a home visit the pharmacist is a guest: build rapport, explain the purpose and get consent first — then interview, look at medicines with permission and involve the family.','ในการเยี่ยมบ้าน เภสัชกรเป็น "แขก" ต้องสร้างสัมพันธภาพ บอกจุดประสงค์ และขอความยินยอมก่อน จากนั้นจึงซักประวัติ ขออนุญาตดูยา และชวนญาติร่วมคุย']),{off:true}),
  DQ('pp_metformin',['65 歲男性糖尿病人，eGFR 約 23 mL/min/1.73m²，正在吃 metformin 500 mg 一天三次。最適當的建議是？','A 65-year-old man with diabetes has an eGFR of about 23 mL/min/1.73m² and takes metformin 500 mg three times a day. The most appropriate recommendation is:','ชายอายุ 65 ปีเป็นเบาหวาน eGFR ประมาณ 23 mL/min/1.73m² กิน metformin 500 mg วันละ 3 ครั้ง ข้อเสนอแนะที่เหมาะสมที่สุดคือ'],[
   ['建議停用 metformin（eGFR < 30 禁用）並調整治療','Stop metformin (contraindicated below eGFR 30) and re-plan therapy','เสนอหยุด metformin (ห้ามใช้เมื่อ eGFR < 30) และปรับแผนการรักษา'],
   ['劑量減半成一天 750 mg，繼續使用並定期監測腎功能','Halve it to 750 mg a day, continue it and monitor kidney function','ลดขนาดครึ่งหนึ่งเหลือ 750 mg/วัน ใช้ต่อและติดตามการทำงานของไต'],
@@ -100,27 +100,27 @@ const DEFAULT_QUESTIONS=[
   ['Metformin ＋ acarbose ＋ glimepiride','Metformin + acarbose + glimepiride','Metformin + acarbose + glimepiride'],
   ['抗組織胺 ＋ 偽麻黃鹼 ＋ 鼻用類固醇','Antihistamine + pseudoephedrine + nasal steroid','ยาแก้แพ้ + pseudoephedrine + สเตียรอยด์พ่นจมูก']],
   ['「三重打擊」(triple whammy)：ARB/ACEI 擴張出球小動脈、利尿劑減少血容量、NSAID 收縮入球小動脈——腎臟灌流驟降。','The "triple whammy": an ARB/ACEI dilates the efferent arteriole, a diuretic lowers volume and an NSAID constricts the afferent arteriole — renal perfusion collapses.','"Triple whammy": ARB/ACEI ขยายหลอดเลือดขาออก ยาขับปัสสาวะลดปริมาตรเลือด และ NSAID หดหลอดเลือดขาเข้า — เลือดไปเลี้ยงไตลดฮวบ']),
- DQ('pp_pseudo',['病人同時從三位醫師拿到含 pseudoephedrine 的鼻炎藥。最需要擔心的是？','A patient gets pseudoephedrine-containing allergy pills from three doctors at once. The main concern is:','ผู้ป่วยได้รับยาภูมิแพ้ที่มี pseudoephedrine จากแพทย์ 3 คนพร้อมกัน สิ่งที่น่ากังวลที่สุดคือ'],[
+ Object.assign(DQ('pp_pseudo',['病人同時從三位醫師拿到含 pseudoephedrine 的鼻炎藥。最需要擔心的是？','A patient gets pseudoephedrine-containing allergy pills from three doctors at once. The main concern is:','ผู้ป่วยได้รับยาภูมิแพ้ที่มี pseudoephedrine จากแพทย์ 3 คนพร้อมกัน สิ่งที่น่ากังวลที่สุดคือ'],[
   ['重複用藥超量：血壓升高、心悸、失眠、排尿困難','Duplicate overdose: high BP, palpitations, insomnia, urinary retention','ได้ยาซ้ำเกินขนาด: ความดันสูง ใจสั่น นอนไม่หลับ ปัสสาวะลำบาก'],
   ['一起吃效果比較強，鼻炎症狀可以控制得更好','Taking them together works better, so the symptoms are controlled','กินรวมกันได้ผลแรงขึ้น อาการภูมิแพ้จึงควบคุมได้ดีกว่าเดิม'],
   ['主要副作用是嗜睡，提醒他不要開車就可以了','The main problem is drowsiness — just remind him not to drive','ปัญหาหลักคือง่วงซึม แค่เตือนผู้ป่วยไม่ให้ขับรถก็เพียงพอ'],
   ['會讓血糖下降，需要增加降血糖藥物的劑量','It lowers blood sugar, so his diabetes drugs need to be increased','ทำให้น้ำตาลในเลือดต่ำลง จึงต้องเพิ่มขนาดยาเบาหวาน']],
-  ['Pseudoephedrine 每日上限 240 mg，重複處方很容易超量，對高血壓病人特別危險。','Pseudoephedrine tops out at 240 mg a day; duplicate prescriptions easily exceed it — especially dangerous with hypertension.','Pseudoephedrine ขนาดสูงสุด 240 mg/วัน ใบสั่งยาซ้ำซ้อนทำให้เกินขนาดได้ง่าย อันตรายมากในผู้ป่วยความดันสูง']),
+  ['Pseudoephedrine 每日上限 240 mg，重複處方很容易超量，對高血壓病人特別危險。','Pseudoephedrine tops out at 240 mg a day; duplicate prescriptions easily exceed it — especially dangerous with hypertension.','Pseudoephedrine ขนาดสูงสุด 240 mg/วัน ใบสั่งยาซ้ำซ้อนทำให้เกินขนาดได้ง่าย อันตรายมากในผู้ป่วยความดันสูง']),{off:true}),
  DQ('pp_crcl',['肥胖病人（BMI 30）用「實際體重」算 Cockcroft–Gault CrCl，結果通常會？','In an obese patient (BMI 30), using ACTUAL body weight in the Cockcroft–Gault CrCl usually:','ในผู้ป่วยอ้วน (BMI 30) ถ้าใช้ "น้ำหนักจริง" คำนวณ CrCl ด้วย Cockcroft–Gault ผลมักจะเป็นอย่างไร?'],[
   ['高估腎功能，所以常改用理想或調整體重','Overestimates kidney function, so ideal or adjusted weight is used','ประเมินไตสูงเกินจริง จึงมักใช้น้ำหนักในอุดมคติหรือน้ำหนักปรับ'],
   ['低估腎功能，所以用實際體重才最準確','Underestimates kidney function, so actual weight is the most accurate','ประเมินการทำงานของไตต่ำเกินจริง จึงควรใช้น้ำหนักจริงที่แม่นที่สุด'],
   ['沒有影響，因為公式裡根本沒有用到體重','Makes no difference, because weight is not in the formula at all','ไม่มีผลอะไรเลย เพราะสูตร Cockcroft–Gault ไม่ได้ใช้น้ำหนัก'],
   ['結果和 eGFR 完全一樣，兩者可以互相替換','Gives exactly the eGFR value, so the two are interchangeable','ได้ค่าเท่ากับ eGFR พอดี จึงใช้แทนกันได้ในทุกกรณีของผู้ป่วย']],
   ['脂肪組織產生的肌酸酐少，用實際體重會高估；肥胖時常用調整體重（AdjBW）。','Fat tissue makes little creatinine, so actual weight overestimates; adjusted body weight (AdjBW) is often used in obesity.','เนื้อเยื่อไขมันสร้างครีเอตินินน้อย ใช้น้ำหนักจริงจึงประเมินสูงเกิน คนอ้วนมักใช้น้ำหนักปรับ (AdjBW)']),
- DQ('pp_teach',['衛教結束前，確認病人真的聽懂的最好方法是？','Before ending your counselling, the best way to confirm the patient really understood is to:','ก่อนจบการให้คำแนะนำ วิธีที่ดีที่สุดในการยืนยันว่าผู้ป่วยเข้าใจจริงคือ'],[
+ Object.assign(DQ('pp_teach',['衛教結束前，確認病人真的聽懂的最好方法是？','Before ending your counselling, the best way to confirm the patient really understood is to:','ก่อนจบการให้คำแนะนำ วิธีที่ดีที่สุดในการยืนยันว่าผู้ป่วยเข้าใจจริงคือ'],[
   ['請他用自己的話說一次回家要怎麼吃藥','Ask him to say in his own words how he will take his medicines','ให้ผู้ป่วยอธิบายด้วยคำของตัวเองว่ากลับบ้านจะกินยาอย่างไร'],
   ['問他「這樣清楚嗎？」，點頭就代表懂了','Ask "Is that clear?" — if he nods, he has understood it','ถามว่า "เข้าใจไหม?" ถ้าผู้ป่วยพยักหน้าแปลว่าเข้าใจแล้ว'],
   ['把所有資訊印成一份詳細的書面資料給他','Hand him a detailed printed sheet that has all the information','ให้เอกสารที่พิมพ์ข้อมูลทั้งหมดไว้อย่างละเอียดกลับไปอ่าน'],
   ['請家屬簽名，保證之後會負責提醒病人','Have a family member sign that they will remind him every day','ให้ญาติเซ็นรับรองว่าจะช่วยเตือนผู้ป่วยกินยาทุกวัน']],
-  ['Teach-back：請病人用自己的話複述，是確認理解最有效的方法；點頭不等於聽懂。','Teach-back — the patient restates the plan in his own words — is the most reliable check of understanding; a nod is not understanding.','Teach-back ให้ผู้ป่วยพูดทวนด้วยคำของตัวเอง เป็นวิธียืนยันความเข้าใจที่ดีที่สุด การพยักหน้าไม่ได้แปลว่าเข้าใจ']),
+  ['Teach-back：請病人用自己的話複述，是確認理解最有效的方法；點頭不等於聽懂。','Teach-back — the patient restates the plan in his own words — is the most reliable check of understanding; a nod is not understanding.','Teach-back ให้ผู้ป่วยพูดทวนด้วยคำของตัวเอง เป็นวิธียืนยันความเข้าใจที่ดีที่สุด การพยักหน้าไม่ได้แปลว่าเข้าใจ']),{off:true}),
  DR('rf_moment',['回想這次訪視：哪一個「關鍵時刻」讓你發現了重要問題？你當時是怎麼想的？','Looking back on the visit: which key moment led you to an important problem, and what were you thinking at the time?','ย้อนนึกถึงการเยี่ยมครั้งนี้: ช่วงเวลาสำคัญไหนที่ทำให้คุณพบปัญหาสำคัญ และตอนนั้นคุณคิดอย่างไร?']),
- DR('rf_redo',['如果重來一次，有哪一件事你會「做得不一樣」？為什麼？','If you could do the visit again, what is one thing you would do differently, and why?','ถ้าได้เยี่ยมใหม่อีกครั้ง มีอะไรหนึ่งอย่างที่คุณจะทำต่างออกไป และเพราะอะไร?']),
- DR('rf_apply',['這次學到的哪一點，你會用在真實的居家訪視或藥局工作上？','Which lesson from this case will you use on a real home visit or in the pharmacy?','บทเรียนข้อไหนจากเคสนี้ที่คุณจะนำไปใช้ในการเยี่ยมบ้านจริงหรือในร้านยา?']),
+ Object.assign(DR('rf_redo',['如果重來一次，有哪一件事你會「做得不一樣」？為什麼？','If you could do the visit again, what is one thing you would do differently, and why?','ถ้าได้เยี่ยมใหม่อีกครั้ง มีอะไรหนึ่งอย่างที่คุณจะทำต่างออกไป และเพราะอะไร?']),{off:true}),
+ Object.assign(DR('rf_apply',['這次學到的哪一點，你會用在真實的居家訪視或藥局工作上？','Which lesson from this case will you use on a real home visit or in the pharmacy?','บทเรียนข้อไหนจากเคสนี้ที่คุณจะนำไปใช้ในการเยี่ยมบ้านจริงหรือในร้านยา?']),{off:true}),
 ];
 const gameQuestions=()=>Array.isArray(GAME_CFG.questions)?GAME_CFG.questions:DEFAULT_QUESTIONS;
 const TE=k=>ED[k]?(ED[k][LI()]||ED[k][0]):k;

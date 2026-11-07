@@ -54,7 +54,12 @@ built on an older Case A, kept as `cd/a_base.html`. `rebuild_cd.sh` builds them 
 2. `cd/mk_cases.py` does a three-way merge of *(cd/a_base.html → current Case A)* into each case. This way every
    engine change reaches C and D. Conflicts are resolved to the engine side; C = 3 and D = 4 conflicts are expected.
    It then renames the storage keys to each case's own.
-3. `mk_resume.py` adds save-anywhere to all three.
+3. `mk_resume.py` adds save-anywhere to all three, then `mk_clarity.py` makes right and wrong clear. Students said right/wrong
+   wasn't obvious and vanished too fast (Nov 2026). With it:
+   - mission results stay until Continue, with a verdict, marks on the cards, the answer and the explanation;
+   - boss cards say ✅ / 🔸 / ❌;
+   - Continue ignores taps for 0.6 s.
+   `mk_main.py` runs both on the main link too.
 4. `mk_main.py` reverses `fix_a_age.py`, which changed the age 61 → 65 (birth date from the receipt). It also
    puts back the eight age-61 bag pictures from `assets/case_a_bags_age61.json`. It also sets the eGFR/CrCl age
    chip back to 61; that chip is set outside `fix_a_age.py` and showed 65 on the main link from 4 to 7 Nov 2026.
@@ -94,6 +99,9 @@ Pictures: `imgsrc.py` reads and replaces the base64 images (`get(case, key)`, `p
   case file): the conflict is resolved to the engine side and the case edit is lost.
 - **Edits made straight to the live HTML on `main` must be copied here too.** Otherwise the next rebuild undoes them.
   After any change, rebuild and check that the outputs match the files on `main` byte for byte (`cmp`).
+- **Pre/post and reflection questions (7 Nov 2026):** 3 pre/post questions and 1 reflection are on in every case. The
+  others stay in `DEFAULT_QUESTIONS` with `{off:true}`, so an instructor can switch them back on. On Case A, published
+  settings (Customise → Publish) replace these defaults on the live site.
 - Keep all three languages in every text: `['中文','English','ไทย']`.
 - The instructor results key is a Cloudflare secret (`TEACHER_KEY`). Never put it in any file.
 

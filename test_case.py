@@ -42,7 +42,7 @@ def handle_cq(pg):
         key = 'post' if (st['pp'] and st['pre'] >= 6) else 'pre' if st['pp'] else 'cq'
         j = '0' if key in ('post', 'cq') or (key == 'pre' and st['pre'] < 2) else '1'
         pg.click(f'#cqBody .cqo[data-j="{j}"]')
-    pg.click('#cqGo'); time.sleep(0.35); pg.click('#cqGo'); time.sleep(0.3)
+    pg.click('#cqGo'); time.sleep(0.75); pg.click('#cqGo'); time.sleep(0.3)   # Continue ignores taps for 0.6 s after Submit
 def center(pg, sel):
     bb = pg.locator(sel).first.bounding_box(); return bb['x'] + bb['width'] / 2, bb['y'] + bb['height'] / 2
 def svgpt(pg, x, y):
@@ -327,6 +327,9 @@ with sync_playwright() as p:
             for a_ in ans: pg.click(f'#medrev .dcard[data-d="{a_}"]'); time.sleep(0.1)
         if i == 0: shot(pg, '12_mission')
         pg.click('#mrOk'); time.sleep(0.6)
+        if pg.locator('#mrNext').count():   # the result panel stays until Continue (mk_clarity.py)
+            if i == 0: shot(pg, '12_mission_result')
+            time.sleep(0.8); pg.click('#mrNext'); time.sleep(0.4)
     notes['mr'] = pg.evaluate("()=>window.__PD__.S.mr.perfect"); notes['missions'] = NM
     for turn in range(10):
         if not pump(pg, until=lambda: pg.evaluate("()=>document.querySelectorAll('#bossCards .ccard').length") > 0 or vis(pg, '#finalBox'), maxn=160): break

@@ -27,5 +27,7 @@ for bad in ['65 歲・雜貨店老闆', '(140-65)', 'age:65', '1955/11/7（65']:
     assert bad not in s, bad
 open(sys.argv[1], 'w', encoding='utf-8').write(s)
 r = subprocess.run(['python3', f'{SP}/mk_resume.py', sys.argv[1]], capture_output=True, text=True); print(r.stdout.strip()[-200:], r.stderr.strip()[-300:])
+r = subprocess.run(['python3', f'{SP}/mk_clarity.py', sys.argv[1]], capture_output=True, text=True); print(r.stdout.strip()[-200:], r.stderr.strip()[-300:])
+s = open(sys.argv[1], encoding='utf-8').read()
 sc = re.findall(r'<script>(.*?)</script>', s, re.S); open(f'{SP}/main_all.js', 'w', encoding='utf-8').write('\n;\n'.join(sc))
 c = subprocess.run(['node', '--check', f'{SP}/main_all.js'], capture_output=True, text=True); print('syntax', 'OK' if c.returncode == 0 else c.stderr[:300])

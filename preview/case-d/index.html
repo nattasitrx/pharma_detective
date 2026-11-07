@@ -846,6 +846,25 @@ html[lang=en] #logo h1{font-size:76px;letter-spacing:2px}
 /* Outlined titles: browsers without paint-order on HTML text draw the outline over the letters. A plain fill copy on top keeps the outline outside the letters everywhere. */
 :where(#splash .s,#intro .nm,#logo h1,#logo h2,.rank){position:relative}
 #splash .s::after,#intro .nm::after,#logo h1::after,#logo h2::after,.rank::after{content:attr(data-txt);position:absolute;inset:0;-webkit-text-stroke:0;text-shadow:none;pointer-events:none}
+
+/* clear right / wrong (mk_clarity.py) */
+.dcard,.acard{position:relative}
+.dcard.ok::after,.dcard.miss::after,.dcard.bad::after,.acard.ok::after,.acard.bad::after{position:absolute;top:-12px;left:-10px;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;box-shadow:0 0 0 3px #fff,0 3px 8px rgba(0,0,0,.25);z-index:2}
+.dcard.ok::after,.acard.ok::after{content:'✓';background:#18b07f}
+.dcard.miss::after{content:'!';background:#f0a000}
+.dcard.bad::after,.acard.bad::after{content:'✕';background:#ff3d5c}
+.mr-side.mr-res{background:#fff;color:#2a2140;display:flex;flex-direction:column;gap:10px}
+.mr-res .mr-v{font-family:var(--tc);font-weight:900;font-size:30px;line-height:1.2;padding:12px 14px;border-radius:18px;text-align:center}
+.mr-res.ok .mr-v{background:#e6fbf2;color:#0f7a55}
+.mr-res.part .mr-v{background:#fff6dc;color:#9a6400}
+.mr-res.bad .mr-v{background:#ffecee;color:#c0213d}
+.mr-res .mr-lg{display:flex;flex-direction:column;gap:4px;font-size:16px;font-weight:700}
+.mr-res .mr-lg span{display:flex;gap:8px;align-items:center}
+.mr-res .mr-lg i{font-style:normal;width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:15px;flex:0 0 auto}
+.mr-res .mr-ans{font-size:17px;font-weight:800;color:#0f7a55;background:#f2fbf7;border-radius:14px;padding:8px 12px}
+.mr-res .mr-x{flex:1;overflow:auto;font-size:17px;line-height:1.55;background:#f7f4ff;border-radius:14px;padding:10px 12px}
+.mr-res .mr-x p{margin:0 0 8px}
+.mr-res #mrNext{align-self:stretch;font-size:22px}
 </style>
 </head>
 <body>
@@ -1018,9 +1037,9 @@ const UI = {
   claimLbl:['李伯伯的說法','Uncle Lee\'s claim','คำพูดของลุง'], claimTip:['找出能「直接」推翻黃色字的證物','Find the evidence that DIRECTLY contradicts the highlighted words','หาหลักฐานที่ "หักล้างตรงๆ" กับข้อความสีเหลือง'],
   usedTag:['✓ 已用過','✓ Used','✓ ใช้แล้ว'], triedTag:['✗ 試過了','✗ Tried','✗ ลองแล้ว'], foundLoc:['發現地點','Found at','พบที่'],
   objection:['等一下！','HOLD IT!','เดี๋ยวก่อน!'], gotcha:['找到了！','GOTCHA!','เจอแล้ว!'], unlock:['心鎖解除！','UNLOCKED!','ปลดล็อก!'],
-  critical:['會心一擊！','CRITICAL!','คริติคอล!'], victory:['完全勝利！','VICTORY!','ชนะแล้ว!'], escaped:['逃走了……','ESCAPED…','หนีไปแล้ว…'],
+  critical:['✅ 正確！','✅ Right!','✅ ถูก!'], victory:['完全勝利！','VICTORY!','ชนะแล้ว!'], escaped:['逃走了……','ESCAPED…','หนีไปแล้ว…'],
   mythAliveH:['👿 存活的迷思','👿 Myths still alive','👿 ความเชื่อที่ยังรอด'], mythListH:['👿 還沒破的迷思：在總結裡提到它，就能把它打倒','👿 Myths still alive: mention each one in your summary to break it','👿 ความเชื่อที่ยังไม่แตก: พูดถึงในสรุปเพื่อทลายมัน'],
-  mythShaken:['動搖了…但還沒破！','Shaken… not broken!','สั่นคลอน… แต่ยังไม่แตก!'], mythHolds:['迷思還在！','Myth holds!','ความเชื่อยังอยู่!'],
+  mythShaken:['🔸 部分正確','🔸 Partly right','🔸 ถูกบางส่วน'], mythHolds:['❌ 不對！','❌ Wrong!','❌ ผิด!'],
   mythSurv:['這個迷思還沒破，最後總結時要再提到它！','This myth survived. Bring it up again in your closing summary!','ความเชื่อนี้ยังไม่แตก ตอนสรุปปิดท้ายต้องพูดถึงอีกครั้ง!'],
   mythRule:['注意：只有「最佳」衛教卡才能打破迷思。沒打破的迷思會留在李伯伯腦中，兩週後就會看到後果！','Heads up: only the BEST card breaks a myth. Any myth left standing stays in Uncle Lee\'s head, and two weeks later you\'ll see what it does!','ระวัง: มีแต่การ์ดที่ดีที่สุดเท่านั้นที่ทลายความเชื่อได้ ความเชื่อที่ยังไม่แตกจะติดอยู่ในหัวลุงหลี่ แล้วอีกสองสัปดาห์จะเห็นผลของมัน!'],
   mythLastCall:['還有 {n} 個迷思沒破！最後的總結要把它們都說清楚，不然大魔王會帶著它們逃走！','{n} myths are still standing! Your closing summary has to address them, or the Overlord escapes with them!','ยังมีความเชื่อที่ไม่แตกอีก {n} ข้อ! สรุปปิดท้ายต้องพูดถึงให้ครบ ไม่งั้นจอมมารจะหนีไปพร้อมมัน!'],
@@ -3676,6 +3695,24 @@ function labPanelHTML(){
   return `<h3>${T('labPanel')}</h3>${rows.map(r=>`<div class="lrow"><b>${r[0]} <small>${r[1]}</small></b><span class="v ${r[3]}">${r[2]}</span></div>`).join('')}
    <p style="font-size:13px;color:#b9b4d6;margin:8px 0">88 y · ♂ · 167 cm · 62 kg</p><button class="gbtn blue" id="mrSheet" style="font-size:17px;padding:8px 18px">${T('viewSheet')}</button>`;
 }
+/* ---------- mission result: stays until Continue (mk_clarity.py) ---------- */
+const MRV={ ok:['✅ 全部正確！','✅ All correct!','✅ ถูกทั้งหมด!'], part:['🔸 部分正確','🔸 Partly right','🔸 ถูกบางส่วน'], bad:['❌ 不正確','❌ Not right','❌ ยังไม่ถูก'],
+  lOk:['選對了','Right choice','เลือกถูก'], lMiss:['應該選，但沒選','Should have picked','ควรเลือก แต่ไม่ได้เลือก'], lBad:['不該選','Should not pick','ไม่ควรเลือก'],
+  lOkA:['放對籃子','Right basket','ใส่ถูกตะกร้า'], lBadA:['放錯籃子','Wrong basket','ใส่ผิดตะกร้า'], ans:['正確答案','Answer','คำตอบที่ถูก'], why:['💡 解說','💡 Why','💡 คำอธิบาย'] };
+function mrVerdict(m, r){ return new Promise(res=>{
+  const host=$('#medrev'); if(!host){ res(); return; }
+  const side=host.querySelector('.mr-side'), act=host.querySelector('.mr-act'), acb=!!host.querySelector('.acard');
+  const has=c=>!!host.querySelector('.dcard.'+c+',.acard.'+c), k=r.perfect?'ok':r.partial?'part':'bad';
+  const dot=(c,bg,t)=>`<span><i style="background:${bg}">${c}</i>${esc(L(t))}</span>`;
+  const lg=[has('ok')?dot('✓','#18b07f',acb?MRV.lOkA:MRV.lOk):'', has('miss')?dot('!','#f0a000',MRV.lMiss):'', has('bad')?dot('✕','#ff3d5c',acb?MRV.lBadA:MRV.lBad):''].join('');
+  const name=id=>{ const d=DRUGS.find(x=>x.id===id); return d?d.n.split(' ')[0]:id; };
+  const ans=!acb&&!r.perfect&&(m.ans||[]).length?`<div class="mr-ans">${esc(L(MRV.ans))}: ${(m.ans||[]).map(name).map(esc).join(', ')}</div>`:'';
+  const why=(m.x||[]).map(x=>`<p>${kpHTML(L(x))}</p>`).join('');
+  const box=side||document.createElement('div'); box.className='mr-side mr-res '+k;
+  box.innerHTML=`<div class="mr-v">${esc(L(MRV[k]))}</div>${lg?`<div class="mr-lg">${lg}</div>`:''}${ans}${why?`<div class="mr-x"><b>${esc(L(MRV.why))}</b>${why}</div>`:''}<button class="gbtn" id="mrNext">${esc(T('cqNext'))}</button>`;
+  if(!side) host.appendChild(box); if(act) act.style.visibility='hidden';
+  const t0=performance.now(); $('#mrNext').onclick=()=>{ if(performance.now()-t0<600) return; sfx.click(); res(); };
+}); }
 function missionUI(m, i, n){
   return new Promise(res=>{
     let host=$('#medrev'); if(!host){ host=document.createElement('div'); host.id='medrev'; $('#stage').appendChild(host); }
@@ -4357,11 +4394,9 @@ async function chapter4(){
     S.mr.ans.push({id:m.id, sel:r.sel, perfect:r.perfect, partial:r.partial}); logEvent({type:'medrev', m:m.id, sel:r.sel, perfect:r.perfect, partial:r.partial});
     if(r.perfect) S.mr.perfect++; else if(r.partial) S.mr.partial++; else { S.mr.wrong++; spend(CONFIG.COST_WRONG); }
     if(EXAM()){ sfx.select(); toast(T('examNoted')); }
-    else if(r.perfect) splash('perfect','gold','crit'); else if(r.partial){ sfx.hit(); toast('🔸 '+T('partial')); } else { sfx.error(); toast('❌ '+T('wrongDx')); }
+    else { if(r.perfect) splash('perfect','gold','crit'); else if(r.partial) sfx.hit(); else sfx.error(); await mrVerdict(m,r); }
     m.ans.forEach(id=>{ (S.mr.tags[id]=S.mr.tags[id]||[]).push(L(m.tag)); });
-    await sleep(EXAM()?900:2300); $('#medrev').classList.add('hidden');
-    if(!EXAM()){ show('yeh','R', r.perfect?'happy':r.partial?'think':'sad'); show('me','L','neutral');
-      for(const x of m.x) await say('yeh','neutral',x); }
+    if(EXAM()) await sleep(900); $('#medrev').classList.add('hidden');
     reveal(m.p);
   }
   resumePoint();
@@ -4482,7 +4517,7 @@ async function chapter5(){
     if(q===2){ B.crit++; B.combo++; B.maxCombo=Math.max(B.maxCombo,B.combo); const d=100+B.combo*5; mhp[m.p]=0; sfx.crit(); flash(); setMonster('hit'); mon.classList.remove('hit'); void mon.offsetWidth; mon.classList.add('hit');
       dmgNum('−'+d+'  '+T('critical')); $('#combo').textContent=B.combo>1?B.combo+' '+T('combo')+'!':''; $('#myth').animate([{transform:'none',opacity:1},{transform:'scale(1.25) rotate(-3deg)',opacity:0}],{duration:600,easing:'ease-in',fill:'forwards'}); }
     else if(q===1){ B.ok++; B.combo=0; mhp[m.p]=60; B.alive.push(m.p); sfx.hit(); setMonster('hit'); mon.classList.remove('hit'); void mon.offsetWidth; mon.classList.add('hit'); dmgNum(T('mythShaken'),'#ff9d00'); $('#combo').textContent=''; drawAlive(); }
-    else { B.miss++; B.combo=0; B.alive.push(m.p); sfx.heal(); setMonster('laugh'); dmgNum(T('mythHolds'),'#18b07f'); confusion++; setConf(); $('#combo').textContent=''; chenMini('shock'); drawAlive(); }
+    else { B.miss++; B.combo=0; B.alive.push(m.p); sfx.error(); setMonster('laugh'); dmgNum(T('mythHolds'),'#e0435a'); confusion++; setConf(); $('#combo').textContent=''; chenMini('shock'); drawAlive(); }
     setHP(); await sleep(700); chenMini(q===2?'happy':'think');
     const sv=q<2?' '+T('mythSurv'):'';
     if(!EXAM()) await say('yeh', q===2?'happy':q===1?'think':'sad', [ (q===2?'完美！':q===1?'方向對，但不夠完整。':'不對喔！')+m.x[0]+sv, (q===2?'Perfect! ':q===1?'Right idea, but incomplete. ':'Nope! ')+m.x[1]+sv, (q===2?'เยี่ยม! ':q===1?'มาถูกทาง แต่ยังไม่ครบ ':'ไม่ใช่นะ! ')+m.x[2]+sv ]);
@@ -4757,7 +4792,7 @@ const ED={
  cp_pp:['📊 前測＋後測（序章後、最後各問一次）','📊 Pre- & post-test (after the prologue AND at the end)','📊 ก่อน+หลังเรียน (ถามหลังบทนำ และอีกครั้งตอนจบ)'], cp_refl:['💭 反思題（遊戲最後）','💭 Reflection (end of the game)','💭 คำถามสะท้อนคิด (ท้ายเกม)'],
  ppNote:['同一題會問兩次：前測不顯示對錯、不計分；後測顯示解答。到「全班概況」比較前後測。','Each question is asked twice: the pre-test shows no answers and isn\'t scored; the post-test shows answers. Compare them in Class overview.','ถามข้อเดียวกันสองครั้ง: ก่อนเรียนไม่เฉลยและไม่นับคะแนน หลังเรียนมีเฉลย เปรียบเทียบได้ในแท็บภาพรวมชั้นเรียน'],
  reflNote:['反思題不計分，學生的回答在「學生紀錄」和「全班概況」。','Reflection answers aren\'t scored — read them under Sessions and Class overview.','คำถามสะท้อนคิดไม่นับคะแนน อ่านคำตอบได้ในแท็บบันทึกนักศึกษาและภาพรวมชั้นเรียน'],
- defNote:['已預先放好 6 題前後測和 3 題反思題，可以直接修改、停用或刪除。','6 pre/post-test questions and 3 reflection questions are preloaded — edit, switch off or delete them as you like.','มีคำถามก่อน/หลังเรียน 6 ข้อ และคำถามสะท้อนคิด 3 ข้อเตรียมไว้แล้ว แก้ ปิด หรือลบได้ตามต้องการ'],
+ defNote:['已預先放好前後測和反思題：預設啟用 3 題前後測和 1 題反思，其他題目先停用。可以直接修改、啟用、停用或刪除。','Pre/post-test and reflection questions are preloaded: 3 pre/post questions and 1 reflection are on, the others are kept but switched off. Edit, switch on or off, or delete them as you like.','มีคำถามเตรียมไว้แล้ว: เปิดใช้คำถามก่อน/หลังเรียน 3 ข้อ และสะท้อนคิด 1 ข้อ ข้ออื่นเก็บไว้แต่ปิดอยู่ แก้ เปิด ปิด หรือลบได้ตามต้องการ'],
  qRestore:['↺ 放回預設的前後測／反思題','↺ Restore the default pre/post & reflection questions','↺ ใส่คำถามก่อน/หลังเรียนและสะท้อนคิดตั้งต้นกลับ'], qRestored:['已放回預設題目','Default questions restored','ใส่คำถามตั้งต้นกลับแล้ว'],
  stMode:['遊戲模式','Game mode','โหมดเกม'], stModeChoose:['學生自己選','Students choose','ให้นักศึกษาเลือกเอง'],
  stModeNote:['練習：有提示和解說。考試：沒有提示、選項隨機、「接近」的證物也算錯、解說留到最後。','Practice: hints and explanations. Exam: no hints, shuffled options, "close" evidence counts as wrong, explanations at the end.','ฝึกซ้อม: มีคำใบ้และคำอธิบาย · สอบ: ไม่มีคำใบ้ ตัวเลือกสุ่ม หลักฐานที่ "ใกล้เคียง" นับว่าผิด คำอธิบายรอตอนท้าย'],
@@ -4772,18 +4807,18 @@ const DEFAULT_QUESTIONS=[
   ['兩支一起用——兩種吸入器同時用，氣管會比單用一支打開得更快','Both together — two different inhalers open the airways faster than either one alone','ใช้ทั้งสองอันพร้อมกัน — ยาพ่นสองชนิดช่วยขยายหลอดลมได้เร็วกว่าใช้แค่อันเดียวอย่างเห็นได้ชัด'],
   ['哪一支都可以——兩支都是支氣管擴張劑，看哪支在手邊就用哪支','Either one — both are bronchodilators, so it only matters which is within reach','ตัวไหนก็ได้ — เป็นยาขยายหลอดลมทั้งคู่ อันไหนอยู่ใกล้มือก็ใช้อันนั้น']],
   ['短效 β2 致效劑（如 fenoterol）幾分鐘內起效，是「喘的時候」用的急救藥；Spiolto 是長效 LAMA＋LABA，每天固定時間用來預防症狀，不是急救藥。','A short-acting β2-agonist (such as fenoterol) works within minutes and is the rescue inhaler for breathlessness; Spiolto is a long-acting LAMA + LABA taken at the same time every day to prevent symptoms — it is not for rescue.','ยา β2-agonist ออกฤทธิ์สั้น (เช่น fenoterol) ออกฤทธิ์ภายในไม่กี่นาที เป็นยาฉุกเฉินเมื่อหอบ ส่วน Spiolto เป็น LAMA + LABA ออกฤทธิ์ยาว ใช้เวลาเดิมทุกวันเพื่อป้องกันอาการ ไม่ใช่ยาฉุกเฉิน']),
- DQ('pp_mdi',['使用定量噴霧吸入器（MDI），下列哪個順序最正確？','Which sequence is the most correct way to use a pressurised metered-dose inhaler (MDI)?','ข้อใดเป็นลำดับการใช้ยาพ่นชนิด MDI ที่ถูกต้องที่สุด?'],[
+ Object.assign(DQ('pp_mdi',['使用定量噴霧吸入器（MDI），下列哪個順序最正確？','Which sequence is the most correct way to use a pressurised metered-dose inhaler (MDI)?','ข้อใดเป็นลำดับการใช้ยาพ่นชนิด MDI ที่ถูกต้องที่สุด?'],[
   ['搖勻 → 先吐氣 → 含住吸嘴，開始慢慢深吸的同時按壓 → 閉氣約 10 秒','Shake → breathe out first → seal lips, press as you start a slow deep breath → hold the breath about 10 seconds','เขย่า → หายใจออกก่อน → อมปากพ่น กดพร้อมเริ่มสูดเข้าช้าๆ ลึกๆ → กลั้นหายใจราว 10 วินาที'],
   ['搖勻 → 先按壓噴進嘴裡 → 再用力快速吸一口 → 馬上吐氣','Shake → press into the mouth first → then take a fast, hard breath → breathe out at once','เขย่า → กดพ่นเข้าปากก่อน → แล้วค่อยสูดแรงๆ เร็วๆ → หายใจออกทันที'],
   ['不用搖 → 先深吸一口氣 → 吸飽之後再按壓 → 把藥含在嘴裡一會兒再吐掉','No shaking → take a deep breath → press once the lungs are full → hold the medicine in the mouth, then spit it out','ไม่ต้องเขย่า → สูดหายใจเข้าลึกๆ ก่อน → สูดจนเต็มปอดแล้วค่อยกด → อมยาไว้ในปากสักพักแล้วบ้วนทิ้ง'],
   ['搖勻 → 吸嘴離嘴巴遠一點 → 連按兩下 → 用鼻子吸氣','Shake → hold the mouthpiece away from the mouth → press twice quickly → breathe in through the nose','เขย่า → ถือปากพ่นห่างจากปาก → กดติดกัน 2 ครั้ง → สูดหายใจทางจมูก']],
-  ['MDI 的關鍵是「按壓和慢慢吸氣同時開始」，再閉氣讓藥停留在肺裡。手口不協調的人（常見於長者）加用吸藥輔助器（spacer），並請病人回覆示教。','The key to an MDI is pressing at the moment a slow breath in begins, then holding the breath so the drug stays in the lungs. People with poor coordination (common in older adults) should use a spacer, and the patient should demonstrate it back.','หัวใจของ MDI คือ "กดพร้อมกับเริ่มสูดหายใจเข้าช้าๆ" แล้วกลั้นหายใจให้ยาค้างในปอด ผู้ที่กดกับสูดไม่พร้อมกัน (พบบ่อยในผู้สูงอายุ) ควรใช้ spacer และให้ผู้ป่วยสาธิตกลับ']),
- DQ('pp_nsaid',['88 歲高血壓（吃 ACEI）、有胃痛的膝關節炎病人，同時有 Ponstan（mefenamic acid）和 Sketa（acetaminophen＋chlorzoxazone）。最適當的建議是？','An 88-year-old with knee OA, hypertension on an ACEI and stomach pain has both Ponstan (mefenamic acid) and Sketa (acetaminophen + chlorzoxazone). The most appropriate recommendation is:','ผู้สูงอายุ 88 ปีเป็นข้อเข่าเสื่อม ความดันสูง (กิน ACEI) และปวดท้อง มีทั้ง Ponstan (mefenamic acid) และ Sketa (acetaminophen + chlorzoxazone) ข้อเสนอแนะที่เหมาะสมที่สุดคือ'],[
+  ['MDI 的關鍵是「按壓和慢慢吸氣同時開始」，再閉氣讓藥停留在肺裡。手口不協調的人（常見於長者）加用吸藥輔助器（spacer），並請病人回覆示教。','The key to an MDI is pressing at the moment a slow breath in begins, then holding the breath so the drug stays in the lungs. People with poor coordination (common in older adults) should use a spacer, and the patient should demonstrate it back.','หัวใจของ MDI คือ "กดพร้อมกับเริ่มสูดหายใจเข้าช้าๆ" แล้วกลั้นหายใจให้ยาค้างในปอด ผู้ที่กดกับสูดไม่พร้อมกัน (พบบ่อยในผู้สูงอายุ) ควรใช้ spacer และให้ผู้ป่วยสาธิตกลับ']),{off:true}),
+ Object.assign(DQ('pp_nsaid',['88 歲高血壓（吃 ACEI）、有胃痛的膝關節炎病人，同時有 Ponstan（mefenamic acid）和 Sketa（acetaminophen＋chlorzoxazone）。最適當的建議是？','An 88-year-old with knee OA, hypertension on an ACEI and stomach pain has both Ponstan (mefenamic acid) and Sketa (acetaminophen + chlorzoxazone). The most appropriate recommendation is:','ผู้สูงอายุ 88 ปีเป็นข้อเข่าเสื่อม ความดันสูง (กิน ACEI) และปวดท้อง มีทั้ง Ponstan (mefenamic acid) และ Sketa (acetaminophen + chlorzoxazone) ข้อเสนอแนะที่เหมาะสมที่สุดคือ'],[
   ['停用 Ponstan 和肌肉鬆弛劑，改用單純 acetaminophen（≤3 g/天）、外用 NSAID 和運動','Stop Ponstan and the muscle relaxant; use plain acetaminophen (≤3 g/day), a topical NSAID and exercise','หยุด Ponstan กับยาคลายกล้ามเนื้อ ใช้ acetaminophen เดี่ยว (≤3 g/วัน) ยาทา NSAID และออกกำลังกาย'],
   ['兩種一起吃止痛效果最強，膝蓋特別痛的時候再多吃一顆','Take both together for the strongest relief, plus an extra tablet on days when the knee is especially bad','กินทั้งสองตัวพร้อมกันจะแก้ปวดได้แรงที่สุด วันไหนเข่าปวดมากเป็นพิเศษก็กินเพิ่มอีกเม็ดได้เลย'],
   ['把 Ponstan 換成另一種比較不傷胃的口服 NSAID 就好','Just switch Ponstan to a different oral NSAID that is gentler on the stomach','แค่เปลี่ยน Ponstan เป็น NSAID ชนิดกินตัวอื่นที่ไม่กัดกระเพาะ'],
   ['只要飯後再吃，NSAID 就完全不會影響腎臟和血壓，所以這兩種藥都可以繼續放心吃下去','Taken after meals, NSAIDs no longer affect his kidneys or blood pressure, so keep both','ถ้ากินหลังอาหาร NSAID ก็จะไม่มีผลต่อไตและความดันเลย ใช้ทั้งสองตัวต่อไปได้ตามเดิมอย่างสบายใจ']],
-  ['口服 NSAID 在長者會增加胃腸出血、血壓上升與急性腎損傷（與 ACEI 併用更明顯）；chlorzoxazone 是鎮靜型肌肉鬆弛劑（Beers：避免）。也要避免兩種含 acetaminophen 的藥重複。','Oral NSAIDs in older adults raise the risk of GI bleeding, higher BP and acute kidney injury (worse with an ACEI); chlorzoxazone is a sedating muscle relaxant (Beers: avoid). Also watch for duplicate acetaminophen products.','NSAID ชนิดกินในผู้สูงอายุเพิ่มความเสี่ยงเลือดออกในทางเดินอาหาร ความดันขึ้น และไตบาดเจ็บเฉียบพลัน (ยิ่งเมื่อใช้ร่วมกับ ACEI) chlorzoxazone เป็นยาคลายกล้ามเนื้อที่ทำให้ง่วง (Beers: เลี่ยง) และระวังผลิตภัณฑ์ที่มี acetaminophen ซ้ำกัน']),
+  ['口服 NSAID 在長者會增加胃腸出血、血壓上升與急性腎損傷（與 ACEI 併用更明顯）；chlorzoxazone 是鎮靜型肌肉鬆弛劑（Beers：避免）。也要避免兩種含 acetaminophen 的藥重複。','Oral NSAIDs in older adults raise the risk of GI bleeding, higher BP and acute kidney injury (worse with an ACEI); chlorzoxazone is a sedating muscle relaxant (Beers: avoid). Also watch for duplicate acetaminophen products.','NSAID ชนิดกินในผู้สูงอายุเพิ่มความเสี่ยงเลือดออกในทางเดินอาหาร ความดันขึ้น และไตบาดเจ็บเฉียบพลัน (ยิ่งเมื่อใช้ร่วมกับ ACEI) chlorzoxazone เป็นยาคลายกล้ามเนื้อที่ทำให้ง่วง (Beers: เลี่ยง) และระวังผลิตภัณฑ์ที่มี acetaminophen ซ้ำกัน']),{off:true}),
  DQ('pp_beers',['依 Beers 準則，下列哪一種藥「最應該避免」給 88 歲、有攝護腺肥大、常頭暈的長者？','According to the Beers Criteria, which drug should MOST be avoided in an 88-year-old with BPH and frequent dizziness?','ตาม Beers Criteria ยาใดที่ "ควรหลีกเลี่ยงที่สุด" ในผู้สูงอายุ 88 ปีที่มีต่อมลูกหมากโตและเวียนหัวบ่อย?'],[
   ['Diphenhydramine 50 mg 一天兩次','Diphenhydramine 50 mg twice daily','Diphenhydramine 50 mg วันละ 2 ครั้ง'],
   ['Loratadine 10 mg 一天一次','Loratadine 10 mg once daily','Loratadine 10 mg วันละครั้ง'],
@@ -4796,12 +4831,12 @@ const DEFAULT_QUESTIONS=[
   ['這些都是正常老化，藥不用改，晚上起床動作慢一點就好','These are just normal signs of ageing — keep every medicine and simply get up more slowly at night','เป็นอาการตามวัยปกติ ยาไม่ต้องเปลี่ยน แค่ลุกช้าลงตอนกลางคืน'],
   ['漏吃的 glipizide 睡前一起補吃，夜裡血糖才會穩定','Take any missed glipizide together at bedtime so his blood sugar stays steady overnight','glipizide ที่ลืมให้กินรวบก่อนนอน น้ำตาลตอนกลางคืนจะได้คงที่']],
   ['Sulfonylurea 在長者容易造成嚴重、延長的低血糖（Beers：避免或謹慎）。高齡、獨居、漏吃又補雙倍，風險更高；長者的血糖目標應放寬、以安全為先。','Sulfonylureas easily cause severe, prolonged hypoglycaemia in older adults (Beers: avoid or use with caution). Great age, living alone and doubling missed doses make it riskier; glycaemic targets for older adults should be relaxed, with safety first.','Sulfonylurea ทำให้ผู้สูงอายุเกิดน้ำตาลต่ำรุนแรงและนานได้ง่าย (Beers: เลี่ยงหรือใช้อย่างระวัง) อายุมาก อยู่คนเดียว และกินเบิ้ลเมื่อลืม ยิ่งเสี่ยง เป้าน้ำตาลของผู้สูงอายุควรผ่อนลง โดยยึดความปลอดภัยเป็นหลัก']),
- DQ('pp_crcl',['88 歲男性，62 kg，Cr 0.8 mg/dL（參考值 0.64–1.27），正在吃 famotidine 20 mg 一天兩次。下列敘述何者正確？','An 88-year-old man, 62 kg, Cr 0.8 mg/dL (reference 0.64–1.27), takes famotidine 20 mg twice daily. Which statement is correct?','ชายอายุ 88 ปี หนัก 62 กก. Cr 0.8 mg/dL (ค่าอ้างอิง 0.64–1.27) กิน famotidine 20 mg วันละ 2 ครั้ง ข้อใดถูกต้อง?'],[
+ Object.assign(DQ('pp_crcl',['88 歲男性，62 kg，Cr 0.8 mg/dL（參考值 0.64–1.27），正在吃 famotidine 20 mg 一天兩次。下列敘述何者正確？','An 88-year-old man, 62 kg, Cr 0.8 mg/dL (reference 0.64–1.27), takes famotidine 20 mg twice daily. Which statement is correct?','ชายอายุ 88 ปี หนัก 62 กก. Cr 0.8 mg/dL (ค่าอ้างอิง 0.64–1.27) กิน famotidine 20 mg วันละ 2 ครั้ง ข้อใดถูกต้อง?'],[
   ['CrCl ≈ 56 mL/min，famotidine 應減到每天最多 20 mg','CrCl ≈ 56 mL/min, so famotidine should be cut to at most 20 mg a day','CrCl ≈ 56 mL/min ควรลด famotidine เหลือไม่เกิน 20 mg ต่อวัน'],
   ['Cr 在參考值內，腎功能正常，劑量不用調整','Cr is within the reference range, so kidney function is normal and no dose change is needed','Cr อยู่ในค่าอ้างอิง ไตปกติ ไม่ต้องปรับขนาดยา'],
   ['Cr 偏低代表腎功能比年輕人更好，可以再加量','A lowish Cr means his kidneys work better than a young person\'s, so the dose can go up','Cr ค่อนข้างต่ำแปลว่าไตดีกว่าคนหนุ่มสาว เพิ่มขนาดยาได้อีก'],
   ['只要多喝水，不管腎功能如何，famotidine 都不會在體內累積','As long as he drinks plenty of water, famotidine won\'t build up, whatever his kidneys','แค่ดื่มน้ำเยอะๆ เข้าไว้ ไม่ว่าไตจะเป็นอย่างไร famotidine ก็ไม่สะสมในร่างกาย']],
-  ['高齡、肌肉少的人 Cr 會偏低，看起來「正常」卻高估腎功能。多數藥品仿單（如 famotidine）用 Cockcroft–Gault CrCl：CrCl 30–60 時每天最多 20 mg。','Older people with low muscle mass have a low creatinine that looks "normal" but overstates kidney function. Most dosing tables (e.g. famotidine) use Cockcroft–Gault CrCl: at CrCl 30–60, max 20 mg a day.','ผู้สูงอายุที่กล้ามเนื้อน้อยจะมี Cr ต่ำ ดู "ปกติ" แต่ประเมินการทำงานของไตสูงเกินจริง ตารางปรับขนาดยาส่วนใหญ่ (เช่น famotidine) ใช้ CrCl จาก Cockcroft–Gault: เมื่อ CrCl 30–60 ให้ไม่เกิน 20 mg ต่อวัน']),
+  ['高齡、肌肉少的人 Cr 會偏低，看起來「正常」卻高估腎功能。多數藥品仿單（如 famotidine）用 Cockcroft–Gault CrCl：CrCl 30–60 時每天最多 20 mg。','Older people with low muscle mass have a low creatinine that looks "normal" but overstates kidney function. Most dosing tables (e.g. famotidine) use Cockcroft–Gault CrCl: at CrCl 30–60, max 20 mg a day.','ผู้สูงอายุที่กล้ามเนื้อน้อยจะมี Cr ต่ำ ดู "ปกติ" แต่ประเมินการทำงานของไตสูงเกินจริง ตารางปรับขนาดยาส่วนใหญ่ (เช่น famotidine) ใช้ CrCl จาก Cockcroft–Gault: เมื่อ CrCl 30–60 ให้ไม่เกิน 20 mg ต่อวัน']),{off:true}),
  /* ---- extra items: shipped switched off — the instructor can turn them on under ➕ Extra questions ---- */
  Object.assign(DQ('pp_respimat',['Spiolto Respimat（tiotropium＋olodaterol）的正確用法是？','How should Spiolto Respimat (tiotropium + olodaterol) be used?','วิธีใช้ Spiolto Respimat (tiotropium + olodaterol) ที่ถูกต้องคือ?'],[
   ['每天 1 次、每次 2 噴；每噴「轉半圈、打開蓋子、慢慢吸氣時按壓」','2 puffs once daily; each puff: turn half a turn, open the cap, press while breathing in slowly','วันละครั้ง ครั้งละ 2 พัฟ แต่ละพัฟ "หมุนครึ่งรอบ เปิดฝา กดขณะสูดเข้าช้าๆ"'],
@@ -4846,8 +4881,8 @@ const DEFAULT_QUESTIONS=[
   ['每家醫院開的藥都照吃，每位醫師開藥之前一定都已經看過別家的藥了','Keep taking every hospital\'s medicines — each doctor must have checked the others already','กินยาของทุกโรงพยาบาลต่อไปตามเดิม แพทย์แต่ละคนต้องตรวจดูยาของที่อื่นมาก่อนสั่งแล้วแน่ๆ']],
   ['多重就醫最大的風險是「沒有人看到全部的藥」。藥物整合（含 OTC 與保健品）、單一藥局和主要照護醫師，是減少重複與交互作用的根本方法；不要讓病人自行停藥。','The biggest risk of doctor-shopping is that nobody sees the whole list. Medication reconciliation (including OTC and supplements), one pharmacy and a main physician are the fundamental fixes for duplicates and interactions; patients should not stop medicines on their own.','ความเสี่ยงใหญ่ที่สุดของการไปหาหมอหลายที่คือ "ไม่มีใครเห็นยาทั้งหมด" การทบทวนรวบรวมยา (รวมยา OTC และผลิตภัณฑ์เสริม) ร้านยาเดียว และแพทย์หลัก คือทางแก้พื้นฐานของยาซ้ำและอันตรกิริยา และผู้ป่วยไม่ควรหยุดยาเอง']),{off:true}),
  DR('rf_d_note',['寫一段 2–3 句話的訊息給李伯伯的醫師：你最想建議調整的「一個」用藥問題是什麼？為什麼？','Write a 2–3 sentence message to Uncle Lee\'s doctor: what is the ONE medication change you most want to suggest, and why?','เขียนข้อความสั้นๆ 2–3 ประโยคถึงแพทย์ของลุงหลี่: ปัญหาเรื่องยาเรื่องไหนที่คุณอยากเสนอให้ปรับมากที่สุด "หนึ่งเรื่อง" และเพราะอะไร?']),
- DR('rf_d_teach',['88 歲的李伯伯有兩種吸入器（定量噴霧和 Respimat）。如果時間不多，你會先教哪一個？哪些步驟可以簡化？又要怎麼確認他回家真的會用？','Uncle Lee is 88 and has two inhalers (an MDI and a Respimat). With little time, which would you teach first, what could you simplify, and how would you check he can really use them at home?','ลุงหลี่อายุ 88 มียาพ่นสองแบบ (MDI กับ Respimat) ถ้ามีเวลาน้อย คุณจะสอนตัวไหนก่อน ขั้นตอนไหนทำให้ง่ายลงได้ และจะเช็กยังไงว่าลุงใช้ได้จริงตอนอยู่บ้าน?']),
- DR('rf_apply',['李伯伯怕失去獨立生活，所以隱瞞了跌倒。在真實的居家訪視中，你會怎麼兼顧病人的自主和安全？','Uncle Lee hid his fall because he feared losing his independence. On a real home visit, how would you respect a patient\'s autonomy while keeping him safe?','ลุงหลี่ปิดเรื่องหกล้มเพราะกลัวเสียการใช้ชีวิตอิสระ ในการเยี่ยมบ้านจริง คุณจะเคารพการตัดสินใจของผู้ป่วยไปพร้อมกับดูแลความปลอดภัยอย่างไร?']),
+ Object.assign(DR('rf_d_teach',['88 歲的李伯伯有兩種吸入器（定量噴霧和 Respimat）。如果時間不多，你會先教哪一個？哪些步驟可以簡化？又要怎麼確認他回家真的會用？','Uncle Lee is 88 and has two inhalers (an MDI and a Respimat). With little time, which would you teach first, what could you simplify, and how would you check he can really use them at home?','ลุงหลี่อายุ 88 มียาพ่นสองแบบ (MDI กับ Respimat) ถ้ามีเวลาน้อย คุณจะสอนตัวไหนก่อน ขั้นตอนไหนทำให้ง่ายลงได้ และจะเช็กยังไงว่าลุงใช้ได้จริงตอนอยู่บ้าน?']),{off:true}),
+ Object.assign(DR('rf_apply',['李伯伯怕失去獨立生活，所以隱瞞了跌倒。在真實的居家訪視中，你會怎麼兼顧病人的自主和安全？','Uncle Lee hid his fall because he feared losing his independence. On a real home visit, how would you respect a patient\'s autonomy while keeping him safe?','ลุงหลี่ปิดเรื่องหกล้มเพราะกลัวเสียการใช้ชีวิตอิสระ ในการเยี่ยมบ้านจริง คุณจะเคารพการตัดสินใจของผู้ป่วยไปพร้อมกับดูแลความปลอดภัยอย่างไร?']),{off:true}),
 ];
 const gameQuestions=()=>Array.isArray(GAME_CFG.questions)?GAME_CFG.questions:DEFAULT_QUESTIONS;
 const TE=k=>ED[k]?(ED[k][LI()]||ED[k][0]):k;
@@ -4949,7 +4984,7 @@ function askCustom(q, i, n, opt){ opt=opt||{}; return new Promise(res=>{
   }
   const tl=+q.timer||0;
   if(tl>0&&S.qte&&!opt.preview&&!ph){ const t0=performance.now(); iv=setInterval(()=>{ const rem=Math.max(0,tl-(performance.now()-t0)/1000); $('#cqTimer').textContent='⏱ '+Math.ceil(rem); if(rem<=0){ clearInterval(iv); if(!done){ toast(T('cqTimeUp')); submit(true); } } },200); } else $('#cqTimer').textContent='';
-  const finish=r=>{ clearInterval(iv); done=true; go.textContent=T('cqNext'); go.onclick=()=>{ sfx.click(); box.classList.add('hidden'); D.cqGo=null; res(r); }; D.cqGo=go.onclick;
+  const finish=r=>{ clearInterval(iv); done=true; go.textContent=T('cqNext'); const tFin=performance.now(); go.onclick=()=>{ if(performance.now()-tFin<600) return; sfx.click(); box.classList.add('hidden'); D.cqGo=null; res(r); }; D.cqGo=go.onclick;
     const ex=LQ(q.ex||[]); if(ex&&!blind) fb.innerHTML+=`<div class="cqex">💡 ${kpHTML(ex).replace(/\n/g,'<br>')}</div>`;
     if(opt.preview) return;
     if(ph==='pre'||ph==='post'){ S.pp[ph][q.id]={ok:!!r.ok, ans:r.ans}; logEvent({type:'pp', phase:ph, qid:q.id, q:r.q, ok:!!r.ok, ans:r.ans}); saveSession(); return; }

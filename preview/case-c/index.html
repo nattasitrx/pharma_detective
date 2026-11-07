@@ -846,6 +846,25 @@ html[lang=en] #logo h1{font-size:76px;letter-spacing:2px}
 /* Outlined titles: browsers without paint-order on HTML text draw the outline over the letters. A plain fill copy on top keeps the outline outside the letters everywhere. */
 :where(#splash .s,#intro .nm,#logo h1,#logo h2,.rank){position:relative}
 #splash .s::after,#intro .nm::after,#logo h1::after,#logo h2::after,.rank::after{content:attr(data-txt);position:absolute;inset:0;-webkit-text-stroke:0;text-shadow:none;pointer-events:none}
+
+/* clear right / wrong (mk_clarity.py) */
+.dcard,.acard{position:relative}
+.dcard.ok::after,.dcard.miss::after,.dcard.bad::after,.acard.ok::after,.acard.bad::after{position:absolute;top:-12px;left:-10px;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;box-shadow:0 0 0 3px #fff,0 3px 8px rgba(0,0,0,.25);z-index:2}
+.dcard.ok::after,.acard.ok::after{content:'✓';background:#18b07f}
+.dcard.miss::after{content:'!';background:#f0a000}
+.dcard.bad::after,.acard.bad::after{content:'✕';background:#ff3d5c}
+.mr-side.mr-res{background:#fff;color:#2a2140;display:flex;flex-direction:column;gap:10px}
+.mr-res .mr-v{font-family:var(--tc);font-weight:900;font-size:30px;line-height:1.2;padding:12px 14px;border-radius:18px;text-align:center}
+.mr-res.ok .mr-v{background:#e6fbf2;color:#0f7a55}
+.mr-res.part .mr-v{background:#fff6dc;color:#9a6400}
+.mr-res.bad .mr-v{background:#ffecee;color:#c0213d}
+.mr-res .mr-lg{display:flex;flex-direction:column;gap:4px;font-size:16px;font-weight:700}
+.mr-res .mr-lg span{display:flex;gap:8px;align-items:center}
+.mr-res .mr-lg i{font-style:normal;width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:15px;flex:0 0 auto}
+.mr-res .mr-ans{font-size:17px;font-weight:800;color:#0f7a55;background:#f2fbf7;border-radius:14px;padding:8px 12px}
+.mr-res .mr-x{flex:1;overflow:auto;font-size:17px;line-height:1.55;background:#f7f4ff;border-radius:14px;padding:10px 12px}
+.mr-res .mr-x p{margin:0 0 8px}
+.mr-res #mrNext{align-self:stretch;font-size:22px}
 </style>
 </head>
 <body>
@@ -1018,9 +1037,9 @@ const UI = {
   claimLbl:['王太太的說法','Mrs. Wang\'s claim','คำพูดของป้า'], claimTip:['找出能「直接」推翻黃色字的證物','Find the evidence that DIRECTLY contradicts the highlighted words','หาหลักฐานที่ "หักล้างตรงๆ" กับข้อความสีเหลือง'],
   usedTag:['✓ 已用過','✓ Used','✓ ใช้แล้ว'], triedTag:['✗ 試過了','✗ Tried','✗ ลองแล้ว'], foundLoc:['發現地點','Found at','พบที่'],
   objection:['等一下！','HOLD IT!','เดี๋ยวก่อน!'], gotcha:['找到了！','GOTCHA!','เจอแล้ว!'], unlock:['心鎖解除！','UNLOCKED!','ปลดล็อก!'],
-  critical:['會心一擊！','CRITICAL!','คริติคอล!'], victory:['完全勝利！','VICTORY!','ชนะแล้ว!'], escaped:['逃走了……','ESCAPED…','หนีไปแล้ว…'],
+  critical:['✅ 正確！','✅ Right!','✅ ถูก!'], victory:['完全勝利！','VICTORY!','ชนะแล้ว!'], escaped:['逃走了……','ESCAPED…','หนีไปแล้ว…'],
   mythAliveH:['👿 存活的迷思','👿 Myths still alive','👿 ความเชื่อที่ยังรอด'], mythListH:['👿 還沒破的迷思：在總結裡提到它，就能把它打倒','👿 Myths still alive: mention each one in your summary to break it','👿 ความเชื่อที่ยังไม่แตก: พูดถึงในสรุปเพื่อทลายมัน'],
-  mythShaken:['動搖了…但還沒破！','Shaken… not broken!','สั่นคลอน… แต่ยังไม่แตก!'], mythHolds:['迷思還在！','Myth holds!','ความเชื่อยังอยู่!'],
+  mythShaken:['🔸 部分正確','🔸 Partly right','🔸 ถูกบางส่วน'], mythHolds:['❌ 不對！','❌ Wrong!','❌ ผิด!'],
   mythSurv:['這個迷思還沒破，最後總結時要再提到它！','This myth survived. Bring it up again in your closing summary!','ความเชื่อนี้ยังไม่แตก ตอนสรุปปิดท้ายต้องพูดถึงอีกครั้ง!'],
   mythRule:['注意：只有「最佳」衛教卡才能打破迷思。沒打破的迷思會留在王太太腦中，兩週後就會看到後果！','Heads up: only the BEST card breaks a myth. Any myth left standing stays in Mrs. Wang\'s head, and two weeks later you\'ll see what it does!','ระวัง: มีแต่การ์ดที่ดีที่สุดเท่านั้นที่ทลายความเชื่อได้ ความเชื่อที่ยังไม่แตกจะติดอยู่ในหัวป้า แล้วอีกสองสัปดาห์จะเห็นผลของมัน!'],
   mythLastCall:['還有 {n} 個迷思沒破！最後的總結要把它們都說清楚，不然大魔王會帶著它們逃走！','{n} myths are still standing! Your closing summary has to address them, or the Overlord escapes with them!','ยังมีความเชื่อที่ไม่แตกอีก {n} ข้อ! สรุปปิดท้ายต้องพูดถึงให้ครบ ไม่งั้นจอมมารจะหนีไปพร้อมมัน!'],
@@ -3902,6 +3921,24 @@ function labPanelHTML(){
   return `<h3>${T('labPanel')}</h3>${rows.map(r=>`<div class="lrow"><b>${r[0]} <small>${r[1]}</small></b><span class="v ${r[3]}">${r[2]}</span></div>`).join('')}
    <p style="font-size:13px;color:#b9b4d6;margin:8px 0">61 y · ♀ · 158 cm · 53 kg</p><button class="gbtn blue" id="mrSheet" style="font-size:17px;padding:8px 18px">${T('viewSheet')}</button>`;
 }
+/* ---------- mission result: stays until Continue (mk_clarity.py) ---------- */
+const MRV={ ok:['✅ 全部正確！','✅ All correct!','✅ ถูกทั้งหมด!'], part:['🔸 部分正確','🔸 Partly right','🔸 ถูกบางส่วน'], bad:['❌ 不正確','❌ Not right','❌ ยังไม่ถูก'],
+  lOk:['選對了','Right choice','เลือกถูก'], lMiss:['應該選，但沒選','Should have picked','ควรเลือก แต่ไม่ได้เลือก'], lBad:['不該選','Should not pick','ไม่ควรเลือก'],
+  lOkA:['放對籃子','Right basket','ใส่ถูกตะกร้า'], lBadA:['放錯籃子','Wrong basket','ใส่ผิดตะกร้า'], ans:['正確答案','Answer','คำตอบที่ถูก'], why:['💡 解說','💡 Why','💡 คำอธิบาย'] };
+function mrVerdict(m, r){ return new Promise(res=>{
+  const host=$('#medrev'); if(!host){ res(); return; }
+  const side=host.querySelector('.mr-side'), act=host.querySelector('.mr-act'), acb=!!host.querySelector('.acard');
+  const has=c=>!!host.querySelector('.dcard.'+c+',.acard.'+c), k=r.perfect?'ok':r.partial?'part':'bad';
+  const dot=(c,bg,t)=>`<span><i style="background:${bg}">${c}</i>${esc(L(t))}</span>`;
+  const lg=[has('ok')?dot('✓','#18b07f',acb?MRV.lOkA:MRV.lOk):'', has('miss')?dot('!','#f0a000',MRV.lMiss):'', has('bad')?dot('✕','#ff3d5c',acb?MRV.lBadA:MRV.lBad):''].join('');
+  const name=id=>{ const d=DRUGS.find(x=>x.id===id); return d?d.n.split(' ')[0]:id; };
+  const ans=!acb&&!r.perfect&&(m.ans||[]).length?`<div class="mr-ans">${esc(L(MRV.ans))}: ${(m.ans||[]).map(name).map(esc).join(', ')}</div>`:'';
+  const why=(m.x||[]).map(x=>`<p>${kpHTML(L(x))}</p>`).join('');
+  const box=side||document.createElement('div'); box.className='mr-side mr-res '+k;
+  box.innerHTML=`<div class="mr-v">${esc(L(MRV[k]))}</div>${lg?`<div class="mr-lg">${lg}</div>`:''}${ans}${why?`<div class="mr-x"><b>${esc(L(MRV.why))}</b>${why}</div>`:''}<button class="gbtn" id="mrNext">${esc(T('cqNext'))}</button>`;
+  if(!side) host.appendChild(box); if(act) act.style.visibility='hidden';
+  const t0=performance.now(); $('#mrNext').onclick=()=>{ if(performance.now()-t0<600) return; sfx.click(); res(); };
+}); }
 function missionUI(m, i, n){
   return new Promise(res=>{
     let host=$('#medrev'); if(!host){ host=document.createElement('div'); host.id='medrev'; $('#stage').appendChild(host); }
@@ -3965,11 +4002,9 @@ async function chapter4(){
     S.mr.ans.push({id:m.id, sel:r.sel, perfect:r.perfect, partial:r.partial}); logEvent({type:'medrev', m:m.id, sel:r.sel, perfect:r.perfect, partial:r.partial});
     if(r.perfect) S.mr.perfect++; else if(r.partial) S.mr.partial++; else { S.mr.wrong++; spend(CONFIG.COST_WRONG); }
     if(EXAM()){ sfx.select(); toast(T('examNoted')); }
-    else if(r.perfect) splash('perfect','gold','crit'); else if(r.partial){ sfx.hit(); toast('🔸 '+T('partial')); } else { sfx.error(); toast('❌ '+T('wrongDx')); }
+    else { if(r.perfect) splash('perfect','gold','crit'); else if(r.partial) sfx.hit(); else sfx.error(); await mrVerdict(m,r); }
     m.ans.forEach(id=>{ (S.mr.tags[id]=S.mr.tags[id]||[]).push(L(m.tag)); });
-    await sleep(EXAM()?900:2300); $('#medrev').classList.add('hidden');
-    if(!EXAM()){ show('yeh','R', r.perfect?'happy':r.partial?'think':'sad'); show('me','L','neutral');
-      for(const x of m.x) await say('yeh','neutral',x); }
+    if(EXAM()) await sleep(900); $('#medrev').classList.add('hidden');
     reveal(m.p);
   }
   resumePoint();
@@ -4096,7 +4131,7 @@ async function chapter5(){
     if(q===2){ B.crit++; B.combo++; B.maxCombo=Math.max(B.maxCombo,B.combo); const d=100+B.combo*5; mhp[m.p]=0; sfx.crit(); flash(); setMonster('hit'); mon.classList.remove('hit'); void mon.offsetWidth; mon.classList.add('hit');
       dmgNum('−'+d+'  '+T('critical')); $('#combo').textContent=B.combo>1?B.combo+' '+T('combo')+'!':''; $('#myth').animate([{transform:'none',opacity:1},{transform:'scale(1.25) rotate(-3deg)',opacity:0}],{duration:600,easing:'ease-in',fill:'forwards'}); }
     else if(q===1){ B.ok++; B.combo=0; mhp[m.p]=60; B.alive.push(m.p); sfx.hit(); setMonster('hit'); mon.classList.remove('hit'); void mon.offsetWidth; mon.classList.add('hit'); dmgNum(T('mythShaken'),'#ff9d00'); $('#combo').textContent=''; drawAlive(); }
-    else { B.miss++; B.combo=0; B.alive.push(m.p); sfx.heal(); setMonster('laugh'); dmgNum(T('mythHolds'),'#18b07f'); confusion++; setConf(); $('#combo').textContent=''; chenMini('shock'); drawAlive(); }
+    else { B.miss++; B.combo=0; B.alive.push(m.p); sfx.error(); setMonster('laugh'); dmgNum(T('mythHolds'),'#e0435a'); confusion++; setConf(); $('#combo').textContent=''; chenMini('shock'); drawAlive(); }
     setHP(); await sleep(700); chenMini(q===2?'happy':'think');
     const sv=q<2?' '+T('mythSurv'):'';
     if(!EXAM()) await say('yeh', q===2?'happy':q===1?'think':'sad', [ (q===2?'完美！':q===1?'方向對，但不夠完整。':'不對喔！')+m.x[0]+sv, (q===2?'Perfect! ':q===1?'Right idea, but incomplete. ':'Nope! ')+m.x[1]+sv, (q===2?'เยี่ยม! ':q===1?'มาถูกทาง แต่ยังไม่ครบ ':'ไม่ใช่นะ! ')+m.x[2]+sv ]);
@@ -4366,7 +4401,7 @@ const ED={
  cp_pp:['📊 前測＋後測（序章後、最後各問一次）','📊 Pre- & post-test (after the prologue AND at the end)','📊 ก่อน+หลังเรียน (ถามหลังบทนำ และอีกครั้งตอนจบ)'], cp_refl:['💭 反思題（遊戲最後）','💭 Reflection (end of the game)','💭 คำถามสะท้อนคิด (ท้ายเกม)'],
  ppNote:['同一題會問兩次：前測不顯示對錯、不計分；後測顯示解答。到「全班概況」比較前後測。','Each question is asked twice: the pre-test shows no answers and isn\'t scored; the post-test shows answers. Compare them in Class overview.','ถามข้อเดียวกันสองครั้ง: ก่อนเรียนไม่เฉลยและไม่นับคะแนน หลังเรียนมีเฉลย เปรียบเทียบได้ในแท็บภาพรวมชั้นเรียน'],
  reflNote:['反思題不計分，學生的回答在「學生紀錄」和「全班概況」。','Reflection answers aren\'t scored — read them under Sessions and Class overview.','คำถามสะท้อนคิดไม่นับคะแนน อ่านคำตอบได้ในแท็บบันทึกนักศึกษาและภาพรวมชั้นเรียน'],
- defNote:['已預先放好 6 題前後測和 3 題反思題，可以直接修改、停用或刪除。','6 pre/post-test questions and 3 reflection questions are preloaded — edit, switch off or delete them as you like.','มีคำถามก่อน/หลังเรียน 6 ข้อ และคำถามสะท้อนคิด 3 ข้อเตรียมไว้แล้ว แก้ ปิด หรือลบได้ตามต้องการ'],
+ defNote:['已預先放好前後測和反思題：預設啟用 3 題前後測和 1 題反思，其他題目先停用。可以直接修改、啟用、停用或刪除。','Pre/post-test and reflection questions are preloaded: 3 pre/post questions and 1 reflection are on, the others are kept but switched off. Edit, switch on or off, or delete them as you like.','มีคำถามเตรียมไว้แล้ว: เปิดใช้คำถามก่อน/หลังเรียน 3 ข้อ และสะท้อนคิด 1 ข้อ ข้ออื่นเก็บไว้แต่ปิดอยู่ แก้ เปิด ปิด หรือลบได้ตามต้องการ'],
  qRestore:['↺ 放回預設的前後測／反思題','↺ Restore the default pre/post & reflection questions','↺ ใส่คำถามก่อน/หลังเรียนและสะท้อนคิดตั้งต้นกลับ'], qRestored:['已放回預設題目','Default questions restored','ใส่คำถามตั้งต้นกลับแล้ว'],
  stMode:['遊戲模式','Game mode','โหมดเกม'], stModeChoose:['學生自己選','Students choose','ให้นักศึกษาเลือกเอง'],
  stModeNote:['練習：有提示和解說。考試：沒有提示、選項隨機、「接近」的證物也算錯、解說留到最後。','Practice: hints and explanations. Exam: no hints, shuffled options, "close" evidence counts as wrong, explanations at the end.','ฝึกซ้อม: มีคำใบ้และคำอธิบาย · สอบ: ไม่มีคำใบ้ ตัวเลือกสุ่ม หลักฐานที่ "ใกล้เคียง" นับว่าผิด คำอธิบายรอตอนท้าย'],
@@ -4375,30 +4410,30 @@ const ED={
 const DQ=(id,q,opts,ex)=>({id, kind:'single', cp:'pp', who:'sys', q, img:'', opts:opts.map((t,i)=>({t, ok:i===0})), ex, pts:0, timer:0, kw:'', kwMin:1, ans:'', tol:'', unit:'', clues:[], formula:['','',''], off:false});
 const DR=(id,q)=>({id, kind:'text', cp:'refl', who:'yeh', q, img:'', opts:[], ex:['','',''], pts:0, timer:0, kw:'', kwMin:1, ans:'', tol:'', unit:'', clues:[], formula:['','',''], off:false});
 const DEFAULT_QUESTIONS=[
- DQ('pp_c_stop',['王太太說：「一頭痛，我就把所有的藥都停掉。」你最先該做的是？','Mrs. Wang says, "When a headache comes, I stop ALL my medicines." What should you do first?','ป้าหวังบอกว่า "ปวดหัวเมื่อไหร่ ป้าก็หยุดยาทุกตัวเลย" คุณควรทำอะไรก่อน?'],[
+ Object.assign(DQ('pp_c_stop',['王太太說：「一頭痛，我就把所有的藥都停掉。」你最先該做的是？','Mrs. Wang says, "When a headache comes, I stop ALL my medicines." What should you do first?','ป้าหวังบอกว่า "ปวดหัวเมื่อไหร่ ป้าก็หยุดยาทุกตัวเลย" คุณควรทำอะไรก่อน?'],[
   ['先問她為什麼這樣做、停藥後怎麼了，再一起找頭痛的原因','Ask why she does it and what happens when she stops, then look for the cause together','ถามก่อนว่าทำไมป้าทำแบบนั้น หยุดยาแล้วเป็นอย่างไร แล้วช่วยกันหาสาเหตุ'],
   ['直接嚴肅告訴她停藥很危險，以後絕對不可以再自己停','Tell her firmly that stopping is dangerous and she must never do it again','บอกป้าอย่างจริงจังว่าหยุดยาอันตราย ห้ามหยุดเองอีกเด็ดขาด'],
   ['建議她頭痛時，把止痛藥和所有的藥一起吃就好','Suggest she takes a painkiller together with all her pills when it hurts','แนะนำให้กินยาแก้ปวดพร้อมกับยาทุกตัวเวลาที่ปวดหัว'],
   ['請她只停降血糖藥就好，降血壓藥要繼續吃','Tell her to stop only the diabetes pills and keep the BP pills','ให้ป้าหยุดแค่ยาเบาหวาน ส่วนยาความดันกินต่อไป']],
-  ['先了解她的想法和經驗、不責備，她才會說實話。她的頭痛可能和血壓沒控制好，或 Clarinase 裡的偽麻黃鹼有關；找出原因，才能真正解決。','Understand her beliefs and experience first, without blame, so she tells you the truth. Her headaches may come from poorly controlled blood pressure or the pseudoephedrine in Clarinase — find the cause to really fix it.','เข้าใจความคิดและประสบการณ์ของป้าก่อนโดยไม่ตำหนิ ป้าจึงจะเล่าความจริง อาการปวดหัวอาจมาจากความดันที่คุมไม่ดี หรือ pseudoephedrine ใน Clarinase ต้องหาสาเหตุให้เจอจึงจะแก้ได้จริง']),
+  ['先了解她的想法和經驗、不責備，她才會說實話。她的頭痛可能和血壓沒控制好，或 Clarinase 裡的偽麻黃鹼有關；找出原因，才能真正解決。','Understand her beliefs and experience first, without blame, so she tells you the truth. Her headaches may come from poorly controlled blood pressure or the pseudoephedrine in Clarinase — find the cause to really fix it.','เข้าใจความคิดและประสบการณ์ของป้าก่อนโดยไม่ตำหนิ ป้าจึงจะเล่าความจริง อาการปวดหัวอาจมาจากความดันที่คุมไม่ดี หรือ pseudoephedrine ใน Clarinase ต้องหาสาเหตุให้เจอจึงจะแก้ได้จริง']),{off:true}),
  DQ('pp_alendronate',['每週一次的 alendronate（例如 Fosamax）應該怎麼吃？','How should once-weekly alendronate (e.g. Fosamax) be taken?','ควรกิน alendronate สัปดาห์ละครั้ง (เช่น Fosamax) อย่างไร?'],[
   ['起床空腹配一大杯白開水，30 分鐘內保持直立、不吃不喝','On waking with a full glass of plain water, then stay upright with nothing else for 30 min','ตื่นนอนตอนท้องว่าง กินกับน้ำเปล่าแก้วใหญ่ แล้วตัวตรงและงดกินดื่ม 30 นาที'],
   ['早餐時配一杯牛奶吃，多的鈣能幫藥物把骨頭補強','With breakfast and a glass of milk — the extra calcium helps the drug strengthen the bones','กินพร้อมมื้อเช้ากับนมแก้วหนึ่ง แคลเซียมที่เพิ่มขึ้นช่วยให้ยาเสริมกระดูกได้ดีขึ้น'],
   ['睡前配一點點心吃，可以保護胃，藥效也能在睡覺時發揮','At bedtime with a small snack, so the stomach is protected and the drug works overnight','กินก่อนนอนพร้อมขนมเล็กน้อย ช่วยปกป้องกระเพาะ และยาออกฤทธิ์ระหว่างนอน'],
   ['配早上的咖啡吃比較不會忘記，吃完馬上躺下休息也沒關係','With the morning coffee so it isn\'t forgotten; lying down to rest straight after is fine','กินกับกาแฟตอนเช้าจะได้ไม่ลืม กินแล้วนอนพักได้ทันที']],
   ['食物、咖啡、牛奶裡的鈣都會讓 alendronate 幾乎不吸收；吃完躺下會增加食道潰瘍風險。','Food, coffee and calcium in milk all block alendronate absorption; lying down afterwards raises the risk of oesophageal ulcers.','อาหาร กาแฟ และแคลเซียมในนม ทำให้ alendronate แทบไม่ดูดซึม การนอนลงหลังกินยาเพิ่มความเสี่ยงแผลในหลอดอาหาร']),
- DQ('pp_c_decong',['有高血壓的病人因為鼻塞，在吃 Clarinase（loratadine＋pseudoephedrine）。最需要注意的是？','A patient with hypertension takes Clarinase (loratadine + pseudoephedrine) for a blocked nose. The main concern is:','ผู้ป่วยความดันสูงกิน Clarinase (loratadine + pseudoephedrine) เพราะคัดจมูก สิ่งที่ต้องระวังที่สุดคือ'],[
+ Object.assign(DQ('pp_c_decong',['有高血壓的病人因為鼻塞，在吃 Clarinase（loratadine＋pseudoephedrine）。最需要注意的是？','A patient with hypertension takes Clarinase (loratadine + pseudoephedrine) for a blocked nose. The main concern is:','ผู้ป่วยความดันสูงกิน Clarinase (loratadine + pseudoephedrine) เพราะคัดจมูก สิ่งที่ต้องระวังที่สุดคือ'],[
   ['偽麻黃鹼會讓血壓升高、頭痛、心悸；改用不含它的藥並量血壓','Pseudoephedrine raises BP and causes headache and palpitations — switch and check BP','pseudoephedrine ทำให้ความดันขึ้น ปวดหัว ใจสั่น ควรเปลี่ยนยาและวัดความดัน'],
   ['主要問題是會很想睡，提醒她不要開車或操作機器就好','The main problem is drowsiness — just warn her not to drive or use machines','ปัญหาหลักคือง่วงนอน แค่เตือนไม่ให้ขับรถหรือใช้เครื่องจักรก็พอ'],
   ['它會讓血糖下降，所以要把降血糖藥的劑量往上調','It lowers blood sugar, so her diabetes medicine dose should be raised','ยานี้ทำให้น้ำตาลลดลง จึงต้องปรับเพิ่มขนาดยาเบาหวานขึ้น'],
   ['沒什麼要注意，鼻炎藥很溫和，可以長期天天吃','Nothing special — allergy pills are mild and fine every day long-term','ไม่มีอะไรต้องระวัง ยาภูมิแพ้อ่อนมาก กินทุกวันระยะยาวได้']],
-  ['Pseudoephedrine 是讓血管收縮的鼻塞藥，會升高血壓，也常引起頭痛、心悸、失眠。高血壓病人最好避免，可改用類固醇鼻噴劑或不含偽麻黃鹼的抗組織胺，並追蹤血壓。（Loratadine 本身不太會讓人想睡。）','Pseudoephedrine is a vasoconstricting decongestant: it raises blood pressure and often causes headache, palpitations and insomnia. People with hypertension should avoid it — a steroid nasal spray or an antihistamine without pseudoephedrine is safer — and their BP should be followed. (Loratadine itself is hardly sedating.)','Pseudoephedrine เป็นยาลดคัดจมูกที่ทำให้หลอดเลือดหดตัว ความดันจึงสูงขึ้น และมักทำให้ปวดหัว ใจสั่น นอนไม่หลับ ผู้ป่วยความดันสูงควรเลี่ยง ใช้สเตียรอยด์พ่นจมูกหรือยาแก้แพ้ที่ไม่มี pseudoephedrine แทน แล้วติดตามความดัน (loratadine เองแทบไม่ทำให้ง่วง)']),
- DQ('pp_acarbose',['病人血糖 58 mg/dL、手在發抖、冒冷汗，人還清醒。最適合的處理是？','A patient\'s glucose is 58 mg/dL; she is shaky and sweaty but awake. What is the best first step?','ผู้ป่วยน้ำตาล 58 mg/dL มือสั่น เหงื่อแตก แต่ยังรู้สึกตัว ควรทำอะไรก่อนดีที่สุด?'],[
+  ['Pseudoephedrine 是讓血管收縮的鼻塞藥，會升高血壓，也常引起頭痛、心悸、失眠。高血壓病人最好避免，可改用類固醇鼻噴劑或不含偽麻黃鹼的抗組織胺，並追蹤血壓。（Loratadine 本身不太會讓人想睡。）','Pseudoephedrine is a vasoconstricting decongestant: it raises blood pressure and often causes headache, palpitations and insomnia. People with hypertension should avoid it — a steroid nasal spray or an antihistamine without pseudoephedrine is safer — and their BP should be followed. (Loratadine itself is hardly sedating.)','Pseudoephedrine เป็นยาลดคัดจมูกที่ทำให้หลอดเลือดหดตัว ความดันจึงสูงขึ้น และมักทำให้ปวดหัว ใจสั่น นอนไม่หลับ ผู้ป่วยความดันสูงควรเลี่ยง ใช้สเตียรอยด์พ่นจมูกหรือยาแก้แพ้ที่ไม่มี pseudoephedrine แทน แล้วติดตามความดัน (loratadine เองแทบไม่ทำให้ง่วง)']),{off:true}),
+ Object.assign(DQ('pp_acarbose',['病人血糖 58 mg/dL、手在發抖、冒冷汗，人還清醒。最適合的處理是？','A patient\'s glucose is 58 mg/dL; she is shaky and sweaty but awake. What is the best first step?','ผู้ป่วยน้ำตาล 58 mg/dL มือสั่น เหงื่อแตก แต่ยังรู้สึกตัว ควรทำอะไรก่อนดีที่สุด?'],[
   ['先吃 15–20 g 的糖（3–4 顆糖果或半杯果汁），15 分鐘後再測','15–20 g of sugar (3–4 candies or half a cup of juice), then recheck after 15 minutes','กินน้ำตาล 15–20 ก. (ลูกอม 3–4 เม็ด หรือน้ำผลไม้ครึ่งแก้ว) แล้ววัดซ้ำหลัง 15 นาที'],
   ['馬上吃一大碗飯，吃飽就不用再測','Eat a big bowl of rice straight away; no need to recheck once full','กินข้าวชามใหญ่ทันที อิ่มแล้วไม่ต้องวัดซ้ำ'],
   ['再多吃一顆降血糖藥，讓血糖穩定下來','Another diabetes tablet to stabilise the sugar','กินยาเบาหวานเพิ่มอีกเม็ดเพื่อให้น้ำตาลคงที่'],
   ['先睡一覺休息，起床後再吃東西','Have a sleep first and eat after waking up','นอนพักก่อน ตื่นแล้วค่อยกินอาหาร']],
-  ['人還清醒時，先吃 15–20 g 吸收快的糖（糖果、果汁或葡萄糖錠），15 分鐘後再測，回到 70 以上再吃點心或正餐，避免再掉下來。','While she is awake, give 15–20 g of fast sugar (candy, juice or glucose tablets), recheck after 15 minutes, and once above 70 have a snack or meal so it doesn\'t drop again.','ถ้ายังรู้สึกตัว ให้กินน้ำตาลที่ดูดซึมเร็ว 15–20 ก. (ลูกอม น้ำผลไม้ หรือเม็ดกลูโคส) วัดซ้ำหลัง 15 นาที เมื่อเกิน 70 แล้วให้กินของว่างหรือมื้ออาหาร จะได้ไม่ตกอีก']),
+  ['人還清醒時，先吃 15–20 g 吸收快的糖（糖果、果汁或葡萄糖錠），15 分鐘後再測，回到 70 以上再吃點心或正餐，避免再掉下來。','While she is awake, give 15–20 g of fast sugar (candy, juice or glucose tablets), recheck after 15 minutes, and once above 70 have a snack or meal so it doesn\'t drop again.','ถ้ายังรู้สึกตัว ให้กินน้ำตาลที่ดูดซึมเร็ว 15–20 ก. (ลูกอม น้ำผลไม้ หรือเม็ดกลูโคส) วัดซ้ำหลัง 15 นาที เมื่อเกิน 70 แล้วให้กินของว่างหรือมื้ออาหาร จะได้ไม่ตกอีก']),{off:true}),
  DQ('pp_creat',['61 歲女性、53 公斤，Cr 1.2 mg/dL（參考值 0.64–1.27）。她的腎功能？','A 61-year-old, 53-kg woman has Cr 1.2 mg/dL (reference 0.64–1.27). Her kidney function is:','หญิงอายุ 61 ปี หนัก 53 กก. Cr 1.2 mg/dL (ค่าอ้างอิง 0.64–1.27) การทำงานของไตเป็นอย่างไร?'],[
   ['已經下降：eGFR 約 52（G3a），只是肌肉少讓 Cr 看起來正常','Already reduced — eGFR about 52 (G3a); low muscle mass keeps her Cr looking normal','ลดลงแล้ว: eGFR ราว 52 (G3a) แค่กล้ามเนื้อน้อยทำให้ Cr ดูปกติ'],
   ['正常，因為她的肌酸酐 1.2 有落在檢驗室參考值 0.64–1.27 之內','Normal, because her creatinine is inside the laboratory reference range of 0.64–1.27','ปกติ เพราะครีเอตินินอยู่ในช่วงค่าอ้างอิงของแล็บ 0.64–1.27'],
@@ -4412,8 +4447,8 @@ const DEFAULT_QUESTIONS=[
   ['姿勢不良，每天多做仰臥起坐就能長回原來的高度','Poor posture — daily sit-ups will bring the height back','ท่าทางไม่ดี ซิตอัพทุกวันแล้วจะกลับมาสูงเท่าเดิม']],
   ['身高少了 4 公分以上，是脊椎壓迫性骨折的警訊；很多這種骨折沒有明顯症狀。照脊椎 X 光可以確認，結果也會影響骨鬆藥物的選擇和跌倒預防。','Losing 4 cm or more of height is a warning sign of vertebral compression fractures, many of which cause few symptoms. A spine X-ray confirms it, and the result shapes the choice of osteoporosis treatment and fall prevention.','ส่วนสูงลดลงตั้งแต่ 4 ซม. ขึ้นไปเป็นสัญญาณเตือนของกระดูกสันหลังยุบ ซึ่งหลายครั้งไม่มีอาการชัด การเอกซเรย์กระดูกสันหลังช่วยยืนยัน และผลจะมีผลต่อการเลือกยารักษากระดูกพรุนและการป้องกันการล้ม']),
  DR('rf_c_worry',['王太太最在意的是「很累、沒胃口」，你最擔心的卻是低血糖和骨折。你會怎麼把她在意的事，和你擔心的事連在一起談？','Mrs. Wang\'s biggest worry is feeling tired with no appetite; yours is hypos and fractures. How would you connect what she cares about with what worries you?','สิ่งที่ป้าหวังกังวลที่สุดคือเหนื่อยและเบื่ออาหาร แต่สิ่งที่คุณกังวลคือน้ำตาลต่ำกับกระดูกหัก คุณจะเชื่อมเรื่องที่ป้าใส่ใจเข้ากับเรื่องที่คุณกังวลอย่างไร?']),
- DR('rf_c_team',['王太太同時看內分泌科、骨科、耳鼻喉科，卻沒有一位醫師看過她全部的藥。你會用什麼方法，讓這些醫師知道彼此開了什麼？','Mrs. Wang sees endocrinology, orthopaedics and ENT, yet no doctor has seen all her medicines. How would you make sure each doctor knows what the others prescribe?','ป้าหวังไปหาหมอต่อมไร้ท่อ หมอกระดูก และหมอหูคอจมูก แต่ไม่มีหมอคนไหนเห็นยาทั้งหมดของป้า คุณจะทำอย่างไรให้หมอแต่ละคนรู้ว่าคนอื่นสั่งยาอะไรไว้?']),
- DR('rf_c_sure',['從 1 到 5 分，你現在對「幫同時有糖尿病和骨鬆的病人整理用藥」有幾分把握？還差哪一塊要再補強？','From 1 to 5, how confident are you now at reviewing the medicines of a patient with both diabetes and osteoporosis? What is the one piece you still need to work on?','ให้คะแนน 1–5 ตอนนี้คุณมั่นใจแค่ไหนในการทบทวนยาให้ผู้ป่วยที่เป็นทั้งเบาหวานและกระดูกพรุน? ยังขาดเรื่องไหนที่ต้องไปเติม?']),
+ Object.assign(DR('rf_c_team',['王太太同時看內分泌科、骨科、耳鼻喉科，卻沒有一位醫師看過她全部的藥。你會用什麼方法，讓這些醫師知道彼此開了什麼？','Mrs. Wang sees endocrinology, orthopaedics and ENT, yet no doctor has seen all her medicines. How would you make sure each doctor knows what the others prescribe?','ป้าหวังไปหาหมอต่อมไร้ท่อ หมอกระดูก และหมอหูคอจมูก แต่ไม่มีหมอคนไหนเห็นยาทั้งหมดของป้า คุณจะทำอย่างไรให้หมอแต่ละคนรู้ว่าคนอื่นสั่งยาอะไรไว้?']),{off:true}),
+ Object.assign(DR('rf_c_sure',['從 1 到 5 分，你現在對「幫同時有糖尿病和骨鬆的病人整理用藥」有幾分把握？還差哪一塊要再補強？','From 1 to 5, how confident are you now at reviewing the medicines of a patient with both diabetes and osteoporosis? What is the one piece you still need to work on?','ให้คะแนน 1–5 ตอนนี้คุณมั่นใจแค่ไหนในการทบทวนยาให้ผู้ป่วยที่เป็นทั้งเบาหวานและกระดูกพรุน? ยังขาดเรื่องไหนที่ต้องไปเติม?']),{off:true}),
 ];
 const gameQuestions=()=>Array.isArray(GAME_CFG.questions)?GAME_CFG.questions:DEFAULT_QUESTIONS;
 const TE=k=>ED[k]?(ED[k][LI()]||ED[k][0]):k;
@@ -4515,7 +4550,7 @@ function askCustom(q, i, n, opt){ opt=opt||{}; return new Promise(res=>{
   }
   const tl=+q.timer||0;
   if(tl>0&&S.qte&&!opt.preview&&!ph){ const t0=performance.now(); iv=setInterval(()=>{ const rem=Math.max(0,tl-(performance.now()-t0)/1000); $('#cqTimer').textContent='⏱ '+Math.ceil(rem); if(rem<=0){ clearInterval(iv); if(!done){ toast(T('cqTimeUp')); submit(true); } } },200); } else $('#cqTimer').textContent='';
-  const finish=r=>{ clearInterval(iv); done=true; go.textContent=T('cqNext'); go.onclick=()=>{ sfx.click(); box.classList.add('hidden'); D.cqGo=null; res(r); }; D.cqGo=go.onclick;
+  const finish=r=>{ clearInterval(iv); done=true; go.textContent=T('cqNext'); const tFin=performance.now(); go.onclick=()=>{ if(performance.now()-tFin<600) return; sfx.click(); box.classList.add('hidden'); D.cqGo=null; res(r); }; D.cqGo=go.onclick;
     const ex=LQ(q.ex||[]); if(ex&&!blind) fb.innerHTML+=`<div class="cqex">💡 ${kpHTML(ex).replace(/\n/g,'<br>')}</div>`;
     if(opt.preview) return;
     if(ph==='pre'||ph==='post'){ S.pp[ph][q.id]={ok:!!r.ok, ans:r.ans}; logEvent({type:'pp', phase:ph, qid:q.id, q:r.q, ok:!!r.ok, ans:r.ans}); saveSession(); return; }

@@ -36,7 +36,7 @@ h1{margin:8px 0 0;font-weight:900;font-size:clamp(40px,7vw,72px);line-height:1.0
 .flag{position:absolute;right:12px;top:12px;padding:4px 10px;border-radius:99px;font-weight:900;font-size:13px;background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.15)}
 .cls[hidden]{display:none}
 .flag.go{color:#b35a00}.flag.done{color:#11734d}.flag.shut{color:#c0392b}
-.card.shut .pic img{filter:grayscale(.55) brightness(.92)}.card.shut .play{filter:grayscale(.6);opacity:.75}
+.card.shut{cursor:not-allowed}.card.shut:hover,.card.shut:focus-visible{transform:none}.card.shut .pic img{filter:grayscale(.55) brightness(.92)}.card.shut .play{filter:grayscale(.6);opacity:.75}
 .body{display:flex;flex-direction:column;gap:8px;padding:14px 18px 18px;flex:1}
 .body h2{margin:0;font-size:22px;font-weight:900;line-height:1.3}
 .who{margin:0;font-size:15px;line-height:1.55;color:#4a4060}
@@ -112,7 +112,7 @@ const T={
   title:['藥師偵探','Pharma Detective','นักสืบเภสัช'],
   lead:['選一個案例開始居家訪視吧！','Choose a case and start the home visit!','เลือกเคสแล้วเริ่มเยี่ยมบ้านกันเลย!'],
   cls:['班級','Class','ห้อง'], play:['開始 ▶','Play ▶','เล่น ▶'], first:['第一次玩建議從這裡開始','New? Start here','เล่นครั้งแรกแนะนำเคสนี้'],
-  going:['📌 有進行中的遊戲','📌 Game in progress','📌 มีเกมที่เล่นค้าง'], shut:['🔒 尚未開放','🔒 Not open yet','🔒 ยังไม่เปิด'], done:['✅ 已破關','✅ Cleared','✅ เล่นจบแล้ว'], case:['案例','Case','เคส'],
+  going:['📌 有進行中的遊戲','📌 Game in progress','📌 มีเกมที่เล่นค้าง'], shut:['🔒 尚未開放','🔒 Not open yet','🔒 ยังไม่เปิด'], shutMsg:['🔒 這個案例還沒開放，老師開放之後就能玩了。','🔒 This case is not open yet — your instructor will open it soon.','🔒 เคสนี้ยังไม่เปิด อาจารย์จะเปิดให้เล่นเร็วๆ นี้'], done:['✅ 已破關','✅ Cleared','✅ เล่นจบแล้ว'], case:['案例','Case','เคส'],
   credit:['案例：陳崇鈺 教授（高雄醫學大學 藥學系）· 製作：Nattasit Rattanaphanit · {use} · {mail}','Cases: Prof. Chung-Yu Chen (陳崇鈺), School of Pharmacy, Kaohsiung Medical University · Made by Nattasit Rattanaphanit · {use} · {mail}','เคส: Prof. Chung-Yu Chen (陳崇鈺) School of Pharmacy, Kaohsiung Medical University · ผู้สร้าง: ณัฐสิทธิ์ รัตนพาณิชย์ · {use} · {mail}'],
   foot:['👩‍🏫 老師：按右上角「老師」打開後台，可以開關案例、看結果、調整遊戲。','👩‍🏫 Instructors: press "Instructor" at the top right to open or close cases, see results and customise the games.','👩‍🏫 อาจารย์: กดปุ่ม "หน้าอาจารย์" มุมขวาบน เพื่อเปิด/ปิดเคส ดูผล และปรับเกม'],
 };
@@ -172,12 +172,14 @@ function render(){
   const cb=document.getElementById('cls'); cb.hidden=!cls; cb.textContent='🏫 '+T.cls[i]+': '+cls;
   document.getElementById('cases').innerHTML=CASES.map(c=>{
     const going=inProgress(c), done=get(c.clear)==='1', shut=isShut(c);
-    return `<a class="card ${c.id}${shut?' shut':''}" href="${esc(caseURL(c))}">
+    return `<a class="card ${c.id}${shut?' shut':''}" href="${esc(caseURL(c))}"${shut?' aria-disabled="true"':''}>
       <div class="pic"><img src="img/case-${c.id}.jpg" alt="" loading="lazy" width="800" height="450"><span class="badge">${T.case[i]} <b>${c.id.toUpperCase()}</b></span>${shut?`<span class="flag shut">${T.shut[i]}</span>`:going?`<span class="flag go">${T.going[i]}</span>`:done?`<span class="flag done">${T.done[i]}</span>`:''}</div>
       <div class="body"><h2>${esc(c.t[i])}</h2><p class="who">${esc(c.who[i])}</p><div class="tags">${c.tags[i].map(t=>`<span>${esc(t)}</span>`).join('')}</div>
         <div class="start"><span class="hint">${c.first?esc(T.first[i]):''}</span><span class="play">${T.play[i]}</span></div></div></a>`; }).join('');
 }
 document.querySelectorAll('.langs button').forEach(b=>b.onclick=()=>{ lang=b.dataset.l; put('phd_lang_pick',lang); render(); });
+/* a closed case: say so here instead of opening it (the case page is locked as well) */
+document.getElementById('cases').addEventListener('click',e=>{ const a=e.target.closest('a.card.shut'); if(!a) return; e.preventDefault(); toast(T.shutMsg[LANGS.indexOf(lang)]); });
 if(!direct){ render();
   /* ask the server which cases are open right now */
   Promise.all(CASES.map(c=>fetch(`${API}/api/config?class=st--${c.id}&exact=1`,{cache:'no-store'}).then(r=>r.json()).then(j=>{ if(j&&j.ok) put('phd_status_'+c.id, j.config&&j.config.closed?'1':'0'); }).catch(()=>{})))

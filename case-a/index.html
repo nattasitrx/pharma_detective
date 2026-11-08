@@ -953,7 +953,7 @@ html[lang=en] #logo h1{font-size:76px;letter-spacing:2px}
     </div>
     <div id="lockBox" class="hidden"><div class="langs"><button class="lbtn" data-lang="zh">中文</button><button class="lbtn" data-lang="en">English</button><button class="lbtn" data-lang="th">ไทย</button></div>
       <div class="lk-ic">🔒</div><h3 data-i18n="lockH"></h3><p data-i18n="lockP"></p>
-      <div class="lk-alt"><button class="sbtn" id="lockTeacher" data-i18n="teacherBtn"></button></div></div>
+      <div class="lk-alt"><button class="sbtn" id="lockTeacher" data-i18n="teacherBtn"></button> <button class="sbtn g hidden" id="lockTry" data-i18n="lockTry"></button></div></div>
   </div>
   <div id="results" class="hidden"></div>
   <div id="introHost"></div>
@@ -1101,7 +1101,9 @@ const UI = {
   cqAnswerIs:['正確答案：','Correct answer: ','คำตอบที่ถูก: '], cqStat:['老師的加分題','Instructor questions','คำถามจากอาจารย์'], cqPick:['請先作答','Answer first','กรุณาตอบก่อน'], cqTimeUp:['時間到！','Time\'s up!','หมดเวลา!'],
   draftBadge:['👩‍🏫 試玩中：尚未發布的修改版','👩‍🏫 Preview: unpublished changes','👩‍🏫 ทดลองเล่น: ฉบับแก้ไขที่ยังไม่เผยแพร่'],
   syncNote:['遊玩結果會自動傳給老師（需要網路）','Your results go to your instructor automatically (needs internet)','ผลการเล่นจะส่งให้อาจารย์อัตโนมัติ (ต้องมีอินเทอร์เน็ต)'], syncClass:['班級','Class','ห้อง'], caseBack:['🗂 換案例','🗂 Choose a case','🗂 เลือกเคส'],
-  lockH:['這個案例還沒開放','This case is not open yet','เคสนี้ยังไม่เปิดให้เล่น'], lockP:['老師開放之後就能玩了，可以先選其他案例。','Your instructor will open it soon — you can choose another case for now.','อาจารย์จะเปิดให้เล่นเร็วๆ นี้ ระหว่างนี้เลือกเคสอื่นก่อนได้'],
+  lockH:['這個案例還沒開放','This case is not open yet','เคสนี้ยังไม่เปิดให้เล่น'], lockTry:['▶ 老師試玩（學生仍不能進入）','▶ Try it as instructor (students still cannot enter)','▶ ทดลองเล่นแบบอาจารย์ (นักศึกษายังเข้าไม่ได้)'],
+  lockTried:['🔒 這個案例仍是關閉的：只有這個分頁可以試玩','🔒 The case is still closed: only this tab can play it','🔒 เคสนี้ยังปิดอยู่: เล่นได้เฉพาะแท็บนี้ นักศึกษายังเข้าไม่ได้'],
+  lockP:['老師開放之後就能玩了，可以先選其他案例。','Your instructor will open it soon — you can choose another case for now.','อาจารย์จะเปิดให้เล่นเร็วๆ นี้ ระหว่างนี้เลือกเคสอื่นก่อนได้'],
   swH:['學生可以玩這個案例嗎？','Can students play this case?','นักศึกษาเล่นเคสนี้ได้ไหม'], swOpen:['🔓 開放中：學生可以玩','🔓 Open — students can play','🔓 เปิดอยู่ — นักศึกษาเล่นได้'], swClosed:['🔒 關閉中：學生還不能進入','🔒 Closed — students cannot enter yet','🔒 ปิดอยู่ — นักศึกษายังเข้าไม่ได้'],
   swClose:['🔒 關閉這個案例','🔒 Close this case','🔒 ปิดเคสนี้'], swOpenBtn:['🔓 開放這個案例','🔓 Open this case','🔓 เปิดเคสนี้'], swUnknown:['（讀不到狀態）','(status unavailable)','(อ่านสถานะไม่ได้)'],
   swNote:['按下就生效，所有班級的連結都一樣。已經在玩的學生可以玩完。','Takes effect at once for every class link. Students who are already playing can finish.','มีผลทันทีกับลิงก์ของทุกห้อง ใครที่กำลังเล่นอยู่เล่นต่อจนจบได้'],
@@ -2873,15 +2875,17 @@ function initCaseBack(){ const a=$('#caseBack'); if(!a) return; const go=caseHom
    to every class link. Students see a "not open yet" card instead of the title panel; the dashboard stays reachable. */
 const LOCK={closed:false, key:'phd_status_'+CASE_ID, sk:'st--'+CASE_ID, known:false};
 try{ LOCK.closed=localStorage.getItem(LOCK.key)==='1'; }catch(e){}
-const isLocked=()=>!CFG_DRAFTMODE&&LOCK.closed;
+const isLocked=()=>LOCK.closed&&!LOCK.tryOK;   // draft mode no longer skips the lock: the instructor taps 'try as instructor' (mk_lock.py)
 function applyLock(){ const t=$('#title'), box=$('#lockBox'); if(!t||!box) return; const L=isLocked();
-  t.classList.toggle('locked',L); box.classList.toggle('hidden',!L); if(!L&&typeof fitTitle==='function') fitTitle(); }
+  t.classList.toggle('locked',L); box.classList.toggle('hidden',!L); const tr=$('#lockTry'); if(tr) tr.classList.toggle('hidden',!CFG_DRAFTMODE); if(!L&&typeof fitTitle==='function') fitTitle(); }
 async function statusFetch(url, signal){
   const r=await fetch(`${url}/api/config?class=${encodeURIComponent(LOCK.sk)}&exact=1`,{cache:'no-store', signal}); const j=await r.json(); if(!r.ok||!j||!j.ok) throw new Error('http');
   LOCK.closed=!!(j.config&&j.config.closed); LOCK.known=true; try{ localStorage.setItem(LOCK.key, LOCK.closed?'1':'0'); }catch(e){} return LOCK.closed; }
 async function setCaseClosed(closed){ const r=await teacherFetch(`/api/config?class=${encodeURIComponent(LOCK.sk)}`,{method:'PUT', headers:{'Content-Type':'text/plain;charset=UTF-8'}, body:JSON.stringify({closed:!!closed, at:new Date().toISOString()})});
   if(r.ok){ LOCK.closed=!!closed; LOCK.known=true; try{ localStorage.setItem(LOCK.key, closed?'1':'0'); }catch(e){} applyLock(); } return r; }
-function initLock(){ const tb=$('#lockTeacher'); if(tb) tb.onclick=()=>openPage('teacher'); applyLock(); }
+function initLock(){ const tb=$('#lockTeacher'); if(tb) tb.onclick=()=>openPage('teacher');
+  const tr=$('#lockTry'); if(tr) tr.onclick=()=>{ if(!CFG_DRAFTMODE) return; LOCK.tryOK=true; sfx.click(); applyLock(); toast(T('lockTried')); };
+  applyLock(); }
 /* =====================================================================
    STORY — Prologue · Chapter 1 (interview) · Chapter 2 (search)
    ===================================================================== */

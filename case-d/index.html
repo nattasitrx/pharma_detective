@@ -865,6 +865,9 @@ html[lang=en] #logo h1{font-size:76px;letter-spacing:2px}
 .mr-res .mr-x{flex:1;overflow:auto;font-size:17px;line-height:1.55;background:#f7f4ff;border-radius:14px;padding:10px 12px}
 .mr-res .mr-x p{margin:0 0 8px}
 .mr-res #mrNext{align-self:stretch;font-size:22px}
+
+/* phones: a double tap does not zoom (mk_mobile.py) */
+html,body{touch-action:manipulation}
 </style>
 </head>
 <body>
@@ -7072,6 +7075,19 @@ async function startGame(){
   $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden'); hud(); logEvent({type:'start', qte:S.qte, avatar:S.avatar, gender:S.gender, mode:S.mode, view:VIEW.fp?'fp':'tp'}); saveSession(true);
   clearResume(); await runSteps(0);
 }
+/* ---------- zoomed in by accident: a way back (mk_mobile.py) ---------- */
+(function(){ const vv=window.visualViewport; if(!vv) return; let b=null, t=0;
+  const ZM={back:['🔍 回到正常大小','🔍 Back to normal size','🔍 กลับขนาดปกติ'], pinch:['🤏 用兩指往內捏，縮回正常大小','🤏 Pinch with two fingers to zoom back out','🤏 ใช้สองนิ้วบีบเข้าหากันเพื่อย่อกลับ']};
+  const place=()=>{ if(!b||b.style.display==='none') return; b.style.left=(vv.offsetLeft+10)+'px'; b.style.top=(vv.offsetTop+10)+'px'; b.style.transform=`scale(${1/vv.scale})`; };
+  const reset=()=>{ const m=document.querySelector('meta[name=viewport]'); if(m){ const c=m.getAttribute('content');
+      m.setAttribute('content','width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'); setTimeout(()=>m.setAttribute('content',c),400); }
+    setTimeout(()=>{ if(b&&vv.scale>1.05){ b.textContent=L(ZM.pinch); place(); } },700); };
+  const check=()=>{ clearTimeout(t); if(vv.scale<=1.05){ if(b) b.style.display='none'; return; }
+    t=setTimeout(()=>{ if(vv.scale<=1.05) return;
+      if(!b){ b=document.createElement('button'); b.id='pinchBack'; b.type='button'; b.onclick=reset; document.body.appendChild(b);
+        b.style.cssText='position:fixed;z-index:99999;transform-origin:0 0;border:0;border-radius:99px;padding:10px 16px;font:800 16px/1.2 system-ui,sans-serif;background:#2a2140;color:#fff;box-shadow:0 0 0 3px #fff,0 6px 16px rgba(0,0,0,.35)'; }
+      b.textContent=L(ZM.back); b.style.display=''; place(); },600); };
+  vv.addEventListener('resize',()=>{ check(); place(); }); vv.addEventListener('scroll',place); })();
 function bindUI(){
   addEventListener('resize', scaleStage); scaleStage(); bindParallax(); initFitTitle();
   const st=$('#stage'); st.addEventListener('scroll',()=>{ st.scrollTop=0; st.scrollLeft=0; }); addEventListener('scroll',()=>{ if(scrollX||scrollY) scrollTo(0,0); });

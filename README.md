@@ -73,6 +73,9 @@ built on an older Case A, kept as `cd/a_base.html`. `rebuild_cd.sh` builds them 
    Last, `mk_lock.py` (all three cases) makes a closed case look closed to the instructor too. Opening Customise turns on
    draft mode for the tab, and draft mode used to skip the lock; now the lock box shows, with a "try it as instructor"
    button in that tab only (8 Nov 2026).
+   Then `mk_mobile.py` (all three cases): a double tap no longer zooms the page (`touch-action: manipulation`), and if
+   the page is zoomed in anyway a button offers to go back to normal size, or says to pinch where the browser does not
+   allow it (9 Nov 2026: students zoomed in on Case C's height game and could not get back).
 4. (Retired 8 Nov 2026.) `mk_main.py` reverses `fix_a_age.py`, which changed the age 61 → 65 (birth date from the receipt). It also
    puts back the eight age-61 bag pictures from `assets/case_a_bags_age61.json`. It also sets the eGFR/CrCl age
    chip back to 61; that chip is set outside `fix_a_age.py` and showed 65 on the main link from 4 to 7 Nov 2026.

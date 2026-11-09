@@ -139,12 +139,15 @@ def handle_cg(pg):
         while time.time() - t0 < 75:
             ask = pg.evaluate("()=>{const a=document.querySelector('#cgAsk'); return a && !a.classList.contains('hidden') ? a.dataset.want : null}")
             if ask:
-                try: pg.click('#cgOk' if ask in ('water', 'sofa', 'plants') else '#cgStop', force=True, timeout=1500)
+                try: pg.click('#cgOk' if ask in ('water', 'sofa', 'plants', 'after') else '#cgStop', force=True, timeout=1500)
                 except Exception: pass
                 notes.setdefault('asks', []).append(ask); time.sleep(0.3)
-            if pg.evaluate("()=>/7[:：]00/.test((document.querySelector('#cgTime')||{}).textContent||'')"): break
+                if ask == 'after': break   # 7:00: she asks for breakfast and her other pills (mk 9 Nov 2026)
             time.sleep(0.25)
-        time.sleep(0.5); tapt('food'); tapt('pills'); time.sleep(1.6)
+        time.sleep(0.5)
+        for k in ('food', 'pills'):
+            if not pg.evaluate("(k)=>document.querySelector(`#cgScene .tile[data-item=\"${k}\"]`).classList.contains('gone')", k): tapt(k)
+        time.sleep(1.6)
         if pg.locator('#cgCont').count(): pg.click('#cgCont')
         log('fosa'); return True
     if pg.locator('#htSvg').count() and 'height' not in done:

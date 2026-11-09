@@ -6,7 +6,7 @@ const CGX={
   drag:['拖到目標上（或點一下再點目標）','drag onto the target (or tap, then tap the target)','ลากไปวางที่เป้าหมาย (หรือแตะ แล้วแตะเป้าหมาย)'],
 };
 function cgCss(){ if($('#cgCss')) return; const st=document.createElement('style'); st.id='cgCss'; st.textContent=`
-#cgame{position:absolute;left:34px;right:34px;top:94px;bottom:16px;z-index:24;display:flex;flex-direction:column;background:rgba(255,255,255,.98);border-radius:28px;padding:12px 16px;box-shadow:0 0 0 5px #fff,0 0 0 10px #c47a2c,0 16px 40px rgba(0,0,0,.35);animation:enterC .4s cubic-bezier(.2,1.2,.4,1);touch-action:none;-webkit-user-select:none;user-select:none}
+#cgame{position:absolute;left:34px;right:34px;top:94px;bottom:16px;z-index:24;display:flex;flex-direction:column;background:rgba(255,255,255,.98);border-radius:28px;padding:12px 16px;box-shadow:0 0 0 5px #fff,0 0 0 10px #c47a2c,0 16px 40px rgba(0,0,0,.35);animation:enterC .4s cubic-bezier(.2,1.2,.4,1);touch-action:none;touch-action:pinch-zoom;-webkit-user-select:none;user-select:none}
 #cgame .cg-head{display:flex;gap:14px;align-items:center;background:linear-gradient(90deg,#fff1dc,#fff8ec);border-radius:18px;padding:8px 14px;min-height:58px}
 #cgame .cg-head .no{flex:0 0 auto;background:#b4621a;color:#fff;font-weight:900;border-radius:14px;padding:6px 12px;font-size:19px}
 #cgame .cg-head .tx{flex:1;font-family:var(--tc);font-weight:900;font-size:23px;line-height:1.3;color:#4a2a0c}
@@ -25,7 +25,7 @@ function cgCss(){ if($('#cgCss')) return; const st=document.createElement('style
 #cgame .cg-side>.box{background:#f8f4ee;border-radius:18px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px}
 #cgame .cg-hint{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);background:rgba(74,42,12,.82);color:#fff;font-weight:800;font-size:17px;border-radius:99px;padding:6px 16px;white-space:nowrap;pointer-events:none;z-index:4}
 #cgame .cg-hint:empty{display:none}
-#cgame .tile{position:absolute;display:flex;flex-direction:column;align-items:center;gap:2px;width:118px;padding:8px 6px 6px;border-radius:18px;background:#fff;box-shadow:0 0 0 3px #ead9c2,0 6px 14px rgba(0,0,0,.12);font-weight:800;font-size:14.5px;line-height:1.2;text-align:center;color:#3a2a1c;cursor:grab;touch-action:none;transition:box-shadow .15s,transform .15s,opacity .3s}
+#cgame .tile{position:absolute;display:flex;flex-direction:column;align-items:center;gap:2px;width:118px;padding:8px 6px 6px;border-radius:18px;background:#fff;box-shadow:0 0 0 3px #ead9c2,0 6px 14px rgba(0,0,0,.12);font-weight:800;font-size:14.5px;line-height:1.2;text-align:center;color:#3a2a1c;cursor:grab;touch-action:none;touch-action:pinch-zoom;transition:box-shadow .15s,transform .15s,opacity .3s}
 #cgame .tile svg{width:76px;height:76px;display:block;pointer-events:none}
 #cgame #cgGlass svg{width:132px;height:188px}
 #cgame .tile.sel{box-shadow:0 0 0 5px #13a39a,0 8px 18px rgba(0,0,0,.18);transform:scale(1.05)}
@@ -224,7 +224,7 @@ function fosaGame(){
   const FL=[['pour',['倒一大杯白開水（約 200 mL）：點「白開水」','Pour a full glass (≈200 mL) of plain water: tap the water','รินน้ำเปล่าเต็มแก้ว (ราว 200 มล.): แตะ "น้ำเปล่า"'],'💧','.tile[data-item="water"]',['倒好一大杯白開水','A full glass of plain water','รินน้ำเปล่าเต็มแก้วแล้ว']],
     ['swallow',['點藥錠：讓她配這杯水吞下去','Tap the tablet: she swallows it with that water','แตะเม็ดยา: ให้ป้ากลืนพร้อมน้ำแก้วนั้น'],'💊','.tile[data-item="fosa"]',['Fosamax 吞下去了','Fosamax swallowed','กลืน Fosamax แล้ว']],
     ['wait',['接下來 30 分鐘：坐、站、走動都可以，白開水也可以喝；不能躺、不能吃東西或喝別的、不能吃其他藥。她問的時候，按「✋ 等一下！」或「👍 可以」','Next 30 min: sitting, standing, walking and plain water are fine; no lying down, no food or other drinks, no other pills. When she asks, tap "✋ Wait!" or "👍 OK"','30 นาทีจากนี้: นั่ง ยืน เดิน และดื่มน้ำเปล่าได้ ห้ามนอน ห้ามกินอาหารหรือดื่มอย่างอื่น ห้ามกินยาอื่น เวลาป้าถาม แตะ "✋ เดี๋ยวก่อน!" หรือ "👍 ได้"'],'⏳','#cgAsk:not(.hidden) button',['7 點了','It\'s 7:00','เจ็ดโมงแล้ว']],
-    ['after',['7 點了！點早餐和早上的其他藥給她','7:00! Tap her breakfast and her other morning pills','เจ็ดโมงแล้ว! แตะมื้อเช้าและยาเช้าอื่นๆ ให้ป้า'],'🥟','.tile[data-item="food"]:not(.gone),.tile[data-item="pills"]:not(.gone)',['','','']]];
+    ['after',['7 點了，滿 30 分鐘！她問能不能吃早餐和其他藥：按「👍 可以」（或點桌上的早餐和藥）','7:00 — 30 minutes are up! She asks for breakfast and her other pills: tap "👍 OK" (or tap them on the table)','เจ็ดโมงแล้ว ครบ 30 นาที! ป้าถามว่ากินข้าวเช้าและยาอื่นได้ไหม: แตะ "👍 ได้" (หรือแตะมื้อเช้าและยาบนโต๊ะ)'],'🥟',()=>G.askA?'#cgAsk:not(.hidden) .ok-b':'.tile[data-item="food"]:not(.gone),.tile[data-item="pills"]:not(.gone)',['','','']]];
   const scene=`<div style="position:absolute;left:20px;top:16px;width:120px" id="cgClock">${cgClockSVG(30)}</div><div style="position:absolute;left:150px;top:36px;font-weight:900;font-size:22px;color:#b4621a;line-height:1.3">🗓️ ${esc(L(['週三早上','Wednesday','เช้าวันพุธ']))}<br><span id="cgTime" style="font-size:34px;color:#3a2a1c">6:30</span></div>
     <div class="tile" data-item="glass" style="left:400px;top:16px;width:176px;cursor:default"><div id="cgGlass">${cgGlassSVG(0,'water')}</div><span id="cgMl" style="font-size:18px">0 mL</span></div>
     <div class="who" id="cgWho" style="right:16px;top:16px;width:290px;height:430px"><div class="bed" id="cgBed"></div><div class="bub" id="cgBub"></div><div class="art">${charSVG('chen','neutral')}</div></div>
@@ -247,7 +247,7 @@ function fosaGame(){
   const bub=(t,ms)=>{ $('#cgBub').textContent=t; if(ms) C.later(()=>{ if($('#cgBub').textContent===t) $('#cgBub').textContent=''; },ms); };
   const tile=k=>$(`#cgScene .tile[data-item="${k}"]`), art=e=>{ $('#cgWho .art').innerHTML=charSVG('chen',e); };
   const glass=()=>{ $('#cgGlass').innerHTML=cgGlassSVG(G.ml,G.kind); $('#cgMl').textContent=Math.round(G.ml)+' mL'; };
-  const consume=k=>{ if(k==='food'||k==='pills'){ G.gone.add(k); tile(k).classList.add('gone'); } };
+  const consume=k=>{ if(k==='food'||k==='pills'){ G.gone.add(k); tile(k).classList.add('gone'); tile(k).classList.remove('want'); } };
   function pour(k){ if(G.pouring||G.swallowed||G.ml>=200) return; G.pouring=true; G.kind=k==='water'?'water':'bad'; G.pourH=sfxLoop('pour');
     const iv=setInterval(()=>{ G.ml=Math.min(220,G.ml+22); glass(); if(G.ml>=220){ clearInterval(iv); G.pouring=false; if(G.pourH){ G.pourH.stop(.12); G.pourH=null; }
       if(k==='water'){ C.mark('pour'); bub(L(['一大杯白開水，好。','A full glass of plain water — good.','น้ำเปล่าเต็มแก้ว ดีแล้ว']),1500); }
@@ -279,10 +279,20 @@ function fosaGame(){
     else if(ch==='stop'){ sfx.select(); if(ev==='lie') art('happy'); bub(L(ev==='lie'?['好啦，我坐著。','Fine — I\'ll sit up.','ก็ได้ นั่งก็ได้']:['好，等 7 點再說。','Okay, after seven then.','โอเค รอเจ็ดโมงก่อน']),1500); }
     else { C.err(ev==='lie'?'lieDown':ev==='pills'?'earlyPills':'early'); consume(ev); if(ev==='lie') C.later(()=>{ if(G.want!=='lie'){ $('#cgWho').classList.remove('lying'); art('neutral'); } },2600); bub(L(ev==='lie'?['呼……（躺下了）','Zzz… (lies down)','ครอก… (นอนลงแล้ว)']:['（她吃下去了）','(she has it)','(ป้ากินไปแล้ว)']),1500); }
     C.guide(); }
-  $('#cgStop').onclick=()=>{ if(!C.finished) resolveWant('stop'); };
-  $('#cgOk').onclick=()=>{ if(!C.finished) resolveWant('ok'); };
-  function endWait(){ G.wait=false; G.after=true; if(G.want) resolveWant('timeout'); C.status=null; C.mark('wait'); bub(L(['7 點了！可以吃早餐了嗎？','Seven o\'clock! Can I have breakfast now?','เจ็ดโมงแล้ว! กินข้าวเช้าได้หรือยัง?'])); if(C.ex) $('#cgTx').textContent=L(['7:00','7:00','7:00']); checkAfter(); }
-  function checkAfter(){ if(G.gone.has('food')&&G.gone.has('pills')){ C.mark('after'); C.later(()=>C.finish({min:G.min}),900); } }
+  $('#cgStop').onclick=()=>{ if(C.finished) return; if(G.askA) return afterAns('stop'); resolveWant('stop'); };
+  $('#cgOk').onclick=()=>{ if(C.finished) return; if(G.askA) return afterAns('ok'); resolveWant('ok'); };
+  function endWait(){ G.wait=false; G.after=true; if(G.want) resolveWant('timeout'); C.status=null; C.mark('wait'); if(C.ex) $('#cgTx').textContent=L(['7:00','7:00','7:00']); checkAfter(); askAfter(); }
+  /* 7:00: she asks for what she still hasn't had (breakfast, her other pills), with the same Wait / OK buttons and no timer */
+  const AFT={both:['7 點了！可以吃早餐和其他的藥了嗎？','Seven o\'clock! Can I have breakfast and my other pills now?','เจ็ดโมงแล้ว! กินข้าวเช้ากับยาอื่นได้หรือยัง?'], food:['7 點了！可以吃早餐了嗎？','Seven o\'clock! Can I have breakfast now?','เจ็ดโมงแล้ว! กินข้าวเช้าได้หรือยัง?'],
+    pills:['7 點了！其他的藥可以吃了嗎？','Seven o\'clock! Can I take my other pills now?','เจ็ดโมงแล้ว! กินยาอื่นได้หรือยัง?'], no:['還不行喔？可是已經 30 分鐘了，我還有降血糖藥要吃……','Still not? It\'s been 30 minutes, and I have my diabetes pills to take…','ยังไม่ได้อีกเหรอ? ครบ 30 นาทีแล้วนะ ป้ายังต้องกินยาเบาหวานด้วย…'],
+    ate:['（吃早餐、吃藥）好飽！','(breakfast and pills) All done!','(กินข้าวเช้าและยาแล้ว) อิ่มแล้ว!']};
+  function askAfter(){ if(C.finished||!G.after||G.askA) return; const need=['food','pills'].filter(k=>!G.gone.has(k)); if(!need.length) return;
+    G.askA=true; bub(L(need.length===2?AFT.both:AFT[need[0]])); sfx.blip('chen'); need.forEach(k=>tile(k).classList.add('want'));
+    const a=$('#cgAsk'), w=$('#cgWho'); a.dataset.want='after'; a.style.left=(w.offsetLeft-236)+'px'; a.style.top=(w.offsetTop+120)+'px'; $('#cgAskT').parentElement.style.visibility='hidden'; a.classList.remove('hidden'); C.guide(); }
+  function afterAns(ch){ G.askA=false; $('#cgAsk').classList.add('hidden'); ['food','pills'].forEach(k=>tile(k).classList.remove('want'));
+    if(ch==='ok'){ ['food','pills'].forEach(k=>{ if(!G.gone.has(k)) consume(k); }); sfx.chew(); art('happy'); bub(L(AFT.ate),1600); checkAfter(); return; }
+    C.err('noAfter'); art('sad'); bub(L(AFT.no)); C.guide(); C.later(askAfter,2200); }
+  function checkAfter(){ if(G.gone.has('food')&&G.gone.has('pills')){ if(G.askA){ G.askA=false; $('#cgAsk').classList.add('hidden'); } C.mark('after'); C.later(()=>C.finish({min:G.min}),900); } }
   ['water','coffee','milk','juice'].forEach(k=>tile(k).addEventListener('click',()=>{ if(C.finished) return;
     if(!G.swallowed) return pour(k); if(G.wait){ if(k!=='water'){ C.err('early'); bub(L(['（她喝了一口）','(she takes a sip)','(ป้าจิบไปหนึ่งอึก)']),1300); } } }));
   tile('fosa').addEventListener('click',()=>{ if(!C.finished) swallow(); });
@@ -312,7 +322,7 @@ function hypoGame(){
   const scene=`<div class="who" id="cgWho" style="right:16px;top:16px;width:290px;height:440px"><div class="bub" id="cgBub"></div><div class="art">${charSVG('chen','sad')}</div></div>
     <div style="position:absolute;left:24px;top:20px;width:150px" id="cgClock">${cgClockSVG(0)}</div>
     <div style="position:absolute;left:190px;top:34px;font-weight:900;font-size:20px;color:#b4621a;line-height:1.4"><span id="cgWait" style="font-size:32px;color:#3a2a1c">+0 ${esc(L(FLOWG.min))}</span><br><button class="gbtn gray" id="cgWait15" style="font-size:19px;padding:8px 16px;margin-top:6px">${esc(L(FLOWG.wait15))}</button></div>
-    <div class="cg-read" style="left:24px;top:210px;width:300px"><div style="font-weight:900;color:#5a4a3a">🩸 ${esc(L(['血糖','Blood sugar','น้ำตาลในเลือด']))}</div><b id="cgBg">— —</b><div style="font-weight:900;color:#5a4a3a">🍬 ${esc(L(['已給的糖','Sugar given','ให้น้ำตาลแล้ว']))}: <b id="cgG" style="display:inline;font-size:26px">0</b> g</div></div>
+    <div class="cg-read" style="left:24px;top:210px;width:300px"><div style="font-weight:900;color:#5a4a3a">🩸 ${esc(L(['血糖','Blood sugar','น้ำตาลในเลือด']))}</div><b id="cgBg">— —</b><div id="cgBgOld" style="font-weight:800;font-size:16px;color:#8a7a6a;margin:-2px 0 4px"></div><div style="font-weight:900;color:#5a4a3a">🍬 ${esc(L(['已給的糖','Sugar given','ให้น้ำตาลแล้ว']))}: <b id="cgG" style="display:inline;font-size:26px">0</b> g</div></div>
     ${cgTile('meter',['血糖機','Glucose meter','เครื่องวัดน้ำตาล'],24,476)}${cgTile('gluc',['葡萄糖錠','Glucose tablets','เม็ดกลูโคส'],154,476)}${cgTile('candy',['硬糖','Hard candy','ลูกอมแข็ง'],284,476)}${cgTile('juice',['柳橙汁（半杯）','Orange juice (½ cup)','น้ำส้ม (ครึ่งแก้ว)'],414,476)}${cgTile('bread',['蘇打餅乾','Crackers','ขนมปังกรอบ'],544,476)}`;
   const gd=null, hside=gd?`<div class="box" style="align-items:stretch;text-align:left"><div style="font-weight:900;color:#c0392b;font-size:15px">💊 ${esc(L(['她在吃','She takes','ป้ากินยานี้อยู่']))}</div><b style="font-size:17px;line-height:1.25">${esc(gd.n)}</b><span style="font-size:14px;color:#6a6585">${esc(gd.g)}</span><span style="font-weight:800;font-size:15px;line-height:1.35;color:#8a4fb8">${esc(L(gd.cls))}</span></div>`:'';
   const C=cgPanel({title:['🩸 實作：低血糖急救','🩸 Hands-on: hypo rescue','🩸 ลงมือ: แก้น้ำตาลต่ำ'], task:['王太太在發抖冒冷汗，還沒吃午餐。處理到她安全為止。','Mrs. Wang is shaky and sweaty and hasn\'t had lunch. Handle it until she\'s safe.','ป้าหวังมือสั่นเหงื่อแตก ยังไม่ได้กินข้าวเที่ยง ดูแลจนป้าปลอดภัย'],
@@ -321,7 +331,11 @@ function hypoGame(){
   const G={bg:58, g:0, roundG:0, waited:-1, checked:false, rechecked:false, ok:false, snack:false, checks:0, busy:false};
   const bub=(t,ms)=>{ $('#cgBub').textContent=t; if(ms) C.later(()=>{ if($('#cgBub').textContent===t) $('#cgBub').textContent=''; },ms); };
   const tile=k=>$(`#cgScene .tile[data-item="${k}"]`);
-  const show=v=>{ const e=$('#cgBg'); e.textContent=v+' mg/dL'; e.style.color=v<70?'#c0172f':'#18b07f'; sfx.beep(); };
+  const show=v=>{ const e=$('#cgBg'); e.textContent=v+' mg/dL'; e.style.color=v<70?'#c0172f':'#18b07f'; $('#cgBgOld').textContent=''; sfx.beep(); };
+  const HY={old:['這是 15 分鐘前的數值，現在呢？','That was 15 minutes ago — what is it now?','ค่านี้วัดเมื่อ 15 นาทีที่แล้ว ตอนนี้ล่ะ?'],
+    wonder:['15 分鐘了……我的血糖上來了沒？','15 minutes now… is my sugar back up?','15 นาทีแล้ว… น้ำตาลป้าขึ้นหรือยังนะ?'], passed:['（過了 15 分鐘）','(15 minutes later)','(ผ่านไป 15 นาที)'],
+    sure:['確定她安全了嗎？還沒重測血糖喔。','Sure she\'s safe? Her sugar hasn\'t been rechecked.','แน่ใจหรือว่าป้าปลอดภัยแล้ว? ยังไม่ได้วัดน้ำตาลซ้ำเลย']};
+  const glowMeter=()=>{ if(!C.ex) tile('meter').classList.add('cg-glow'); };
   bub(L(['手好抖……頭暈……','My hands are shaking… so dizzy…','มือสั่นจัง… เวียนหัว…']));
   tile('meter').addEventListener('click',()=>{ if(C.finished||G.busy) return; G.checks++;
     if(!G.checked){ G.checked=true; show(G.bg); C.mark('check'); return; }
@@ -337,11 +351,13 @@ function hypoGame(){
   [['candy',5,['（含一顆糖果）','(sucks a candy)','(อมลูกอมหนึ่งเม็ด)']],['juice',15,['（喝了半杯柳橙汁）','(drinks half a cup of orange juice)','(ดื่มน้ำส้มครึ่งแก้ว)']]].forEach(([k,g,say])=>tile(k).addEventListener('click',()=>{ if(C.finished||G.ok) return; if(G.waited>=15){ bub(L(FLOWG.recheckFirst),1400); return; }
     G.g+=g; G.roundG+=g; $('#cgG').textContent=G.g; k==='juice'?sfx.sip():sfx.chew(); bub(L(say),900);
     if(G.roundG>24) C.err('tooMuch'); C.guide(); }));
-  tile('bread').addEventListener('click',()=>{ if(C.finished) return; if(!G.ok){ C.err('slowCarb'); return; } if(G.snack) return; G.snack=true; C.mark('snack'); sfx.crunch();
+  tile('bread').addEventListener('click',()=>{ if(C.finished) return; if(!G.ok&&G.waited>=15){ C.err('noRecheck'); bub(L(FLOWG.recheckFirst),1600); glowMeter(); return; } if(!G.ok){ C.err('slowCarb'); return; } if(G.snack) return; G.snack=true; C.mark('snack'); sfx.crunch();
     bub(L(['謝謝你，我中午都忘了吃飯……','Thank you — I forgot to eat lunch…','ขอบใจนะ เที่ยงนี้ลืมกินข้าวเลย…']),2000); C.later(()=>C.finish({g:G.g, bg:G.bg, checks:G.checks}),1200); });
   $('#cgWait15').onclick=()=>{ if(C.finished||G.busy) return; if(!G.roundG){ bub(L(FLOWG.treatFirst),1400); sfx.error(); return; } if(G.waited>=15) return;
-    C.mark('treat'); G.busy=true; sfx.whoosh(); let m=0; const iv=setInterval(()=>{ m++; $('#cgClock').innerHTML=cgClockSVG(m); $('#cgWait').textContent='+'+m+' '+L(FLOWG.min); if(m%5===0) sfx.tick(); if(m>=15){ clearInterval(iv); G.waited=15; G.busy=false; C.mark('wait'); } },70); };
-  function done(){ if(!G.g) C.errs.add('under'); else if(!G.rechecked) C.errs.add('noRecheck'); else if(G.ok&&!G.snack) C.errs.add('noSnack'); C.finish({g:G.g, bg:G.bg, checks:G.checks}); }
+    C.mark('treat'); G.busy=true; sfx.whoosh(); let m=0; const iv=setInterval(()=>{ m++; $('#cgClock').innerHTML=cgClockSVG(m); $('#cgWait').textContent='+'+m+' '+L(FLOWG.min); if(m%5===0) sfx.tick(); if(m>=15){ clearInterval(iv); G.waited=15; G.busy=false; C.mark('wait');
+      const e=$('#cgBg'); e.style.color='#b8aca0'; $('#cgBgOld').textContent=L(HY.old); bub(L(C.ex?HY.passed:HY.wonder)); glowMeter(); } },70); };
+  function done(){ if(!C.ex&&G.g&&!G.rechecked&&!G.asked){ G.asked=true; sfx.error(); bub(L(HY.sure),2600); glowMeter(); return; }
+    if(!G.g) C.errs.add('under'); else if(!G.rechecked) C.errs.add('noRecheck'); else if(G.ok&&!G.snack) C.errs.add('noSnack'); C.finish({g:G.g, bg:G.bg, checks:G.checks}); }
   return C.result;
 }
 /* ---------- 3) measuring her height properly, then comparing with the 2018 health booklet ---------- */
@@ -358,10 +374,10 @@ function heightGame(){
   const K=3.4, FLOOR=650, POLE=640, X0=230, XW=POLE-62;   // px per cm; figure's back x at the wall
   const scale=[...Array(41)].map((_,i)=>{ const cm=140+i, y=FLOOR-cm*K, big=cm%10===0, mid=cm%5===0;
     return `<path d="M${POLE} ${y.toFixed(1)} h${big?-26:mid?-18:-10}" stroke="#3a2e22" stroke-width="${big?3:2}"/>${mid?`<text x="${POLE+24}" y="${(y+6).toFixed(1)}" font-size="${big?18:14}" font-weight="900" fill="#3a2e22" font-family="sans-serif">${cm}</text>`:''}`; }).join('');
-  const scene=`<svg id="htSvg" viewBox="0 0 940 690" preserveAspectRatio="xMinYMin meet" style="position:absolute;inset:0;width:100%;height:100%;touch-action:none">
+  const scene=`<svg id="htSvg" viewBox="0 0 940 690" preserveAspectRatio="xMinYMin meet" style="position:absolute;inset:0;width:100%;height:100%;touch-action:none;touch-action:pinch-zoom">
     <rect x="${POLE}" y="0" width="300" height="${FLOOR}" fill="#f1e2c9"/><rect x="0" y="${FLOOR}" width="940" height="40" fill="#d8bf98"/>
     <rect x="${POLE}" y="16" width="16" height="${FLOOR-16}" fill="#fff" stroke="#3a2e22" stroke-width="3"/>${scale}
-    <g id="htBoard" style="cursor:grab"><rect x="${POLE-150}" y="-7" width="170" height="14" rx="4" fill="#5b8fd6" stroke="#3a2e22" stroke-width="3"/><rect x="${POLE-6}" y="-16" width="28" height="32" rx="5" fill="#3d6fb8" stroke="#3a2e22" stroke-width="3"/></g>
+    <g id="htBoard" style="cursor:grab"><rect x="${POLE-200}" y="-48" width="270" height="96" fill="#000" fill-opacity="0"/><rect x="${POLE-150}" y="-7" width="170" height="14" rx="4" fill="#5b8fd6" stroke="#3a2e22" stroke-width="3"/><rect x="${POLE-6}" y="-16" width="28" height="32" rx="5" fill="#3d6fb8" stroke="#3a2e22" stroke-width="3"/></g>
     <g id="htFig" style="cursor:grab"></g>
     <g id="htSlip" style="cursor:pointer"></g>
     <g id="htRead" style="display:none"><rect x="${POLE+70}" y="0" width="190" height="84" rx="16" fill="#fff" stroke="#18b07f" stroke-width="5"/><text id="htVal" x="${POLE+165}" y="56" text-anchor="middle" font-size="38" font-weight="900" fill="#1f5a3a" font-family="sans-serif"></text></g>
@@ -379,6 +395,10 @@ function heightGame(){
   const pt=e=>{ const p=svg.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; return p.matrixTransform(svg.getScreenCTM().inverse()); };
   const bub=(t,ms)=>{ $('#cgBub').textContent=t; if(ms) C.later(()=>{ if($('#cgBub').textContent===t) $('#cgBub').textContent=''; },ms); };
   const hCm=()=>158+(G.slip?2:0)-(G.level?0:1.5), top=()=>FLOOR-hCm()*K;
+  const NX={slip:['點她的拖鞋，把拖鞋脫掉','Tap her slippers to take them off','แตะรองเท้าแตะเพื่อถอดออก'], wall:['把她拖到右邊的牆邊（量尺旁）','Drag her right, to the wall by the scale','ลากป้าไปชิดผนังด้านขวา (ข้างไม้วัด)'],
+    level:['點她的頭，讓她平視前方','Tap her head so she looks straight ahead','แตะศีรษะให้ป้ามองตรงไปข้างหน้า'], board:['點一下藍色頭板（或往下拖），讓它放到頭頂','Tap the blue headboard (or drag it down) onto her head','แตะแผ่นวัดสีฟ้า (หรือลากลง) ให้แตะศีรษะ'],
+    read:['點量尺讀出身高','Tap the scale to read her height','แตะไม้วัดเพื่ออ่านค่าส่วนสูง'], diff:['在右邊填「矮了幾公分」，再按「確認」','Type how many cm shorter on the right, then tap Check','กรอกว่าเตี้ยลงกี่ ซม. ทางขวา แล้วแตะ "ตรวจ"']};
+  const next=()=>{ if(C.ex||C.finished) return; C.hint(L(G.read!=null?NX.diff:G.slip?NX.slip:!G.wall?NX.wall:!G.level?NX.level:!G.touch?NX.board:NX.read)); };
   function drawFig(){ const H=158*K, lift=G.slip?2*K:0, tilt=G.level?0:-17;
     fig.setAttribute('transform',`translate(${G.x},${FLOOR-lift})`);
     fig.innerHTML=`<path d="M10 0 v-${H*.47} h44 v${H*.47} Z" fill="#3b4a7a" stroke="#3a2e22" stroke-width="4"/><path d="M6 -${H*.47} q-6 -${H*.18} 6 -${H*.33} h44 q10 ${H*.15} 6 ${H*.33}Z" fill="#3a6fb5" stroke="#3a2e22" stroke-width="4"/>
@@ -389,35 +409,42 @@ function heightGame(){
         <circle cx="4" cy="-${H*.935}" r="5" fill="#3a2e22"/><path d="M-10 -${H*.92} l-8 6 l9 2" stroke="#3a2e22" stroke-width="3" fill="none" stroke-linejoin="round"/><path d="M-2 -${H*.895} q6 3 10 0" stroke="#b03a48" stroke-width="3" fill="none"/>
         <circle cx="40" cy="-${H*.925}" r="9" fill="#f2b394" stroke="#3a2e22" stroke-width="3"/>${G.level?`<path d="M40 -${H*.925} H-30" stroke="#18b07f" stroke-width="3" stroke-dasharray="6 5"/>`:''}</g>
       <path d="M8 0 h-26 q-6 0 -4 -8 l4 -6 h26Z" fill="#3a2e22"/>`;
-    slip.innerHTML=G.slip?`<path transform="translate(${G.x},${FLOOR})" d="M-24 0 h70 q6 0 6 -4 v-4 h-80 v4 q0 4 4 4Z" fill="#ff8aa8" stroke="#3a2e22" stroke-width="3"/>`:`<path transform="translate(70,${FLOOR})" d="M0 0 h70 q6 0 6 -4 v-4 h-80 v4 q0 4 4 4Z" fill="#ff8aa8" stroke="#3a2e22" stroke-width="3" opacity=".8"/>`;
-    $('#htHead').addEventListener('pointerdown',e=>{ e.stopPropagation(); if(C.finished||G.read) return; G.level=!G.level; sfx.select(); if(G.level){ C.mark('level'); bub(L(['眼睛看前面……這樣嗎？','Eyes straight ahead… like this?','มองตรงไปข้างหน้า… แบบนี้ใช่ไหม?']),1600); } else C.done.delete('level'), C.paint(); drawFig(); dropBoard(); }); }
+    slip.innerHTML=G.slip?`<g transform="translate(${G.x},${FLOOR})"><rect x="-50" y="-70" width="130" height="110" fill="#000" fill-opacity="0"/><path d="M-24 0 h70 q6 0 6 -4 v-4 h-80 v4 q0 4 4 4Z" fill="#ff8aa8" stroke="#3a2e22" stroke-width="3"/><text x="11" y="-22" text-anchor="middle" font-size="30">🩴</text></g>`:`<path transform="translate(70,${FLOOR})" d="M0 0 h70 q6 0 6 -4 v-4 h-80 v4 q0 4 4 4Z" fill="#ff8aa8" stroke="#3a2e22" stroke-width="3" opacity=".8"/>`;
+    $('#htHead').addEventListener('pointerdown',e=>{ e.stopPropagation(); if(C.finished||G.read) return; G.level=!G.level; sfx.select(); if(G.level){ C.mark('level'); bub(L(['眼睛看前面……這樣嗎？','Eyes straight ahead… like this?','มองตรงไปข้างหน้า… แบบนี้ใช่ไหม?']),1600); } else C.done.delete('level'), C.paint(); drawFig(); dropBoard(); next(); }); }
   function drawBoard(){ board.setAttribute('transform',`translate(0,${G.boardY})`); }
   function dropBoard(){ if(G.touch&&!G.read){ G.boardY=top(); drawBoard(); } }
-  slip.addEventListener('pointerdown',e=>{ if(C.finished||G.read||!G.slip) return; e.stopPropagation(); G.slip=false; sfx.pop(); C.mark('shoes'); drawFig(); dropBoard(); });
+  slip.addEventListener('pointerdown',e=>{ if(C.finished||G.read||!G.slip) return; e.stopPropagation(); G.slip=false; sfx.pop(); C.mark('shoes'); drawFig(); dropBoard(); next(); });
   // drag her to the wall
   fig.addEventListener('pointerdown',e=>{ if(C.finished||G.read||e.target.closest('#htHead')) return; e.preventDefault(); const p0=pt(e), x0=G.x; try{ fig.setPointerCapture(e.pointerId); }catch(_){}
     const mv=ev=>{ const p=pt(ev); G.x=Math.max(60,Math.min(XW,x0+p.x-p0.x)); drawFig(); };
     const up=()=>{ fig.removeEventListener('pointermove',mv); fig.removeEventListener('pointerup',up); fig.removeEventListener('pointercancel',up);
-      if(G.x>XW-24){ G.x=XW; G.wall=true; C.mark('wall'); sfx.select(); bub(L(['靠好了。','Against the wall.','ชิดผนังแล้ว']),1200); } else { G.wall=false; C.done.delete('wall'); C.paint(); C.text(); } drawFig(); };
+      if(G.x>XW-24){ G.x=XW; G.wall=true; C.mark('wall'); sfx.select(); bub(L(['靠好了。','Against the wall.','ชิดผนังแล้ว']),1200); } else { G.wall=false; C.done.delete('wall'); C.paint(); C.text(); } drawFig(); next(); };
     fig.addEventListener('pointermove',mv); fig.addEventListener('pointerup',up); fig.addEventListener('pointercancel',up); });
   // the headboard slides down the pole and stops on her head (only when she stands at the wall)
-  board.addEventListener('pointerdown',e=>{ if(C.finished||G.read) return; e.preventDefault(); const p0=pt(e), y0=G.boardY; try{ board.setPointerCapture(e.pointerId); }catch(_){}
+  const WALL1=['先讓她貼牆站好，頭板才量得到','Get her against the wall first','ให้ป้ายืนชิดผนังก่อน แผ่นวัดถึงจะวัดได้'];
+  const lower=()=>{ G.touch=true; G.boardY=top(); drawBoard(); C.mark('board'); sfx.select(); next(); };
+  board.addEventListener('pointerdown',e=>{ if(C.finished||G.read) return; e.preventDefault(); e.stopPropagation(); const p0=pt(e), y0=G.boardY; let moved=0; try{ board.setPointerCapture(e.pointerId); }catch(_){}
     const lim=()=>G.wall?top():FLOOR-20;
-    const mv=ev=>{ const p=pt(ev); G.boardY=Math.max(20,Math.min(lim(),y0+p.y-p0.y)); drawBoard(); };
+    const mv=ev=>{ const p=pt(ev); moved=Math.max(moved,Math.abs(p.y-p0.y)); G.boardY=Math.max(20,Math.min(lim(),y0+p.y-p0.y)); drawBoard(); };
     const up=()=>{ board.removeEventListener('pointermove',mv); board.removeEventListener('pointerup',up); board.removeEventListener('pointercancel',up);
-      if(!G.wall){ G.boardY=30; drawBoard(); if(!C.ex){ sfx.error(); C.hint(L(['先讓她貼牆站好，頭板才量得到','Get her against the wall first','ให้ป้ายืนชิดผนังก่อน แผ่นวัดถึงจะวัดได้'])); } return; }
-      G.touch=G.boardY>=top()-6; if(G.touch){ G.boardY=top(); drawBoard(); C.mark('board'); sfx.select(); C.hint(C.ex?'':L(['點刻度讀數','tap the scale to read it','แตะไม้วัดเพื่ออ่านค่า'])); } };
+      if(!G.wall){ G.boardY=30; drawBoard(); sfx.error(); C.hint(L(WALL1)); return; }
+      if(moved<10){ if(G.touch) read(); else lower(); return; }
+      if(G.boardY>=top()-6) lower(); else { G.touch=false; C.done.delete('board'); C.paint(); C.hint(L(['頭板要往下碰到頭頂','Bring the headboard down until it touches her head','เลื่อนแผ่นวัดลงจนแตะศีรษะ'])); } };
     board.addEventListener('pointermove',mv); board.addEventListener('pointerup',up); board.addEventListener('pointercancel',up); });
   // read: tap the pole/scale once the board rests on her head
-  svg.addEventListener('pointerdown',e=>{ if(C.finished||G.read||!G.touch) return; const p=pt(e); if(Math.abs(p.x-POLE)>60) return;
+  // read: tap the scale once the board rests on her head (tapping it too early says what is missing)
+  svg.addEventListener('pointerdown',e=>{ if(C.finished||G.read!=null||e.target.closest('#htFig,#htSlip,#htBoard')) return; const p=pt(e); if(p.x<POLE-90||p.x>POLE+110) return;
+    if(!G.wall){ sfx.error(); C.hint(L(WALL1)); return; } if(!G.touch){ lower(); return; } read(); });
+  function read(){ if(G.read!=null) return;
     G.read=+hCm().toFixed(1); if(G.slip) C.err('shoes'); if(!G.level) C.err('level'); C.mark('read'); sfx.get();
     $('#htRead').style.display=''; $('#htRead').setAttribute('transform',`translate(0,${Math.max(10,G.boardY-42)})`); $('#htVal').textContent=G.read.toFixed(1)+' cm'; $('#htToday').textContent=G.read.toFixed(1)+' cm';
-    $('#htDiff').disabled=false; $('#htCheck').disabled=false; C.hint(''); try{ $('#htDiff').focus({preventScroll:true}); }catch(_){} });
+    $('#htDiff').disabled=false; $('#htCheck').disabled=false; C.hint(''); next();
+    if(matchMedia('(pointer:fine)').matches) try{ $('#htDiff').focus({preventScroll:true}); }catch(_){} }   // a phone keyboard popping up on its own covers the game
   $('#htCheck').onclick=()=>{ if(C.finished||G.read==null) return; const v=parseFloat(String($('#htDiff').value).replace(',','.')); if(isNaN(v)){ sfx.error(); return; }
     const want=+(162-G.read).toFixed(1); if(Math.abs(Math.abs(v)-want)>0.15) C.err('compare'); C.mark('compare'); $('#htCheck').disabled=true;
     bub(L(['……我真的變矮了？','…I really did get shorter?','…ป้าเตี้ยลงจริงๆ เหรอ?'])); C.later(()=>C.finish({cm:G.read, diff:v}),1100); };
   function done(){ if(G.read==null) C.errs.add('noRead'); C.finish({cm:G.read}); }
-  drawFig(); drawBoard(); C.paint(); C.text(); if(!C.ex) C.hint(L(['點拖鞋脫掉 · 拖她到牆邊 · 點頭部調整 · 拖頭板','tap the slippers · drag her to the wall · tap her head · drag the headboard','แตะรองเท้า · ลากป้าไปชิดผนัง · แตะศีรษะ · ลากแผ่นวัด']));
+  drawFig(); drawBoard(); C.paint(); C.text(); next();
   bub(L(['要量喔？我穿著拖鞋就好啦。','Measure me? I\'ll keep my slippers on.','จะวัดเหรอ? ใส่รองเท้าแตะไว้ก็ได้มั้ง']));
   return C.result;
 }

@@ -3485,7 +3485,10 @@ function heightGame(){
     sumExtra:out=>`<p style="font-size:18px;font-weight:800;line-height:1.45;margin:8px 0 0;color:#5a1030">🦴 ${esc(L(['骨鬆病人身高減少 ≥ 4 公分（或一年 ≥ 2 公分）、又有背痛：要懷疑脊椎壓迫性骨折，請醫師安排 X 光。','Height loss of ≥ 4 cm (or ≥ 2 cm in a year) plus back pain in osteoporosis: suspect a vertebral compression fracture — ask the doctor for an X-ray.','ผู้ป่วยกระดูกพรุนที่ส่วนสูงลดลง ≥ 4 ซม. (หรือ ≥ 2 ซม. ใน 1 ปี) ร่วมกับปวดหลัง: สงสัยกระดูกสันหลังยุบ ควรให้แพทย์ส่งเอกซเรย์']))}</p>`});
   const G={x:X0, slip:true, level:false, wall:false, boardY:30, touch:false, read:null};
   const svg=$('#htSvg'), fig=$('#htFig'), slip=$('#htSlip'), board=$('#htBoard');
-  const pt=e=>{ const p=svg.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; return p.matrixTransform(svg.getScreenCTM().inverse()); };
+  let lastTouch=0; svg.addEventListener('touchend',e=>{ const t=e.timeStamp; if(t-lastTouch<400) e.preventDefault(); lastTouch=t; },{passive:false});
+  // tap/drag position in the picture's own units. Not getScreenCTM(): older iPhone Safari leaves out the stage's CSS scale
+  // (WebKit bug 209220, fixed 2026), so taps on the scale missed. viewBox 940x690, xMinYMin meet.
+  const pt=e=>{ const r=svg.getBoundingClientRect(), k=Math.min(r.width/940, r.height/690)||1; return {x:(e.clientX-r.left)/k, y:(e.clientY-r.top)/k}; };
   const bub=(t,ms)=>{ $('#cgBub').textContent=t; if(ms) C.later(()=>{ if($('#cgBub').textContent===t) $('#cgBub').textContent=''; },ms); };
   const hCm=()=>158+(G.slip?2:0)-(G.level?0:1.5), top=()=>FLOOR-hCm()*K;
   const NX={slip:['點她的拖鞋，把拖鞋脫掉','Tap her slippers to take them off','แตะรองเท้าแตะเพื่อถอดออก'], wall:['把她拖到右邊的牆邊（量尺旁）','Drag her right, to the wall by the scale','ลากป้าไปชิดผนังด้านขวา (ข้างไม้วัด)'],

@@ -179,3 +179,9 @@ These need Playwright with Chromium, and node 22+ for the local results server.
 
 Credits: cases by Prof. Chung-Yu Chen (陳崇鈺), Kaohsiung Medical University; game by Nattasit Rattanaphanit
 (ณัฐสิทธิ์ รัตนพาณิชย์). Course use only; see `LICENSE.md` on `main`.
+
+## `ghost/` — Case D "Blackout Night" (prototype, 10 Nov 2026)
+
+`ghost/index.html` is a stand-alone escape-room prototype of Case D (one room, three knowledge locks, a ghost that
+pressures and hints). It is not built from the engine: copy it to `main:ghost-d/index.html`. It is not linked from the
+case chooser, uses no server and saves nothing.

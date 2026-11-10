@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="robots" content="noindex">
+<title>藥師偵探 D · 停電夜 (prototype)</title>
+<style>
+:root{--ink:#e9e4ff;--pink:#ff7aa2;--gold:#ffd36b;--mint:#7fe3c0;--night:#0c0a1c}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:#05040c;touch-action:pan-x pan-y;-webkit-user-select:none;user-select:none;
+  font-family:system-ui,-apple-system,"Noto Sans TC","Noto Sans Thai","PingFang TC","Microsoft JhengHei",sans-serif;color:var(--ink)}
+#wrap{position:fixed;inset:0;overflow:hidden}
+#stage{position:absolute;left:0;top:0;width:1600px;height:900px;transform-origin:0 0;overflow:hidden;background:var(--night);touch-action:none}
+.hidden{display:none!important}
+button{font:inherit;color:inherit;cursor:pointer;border:0}
+.btn{background:var(--pink);color:#2a1030;font-weight:900;font-size:30px;padding:16px 34px;border-radius:99px;box-shadow:0 6px 0 #b8456b}
+.btn:active{transform:translateY(3px);box-shadow:0 3px 0 #b8456b}
+.btn.alt{background:#3a3260;color:var(--ink);box-shadow:0 6px 0 #231d40}
+.btn.sm{font-size:22px;padding:10px 20px}
+/* title */
+#title{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center;
+  background:radial-gradient(ellipse at 50% 30%,#2a2356 0%,#0c0a1c 70%)}
+#title h1{font-size:92px;margin:0;letter-spacing:4px;text-shadow:0 0 30px #7a6cff}
+#title h2{font-size:38px;margin:0;color:var(--gold);font-weight:800}
+#title p{font-size:24px;max-width:1050px;margin:0;line-height:1.5;color:#c9c1f5}
+#langs{display:flex;gap:12px}
+#langs button{background:#2a2450;border-radius:99px;padding:10px 24px;font-size:24px;font-weight:800}
+#langs button.on{background:var(--gold);color:#2a1030}
+.proto{position:absolute;top:22px;left:22px;background:#ffd36b;color:#2a1030;font-weight:900;font-size:20px;padding:6px 16px;border-radius:99px}
+/* room */
+#room{position:absolute;inset:0}
+#room svg{position:absolute;inset:0;width:1600px;height:900px}
+.hs{cursor:pointer;fill:#fff;fill-opacity:0;stroke:var(--gold);stroke-width:5;stroke-opacity:0;stroke-dasharray:14 10;rx:14}
+.hs.lit{stroke-opacity:.75}
+.hs.want{stroke-opacity:1;stroke:var(--mint);animation:want 1s infinite}
+@keyframes want{50%{stroke-width:11}}
+#dark{position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle 250px at var(--x,800px) var(--y,450px),rgba(8,6,20,0) 0%,rgba(8,6,20,.18) 55%,rgba(6,4,16,.93) 100%)}
+#dark.flick{animation:flick .5s 2}
+@keyframes flick{0%,100%{opacity:1}40%{opacity:.25}60%{opacity:1}80%{opacity:.5}}
+/* HUD */
+#hud{position:absolute;left:0;right:0;top:0;height:84px;display:flex;align-items:center;gap:18px;padding:0 22px;background:linear-gradient(#000c,#0000);pointer-events:none}
+#hud>*{pointer-events:auto}
+.pill{background:#1c1838e6;border-radius:99px;padding:8px 20px;font-size:28px;font-weight:900;display:flex;align-items:center;gap:10px;box-shadow:0 0 0 3px #3a3260}
+#gbar{width:330px;height:22px;border-radius:99px;background:#2a2450;overflow:hidden}
+#gfill{height:100%;width:0;background:linear-gradient(90deg,#7fe3c0,#ffd36b,#ff5c7a);transition:width .4s}
+#hud .sp{flex:1}
+#say{position:absolute;left:50%;bottom:120px;transform:translateX(-50%);max-width:1200px;background:#1c1838f2;border-radius:26px;padding:16px 28px;font-size:28px;line-height:1.45;font-weight:700;box-shadow:0 0 0 4px #4a3f8a;text-align:center;pointer-events:none}
+#say b{color:var(--gold)}
+#notes{position:absolute;left:0;right:0;bottom:0;height:104px;display:flex;align-items:center;gap:12px;padding:0 22px;background:linear-gradient(#0000,#000d);overflow-x:auto;touch-action:pan-x}
+#notes .nt{flex:0 0 auto;background:#2a2450;border-radius:16px;padding:10px 18px;font-size:22px;font-weight:800;box-shadow:0 0 0 3px #4a3f8a}
+#notes .nt.new{animation:pop .6s}
+@keyframes pop{0%{transform:scale(.4)}70%{transform:scale(1.15)}}
+#notes .lab{font-size:20px;color:#a99fe0;font-weight:800;flex:0 0 auto}
+/* panels */
+#veil{position:absolute;inset:0;background:#05040ccc;display:flex;align-items:center;justify-content:center}
+.panel{width:1180px;max-height:800px;overflow:auto;background:#f8f3ea;color:#2a2140;border-radius:30px;padding:30px 38px;box-shadow:0 0 0 6px #4a3f8a,0 30px 60px #000a;touch-action:pan-y}
+.panel h3{margin:0 0 12px;font-size:36px}
+.panel p{font-size:25px;line-height:1.5;margin:8px 0}
+.panel table{border-collapse:collapse;width:100%;font-size:24px;margin:8px 0}
+.panel td,.panel th{border:2px solid #cbbfa8;padding:8px 12px;text-align:left}
+.panel th{background:#efe6d4}
+.panel .row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+.panel .hint{font-size:21px;color:#7a6f8f}
+.panel .hand{font-family:"Comic Sans MS","Segoe Print",cursive,inherit;background:#fff9c9;border-radius:14px;padding:14px 18px;transform:rotate(-.6deg);box-shadow:0 4px 0 #e2d98f}
+.dials{display:flex;gap:16px;justify-content:center;margin:20px 0}
+.dial{display:flex;flex-direction:column;align-items:center;gap:8px;min-width:150px}
+.dial .cap{font-size:20px;font-weight:800;color:#7a6f8f;text-align:center;max-width:300px}
+.dial .v{min-width:130px;max-width:310px;min-height:92px;display:flex;align-items:center;justify-content:center;text-align:center;background:#2a2140;color:#ffd36b;border-radius:18px;font-size:30px;font-weight:900;padding:8px 14px}
+.dial.num .v{font-size:66px;font-variant-numeric:tabular-nums}
+.dial button{background:#e7dcc6;border-radius:14px;width:120px;height:52px;font-size:26px;font-weight:900;color:#2a2140}
+.panel.shake{animation:shake .4s}
+@keyframes shake{20%{transform:translateX(-18px)}40%{transform:translateX(16px)}60%{transform:translateX(-10px)}80%{transform:translateX(6px)}}
+.opt{display:block;width:100%;text-align:left;background:#efe6d4;border-radius:18px;padding:16px 22px;font-size:26px;font-weight:800;margin:10px 0;color:#2a2140}
+.opt.ok{background:#bff0dc}.opt.bad{background:#ffc9d2}
+/* ghost event */
+#boo{position:absolute;inset:0;background:radial-gradient(circle at 50% 45%,#2b1f5ee6,#05040cf2);display:flex;align-items:center;justify-content:center;gap:40px}
+#boo .gh{width:330px;animation:float 2.2s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-22px) rotate(2deg)}}
+#boo .q{width:820px}
+#boo .q h3{font-size:34px;margin:0 0 6px;color:var(--gold)}
+#boo .q p{font-size:28px;font-weight:800;margin:0 0 10px;line-height:1.4}
+#boo .tm{height:14px;border-radius:99px;background:#2a2450;overflow:hidden;margin-bottom:12px}
+#boo .tm i{display:block;height:100%;background:var(--pink);width:100%}
+#boo .opt{background:#2a2450;color:var(--ink);box-shadow:0 0 0 3px #4a3f8a}
+#boo .opt.ok{background:#1f6b54}#boo .opt.bad{background:#7a2740}
+#boo .why{font-size:23px;color:#c9c1f5;min-height:60px}
+#peek{position:absolute;width:150px;pointer-events:none;opacity:0;transition:opacity .8s,transform 2.5s}
+#end{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 30%,#3a2f78,#0c0a1c 75%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;text-align:center;padding:0 120px}
+#end h1{font-size:50px;margin:0}
+#end p{font-size:24px;line-height:1.5;margin:0;max-width:1200px}
+#end ul{font-size:22px;text-align:left;line-height:1.5;margin:0;max-width:1150px}
+</style>
+</head>
+<body>
+<div id="wrap">
+<div id="stage">
+  <div id="room" class="hidden"></div>
+  <div id="dark" class="hidden"></div>
+  <div id="peek"></div>
+  <div id="hud" class="hidden">
+    <div class="pill">⏱ <span id="clock">15:00</span></div>
+    <div class="pill">👻 <div id="gbar"><div id="gfill"></div></div></div>
+    <div class="pill">🔓 <span id="nlock">0</span>/4</div>
+    <div class="sp"></div>
+    <button class="btn sm alt" id="bHint"></button>
+    <button class="btn sm alt" id="bMute">🔊</button>
+  </div>
+  <div id="say" class="hidden"></div>
+  <div id="notes" class="hidden"></div>
+  <div id="veil" class="hidden"></div>
+  <div id="boo" class="hidden"></div>
+  <div id="end" class="hidden"></div>
+  <div id="title">
+    <div class="proto">PROTOTYPE · 試作版</div>
+    <div id="langs"><button data-l="0">中文</button><button data-l="1">English</button><button data-l="2">ไทย</button></div>
+    <h1 id="t1"></h1><h2 id="t2"></h2><p id="t3"></p>
+    <button class="btn" id="bStart"></button>
+    <p id="t4" style="font-size:20px;color:#8f86c4"></p>
+  </div>
+</div>
+</div>
+<script>
+'use strict';
+/* =====================================================================
+   Pharma Detective · Case D · "Blackout night" — escape-room prototype (room 1 of the idea, 10 Nov 2026)
+   Same case facts as Case D (Mr. Lee, 88): CrCl 56, rescue vs daily inhaler, duplicate drugs, doubled glipizide → fall.
+   One file, no server, nothing is saved or sent.
+   ===================================================================== */
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+let LANG=(()=>{ const q=new URLSearchParams(location.search).get('lang'); return q==='en'?1:q==='th'?2:0; })();
+const L=a=>a[LANG]||a[0];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+/* ---------- stage scale ---------- */
+let K=1; function fit(){ const w=document.documentElement.clientWidth, h=document.documentElement.clientHeight; K=Math.min(w/1600,h/900); const st=$('#stage'); st.style.transform=`scale(${K})`; st.style.left=(w-1600*K)/2+'px'; st.style.top=(h-900*K)/2+'px'; }
+addEventListener('resize',fit); fit();
+['gesturestart','gesturechange'].forEach(t=>document.addEventListener(t,e=>e.preventDefault(),{passive:false}));
+const pt=e=>{ const r=$('#stage').getBoundingClientRect(); return {x:(e.clientX-r.left)/K, y:(e.clientY-r.top)/K}; };
+/* ---------- sound ---------- */
+const A={ctx:null,mute:false};
+function tone(f,d,type='sine',v=.12,slide){ if(A.mute) return; try{ A.ctx=A.ctx||new (window.AudioContext||window.webkitAudioContext)(); const c=A.ctx,o=c.createOscillator(),g=c.createGain(); o.type=type; o.frequency.value=f; if(slide) o.frequency.exponentialRampToValueAtTime(slide,c.currentTime+d);
+  g.gain.setValueAtTime(v,c.currentTime); g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d); o.connect(g).connect(c.destination); o.start(); o.stop(c.currentTime+d); }catch(e){} }
+const sfx={ click:()=>tone(520,.06,'square',.05), knock:()=>{ tone(90,.12,'triangle',.3); setTimeout(()=>tone(80,.12,'triangle',.3),180); setTimeout(()=>tone(85,.14,'triangle',.3),360); },
+  bad:()=>tone(140,.35,'sawtooth',.12,70), good:()=>{ tone(660,.12,'triangle',.14); setTimeout(()=>tone(880,.14,'triangle',.14),110); setTimeout(()=>tone(1320,.25,'triangle',.14),230); },
+  woo:()=>tone(300,1.1,'sine',.12,700), beat:()=>{ tone(58,.12,'sine',.28); setTimeout(()=>tone(52,.14,'sine',.2),160); }, paper:()=>tone(1800,.08,'triangle',.04,600), dial:()=>tone(900,.03,'square',.04) };
+/* ---------- texts ---------- */
+const TX={
+ t1:['停電夜','Blackout Night','คืนไฟดับ'], t2:['藥師偵探 D · 李伯伯的房間','Pharma Detective D · Mr. Lee\'s room','นักสืบเภสัช D · ห้องของลุงหลี่'],
+ t3:['晚上七點，你來到精忠新村四樓做居家訪視。門一關上——整層樓停電了，門也打不開。李伯伯躺在床上喘。黑暗裡，好像還有「別人」……用你的藥學知識解開房間裡的鎖，在時間內帶他出去。',
+     '7 pm. You arrive on the 4th floor for a home visit. The door shuts — the power goes out, and the door won\'t open. Mr. Lee lies wheezing on the bed. And in the dark there seems to be someone else… Use what you know about medicines to open the locks and get him out in time.',
+     'หนึ่งทุ่ม คุณมาเยี่ยมบ้านที่ชั้น 4 พอประตูปิด ไฟก็ดับทั้งชั้น ประตูเปิดไม่ออก ลุงหลี่นอนหอบอยู่บนเตียง และในความมืดเหมือนมี "ใครอีกคน"… ใช้ความรู้เรื่องยาไขกุญแจในห้อง แล้วพาลุงออกไปให้ทันเวลา'],
+ t4:['有一點點緊張的音效 · 建議橫向拿手機 · 大約 10–15 分鐘','Mildly spooky sounds · hold your phone sideways · about 10–15 minutes','มีเสียงลุ้นระทึกเล็กน้อย · ถือมือถือแนวนอน · ประมาณ 10–15 นาที'],
+ start:['▶ 進門','▶ Go in','▶ เข้าห้อง'], hint:['👻 問老班長','👻 Ask the Sergeant','👻 ถามจ่าเฒ่า'], close:['關閉','Close','ปิด'], tryOpen:['🔑 試試看','🔑 Try it','🔑 ลองเปิด'], notes:['線索','Clues','เบาะแส'],
+ locked:['鎖著。','Locked.','ล็อกอยู่'], wrong:['喀——打不開！黑暗裡有東西靠近了……','Click — it won\'t open! Something in the dark moves closer…','แกร๊ก — เปิดไม่ออก! มีบางอย่างในความมืดขยับเข้ามาใกล้…'],
+ open:['喀嚓！開了！','Click! It\'s open!','คลิก! เปิดแล้ว!'], again:['再試一次','Try again','ลองใหม่'],
+ booT:['老班長飄出來了！','The Sergeant floats out!','จ่าเฒ่าลอยออกมา!'], booOk:['「嗯，你懂。」他退回黑暗裡。','"Hm. You know your stuff." He drifts back into the dark.','"อืม รู้จริงนี่" แล้วเขาก็ลอยกลับเข้าไปในความมืด'],
+ booBad:['「不對啦！」他繞著你轉了好幾圈——浪費了 45 秒。','"Wrong!" He circles you again and again — 45 seconds lost.','"ผิด!" เขาวนรอบตัวคุณหลายรอบ เสียเวลาไป 45 วินาที'],
+ lose1:['時間到了','Time is up','หมดเวลา'], lose2:['李伯伯喘得更厲害了，救護人員破門而入。這次沒能自己找出原因——再試一次吧。','Mr. Lee\'s breathing got worse and the paramedics broke the door down. You didn\'t find the cause yourself this time — try again.','ลุงหลี่หอบหนักขึ้น เจ้าหน้าที่กู้ภัยพังประตูเข้ามา รอบนี้ยังหาสาเหตุเองไม่ได้ ลองอีกครั้งนะ'],
+ win1:['門開了！','The door opens!','ประตูเปิดแล้ว!'],
+ win2:['老班長站在門邊，對你敬了個禮。「以前住這間的是我。沒人幫我看藥……別讓老李跟我一樣。」燈亮了，他不見了。',
+       'The Sergeant stands by the door and salutes. "This used to be my room. Nobody ever checked my medicines… don\'t let Old Lee end up like me." The lights come on, and he is gone.',
+       'จ่าเฒ่ายืนข้างประตู ยกมือทำความเคารพ "เมื่อก่อนห้องนี้เป็นของฉัน ไม่มีใครช่วยดูยาให้ฉันเลย… อย่าให้เฒ่าหลี่เป็นแบบฉัน" ไฟติด แล้วเขาก็หายไป'],
+ win3:['你用到的知識','What you used','ความรู้ที่คุณใช้ไข'], time:['剩餘時間','Time left','เวลาที่เหลือ'], scares:['被嚇到','Scares','โดนหลอก'], proto:['這是試作版（第一個房間）。之後可以加上更多房間、吸入器實作和完整的照護計畫。','This is a prototype (the first room). More rooms, the hands-on inhaler practice and a full care plan can follow.','นี่คือเวอร์ชันทดลอง (ห้องแรก) ต่อไปเพิ่มห้องอื่น ด่านฝึกยาพ่น และแผนดูแลฉบับเต็มได้']
+};
+const T=k=>L(TX[k]);
+/* ---------- the case (facts as in Case D) ---------- */
+const DOCS={
+ card:{ic:'🪪', n:['個案卡','Patient card','บัตรผู้ป่วย'], h:()=>`<h3>🪪 ${L(['個案卡','Patient card','บัตรผู้ป่วย'])}</h3><table>
+   <tr><th>${L(['姓名','Name','ชื่อ'])}</th><td>${L(['李伯伯（男）','Mr. Lee (male)','ลุงหลี่ (ชาย)'])}</td></tr>
+   <tr><th>${L(['年齡','Age','อายุ'])}</th><td>88 ${L(['歲','years','ปี'])}</td></tr>
+   <tr><th>${L(['身高／體重','Height / weight','ส่วนสูง / น้ำหนัก'])}</th><td>167 cm / <b>62 kg</b></td></tr>
+   <tr><th>${L(['診斷','Diagnoses','โรค'])}</th><td>COPD · ${L(['高血壓','hypertension','ความดันสูง'])} · ${L(['第 2 型糖尿病','type 2 diabetes','เบาหวานชนิดที่ 2'])} · BPH · GERD…</td></tr></table>`},
+ labs:{ic:'🧪', n:['檢驗單','Lab sheet','ผลแล็บ'], h:()=>`<h3>🧪 ${L(['高雄 XX 總醫院 檢查紀錄','General Hospital — lab record','ผลตรวจ รพ.ทั่วไป'])}</h3><table>
+   <tr><th></th><th>2021/11/20</th><th>2022/01/20</th><th>2022/04/22</th></tr>
+   <tr><th>HbA1c (%)</th><td>7.2</td><td>7.9</td><td>8.2</td></tr>
+   <tr><th>GLU-AC (mg/dL)</th><td>162</td><td>123</td><td>151</td></tr>
+   <tr><th>CREA (mg/dL)</th><td>1.0</td><td>0.5</td><td>0.8</td></tr></table>
+   <p class="hint">${L(['參考值 0.64–1.27——看起來「正常」。','Reference 0.64–1.27 — it looks "normal".','ค่าอ้างอิง 0.64–1.27 ดูเหมือน "ปกติ"'])}</p>`},
+ formula:{ic:'📄', n:['撕下的筆記','Torn note','กระดาษโน้ตที่ฉีกมา'], h:()=>`<h3>📄 ${L(['地上撕下的一頁','A torn page on the floor','กระดาษที่ฉีกตกอยู่บนพื้น'])}</h3>
+   <p class="hand">${L(['藥櫃的密碼＝老李「真正」的腎功能（用最新的 Cr）。','Cabinet code = Old Lee\'s REAL kidney function (use the newest Cr).','รหัสตู้ยา = การทำงานของไต "ที่แท้จริง" ของเฒ่าหลี่ (ใช้ค่า Cr ล่าสุด)'])}<br><br>
+   CrCl (♂) = (140 − ${L(['年齡','age','อายุ'])}) × ${L(['體重','weight','น้ำหนัก'])} ÷ (72 × Cr)<br><span style="font-size:20px">— ${L(['老班長','the Sergeant','จ่าเฒ่า'])} 👻</span></p>`},
+ bags:{ic:'💊', n:['門後的藥袋','Drug bags on the door','ซองยาหลังประตู'], h:()=>`<h3>💊 ${L(['總醫院藥袋（111/04/28）','General Hospital bags (28 Apr 2022)','ซองยา รพ.ทั่วไป (28 เม.ย. 2022)'])}</h3><table>
+   <tr><th>${L(['胸腔內科','Chest clinic','คลินิกทรวงอก'])}</th><td><b>Peace</b> 鼻福 — pseudoephedrine ${L(['複方','combination','สูตรผสม'])}<br><b>Famo</b> — famotidine 20 mg × 2/${L(['天','day','วัน'])}<br><b>Amtrel</b> — ${L(['降血壓','blood pressure','ลดความดัน'])}<br>Actein · <b>Berotec N</b> · <b>Spiolto Respimat</b></td></tr>
+   <tr><th>${L(['新陳代謝科','Endocrine clinic','คลินิกต่อมไร้ท่อ'])}</th><td><b>Minidiab</b> — glipizide<br>Galvus MET — vildagliptin + metformin<br><b>Mopride</b> — mosapride<br>Actibest<br><b>Sketa</b> — acetaminophen + chlorzoxazone</td></tr></table>`},
+ inh:{ic:'🫁', n:['床頭的吸入器','Inhalers on the headboard','ยาพ่นที่หัวเตียง'], h:()=>`<h3>🫁 ${L(['床頭的兩支吸入器','Two inhalers on the headboard','ยาพ่นสองตัวที่หัวเตียง'])}</h3><table>
+   <tr><th>🔵 Berotec N</th><td>fenoterol — ${L(['短效 β2 致效劑，幾分鐘內打開氣管。藍色那支快用完了。','short-acting β2 agonist, opens the airways within minutes. The blue one is nearly empty.','ยาขยายหลอดลมออกฤทธิ์สั้น ออกฤทธิ์ในไม่กี่นาที ตัวสีฟ้าใกล้หมดแล้ว'])}</td></tr>
+   <tr><th>🟢 Spiolto Respimat</th><td>tiotropium + olodaterol — ${L(['長效 LAMA＋LABA，藥效 24 小時。綠色那支幾乎是滿的。','long-acting LAMA + LABA, lasts 24 hours. The green one is almost full.','ยาออกฤทธิ์ยาว LAMA + LABA อยู่ได้ 24 ชั่วโมง ตัวสีเขียวแทบยังเต็ม'])}</td></tr></table>`},
+ leaflet:{ic:'📑', n:['Spiolto 仿單','Spiolto leaflet','เอกสารกำกับยา Spiolto'], h:()=>`<h3>📑 Spiolto Respimat — ${L(['仿單','package leaflet','เอกสารกำกับยา'])}</h3>
+   <p>${L(['標準劑量：<b>每天 1 次、每次 2 噴</b>，固定時間使用。不是急救用藥。','Standard dose: <b>2 puffs once daily</b>, at the same time each day. Not for sudden breathlessness.','ขนาดมาตรฐาน: <b>วันละครั้ง ครั้งละ 2 พัฟ</b> เวลาเดิมทุกวัน ไม่ใช่ยาสำหรับอาการหอบเฉียบพลัน'])}</p>
+   <p class="hand">${L(['藥袋上卻寫「一天兩次」……要跟醫師確認。抽屜的鎖：哪支急救？哪支每天？每天怎麼用？','But the bag says "twice a day"… check with the doctor. The drawer lock: which one for rescue? which one daily? and how is the daily one used?','แต่ซองยาเขียนว่า "วันละสองครั้ง"… ต้องถามหมอ กุญแจลิ้นชัก: ตัวไหนฉุกเฉิน? ตัวไหนใช้ทุกวัน? และตัวที่ใช้ทุกวันใช้อย่างไร?'])} 👻</p>`},
+ receipt:{ic:'🧾', n:['診所收據','Clinic receipt','ใบเสร็จคลินิก'], h:()=>`<h3>🧾 ${L(['吳家醫科診所收據（111/03/20）','Wu Family Clinic receipt (20 Mar 2022)','ใบเสร็จคลินิกครอบครัวอู๋ (20 มี.ค. 2022)'])}</h3><table>
+   <tr><th>Ponstan 500 mg</th><td>mefenamic acid (NSAID) × 3/${L(['天','day','วัน'])}</td></tr>
+   <tr><th>Royamet 200 mg</th><td>cimetidine × 3/${L(['天','day','วัน'])}</td></tr>
+   <tr><th>Clarinase ${L(['（自費）','(self-paid)','(จ่ายเอง)'])}</th><td>loratadine + pseudoephedrine</td></tr>
+   <tr><th>Kudona ${L(['（自費）','(self-paid)','(จ่ายเอง)'])}</th><td>glucosamine</td></tr></table>
+   <p class="hand">${L(['鐵盒的鎖：診所開的這三個藥，各自跟家裡哪一包「撞藥」？','The metal box: each of these three clinic drugs doubles up with which bag at home?','กล่องเหล็ก: ยาสามตัวจากคลินิกนี้ ซ้ำซ้อนกับซองไหนที่บ้าน?'])} 👻</p>`},
+ pillbox:{ic:'🗓️', n:['一週藥盒','Weekly pillbox','กล่องยารายสัปดาห์'], h:()=>`<h3>🗓️ ${L(['鐵盒裡的一週藥盒','The weekly pillbox in the metal box','กล่องยารายสัปดาห์ในกล่องเหล็ก'])}</h3>
+   <p>${L(['阿梅上大夜班的那幾天，早上沒有人打電話提醒。<b>週二、週四的「早上」格是空的——可是「晚上」那格的藥也不見了，還多了一張字條：</b>','On Ah-Mei\'s night-shift days nobody phones in the morning. <b>The Tuesday and Thursday morning slots were skipped — and a note is tucked inside:</b>','วันที่พี่เหมยเข้ากะดึก ไม่มีใครโทรเตือนตอนเช้า <b>ช่องเช้าวันอังคารและพฤหัสฯ ถูกข้าม และมีกระดาษโน้ตสอดอยู่:</b>'])}</p>
+   <p class="hand">${L(['「早上忘了吃，晚上想起來，早晚的一起吞。公家的藥不能浪費。上週四晚上頭暈、冒冷汗、手抖，在浴室跌倒——不要告訴阿梅。」','"Forgot the morning ones. Remembered at night, swallowed morning and evening together. Government medicine mustn\'t be wasted. Last Thursday night: dizzy, cold sweat, shaky, fell in the bathroom — don\'t tell Ah-Mei."','"ลืมยาเช้า นึกได้ตอนกลางคืน เลยกลืนยาเช้ากับเย็นรวมกัน ยาหลวงทิ้งไม่ได้ คืนวันพฤหัสฯ ที่แล้วเวียนหัว เหงื่อแตก มือสั่น ล้มในห้องอาบน้ำ อย่าบอกเหมยนะ"'])}</p>`}
+};
+const HOME=['Peace','Famo','Sketa','Amtrel','Minidiab','Mopride'];
+const LOCKS={
+ cabinet:{ n:['牆上的藥櫃（兩位數密碼鎖）','Wall cabinet (2-digit lock)','ตู้ยาบนผนัง (รหัส 2 หลัก)'], dials:[{num:1},{num:1}], ok:v=>v[0]===5&&v[1]===6, gives:'leaflet',
+   why:['(140 − 88) × 62 ÷ (72 × 0.8) ≈ 56 mL/min。Cr 0.8「正常」，腎功能其實只剩一半多——famotidine 要減量、NSAID 要避免。','(140 − 88) × 62 ÷ (72 × 0.8) ≈ 56 mL/min. Cr 0.8 looks normal, but his kidneys work at little more than half — reduce famotidine, avoid NSAIDs.','(140 − 88) × 62 ÷ (72 × 0.8) ≈ 56 mL/นาที Cr 0.8 ดูปกติ แต่ไตทำงานเหลือเกินครึ่งนิดเดียว ต้องลด famotidine และเลี่ยง NSAID'] },
+ drawer:{ n:['床頭抽屜（三段轉盤）','Bedside drawer (3 wheels)','ลิ้นชักหัวเตียง (วงล้อ 3 ช่อง)'], need:'leaflet',
+   dials:[{cap:['🆘 突然很喘時','🆘 Suddenly breathless','🆘 หอบขึ้นมากะทันหัน'], opts:[['🔵 Berotec','🔵 Berotec','🔵 Berotec'],['🟢 Spiolto','🟢 Spiolto','🟢 Spiolto']]},
+          {cap:['📅 每天固定用','📅 Every day','📅 ใช้ทุกวัน'], opts:[['🔵 Berotec','🔵 Berotec','🔵 Berotec'],['🟢 Spiolto','🟢 Spiolto','🟢 Spiolto']]},
+          {cap:['🟢 Spiolto 標準用法','🟢 Spiolto standard dose','🟢 ขนาดมาตรฐานของ Spiolto'], opts:[['喘的時候才噴','only when breathless','เฉพาะตอนหอบ'],['每天 2 次、每次 1 噴','1 puff twice daily','วันละ 2 ครั้ง ครั้งละ 1 พัฟ'],['每天 1 次、每次 2 噴','2 puffs once daily','วันละครั้ง ครั้งละ 2 พัฟ']]}],
+   ok:v=>v[0]===0&&v[1]===1&&v[2]===2, gives:'receipt',
+   why:['藍色 Berotec 是急救用；綠色 Spiolto 是每天用的長期控制藥，每天 1 次 2 噴。他剛好用反了。','Blue Berotec is the rescue inhaler; green Spiolto is the daily long-term controller, 2 puffs once a day. He has them the wrong way round.','Berotec สีฟ้าคือยาฉุกเฉิน Spiolto สีเขียวคือยาควบคุมระยะยาวที่ใช้ทุกวัน วันละครั้ง 2 พัฟ ลุงใช้สลับกัน'] },
+ box:{ n:['桌上的鐵盒（三段轉盤）','Metal box on the table (3 wheels)','กล่องเหล็กบนโต๊ะ (วงล้อ 3 ช่อง)'], need:'receipt',
+   dials:['Ponstan','Royamet','Clarinase'].map(d=>({cap:[d+' ↔ ?',d+' ↔ ?',d+' ↔ ?'], opts:HOME.map(h=>[h,h,h])})),
+   ok:v=>HOME[v[0]]==='Sketa'&&HOME[v[1]]==='Famo'&&HOME[v[2]]==='Peace', gives:'pillbox',
+   why:['Ponstan＋Sketa＝兩種止痛藥；Royamet＋Famo＝兩種 H2 阻斷劑；Clarinase＋Peace＝兩份 pseudoephedrine（血壓升高、更難排尿）。四個處方來源，沒有人看到全貌。','Ponstan + Sketa = two pain relievers; Royamet + Famo = two H2 blockers; Clarinase + Peace = a double dose of pseudoephedrine (higher blood pressure, harder to pass urine). Four prescribers, and nobody saw the whole picture.','Ponstan + Sketa = ยาแก้ปวดสองตัว; Royamet + Famo = H2 blocker สองตัว; Clarinase + Peace = pseudoephedrine ซ้ำ (ความดันขึ้น ปัสสาวะยากขึ้น) สั่งยาจากสี่แหล่ง ไม่มีใครเห็นภาพรวม'] }
+};
+const FINAL={ q:['門上浮出一行字：「老李上週四晚上為什麼跌倒？」','Words appear on the door: "Why did Old Lee fall last Thursday night?"','มีตัวอักษรลอยขึ้นบนประตู: "ทำไมเฒ่าหลี่ถึงล้มเมื่อคืนวันพฤหัสฯ ที่แล้ว?"'],
+  o:[['Berotec 噴太多，手抖心悸','Too much Berotec — tremor and palpitations','พ่น Berotec มากไป มือสั่นใจสั่น'],
+     ['把漏掉的早上藥和晚上藥一起吞 → glipizide 雙倍 → 夜間低血糖','He took the missed morning pills with the evening ones → double glipizide → night-time hypoglycaemia','กินยาเช้าที่ลืมรวมกับยาเย็น → glipizide สองเท่า → น้ำตาลต่ำตอนกลางคืน'],
+     ['房間太熱中暑了','Heat stroke from the hot room','ห้องร้อนจนเป็นลมแดด']], a:1,
+  why:['頭暈、冒冷汗、手抖＝低血糖。88 歲、獨居、會漏藥又補吃——要和醫師討論停用或減量 glipizide，並設計不會「補吃」的提醒方式。','Dizzy, sweaty, shaky = hypoglycaemia. He is 88, lives alone and doubles up missed doses — discuss stopping or reducing glipizide with his doctor, and set up reminders so he never "catches up".','เวียนหัว เหงื่อแตก มือสั่น = น้ำตาลต่ำ ลุงอายุ 88 อยู่คนเดียว ลืมยาแล้วกินชดเชย ควรปรึกษาแพทย์เรื่องหยุดหรือลด glipizide และหาวิธีเตือนที่ไม่ทำให้ "กินรวบ"'] };
+const QUIZ=[
+ {q:['Cr 0.8 mg/dL 在 88 歲、62 公斤的人身上代表什麼？','What does Cr 0.8 mg/dL mean in an 88-year-old who weighs 62 kg?','Cr 0.8 mg/dL ในคนอายุ 88 หนัก 62 กก. หมายความว่าอย่างไร?'], o:[['腎功能完全正常','Kidneys are fully normal','ไตปกติดี'],['肌肉少，Cr 會「假正常」，要算 CrCl','Low muscle mass hides it — work out CrCl','กล้ามเนื้อน้อย Cr จึงดูปกติ ต้องคำนวณ CrCl'],['一定是洗腎前期','He must be close to dialysis','ใกล้ต้องฟอกไตแน่นอน']], a:1},
+ {q:['突然很喘，該拿哪一支？','Suddenly breathless — which inhaler?','หอบขึ้นมากะทันหัน ใช้ตัวไหน?'], o:[['🟢 Spiolto','🟢 Spiolto','🟢 Spiolto'],['🔵 Berotec','🔵 Berotec','🔵 Berotec'],['兩支一起','Both together','ทั้งสองตัวพร้อมกัน']], a:1},
+ {q:['pseudoephedrine 對 BPH 病人最大的問題是？','The main problem with pseudoephedrine in a man with BPH?','ปัญหาหลักของ pseudoephedrine ในผู้ป่วยต่อมลูกหมากโต?'], o:[['更難排尿','Harder to pass urine','ปัสสาวะยากขึ้น'],['血糖下降','Lower blood sugar','น้ำตาลลด'],['想睡覺','Sleepiness','ง่วงนอน']], a:0},
+ {q:['漏掉早上的降血糖藥，晚上才想起來，該怎麼辦？','A morning diabetes pill was missed and remembered at night. What now?','ลืมยาเบาหวานตอนเช้า มานึกได้ตอนกลางคืน ควรทำอย่างไร?'], o:[['早晚的一起吃','Take both doses together','กินรวมกับยาเย็น'],['跳過，不要補吃雙倍','Skip it — never double up','ข้ามไป ไม่กินสองเท่า'],['明天吃三倍','Take three tomorrow','พรุ่งนี้กินสามเท่า']], a:1},
+ {q:['88 歲用 NSAID（Ponstan）最需要擔心的是？','The main worry with an NSAID (Ponstan) at 88?','ข้อกังวลหลักของ NSAID (Ponstan) ในวัย 88?'], o:[['腸胃出血和腎臟傷害','GI bleeding and kidney injury','เลือดออกทางเดินอาหารและไตบาดเจ็บ'],['頭髮變白','Grey hair','ผมหงอก'],['血糖升高','Higher blood sugar','น้ำตาลสูง']], a:0},
+ {q:['Famo ＋ Royamet 一起吃的問題是？','What is wrong with Famo plus Royamet?','Famo กับ Royamet กินด้วยกันมีปัญหาอะไร?'], o:[['都是 H2 阻斷劑，重複用藥','Both are H2 blockers — a duplication','เป็น H2 blocker ทั้งคู่ ซ้ำซ้อน'],['一個升血壓一個降血壓','One raises and one lowers blood pressure','ตัวหนึ่งเพิ่ม อีกตัวลดความดัน'],['沒有問題','Nothing','ไม่มีปัญหา']], a:0}
+];
+/* ---------- state ---------- */
+const S={on:false, time:900, ghost:0, found:new Set(), open:new Set(), scares:0, busy:false, qi:0, tick:null, lx:800, ly:450, said:0};
+/* ---------- room ---------- */
+const ghostSVG=(w=200)=>`<svg viewBox="0 0 200 230" width="${w}"><path d="M100 22c-52 0-78 40-78 92v96l26-20 26 22 26-22 26 22 26-22 26 20v-96c0-52-26-92-78-92Z" fill="#f4f1ff" stroke="#b9b0e8" stroke-width="5"/>
+ <path d="M44 62q56-44 112 0l-6 14q-50-26-100 0Z" fill="#5d7a4a" stroke="#3d5231" stroke-width="4"/><rect x="88" y="34" width="24" height="14" rx="4" fill="#ffd36b"/>
+ <circle cx="76" cy="112" r="11" fill="#2a2140"/><circle cx="124" cy="112" r="11" fill="#2a2140"/><circle cx="80" cy="108" r="4" fill="#fff"/><circle cx="128" cy="108" r="4" fill="#fff"/>
+ <ellipse cx="58" cy="134" rx="13" ry="8" fill="#ffb3c7" opacity=".8"/><ellipse cx="142" cy="134" rx="13" ry="8" fill="#ffb3c7" opacity=".8"/><path d="M88 142q12 12 24 0" fill="none" stroke="#2a2140" stroke-width="5" stroke-linecap="round"/></svg>`;
+function drawRoom(){
+ $('#room').innerHTML=`<svg viewBox="0 0 1600 900">
+ <rect width="1600" height="900" fill="#2b2748"/><rect y="640" width="1600" height="260" fill="#3a2f2a"/><path d="M0 640h1600" stroke="#1d1a33" stroke-width="8"/>
+ <!-- window + moon -->
+ <rect x="640" y="110" width="260" height="230" rx="10" fill="#141a3d" stroke="#6b5f4a" stroke-width="12"/><circle cx="830" cy="180" r="34" fill="#f6efc4"/><path d="M770 110v230M640 225h260" stroke="#6b5f4a" stroke-width="8"/>
+ <!-- lab sheet on wall (falls) -->
+ <g id="gLabs"><rect x="480" y="150" width="110" height="140" fill="#f4efe2" transform="rotate(-4 535 220)"/><path d="M498 185h74M498 205h74M498 225h60M498 245h74" stroke="#b9ad92" stroke-width="5" transform="rotate(-4 535 220)"/></g>
+ <!-- clock -->
+ <circle cx="1010" cy="170" r="52" fill="#efe6d4" stroke="#6b5f4a" stroke-width="8"/><path d="M1010 170V132M1010 170l26 14" stroke="#2a2140" stroke-width="7" stroke-linecap="round"/>
+ <!-- cabinet -->
+ <g><rect x="1090" y="250" width="210" height="190" rx="10" fill="#7d6a52" stroke="#4d3f2f" stroke-width="8"/><path d="M1195 250v190" stroke="#4d3f2f" stroke-width="6"/><rect id="cabLock" x="1172" y="330" width="46" height="40" rx="8" fill="#ffd36b" stroke="#8a6a1a" stroke-width="5"/><text x="1195" y="235" text-anchor="middle" font-size="30">➕</text></g>
+ <!-- bed + Mr. Lee -->
+ <rect x="60" y="560" width="560" height="120" rx="20" fill="#5a6f9c"/><rect x="40" y="430" width="70" height="270" rx="14" fill="#6b5441"/><rect x="40" y="430" width="250" height="26" rx="8" fill="#7d6a52"/>
+ <rect x="110" y="520" width="170" height="70" rx="26" fill="#e9e4ff"/><circle cx="200" cy="520" r="52" fill="#f1c9a5"/><path d="M160 498q40-40 82 0" fill="#d9d9de"/><path d="M178 528h14M212 528h14" stroke="#3a2e22" stroke-width="5" stroke-linecap="round"/><ellipse cx="204" cy="548" rx="9" ry="6" fill="#b5654a"/>
+ <rect x="250" y="560" width="370" height="90" rx="24" fill="#7f95c6"/><text id="zz" x="268" y="470" font-size="34" fill="#c9c1f5">💨</text>
+ <!-- inhalers on headboard -->
+ <g><rect x="132" y="386" width="30" height="46" rx="6" fill="#3d7bff"/><rect x="132" y="418" width="50" height="16" rx="5" fill="#3d7bff"/><rect x="214" y="380" width="30" height="52" rx="10" fill="#2fae6b"/><rect x="219" y="370" width="20" height="14" rx="4" fill="#d9f3e5"/></g>
+ <!-- bedside drawer -->
+ <rect x="640" y="520" width="170" height="180" rx="10" fill="#7d6a52" stroke="#4d3f2f" stroke-width="8"/><path d="M640 610h170" stroke="#4d3f2f" stroke-width="6"/><circle cx="725" cy="565" r="13" fill="#ffd36b" stroke="#8a6a1a" stroke-width="5"/><circle cx="725" cy="655" r="9" fill="#4d3f2f"/>
+ <!-- table + metal box + patient card -->
+ <rect x="880" y="560" width="330" height="26" rx="8" fill="#7d6a52"/><path d="M900 586v114M1190 586v114" stroke="#5c4b39" stroke-width="16"/>
+ <rect x="1040" y="492" width="140" height="70" rx="8" fill="#8f97a8" stroke="#535a69" stroke-width="7"/><rect x="1096" y="516" width="28" height="24" rx="5" fill="#ffd36b" stroke="#8a6a1a" stroke-width="4"/>
+ <rect x="905" y="530" width="92" height="30" rx="4" fill="#f4efe2" transform="rotate(-6 950 545)"/>
+ <!-- torn note on floor -->
+ <path d="M430 760l96-14 10 62-98 12Z" fill="#fff9c9"/>
+ <!-- door + hook + bags -->
+ <rect x="1360" y="190" width="200" height="460" rx="8" fill="#5c4b39" stroke="#3a2f22" stroke-width="10"/><circle cx="1392" cy="430" r="14" fill="#ffd36b"/><rect id="doorLock" x="1374" y="456" width="36" height="34" rx="7" fill="#ffd36b" stroke="#8a6a1a" stroke-width="4"/>
+ <path d="M1470 250v26" stroke="#c9c1f5" stroke-width="6"/><rect x="1432" y="272" width="80" height="104" rx="8" fill="#f4efe2" stroke="#b9ad92" stroke-width="5"/><text x="1472" y="336" text-anchor="middle" font-size="38">💊</text>
+ <!-- hotspots -->
+ <rect class="hs" data-h="labs" x="455" y="130" width="160" height="185"/><rect class="hs" data-h="cabinet" x="1075" y="205" width="240" height="250"/>
+ <rect class="hs" data-h="lee" x="100" y="455" width="230" height="150"/><rect class="hs" data-h="inh" x="110" y="355" width="160" height="92"/>
+ <rect class="hs" data-h="drawer" x="625" y="505" width="200" height="210"/><rect class="hs" data-h="box" x="1022" y="474" width="176" height="100"/>
+ <rect class="hs" data-h="card" x="888" y="508" width="126" height="66"/><rect class="hs" data-h="formula" x="410" y="730" width="150" height="104"/>
+ <rect class="hs" data-h="bags" x="1416" y="240" width="112" height="150"/><rect class="hs" data-h="door" x="1350" y="400" width="96" height="120"/>
+ <rect class="hs" data-h="clock" x="950" y="110" width="120" height="120"/><rect class="hs" data-h="window" x="630" y="100" width="280" height="250"/>
+ </svg>`;
+ $$('.hs').forEach(h=>h.addEventListener('click',()=>{ if(S.busy||!S.on) return; tap(h.dataset.h); }));
+}
+function light(x,y){ S.lx=x; S.ly=y; const d=$('#dark'); d.style.setProperty('--x',x+'px'); d.style.setProperty('--y',y+'px');
+ $$('.hs').forEach(h=>{ const cx=+h.getAttribute('x')+h.getAttribute('width')/2, cy=+h.getAttribute('y')+h.getAttribute('height')/2; h.classList.toggle('lit',Math.hypot(cx-x,cy-y)<230); }); }
+['pointerdown','pointermove'].forEach(t=>$('#stage').addEventListener(t,e=>{ if(!S.on) return; const p=pt(e); light(p.x,p.y); }));
+/* ---------- talk + notes ---------- */
+let sayT=0; function say(html,ms=4200){ const s=$('#say'); s.innerHTML=html; s.classList.remove('hidden'); clearTimeout(sayT); sayT=setTimeout(()=>s.classList.add('hidden'),ms); }
+function paintNotes(newId){ $('#notes').innerHTML=`<span class="lab">📒 ${T('notes')}</span>`+[...S.found].map(k=>`<button class="nt${k===newId?' new':''}" data-d="${k}">${DOCS[k].ic} ${esc(L(DOCS[k].n))}</button>`).join('');
+ $$('#notes .nt').forEach(b=>b.onclick=()=>{ if(!S.busy) showDoc(b.dataset.d); }); }
+function find(k){ const isNew=!S.found.has(k); S.found.add(k); paintNotes(isNew?k:null); if(isNew) sfx.paper(); }
+/* ---------- panels ---------- */
+function panel(html){ S.busy=true; const v=$('#veil'); v.innerHTML=`<div class="panel">${html}</div>`; v.classList.remove('hidden'); return v.firstChild; }
+function closePanel(){ $('#veil').classList.add('hidden'); S.busy=false; }
+function showDoc(k){ find(k); const p=panel(DOCS[k].h()+`<div class="row"><button class="btn sm alt" id="pX">${T('close')}</button></div>`); p.querySelector('#pX').onclick=()=>{ sfx.click(); closePanel(); }; }
+function lockUI(id){ const lk=LOCKS[id]; if(S.open.has(id)){ showDoc(lk.gives); return; }
+ if(lk.need&&!S.found.has(lk.need)){ say('🔒 '+esc(T('locked'))+' '+esc(L(['好像還缺一個線索……','It seems one clue is still missing…','เหมือนยังขาดเบาะแสอีกอย่าง…']))); sfx.bad(); return; }
+ const v=lk.dials.map(()=>0);
+ const draw=()=>{ const p=panel(`<h3>🔐 ${esc(L(lk.n))}</h3><div class="dials">${lk.dials.map((d,i)=>`<div class="dial${d.num?' num':''}">${d.cap?`<div class="cap">${esc(L(d.cap))}</div>`:''}<button data-u="${i}">▲</button><div class="v">${d.num?v[i]:esc(L(d.opts[v[i]]))}</div><button data-d="${i}">▼</button></div>`).join('')}</div>
+   <div class="row"><button class="btn sm" id="pTry">${T('tryOpen')}</button><button class="btn sm alt" id="pX">${T('close')}</button></div><p class="hint" style="text-align:center">${esc(L(['線索在房間裡和下面的「線索」列','The clues are in the room and in the Clues bar below','เบาะแสอยู่ในห้องและในแถบ "เบาะแส" ด้านล่าง']))}</p>`);
+   p.querySelectorAll('[data-u],[data-d]').forEach(b=>b.onclick=()=>{ const i=+(b.dataset.u??b.dataset.d), n=lk.dials[i].num?10:lk.dials[i].opts.length; v[i]=(v[i]+(b.dataset.u!=null?1:n-1))%n; sfx.dial(); draw(); });
+   p.querySelector('#pX').onclick=()=>{ sfx.click(); closePanel(); };
+   p.querySelector('#pTry').onclick=()=>{ if(lk.ok(v)){ sfx.good(); S.open.add(id); $('#nlock').textContent=S.open.size; bump(-25); find(lk.gives);
+       const q=panel(`<h3>🔓 ${T('open')}</h3><p>${esc(L(lk.why))}</p>${DOCS[lk.gives].h()}<div class="row"><button class="btn sm" id="pX">${T('close')}</button></div>`); q.querySelector('#pX').onclick=()=>{ closePanel(); afterOpen(id); }; }
+     else { sfx.bad(); p.classList.add('shake'); setTimeout(()=>p.classList.remove('shake'),450); bump(18); flick(); say('👻 '+esc(T('wrong'))); } }; };
+ draw(); }
+function doorUI(){ if(S.open.size<3){ say('🚪 '+esc(L(['門鎖死了。門上有三道刮痕，像在說「先解開三個鎖」。','The door is jammed. Three scratches on it seem to say "open three locks first".','ประตูล็อกแน่น มีรอยขีดสามรอยเหมือนจะบอกว่า "ไขกุญแจสามดอกก่อน"']))); sfx.knock(); return; }
+ const p=panel(`<h3>🚪 ${esc(L(FINAL.q))}</h3>${FINAL.o.map((o,i)=>`<button class="opt" data-i="${i}">${esc(L(o))}</button>`).join('')}<div class="row"><button class="btn sm alt" id="pX">${T('close')}</button></div>`);
+ p.querySelector('#pX').onclick=()=>closePanel();
+ p.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{ if(+b.dataset.i===FINAL.a){ b.classList.add('ok'); sfx.good(); S.open.add('door'); setTimeout(win,900); } else { b.classList.add('bad'); sfx.bad(); bump(18); flick(); } }); }
+function tap(h){ sfx.click();
+ if(DOCS[h]&&h!=='leaflet'&&h!=='receipt'&&h!=='pillbox'){ if(h==='labs') $('#gLabs').setAttribute('transform','translate(-10 430) rotate(18 535 220)'); return showDoc(h); }
+ if(LOCKS[h]) return lockUI(h);
+ if(h==='door') return doorUI();
+ if(h==='lee') return say(L(['李伯伯：「呼……呼……藍色那支……我噴了好多下……還是喘……」','Mr. Lee: "Hhh… hhh… the blue one… I puffed it so many times… still can\'t breathe…"','ลุงหลี่: "แฮ่ก… แฮ่ก… ตัวสีฟ้า… ลุงพ่นไปหลายทีแล้ว… ยังหอบอยู่เลย…"']),5200);
+ if(h==='clock') return say(L(['時鐘停在 7:05。秒針偶爾自己跳一下。','The clock stopped at 7:05. Now and then the second hand twitches by itself.','นาฬิกาหยุดที่ 7:05 เข็มวินาทีกระตุกเองเป็นพักๆ']));
+ if(h==='window') return say(L(['窗外整個新村都是黑的。玻璃上有一個小小的手印。','The whole village is dark outside. There is a small handprint on the glass.','ข้างนอกมืดทั้งหมู่บ้าน บนกระจกมีรอยมือเล็กๆ'])); }
+function afterOpen(id){ const nx={cabinet:['drawer',['老班長把仿單吹到你腳邊，然後指了指床頭的抽屜。','The Sergeant blows the leaflet to your feet, then points at the bedside drawer.','จ่าเฒ่าเป่าเอกสารกำกับยามาที่เท้าคุณ แล้วชี้ไปที่ลิ้นชักหัวเตียง']],
+   drawer:['box',['抽屜裡是一張診所收據。桌上的鐵盒自己「叩」了一聲。','A clinic receipt was inside. The metal box on the table knocks once, by itself.','ในลิ้นชักมีใบเสร็จคลินิก กล่องเหล็กบนโต๊ะดัง "ก๊อก" ขึ้นมาเอง']],
+   box:['door',['你知道原因了。門那邊傳來三下敲門聲。','Now you know why. Three knocks come from the door.','คุณรู้สาเหตุแล้ว มีเสียงเคาะประตูสามครั้ง']]}[id]; if(!nx) return; sfx.knock(); peek(nx[0]); say('👻 '+esc(L(nx[1])),5200); }
+/* ---------- the ghost ---------- */
+function bump(d){ S.ghost=Math.max(0,Math.min(100,S.ghost+d)); $('#gfill').style.width=S.ghost+'%'; }
+function flick(){ const d=$('#dark'); d.classList.remove('flick'); void d.offsetWidth; d.classList.add('flick'); }
+function spot(h){ const e=$(`.hs[data-h="${h}"]`); return {x:+e.getAttribute('x')+e.getAttribute('width')/2, y:+e.getAttribute('y')+e.getAttribute('height')/2, e}; }
+function peek(h){ const s=spot(h), p=$('#peek'); p.innerHTML=ghostSVG(150); p.style.left=(s.x-75)+'px'; p.style.top=(s.y-210)+'px'; p.style.transform='translateY(30px)'; p.style.opacity='.85';
+ s.e.classList.add('want'); setTimeout(()=>{ p.style.transform='translateY(-20px)'; },50); setTimeout(()=>{ p.style.opacity='0'; },2600); setTimeout(()=>s.e.classList.remove('want'),6000); }
+function nextTarget(){ if(!S.found.has('formula')) return 'formula'; if(!S.found.has('labs')) return 'labs'; if(!S.found.has('card')) return 'card'; if(!S.open.has('cabinet')) return 'cabinet';
+ if(!S.found.has('inh')) return 'inh'; if(!S.open.has('drawer')) return 'drawer'; if(!S.found.has('bags')) return 'bags'; if(!S.open.has('box')) return 'box'; return 'door'; }
+function hint(){ if(S.busy) return; bump(15); sfx.woo(); peek(nextTarget()); say('👻 '+esc(L(['老班長歪著頭，飄到某個地方晃了一下……（他靠得更近了）','The Sergeant tilts his head and hovers over something… (and he is closer now)','จ่าเฒ่าเอียงคอ แล้วลอยไปวนอยู่ตรงจุดหนึ่ง… (และเข้ามาใกล้ขึ้นด้วย)']))); }
+function boo(){ S.busy=true; S.scares++; sfx.woo(); flick(); const q=QUIZ[S.qi++%QUIZ.length], b=$('#boo'); let left=100, done=false;
+ b.innerHTML=`<div class="gh">${ghostSVG(330)}</div><div class="q"><h3>👻 ${T('booT')}</h3><p>${esc(L(q.q))}</p><div class="tm"><i></i></div>${q.o.map((o,i)=>`<button class="opt" data-i="${i}">${esc(L(o))}</button>`).join('')}<div class="why"></div></div>`;
+ b.classList.remove('hidden'); const bar=b.querySelector('.tm i');
+ const end=ok=>{ if(done) return; done=true; clearInterval(iv); b.querySelectorAll('.opt').forEach((o,i)=>{ if(i===q.a) o.classList.add('ok'); o.disabled=true; });
+   if(ok){ sfx.good(); S.ghost=25; } else { sfx.bad(); S.time=Math.max(20,S.time-45); S.ghost=45; } bump(0); b.querySelector('.why').textContent=T(ok?'booOk':'booBad');
+   setTimeout(()=>{ b.classList.add('hidden'); S.busy=!$('#veil').classList.contains('hidden'); },2300); };
+ const iv=setInterval(()=>{ left-=1; bar.style.width=left+'%'; if(left<=0) end(false); },120);
+ b.querySelectorAll('.opt').forEach(o=>o.onclick=()=>{ const ok=+o.dataset.i===q.a; if(!ok) o.classList.add('bad'); end(ok); }); }
+/* ---------- clock ---------- */
+function tick(){ if(!S.on) return; const booing=!$('#boo').classList.contains('hidden'); if(booing) return;
+ S.time--; const m=Math.floor(S.time/60), s=S.time%60; $('#clock').textContent=m+':'+String(s).padStart(2,'0'); $('#clock').style.color=S.time<120?'#ff7aa2':'';
+ bump(.55); if(S.ghost>60&&S.time%2===0) sfx.beat(); else if(S.ghost>30&&S.time%4===0) sfx.beat();
+ if(S.time%47===0&&!S.busy){ sfx.knock(); $('#zz').textContent=['💨','😮‍💨','💨'][S.time%3]; }
+ if(S.time<=0) return lose(); if(S.ghost>=100&&$('#veil').classList.contains('hidden')) boo(); else if(S.ghost>=100) bump(-1); }
+/* ---------- start / end ---------- */
+function paintTitle(){ $('#t1').textContent=T('t1'); $('#t2').textContent=T('t2'); $('#t3').textContent=T('t3'); $('#t4').textContent=T('t4'); $('#bStart').textContent=T('start'); $('#bHint').textContent=T('hint');
+ $$('#langs button').forEach(b=>b.classList.toggle('on',+b.dataset.l===LANG)); document.documentElement.lang=['zh-Hant','en','th'][LANG]; }
+$$('#langs button').forEach(b=>b.onclick=()=>{ LANG=+b.dataset.l; paintTitle(); });
+function start(){ Object.assign(S,{on:true,time:900,ghost:0,found:new Set(),open:new Set(),scares:0,busy:false}); drawRoom(); paintNotes(); $('#nlock').textContent=0; bump(0);
+ ['#title','#end','#veil','#boo'].forEach(s=>$(s).classList.add('hidden')); ['#room','#dark','#hud','#notes'].forEach(s=>$(s).classList.remove('hidden')); light(800,450);
+ clearInterval(S.tick); S.tick=setInterval(tick,1000); sfx.knock();
+ say(L(['啪！停電了。你只剩手機的手電筒——<b>用手指移動光線</b>，點發亮的地方調查。','Snap — the power is out. You only have your phone\'s torch: <b>move the light with your finger</b> and tap what glows.','พรึ่บ! ไฟดับ เหลือแค่ไฟฉายมือถือ <b>ใช้นิ้วเลื่อนแสง</b> แล้วแตะจุดที่เรืองแสงเพื่อสำรวจ']),6500);
+ setTimeout(()=>{ if(S.on&&!S.found.has('labs')){ sfx.knock(); $('#gLabs').setAttribute('transform','translate(-10 430) rotate(18 535 220)'); peek('formula'); say('👻 '+esc(L(['牆上的檢驗單自己掉了下來。地上還有一張撕下的紙……','The lab sheet drops off the wall by itself. And there is a torn page on the floor…','ผลแล็บบนผนังหล่นลงมาเอง และมีกระดาษที่ฉีกตกอยู่บนพื้น…'])),5500); } },7500); }
+function stop(){ S.on=false; clearInterval(S.tick); ['#dark','#hud','#notes','#say','#veil','#boo'].forEach(s=>$(s).classList.add('hidden')); }
+function lose(){ stop(); sfx.bad(); const e=$('#end'); e.innerHTML=`<h1>⏱ ${T('lose1')}</h1><p>${esc(T('lose2'))}</p><button class="btn" id="eAgain">${T('again')}</button>`; e.classList.remove('hidden'); $('#eAgain').onclick=start; }
+function win(){ const left=S.time; stop(); sfx.good(); const e=$('#end');
+ e.innerHTML=`<div style="width:110px">${ghostSVG(110)}</div><h1>🚪 ${T('win1')}</h1><p>${esc(T('win2'))}</p><p><b>${T('win3')}</b></p>
+ <ul>${['cabinet','drawer','box'].map(k=>`<li>${esc(L(LOCKS[k].why))}</li>`).join('')}<li>${esc(L(FINAL.why))}</li></ul>
+ <p>⏱ ${T('time')} ${Math.floor(left/60)}:${String(left%60).padStart(2,'0')} · 👻 ${T('scares')} ${S.scares}</p><p style="font-size:20px;color:#a99fe0">${esc(T('proto'))}</p><button class="btn sm" id="eAgain">${T('again')}</button>`;
+ e.classList.remove('hidden'); $('#eAgain').onclick=start; }
+$('#bStart').onclick=()=>{ sfx.click(); start(); };
+$('#bHint').onclick=hint;
+$('#bMute').onclick=()=>{ A.mute=!A.mute; $('#bMute').textContent=A.mute?'🔇':'🔊'; };
+paintTitle();
+</script>
+</body>
+</html>

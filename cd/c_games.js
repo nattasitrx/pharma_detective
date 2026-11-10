@@ -6,7 +6,7 @@ const CGX={
   drag:['拖到目標上（或點一下再點目標）','drag onto the target (or tap, then tap the target)','ลากไปวางที่เป้าหมาย (หรือแตะ แล้วแตะเป้าหมาย)'],
 };
 function cgCss(){ if($('#cgCss')) return; const st=document.createElement('style'); st.id='cgCss'; st.textContent=`
-#cgame{position:absolute;left:34px;right:34px;top:94px;bottom:16px;z-index:24;display:flex;flex-direction:column;background:rgba(255,255,255,.98);border-radius:28px;padding:12px 16px;box-shadow:0 0 0 5px #fff,0 0 0 10px #c47a2c,0 16px 40px rgba(0,0,0,.35);animation:enterC .4s cubic-bezier(.2,1.2,.4,1);touch-action:none;touch-action:pinch-zoom;-webkit-user-select:none;user-select:none}
+#cgame{position:absolute;left:34px;right:34px;top:94px;bottom:16px;z-index:24;display:flex;flex-direction:column;background:rgba(255,255,255,.98);border-radius:28px;padding:12px 16px;box-shadow:0 0 0 5px #fff,0 0 0 10px #c47a2c,0 16px 40px rgba(0,0,0,.35);animation:enterC .4s cubic-bezier(.2,1.2,.4,1);touch-action:none;-webkit-user-select:none;user-select:none}
 #cgame .cg-head{display:flex;gap:14px;align-items:center;background:linear-gradient(90deg,#fff1dc,#fff8ec);border-radius:18px;padding:8px 14px;min-height:58px}
 #cgame .cg-head .no{flex:0 0 auto;background:#b4621a;color:#fff;font-weight:900;border-radius:14px;padding:6px 12px;font-size:19px}
 #cgame .cg-head .tx{flex:1;font-family:var(--tc);font-weight:900;font-size:23px;line-height:1.3;color:#4a2a0c}
@@ -25,7 +25,7 @@ function cgCss(){ if($('#cgCss')) return; const st=document.createElement('style
 #cgame .cg-side>.box{background:#f8f4ee;border-radius:18px;padding:10px;display:flex;flex-direction:column;align-items:center;gap:6px}
 #cgame .cg-hint{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);background:rgba(74,42,12,.82);color:#fff;font-weight:800;font-size:17px;border-radius:99px;padding:6px 16px;white-space:nowrap;pointer-events:none;z-index:4}
 #cgame .cg-hint:empty{display:none}
-#cgame .tile{position:absolute;display:flex;flex-direction:column;align-items:center;gap:2px;width:118px;padding:8px 6px 6px;border-radius:18px;background:#fff;box-shadow:0 0 0 3px #ead9c2,0 6px 14px rgba(0,0,0,.12);font-weight:800;font-size:14.5px;line-height:1.2;text-align:center;color:#3a2a1c;cursor:grab;touch-action:none;touch-action:pinch-zoom;transition:box-shadow .15s,transform .15s,opacity .3s}
+#cgame .tile{position:absolute;display:flex;flex-direction:column;align-items:center;gap:2px;width:118px;padding:8px 6px 6px;border-radius:18px;background:#fff;box-shadow:0 0 0 3px #ead9c2,0 6px 14px rgba(0,0,0,.12);font-weight:800;font-size:14.5px;line-height:1.2;text-align:center;color:#3a2a1c;cursor:grab;touch-action:none;transition:box-shadow .15s,transform .15s,opacity .3s}
 #cgame .tile svg{width:76px;height:76px;display:block;pointer-events:none}
 #cgame #cgGlass svg{width:132px;height:188px}
 #cgame .tile.sel{box-shadow:0 0 0 5px #13a39a,0 8px 18px rgba(0,0,0,.18);transform:scale(1.05)}
@@ -384,7 +384,7 @@ function heightGame(){
   const K=3.4, FLOOR=650, POLE=640, X0=230, XW=POLE-62;   // px per cm; figure's back x at the wall
   const scale=[...Array(41)].map((_,i)=>{ const cm=140+i, y=FLOOR-cm*K, big=cm%10===0, mid=cm%5===0;
     return `<path d="M${POLE} ${y.toFixed(1)} h${big?-26:mid?-18:-10}" stroke="#3a2e22" stroke-width="${big?3:2}"/>${mid?`<text x="${POLE+24}" y="${(y+6).toFixed(1)}" font-size="${big?18:14}" font-weight="900" fill="#3a2e22" font-family="sans-serif">${cm}</text>`:''}`; }).join('');
-  const scene=`<svg id="htSvg" viewBox="0 0 940 690" preserveAspectRatio="xMinYMin meet" style="position:absolute;inset:0;width:100%;height:100%;touch-action:none;touch-action:pinch-zoom">
+  const scene=`<svg id="htSvg" viewBox="0 0 940 690" preserveAspectRatio="xMinYMin meet" style="position:absolute;inset:0;width:100%;height:100%;touch-action:none">
     <rect x="${POLE}" y="0" width="300" height="${FLOOR}" fill="#f1e2c9"/><rect x="0" y="${FLOOR}" width="940" height="40" fill="#d8bf98"/>
     <rect x="${POLE}" y="16" width="16" height="${FLOOR-16}" fill="#fff" stroke="#3a2e22" stroke-width="3"/>${scale}
     <g id="htBoard" style="cursor:grab"><rect x="${POLE-200}" y="-48" width="270" height="96" fill="#000" fill-opacity="0"/><rect x="${POLE-150}" y="-7" width="170" height="14" rx="4" fill="#5b8fd6" stroke="#3a2e22" stroke-width="3"/><rect x="${POLE-6}" y="-16" width="28" height="32" rx="5" fill="#3d6fb8" stroke="#3a2e22" stroke-width="3"/></g>

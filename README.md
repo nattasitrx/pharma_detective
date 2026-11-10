@@ -79,6 +79,9 @@ built on an older Case A, kept as `cd/a_base.html`. `rebuild_cd.sh` builds them 
    Then `mk_rank.py` (all three cases): the rank gates scale with the number of medicine-review missions (S: all but one
    perfect, A: all but two). Case C has 5 missions, so its S gate is 4 (A and D: 5 of 6, unchanged) (10 Nov 2026).
    Case C's interview patience is 13 (max 17) in `cd/c_orig_pregames.html` (the other cases: 10 / 14).
+   Last, `mk_zoom.py` (all three cases): pictures (evidence photos, drug bags, labs) open in a full-screen viewer with
+   pinch / drag / buttons, and `mk_mobile.py` stops the page itself from zooming. Students said the game kicked them
+   out when they zoomed a drug bag; pinch-zooming the scaled stage can run a phone out of memory (10 Nov 2026).
 4. (Retired 8 Nov 2026.) `mk_main.py` reverses `fix_a_age.py`, which changed the age 61 → 65 (birth date from the receipt). It also
    puts back the eight age-61 bag pictures from `assets/case_a_bags_age61.json`. It also sets the eGFR/CrCl age
    chip back to 61; that chip is set outside `fix_a_age.py` and showed 65 on the main link from 4 to 7 Nov 2026.

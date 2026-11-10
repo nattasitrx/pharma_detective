@@ -866,8 +866,17 @@ html[lang=en] #logo h1{font-size:76px;letter-spacing:2px}
 .mr-res .mr-x p{margin:0 0 8px}
 .mr-res #mrNext{align-self:stretch;font-size:22px}
 
-/* phones: a double tap does not zoom (mk_mobile.py) */
-html,body{touch-action:manipulation}
+/* phones: the page does not zoom (double tap or pinch); pictures zoom in their own viewer (mk_mobile.py, mk_zoom.py) */
+html,body{touch-action:pan-x pan-y}
+
+/* picture viewer (mk_zoom.py) */
+#imgZoom{position:fixed;inset:0;z-index:100001;background:rgba(18,14,30,.95);display:flex;flex-direction:column;touch-action:none;-webkit-user-select:none;user-select:none}
+#imgZoom .iz-pic{flex:1;min-height:0;overflow:hidden;display:flex;align-items:center;justify-content:center;touch-action:none;cursor:grab}
+#imgZoom img{max-width:96vw;max-height:100%;transform-origin:center center;will-change:transform;touch-action:none;pointer-events:none}
+#imgZoom .iz-bar{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;padding:8px 10px 4px}
+#imgZoom .iz-bar button{border:0;border-radius:99px;padding:9px 16px;min-width:52px;font:800 17px/1.2 system-ui,-apple-system,'Noto Sans Thai',sans-serif;background:#fff;color:#2a2140;cursor:pointer}
+#imgZoom .iz-bar button[data-z="x"]{background:#ff5c7a;color:#fff}
+#imgZoom .iz-tip{color:#cfc6ff;text-align:center;font:600 13px/1.3 system-ui,-apple-system,'Noto Sans Thai',sans-serif;padding:2px 10px 10px}
 </style>
 </head>
 <body>
@@ -2437,7 +2446,36 @@ function shakeStage(){ const s=$('#stage'); s.classList.remove('shake'); void s.
 async function splash(key, cls, snd){ const sp=$('#splash'); sp.innerHTML=`<div class="burst"></div><div class="s ${cls||''}">${esc(T(key))}</div>`; flash(); shakeStage(); sfx[snd||'objection'](); await sleep(1250); sp.innerHTML=''; }
 function floaty(text, x, y, color){ const d=document.createElement('div'); d.className='floaty'; d.textContent=text; d.style.left=x+'px'; d.style.top=y+'px'; d.style.color=color||'#ff4f86'; $('#stage').appendChild(d); setTimeout(()=>d.remove(),1500); }
 function stagePop(text, x, y){ const d=document.createElement('div'); d.className='pop'; d.textContent=text; d.style.left=x+'px'; d.style.top=y+'px'; $('#stage').appendChild(d); setTimeout(()=>d.remove(),1400); }
-function zoomImg(src){ showModal(`<img src="${src}" style="width:100%;border-radius:12px;box-shadow:0 0 0 2px #eee">`,[{t:T('close')}],null,'wide'); }
+/* ---------- picture viewer: zoom the picture, not the page (mk_zoom.py) ---------- */
+const ZV={fit:['整張','Fit','พอดีจอ'], close:['關閉','Close','ปิด'], tip:['兩指放大縮小 · 拖曳移動 · 點兩下放大','Pinch to zoom · drag to move · double-tap to zoom','ใช้สองนิ้วซูม · ลากเพื่อเลื่อน · แตะสองครั้งเพื่อขยาย']};
+function zoomImg(src){ if(!src) return;
+  document.querySelectorAll('#imgZoom').forEach(e=>e.remove());
+  const o=document.createElement('div'); o.id='imgZoom';
+  o.innerHTML=`<div class="iz-pic"><img alt="" draggable="false"></div><div class="iz-bar"><button type="button" data-z="out">➖</button><button type="button" data-z="fit">⤢ ${esc(L(ZV.fit))}</button><button type="button" data-z="in">➕</button><button type="button" data-z="x">✕ ${esc(L(ZV.close))}</button></div><div class="iz-tip">${esc(L(ZV.tip))}</div>`;
+  document.body.appendChild(o); try{ sfx.paper(); }catch(e){}
+  const pic=o.querySelector('.iz-pic'), im=o.querySelector('img'); im.src=src;
+  let k=1, x=0, y=0, g=null, d=null, lastTap=0, moved=0; const P=new Map();
+  const clamp=()=>{ k=Math.max(1,Math.min(6,k)); const w=im.offsetWidth*k, h=im.offsetHeight*k, mx=Math.max(0,(w-pic.clientWidth)/2), my=Math.max(0,(h-pic.clientHeight)/2);
+    x=Math.max(-mx,Math.min(mx,x)); y=Math.max(-my,Math.min(my,y)); if(k===1){ x=0; y=0; } im.style.transform=`translate(${x}px,${y}px) scale(${k})`; };
+  const zoomAt=(nk,cx,cy)=>{ const r=pic.getBoundingClientRect(), ox=cx-(r.left+r.width/2), oy=cy-(r.top+r.height/2), f=Math.max(1,Math.min(6,nk))/k;
+    x=ox-(ox-x)*f; y=oy-(oy-y)*f; k*=f; clamp(); };
+  const two=()=>{ const [a,b]=[...P.values()]; return {dist:Math.hypot(a.x-b.x,a.y-b.y)||1, cx:(a.x+b.x)/2, cy:(a.y+b.y)/2}; };
+  pic.addEventListener('pointerdown',e=>{ e.preventDefault(); try{ pic.setPointerCapture(e.pointerId); }catch(_){} P.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(P.size===2){ const t=two(); g={dist:t.dist, k, cx:t.cx, cy:t.cy}; d=null; } else if(P.size===1){ d={sx:e.clientX, sy:e.clientY, x, y}; moved=0; } });
+  pic.addEventListener('pointermove',e=>{ if(!P.has(e.pointerId)) return; P.set(e.pointerId,{x:e.clientX,y:e.clientY});
+    if(P.size>=2&&g){ const t=two(); zoomAt(g.k*t.dist/g.dist, t.cx, t.cy); moved=99; }
+    else if(d){ const dx=e.clientX-d.sx, dy=e.clientY-d.sy; moved=Math.max(moved,Math.abs(dx)+Math.abs(dy)); if(k>1){ x=d.x+dx; y=d.y+dy; clamp(); } } });
+  const up=e=>{ P.delete(e.pointerId); if(P.size<2) g=null;
+    if(P.size===0){ if(d&&moved<8){ const now=performance.now(); if(now-lastTap<320){ zoomAt(k>1.2?1:2.5, e.clientX, e.clientY); lastTap=0; } else lastTap=now; } d=null; }
+    else if(P.size===1){ const [p]=[...P.values()]; d={sx:p.x, sy:p.y, x, y}; } };
+  pic.addEventListener('pointerup',up); pic.addEventListener('pointercancel',up);
+  pic.addEventListener('wheel',e=>{ e.preventDefault(); zoomAt(k*(e.deltaY<0?1.15:1/1.15), e.clientX, e.clientY); },{passive:false});
+  const close=()=>{ o.remove(); document.removeEventListener('keydown',key,true); try{ sfx.click(); }catch(_){} };
+  const key=e=>{ if(e.key==='Escape'){ e.stopPropagation(); close(); } else if(e.key==='+'||e.key==='='){ zoomAt(k*1.5,innerWidth/2,innerHeight/2); } else if(e.key==='-'){ zoomAt(k/1.5,innerWidth/2,innerHeight/2); } };
+  document.addEventListener('keydown',key,true);
+  o.querySelector('.iz-bar').addEventListener('click',e=>{ const b=e.target.closest('button'); if(!b) return; const r=pic.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2;
+    ({in:()=>zoomAt(k*1.5,cx,cy), out:()=>zoomAt(k/1.5,cx,cy), fit:()=>{ k=1; clamp(); }, x:close})[b.dataset.z](); });
+  im.onload=clamp; }
 function getCard(id, isNew){
   return new Promise(res=>{
     const it=ITEMS[id], imgs=itemImages(id); const g=$('#gcard');
@@ -6114,6 +6152,8 @@ async function startGame(){
   $('#title').classList.add('hidden'); $('#hud').classList.remove('hidden'); hud(); logEvent({type:'start', qte:S.qte, avatar:S.avatar, gender:S.gender, mode:S.mode, view:VIEW.fp?'fp':'tp'}); saveSession(true);
   clearResume(); await runSteps(0);
 }
+/* iPhone Safari ignores maximum-scale: cancel the page pinch (pictures zoom in zoomImg's viewer) (mk_mobile.py) */
+['gesturestart','gesturechange'].forEach(t=>document.addEventListener(t,e=>{ if(!(window.visualViewport&&visualViewport.scale>1.01)) e.preventDefault(); },{passive:false}));   // already zoomed in somehow: let a pinch take it back out
 /* ---------- zoomed in by accident: a way back (mk_mobile.py) ---------- */
 (function(){ const vv=window.visualViewport; if(!vv) return; let b=null, t=0;
   const ZM={back:['🔍 回到正常大小','🔍 Back to normal size','🔍 กลับขนาดปกติ'], pinch:['🤏 用兩指往內捏，縮回正常大小','🤏 Pinch with two fingers to zoom back out','🤏 ใช้สองนิ้วบีบเข้าหากันเพื่อย่อกลับ']};

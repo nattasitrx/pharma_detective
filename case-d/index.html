@@ -995,9 +995,12 @@ const CFG_DRAFT_KEY='phd_lee_cfg_draft_'+((GAME_CFG_BAKED.meta&&GAME_CFG_BAKED.m
 /* the version the instructor published online for this link (cached from the last visit, refreshed by cfgRefresh) */
 const CFG_ONLINE_KEY='phd_lee_cfg_online_v1';
 const CFG_REQ_CLASS=(()=>{ try{ return String(new URLSearchParams(location.search).get('class')||'').trim().toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,40)||'main'; }catch(e){ return 'main'; } })();
+/* questions published before the 長期控制 wording (mk_live_d.py) */
+const CFG_WORD_D=[['綠色 Spiolto 是每天用的保養藥','綠色 Spiolto 是每天用的長期控制藥'],['Spiolto 是長效 LAMA＋LABA 保養藥，','Spiolto 是長效 LAMA＋LABA 長期控制藥物，']];
+function cfgWordD(q){ if(!Array.isArray(q)) return q; try{ let j=JSON.stringify(q); if(!CFG_WORD_D.some(([a])=>j.includes(a))) return q; CFG_WORD_D.forEach(([a,b])=>{ j=j.split(a).join(b); }); return JSON.parse(j); }catch(e){ return q; } }
 function cfgFromOnline(o){ if(!o||!o.config||typeof o.config!=='object') return null; const c=Object.assign({}, o.config), bm=GAME_CFG_BAKED.media||{}, om=c.media||{};
   c.media={labImages:[...new Set([].concat(bm.labImages||[], om.labImages||[]))], medBagImages:Object.assign({}, bm.medBagImages||{}, om.medBagImages||{})};
-  c.meta={rev:o.rev, note:o.note||'', online:o.cls}; return c; }
+  c.questions=cfgWordD(c.questions); c.meta={rev:o.rev, note:o.note||'', online:o.cls}; return c; }
 let GAME_CFG_BASE=(()=>{ try{ const all=JSON.parse(localStorage.getItem(CFG_ONLINE_KEY)||'{}'); return cfgFromOnline(all[CFG_REQ_CLASS])||GAME_CFG_BAKED; }catch(e){ return GAME_CFG_BAKED; } })();
 const CFG_DRAFTMODE=(()=>{ try{ return sessionStorage.getItem('phd_lee_usedraft')==='1'; }catch(e){ return false; } })();
 let GAME_CFG=(()=>{ try{ if(CFG_DRAFTMODE){ const dr=JSON.parse(localStorage.getItem(CFG_DRAFT_KEY)||'null'); if(dr) return Object.assign({}, dr, {media:GAME_CFG_BASE.media, meta:GAME_CFG_BASE.meta}); } }catch(e){} return GAME_CFG_BASE; })();

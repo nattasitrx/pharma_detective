@@ -3807,8 +3807,8 @@ function showBadges(){ sfx.paper(); showModal(`<h3>${T('badgeColl')}</h3>${badge
 /* ---------------- Results ---------------- */
 function rankGate(){
   const found=foundCount(), tb=!!S.finalCov[1], fu=!!S.finalCov[2];
-  const list=[['g_found',found===PROBLEMS.length],['g_hints',S.hints===0],['g_tb',tb],['g_trust',S.trust>=7],['g_mr',S.mr.perfect>=5],['g_boss',!mythsAlive().length],['g_time',!S.timeout&&S.visit>=0]];
-  const gate=list.every(x=>x[1])?'S':(found>=17&&S.mr.perfect>=4&&(tb||fu)&&!S.timeout)?'A':found>=14?'B':found>=10?'C':'D';
+  const list=[['g_found',found===PROBLEMS.length],['g_hints',S.hints===0],['g_tb',tb],['g_trust',S.trust>=7],['g_mr',S.mr.perfect>=MISSIONS.length-1],['g_boss',!mythsAlive().length],['g_time',!S.timeout&&S.visit>=0]];
+  const gate=list.every(x=>x[1])?'S':(found>=17&&S.mr.perfect>=MISSIONS.length-2&&(tb||fu)&&!S.timeout)?'A':found>=14?'B':found>=10?'C':'D';
   return {gate, list};
 }
 function computeScore(){

@@ -935,7 +935,7 @@ const CONFIG = {
   VISIT_MIN:60,                     // in-game visit time (minutes) — spent by actions, not real time
   COST_ASK:2, COST_SEARCH:1, COST_WRONG:3, COST_HINT:5,
   SEARCH_CHARGES:16, HEARTS:5, QTE_SEC:12, BOSS_SEC:25, TRUST_START:3,
-  PATIENCE:10, PAT_MAX:14, TRUST_TALK:4  // patience = how many information questions Mrs. Wang tolerates · trust needed before she shares her secret
+  PATIENCE:13, PAT_MAX:17, TRUST_TALK:4  // patience = how many information questions Mrs. Wang tolerates (13: 26 of 30 games ran out after 9-11 of 15 cards, 9 Nov 2026) · trust needed before she shares her secret
 };
 const CONFIG_DEF=Object.assign({},CONFIG);
 function applyCfgSettings(){ const s=GAME_CFG.settings||{}; ['VISIT_MIN','HEARTS','SEARCH_CHARGES'].forEach(k=>{ const v=Math.round(+s[k]); CONFIG[k]=v>0?v:CONFIG_DEF[k]; }); CONFIG.TEACHER_PIN=s.TEACHER_PIN?String(s.TEACHER_PIN):CONFIG_DEF.TEACHER_PIN; }

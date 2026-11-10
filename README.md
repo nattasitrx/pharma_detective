@@ -82,6 +82,10 @@ built on an older Case A, kept as `cd/a_base.html`. `rebuild_cd.sh` builds them 
    Last, `mk_zoom.py` (all three cases): pictures (evidence photos, drug bags, labs) open in a full-screen viewer with
    pinch / drag / buttons, and `mk_mobile.py` stops the page itself from zooming. Students said the game kicked them
    out when they zoomed a drug bag; pinch-zooming the scaled stage can run a phone out of memory (10 Nov 2026).
+   On Case D, `mk_live_d.py`: questions in a published version are read with the instructor's 長期控制 wording (10 Nov 2026;
+   a published version keeps its own copy of the questions, so changing the defaults alone does not reach students).
+   Note for wording changes: the Customise "texts" list skips sentences with a variable part (e.g. one that starts with
+   "Well said!" only after a right answer) and the questions live in their own tab, so check both.
 4. (Retired 8 Nov 2026.) `mk_main.py` reverses `fix_a_age.py`, which changed the age 61 → 65 (birth date from the receipt). It also
    puts back the eight age-61 bag pictures from `assets/case_a_bags_age61.json`. It also sets the eGFR/CrCl age
    chip back to 61; that chip is set outside `fix_a_age.py` and showed 65 on the main link from 4 to 7 Nov 2026.

@@ -336,7 +336,33 @@ with sync_playwright() as p:
             if i == 0: shot(pg, '12_mission_result')
             time.sleep(0.8); pg.click('#mrNext'); time.sleep(0.4)
     notes['mr'] = pg.evaluate("()=>window.__PD__.S.mr.perfect"); notes['missions'] = NM
-    for turn in range(10):
+    if os.environ.get('D2'):   # D2 preview: teach-back (inhaler demo, memo, corrections) in place of the boss
+        seen = set(); MISS = int(os.environ.get('D2_MISS', '0'))   # D2_MISS=1: let one slip pass and leave one wrong line uncircled
+        for turn in range(60):
+            if not pump(pg, until=lambda: vis(pg, '#tback') or vis(pg, '#finalBox'), maxn=200): break
+            if vis(pg, '#finalBox'): break
+            mode = pg.evaluate("()=>document.querySelector('#tback').className")
+            if mode not in seen: seen.add(mode); time.sleep(0.5); shot(pg, '13_tb_' + mode)
+            if mode == 'demo':
+                if vis(pg, '#tback .tb-b.go'):
+                    if 'fb' not in seen: seen.add('fb'); shot(pg, '13_tb_demo_fb')
+                    pg.click('#tback .tb-b.go'); time.sleep(0.3); continue
+                st = pg.evaluate("()=>{const d=window.__PD__.S.boss.demo; return {n:d.ans.length, slip:d.slips.includes(SIM_STEPS.spacer[d.ans.length][0])}}")
+                stop = st['slip'] and not (MISS and st['n'] >= 5)
+                if st['n'] == 3 and not notes.get('r5'): notes['r5'] = 1; reload_resume(pg, 'ch5', lambda: vis(pg, '#tback'))
+                pg.click('#tback .tb-b.stop' if stop else '#tback .tb-b.ok'); time.sleep(0.45)
+            elif mode == 'note':
+                if not pg.evaluate("()=>!!document.querySelector('#tback .tb-line:not([disabled])')"):
+                    shot(pg, '13_tb_note_marked'); pg.click('#tback .tb-b.go'); time.sleep(0.4); continue
+                idx = pg.evaluate("()=>tbLines().map((l,i)=>l.p?i:-1).filter(i=>i>=0)")
+                for i in idx[MISS:]: pg.click(f'#tback .tb-line[data-i="{i}"]'); time.sleep(0.08)
+                pg.click('#tback .tb-b.go'); time.sleep(0.5)
+            elif mode == 'fix':
+                j = pg.evaluate("()=>{const q=document.querySelector('#tback .tb-q').textContent; const m=MYTHS.find(x=>q.includes(L(x.m))); const want=L(m.c.find(c=>c[0]===2)[1]); const cs=[...document.querySelectorAll('#tback .ccard')]; return Math.max(0,cs.findIndex(c=>c.textContent.includes(want.slice(0,40))))}")
+                pg.click(f'#tback .ccard[data-j="{j}"]'); time.sleep(0.9)
+            else: time.sleep(0.3)
+        notes['tb'] = pg.evaluate("()=>{const B=window.__PD__.S.boss; return {demo:B.demo&&{found:B.demo.found, fa:B.demo.fa, slips:B.demo.slips}, note:B.note, answers:B.answers.map(a=>a.p+':'+a.q), alive:B.alive}}")
+    for turn in range(0 if os.environ.get('D2') else 10):
         if not pump(pg, until=lambda: pg.evaluate("()=>document.querySelectorAll('#bossCards .ccard').length") > 0 or vis(pg, '#finalBox'), maxn=160): break
         if vis(pg, '#finalBox'): break
         if turn == 2 and not notes.get('r5'): notes['r5'] = 1; reload_resume(pg, 'ch5', lambda: pg.evaluate("()=>document.querySelectorAll('#bossCards .ccard').length") > 0)

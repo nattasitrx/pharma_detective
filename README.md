@@ -189,7 +189,11 @@ The pre/post test and the professor's content stay. Steps, added one by one:
 
 1. (done) Pre-test first; a short prologue that ends on coughing behind the door; chapter 1 opens with the
    breathlessness scene and the hands-on inhaler lesson (it used to be in chapter 4); no intro cards or tutorial lines.
-2. Spot the mistakes in Uncle Lee's inhaler demo, in place of the myth boss.
+2. (done) Teach-back in place of the myth boss (`cd/d2_teachback.js`): Uncle Lee shows the blue inhaler with the
+   spacer again and the student stops him at the 3 wrong steps (drawn from 5); then he reads out his memo and the
+   student circles the wrong lines (the old myths, mixed with 3 right lines) and picks the correction for each one
+   caught. A wrong line left uncircled stays alive (q -1) and can still be fixed in the closing summary.
+   `D2_MISS=1` makes the test miss one of each.
 3. A timeline of the night he fell, in place of the contradiction chapter.
 4. A prescriber map in the medicine review.
 5. An ending that changes with what the student found.

@@ -8,8 +8,52 @@ Step 1 (this file so far): open with the event, cut the how-to-play parts.
   - chapter 1 opens with the breathlessness scene (the old "question 3" cough event) and goes straight into the
     hands-on inhaler lesson (it used to sit in chapter 4); then the first-move question and the interview
   - no character intro cards, one line instead of the interview tutorial
-Later steps (spot-the-mistake demo, timeline, prescriber map, variable ending) are added here one by one."""
-import sys, re
+Step 2: teach-back in place of the myth boss (cd/d2_teachback.js): he shows the inhaler again and the student stops
+  him at the wrong steps; then he reads out his memo, the student circles the wrong lines (the old myths) and picks
+  the correction for each. S.boss keeps its shape, so the summary, ending and results are unchanged.
+Later steps (timeline, prescriber map, variable ending) are added here one by one."""
+import sys, re, os
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+TB_CSS = r'''
+/* teach-back (mk_d2.py) */
+#tback{position:absolute;left:60px;right:60px;top:92px;bottom:30px;z-index:24;display:flex;flex-direction:column;gap:14px;background:rgba(255,255,255,.97);border-radius:28px;padding:18px 24px;box-shadow:0 0 0 5px #fff,0 0 0 10px #8c9a3e,0 16px 40px rgba(0,0,0,.35);animation:enterC .4s cubic-bezier(.2,1.2,.4,1)}
+#tback .tb-head{display:flex;gap:16px;align-items:center;background:linear-gradient(90deg,#f3f1dc,#fff1dc);border-radius:18px;padding:10px 18px;font-size:26px}
+#tback .tb-head b{font-family:var(--tc);font-weight:900;color:#4a5a12;white-space:nowrap}
+#tback .tb-sub{flex:1;font-size:22px;font-weight:700;color:#5a4a3a}
+#tback .tb-dots{display:flex;gap:8px}
+#tback .tb-dots i{width:22px;height:22px;border-radius:50%;background:#e4e0d0;box-shadow:inset 0 0 0 2px rgba(0,0,0,.08)}
+#tback .tb-dots i.cur{box-shadow:0 0 0 4px #ffb21f}
+#tback .tb-dots i.okd{background:#bfe6cf}#tback .tb-dots i.hit{background:#18b07f}#tback .tb-dots i.miss{background:#ff9d00}#tback .tb-dots i.fa{background:#6aa0ff}
+#tback .tb-main{flex:1;min-height:0;display:flex;gap:26px;align-items:stretch}
+#tback .tb-face{width:330px;flex:none;border-radius:24px;background:linear-gradient(#fdf3d7,#f6dfb0);overflow:hidden;display:flex;align-items:flex-end;justify-content:center}
+#tback .tb-face svg{width:100%;height:100%}
+#tback .tb-face.sm{width:150px;height:150px;border-radius:50%}
+#tback .tb-step{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border-radius:24px;background:#f7f8ee;box-shadow:inset 0 0 0 4px #dfe4c0;padding:18px 30px;text-align:center}
+#tback .tb-n{font-size:24px;font-weight:800;color:#8c9a3e}
+#tback .tb-e{font-size:110px;line-height:1.1}
+#tback .tb-t{font-size:40px;font-weight:900;line-height:1.35;color:var(--ink)}
+#tback .tb-fb{min-height:70px;font-size:26px;font-weight:700;line-height:1.4;border-radius:16px;padding:10px 18px}
+#tback .tb-fb.hit{background:#dff6ea;color:#0d6a4c}#tback .tb-fb.miss{background:#fff0d6;color:#8a4b00}#tback .tb-fb.fa{background:#e4eeff;color:#23427a}
+#tback .tb-btns{display:flex;gap:22px;justify-content:center;align-items:center}
+#tback .tb-b{border:0;border-radius:99px;padding:18px 40px;font-size:30px;font-weight:900;color:#fff;cursor:pointer;box-shadow:0 6px 0 rgba(0,0,0,.18)}
+#tback .tb-b:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.18)}
+#tback .tb-b.stop{background:#e0435a}#tback .tb-b.ok{background:#18b07f}#tback .tb-b.go{background:#3d7bff}
+#tback .tb-cnt{font-size:24px;font-weight:800;color:#5a4a3a}
+#tback .tb-note{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;grid-auto-flow:column;gap:8px 22px;padding:16px 20px;border-radius:20px;background:#fff8cf;box-shadow:inset 0 0 0 3px #ecd98a}
+#tback .tb-line{position:relative;display:flex;gap:10px;align-items:center;text-align:left;font-size:25px;font-weight:700;line-height:1.3;color:#3a2e22;background:transparent;border:4px solid transparent;border-radius:44px;padding:4px 18px;cursor:pointer}
+#tback .tb-line .tb-no{flex:none;color:#b08a2a;font-weight:900}
+#tback .tb-line.on{border-color:#e0435a;background:#ffeef0}
+#tback .tb-line em{position:absolute;right:14px;top:-10px;font-style:normal;font-size:18px;font-weight:900;color:#fff;border-radius:99px;padding:2px 12px}
+#tback .tb-line em:empty{display:none}
+#tback .tb-line.hit{border-color:#18b07f;background:#e6f8ef}#tback .tb-line.hit em{background:#18b07f}
+#tback .tb-line.miss{border-color:#ff9d00;border-style:dashed;background:#fff3dc}#tback .tb-line.miss em{background:#ff9d00}
+#tback .tb-line.fa{border-color:#6aa0ff;background:#eaf1ff}#tback .tb-line.fa em{background:#6aa0ff}
+#tback .tb-quote{display:flex;gap:22px;align-items:center;justify-content:center;flex:1;min-height:0}
+#tback .tb-q{max-width:1000px;font-size:34px;font-weight:900;line-height:1.4;background:#fff8cf;border-radius:26px;padding:20px 30px;box-shadow:0 0 0 5px #ecd98a}
+#tback .tb-cards{display:flex;gap:30px;justify-content:center;padding:0 14px 14px}
+#tback .tb-cards .ccard{width:auto;flex:1;min-height:270px;font-size:25px}
+'''
 
 def main(src, dst):
     s = open(src, encoding='utf-8').read()
@@ -25,7 +69,8 @@ def main(src, dst):
     sub("const isLocked=()=>LOCK.closed&&!LOCK.tryOK;", "const isLocked=()=>false;   // preview: never locked (mk_d2.py)")
     sub("async function syncFlush(){\n  const url=serverURL(); if(!url||SYNC.busy) return;",
         "async function syncFlush(){ return;   // preview: results are not sent (mk_d2.py)\n  const url=serverURL(); if(!url||SYNC.busy) return;")
-    sub("</style>\n</head>", "#d2tag{position:fixed;left:8px;bottom:8px;z-index:99998;background:#ffd36b;color:#2a1030;font:800 13px/1 system-ui,sans-serif;padding:5px 10px;border-radius:99px;pointer-events:none;opacity:.9}\n</style>\n</head>")
+    sub("OUTBOX:'phd_outbox_v1',", "OUTBOX:'phd_outbox_d2',")   # its queue is its own too: the live case must never send preview results
+    sub("</style>\n</head>", "#d2tag{position:fixed;left:8px;bottom:8px;z-index:99998;background:#ffd36b;color:#2a1030;font:800 10px/1 system-ui,sans-serif;padding:4px 8px;border-radius:99px;pointer-events:none;opacity:.9}\n</style>\n</head>")
     i = s.index('<body>'); s = s[:i] + '<body>\n<div id="d2tag">PREVIEW · D2</div>' + s[i+6:]   # the page's own body (a second <body> sits in a print template)
 
     # ---------- step 1: pre-test first, short prologue, cold open ----------
@@ -69,6 +114,21 @@ r"""    await say('yeh','neutral',['李伯伯，剛才喘起來的時候，您�
     sub("['先暫停訪談，打開窗戶讓空氣流通，陪在他身邊等他喘過來','Pause the interview, open the window for fresh air, and stay with him until he recovers','พักการสัมภาษณ์ไว้ก่อน เปิดหน้าต่างให้อากาศถ่ายเท",
         "['先不急著問診，打開窗戶讓空氣流通，陪在他身邊等他喘過來','Hold your questions, open the window for fresh air, and stay with him until he recovers','ยังไม่ต้องรีบถามอะไร เปิดหน้าต่างให้อากาศถ่ายเท")
     sub("],{timer:8, shuffle:true, id:'cough_event',", "],{timer:14, shuffle:true, id:'cough_event',")   # it is now the first thing a student does: time to read four options
+
+    # ---------- step 2: teach-back (inhaler demo + his memo) in place of the myth boss ----------
+    i = s.index('async function chapter5(){'); j = s.index('/* ---------------- Time-out', i); assert s.count('async function chapter5(){') == 1
+    s = s[:i] + open(os.path.join(HERE, 'cd', 'd2_teachback.js'), encoding='utf-8').read() + s[j:]
+    def tsub(key, arr):
+        nonlocal s
+        pat = r"\b" + key + r":\[[^\]]*\]"; assert len(re.findall(pat, s)) == 1, key
+        s = re.sub(pat, lambda _: key + ':[' + ','.join("'" + x.replace("'", "\\'") + "'" for x in arr) + ']', s, count=1)
+    tsub('ch5t', ['回覆示教', 'Teach-back', 'Teach-back: ให้ลุงทวนกลับ'])
+    tsub('ch5s', ['他做一次、說一次，你來抓錯！', 'He shows and tells — you spot the mistakes!', 'ลุงทำและพูดให้ดู คุณจับจุดผิด!'])
+    tsub('tBoss', ['回覆示教（衛教卡）', 'Teach-back (counsel cards)', 'Teach-back (การ์ดคำแนะนำ)'])
+    tsub('mythSurv', ['這個錯誤觀念還沒改過來，最後總結時要再提到它！', 'This wrong idea is still standing. Bring it up again in your closing summary!', 'ความเชื่อผิดข้อนี้ยังไม่ได้แก้ ตอนสรุปปิดท้ายต้องพูดถึงอีกครั้ง!'])
+    tsub('mythListH', ['📝 還沒改過來的錯誤觀念：在總結裡說清楚，就能改過來', '📝 Wrong ideas still standing: make each one clear in your summary to put it right', '📝 ความเชื่อผิดที่ยังไม่ได้แก้: พูดให้ชัดในสรุปเพื่อแก้ให้ถูก'])
+    tsub('mythWarn', ['還有 {n} 個錯誤觀念沒在總結裡提到，李伯伯會照著舊想法做。要繼續修改，還是直接送出？', '{n} wrong ideas are not in your summary yet, and Uncle Lee will go on as before. Keep editing, or send anyway?', 'ยังมีความเชื่อผิดอีก {n} ข้อที่ยังไม่อยู่ในสรุป ลุงหลี่จะทำแบบเดิมต่อไป จะแก้ต่อ หรือส่งเลย?'])
+    sub("</style>\n</head>", TB_CSS + "</style>\n</head>")
     open(dst, 'w', encoding='utf-8').write(s); print(dst, 'D2 preview built')
 
 main(sys.argv[1], sys.argv[2])

@@ -1075,7 +1075,7 @@ const UI = {
   ch0:['序章','PROLOGUE','บทนำ'], ch0t:['到府！','House Call!','ถึงบ้านแล้ว!'], ch0s:['第一次居家訪視','Your first home visit','การเยี่ยมบ้านครั้งแรก'],
   ch1:['第一章','CHAPTER 1','บทที่ 1'], ch1t:['初次見面','First Contact','พบกันครั้งแรก'], ch1s:['建立信任，問出線索','Build trust, collect clues','สร้างความไว้ใจ เก็บเบาะแส'],
   ch2:['第二章','CHAPTER 2','บทที่ 2'], ch2t:['屋內大搜查','House Search','ค้นบ้าน!'], ch2s:['藥藏在哪裡？','Where are the medicines hiding?','ยาถูกซ่อนไว้ที่ไหน?'],
-  ch3:['第三章','CHAPTER 3','บทที่ 3'], ch3t:['矛盾對決','Contradiction Duel','ดวลจับโกหก'], ch3s:['用證物揭穿謊言','Expose the lies with evidence','ใช้หลักฐานเปิดโปงคำโกหก'],
+  ch3:['第三章','CHAPTER 3','บทที่ 3'], ch3t:['攤開來說','Out in the open','เปิดใจคุยกัน'], ch3s:['把找到的東西放在桌上，聽他怎麼說','Lay out what you found and hear his side','วางสิ่งที่พบบนโต๊ะ แล้วฟังลุงเล่า'],
   ch4:['第四章','CHAPTER 4','บทที่ 4'], ch4t:['藥袋危機！','Med-Bag Crisis!','วิกฤตซองยา!'], ch4s:['整合所有藥物、檢查吸入器，找出用藥問題','Reconcile every drug, check the puffers, find the DRPs','รวบรวมยาทั้งหมด เช็กยาพ่น หาปัญหาจากยา'],
   ch5:['最終章','FINAL CHAPTER','บทสุดท้าย'], ch5t:['回覆示教','Teach-back','Teach-back: ให้ลุงทวนกลับ'], ch5s:['他做一次、說一次，你來抓錯！','He shows and tells — you spot the mistakes!','ลุงทำและพูดให้ดู คุณจับจุดผิด!'],
   boardTitle:['🗂️ 提問卡（每問 −2 分）','🗂️ Question cards (−2 min each)','🗂️ การ์ดคำถาม (−2 นาที/ข้อ)'], boardNext:['前往搜查 ▶','Go search ▶','ไปค้นบ้าน ▶'], freeSend:['問！','Ask!','ถาม!'],
@@ -3618,36 +3618,18 @@ async function chapter3(){
   S.chStart=realSec(); hideAll(); playTheme('tense'); if(!RS.ff) S.hearts=CONFIG.HEARTS; $('#hHearts').classList.remove('hidden'); hud();
   await chapterCard(3);
   $('#bgCam').classList.add('dark'); bgFx('testi'); show('me','L','smug'); show('chen','C','smug');
-  await say('chen','smug',['什麼證據不證據的！我當了一輩子兵，生活跟營區一樣，樣樣都有規矩！','Evidence? Hmph! I was a soldier all my life — I run things like a barracks, everything in order!','หลักฐานอะไรกัน! ลุงเป็นทหารมาทั้งชีวิต ใช้ชีวิตเหมือนอยู่ในค่าย ทุกอย่างมีระเบียบ!']);
-  await say('pilly','smug',['證言開始！每句話裡的⟦黃色字⟧就是關鍵。「追問」可以問細節；找到能「直接」推翻黃色字的證物，就「出示證物」！','Testimony time! The ⟦yellow words⟧ are the key part of each claim. "Press" for details; when you find evidence that DIRECTLY contradicts them, "Present" it!','เริ่มคำให้การ! ⟦ข้อความสีเหลือง⟧ คือจุดสำคัญของแต่ละประโยค กด "ซักต่อ" เพื่อถามรายละเอียด เจอหลักฐานที่ "หักล้างตรงๆ" ก็ "แสดงหลักฐาน"!']);
-  await say('pilly','neutral',['每句只有「一個」證物能直接推翻它。完全無關的證物會扣❤️；有關但不夠直接的，陳藥師會給提示。用過的證物會變灰，不能再用！','Each claim has exactly ONE item that directly disproves it. Unrelated items cost ❤️; related-but-indirect ones get a hint from Pharmacist Chen. Used items turn grey and can\'t be reused!','แต่ละประโยคมีหลักฐานที่หักล้างตรงๆ ได้ "ชิ้นเดียว" หลักฐานที่ไม่เกี่ยวจะเสีย ❤️ ส่วนที่เกี่ยวแต่ยังไม่ตรง เภสัชกรเฉินจะใบ้ให้ หลักฐานที่ใช้แล้วจะเป็นสีเทา ใช้ซ้ำไม่ได้!']);
-  $('#testiTitle').textContent=T('testiTitle'); $('#testiBanner').classList.remove('hidden'); $('#testiDots').classList.remove('hidden');
-  $('#tPress').textContent=T('press'); $('#tPresent').textContent=T('present');
-  const T3=((S.seg||(S.seg={})).t3=S.seg.t3||{solved:{},tried:{},lost:{}}), solved=T3.solved, tried=T3.tried, lost=T3.lost; TESTI.forEach(t=>{ tried[t.id]=tried[t.id]||[]; if(!t.need.some(hasEv)) lost[t.id]=1; });
-  const nLost=Object.keys(lost).length; if(nLost){ logEvent({type:'unprovable', st:Object.keys(lost)});
-    await say('pilly','sad',[`糟糕……有 ${nLost} 句話，我們手上沒有能直接推翻的證物（搜查時漏掉了）。那幾句只能先放過了。`,`Uh-oh… for ${nLost} of his claims we have no evidence that directly disproves them (we missed it in the search). We'll have to let those go.`,`แย่แล้ว… มี ${nLost} ประโยคที่เราไม่มีหลักฐานหักล้างตรงๆ (พลาดไปตอนค้นบ้าน) ข้อพวกนั้นต้องปล่อยผ่านไป`]); }
-  const open=()=>TESTI.filter(t=>!solved[t.id]&&!lost[t.id]).length;
-  const nextUnsolved=from=>{ for(let k=1;k<=TESTI.length;k++){ const j=(from+k)%TESTI.length; if(!solved[TESTI[j].id]&&!lost[TESTI[j].id]) return j; } return from; };
-  let i=(lost[TESTI[0].id]||solved[TESTI[0].id])?nextUnsolved(0):0;
-  while(open()>0){
-    resumePoint(); if(S.visit<=0){ S.fl.duelCut=1; break; }
-    showStatement(i, solved, lost); $('#testiUI').classList.remove('hidden');
-    const act=await new Promise(res=>{ $('#tPrev').onclick=()=>{sfx.click();res('prev');}; $('#tNextS').onclick=()=>{sfx.click();res('next');}; $('#tPress').onclick=()=>{sfx.select();res('press');}; $('#tPresent').onclick=()=>{sfx.select();res('present');}; D.testiAct=res; });
-    D.testiAct=null; $('#testiUI').classList.add('hidden');
-    const s=TESTI[i];
-    if(act==='prev'){ i=(i+TESTI.length-1)%TESTI.length; continue; }
-    if(act==='next'){ i=(i+1)%TESTI.length; continue; }
-    if(act==='press'){ logEvent({type:'press', st:s.id}); await say('me','neutral',['請等一下，可以再說清楚一點嗎？','Wait — could you tell me more about that?','เดี๋ยวก่อน ช่วยเล่าให้ละเอียดกว่านี้ได้ไหม?']); await sayLines(s.press); continue; }
-    if(solved[s.id]){ await say('pilly','neutral',['這句已經揭穿囉，換下一句吧！','Already exposed — try another statement!','ข้อนี้เปิดโปงไปแล้ว ลองข้ออื่น!']); i=nextUnsolved(i); continue; }
-    if(lost[s.id]){ await say('pilly','sad',['這句我們沒有證物可以推翻……換下一句吧。','We have nothing that disproves this one… try another statement.','ข้อนี้เราไม่มีหลักฐานหักล้าง… ลองข้ออื่นเถอะ']); i=nextUnsolved(i); continue; }
-    const ev=await openTray({claim:s.st, tried:tried[s.id]}); if(!ev) continue;
-    const isNear=(s.near||[]).includes(ev), ok=s.need.includes(ev), near=!ok&&!EXAM()&&isNear; logEvent({type:'present', st:s.id, item:ev, ok, near, nearX:!ok&&EXAM()&&isNear});
-    if(ok){ await fpShow('item',ev,async()=>{ await splash('objection','','objection'); await say('me','smug',presentAs(ev)); await sayLines(s.solve.slice(0,1)); });
-      await sayLines(s.solve.slice(1)); reveal(s.p); solved[s.id]=1; S.usedEv.push(ev); i=nextUnsolved(i); }
-    else if(near){ tried[s.id].push(ev); await fpShow('item',ev,async()=>{ await say('me','neutral',presentUm(ev)); await say('chen','think',NEAR_LINES[tried[s.id].length%2]); });
-      await sayLines([['yeh','think',s.hint]]); hide('yeh'); spend(1); hud(); }
-    else { tried[s.id].push(ev); await fpShow('item',ev,async()=>{ await say('me','neutral',presentUm(ev)); await say('chen','angry',WRONG_LINES[S.wrong%3]); }); await loseHeart(); }
-  }
+  const T3=((S.seg||(S.seg={})).t3=S.seg.t3||{solved:{},tried:{},lost:{}}), solved=T3.solved, lost=T3.lost; TESTI.forEach(t=>{ if(!t.need.some(hasEv)) lost[t.id]=1; });
+  if(!T3.intro){
+    await say('chen','smug',['什麼證據不證據的！我當了一輩子兵，生活跟營區一樣，樣樣都有規矩！','Evidence? Hmph! I was a soldier all my life — I run things like a barracks, everything in order!','หลักฐานอะไรกัน! ลุงเป็นทหารมาทั้งชีวิต ใช้ชีวิตเหมือนอยู่ในค่าย ทุกอย่างมีระเบียบ!']);
+    show('yeh','R','neutral');
+    await say('yeh','neutral',['李伯伯，我們不是來挑毛病的。我們把剛才看到的東西一樣一樣放在桌上，您跟我們說說是怎麼回事，好嗎？','Uncle Lee, we are not here to find fault. We will put what we saw on the table, one thing at a time — will you tell us the story behind each?','ลุงหลี่ เราไม่ได้มาจับผิดนะ เราจะวางของที่เห็นเมื่อกี้บนโต๊ะทีละอย่าง ลุงช่วยเล่าให้ฟังหน่อยได้ไหมว่าเป็นมายังไง?']);
+    hide('yeh'); T3.intro=1; }
+  for(const s of TESTI){ if(solved[s.id]||lost[s.id]) continue; resumePoint(); if(S.visit<=0){ S.fl.duelCut=1; break; }
+    const ev=s.need.find(hasEv); emo('chen','shock');
+    await fpShow('item',ev,async()=>{ await say('me','neutral',presentAs(ev)); });
+    await sayLines(s.solve.slice(1)); reveal(s.p); solved[s.id]=1; S.usedEv.push(ev); logEvent({type:'present', st:s.id, item:ev, ok:true, auto:true}); }
+  const nLost=Object.keys(lost).length; if(nLost&&!T3.lostSaid){ T3.lostSaid=1; logEvent({type:'unprovable', st:Object.keys(lost)});
+    await say('pilly','sad',[`可惜……還有 ${nLost} 件事，我們搜查時沒找到相關的東西，他就沒有提起。`,`A pity… there ${nLost>1?'are':'is'} ${nLost} more thing${nLost>1?'s':''} we found nothing about in the search, so he never brought ${nLost>1?'them':'it'} up.`,`น่าเสียดาย… ยังมีอีก ${nLost} เรื่องที่เราหาของที่เกี่ยวข้องไม่เจอตอนค้นห้อง ลุงเลยไม่ได้พูดถึง`]); }
   $('#testiBanner').classList.add('hidden'); $('#testiDots').classList.add('hidden'); hideText();
   if(S.visit>0){ resumePoint(); await heartLock(); } else S.fl.lockSkipped=1;
   $('#bgCam').classList.remove('dark'); bgFx('motes'); $('#hHearts').classList.add('hidden');

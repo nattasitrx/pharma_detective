@@ -182,6 +182,10 @@ Credits: cases by Prof. Chung-Yu Chen (陳崇鈺), Kaohsiung Medical University;
 
 ## `mk_d2.py` — Case D preview "D2" (from 11 Nov 2026)
 
+**Dropped on 11 Nov 2026** (it still felt like the same game). The page `main:preview-d/` was deleted and
+`rebuild_cd.sh` no longer builds it; the files stay here for reference. To build it by hand:
+`python3 mk_d2.py site/case-d/index.html site/preview-d/index.html`.
+
 Students said the three cases feel the same. `mk_d2.py site/case-d/index.html site/preview-d/index.html` (run by
 `rebuild_cd.sh`) makes a different Case D from the built one; copy it to `main:preview-d/index.html` (unlisted). The
 live Case D is not touched. The preview has its own saves (`phd_lee2_*`), is never locked and sends no results.
@@ -203,6 +207,8 @@ variable ending.
 Test: `D2=1 CASE=d GAME_URL=http://localhost:8110/preview-d/?class=ph2026a python3 test_case.py zh practice`.
 
 ## `ghost/` — Case D "Blackout Night" (prototype, 10 Nov 2026)
+
+**Dropped on 10 Nov 2026**; the page `main:ghost-d/` was deleted on 11 Nov. The file stays here for reference.
 
 `ghost/index.html` is a stand-alone escape-room prototype of Case D (one room, three knowledge locks, a ghost that
 pressures and hints). It is not built from the engine: copy it to `main:ghost-d/index.html`. It is not linked from the

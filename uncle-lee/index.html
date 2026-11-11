@@ -8,29 +8,53 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600&family=Noto+Serif+Thai:wght@400;600&family=Sarabun:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{--paper:#fbf3e4;--ink:#4a3528;--soft:#8a6f5c;--terra:#c8694a;--amber:#e9a646;--teal:#5f8f8a;--wood:#a8754f;--wood2:#8a5b3c;--wall:#f6e3c5;
-  --sky1:#2b2f55;--sky2:#6b5a7a;--tint:rgba(40,36,80,.55);--shaft:0;--lamp:0;--sun:#ffd9a0}
+:root{--paper:#fbf3e4;--ink:#4a3528;--soft:#8a6f5c;--terra:#c8694a;--amber:#e9a646}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:#2a211c;color:var(--ink);font-family:'Noto Serif Thai','Sarabun',serif;overscroll-behavior:none;touch-action:manipulation;-webkit-user-select:none;user-select:none}
+html,body{margin:0;height:100%;background:#1c1512;color:var(--ink);font-family:'Noto Serif Thai','Sarabun',serif;overscroll-behavior:none;touch-action:manipulation;-webkit-user-select:none;user-select:none}
 #app{position:relative;margin:0 auto;height:100dvh;max-width:480px;display:flex;flex-direction:column;background:var(--paper);overflow:hidden;box-shadow:0 0 60px rgba(0,0,0,.5)}
-#view{position:relative;flex:0 0 auto;width:100%;aspect-ratio:400/400;max-height:58dvh;overflow:hidden;background:#1d1830}
-#view svg.scene{position:absolute;inset:0;width:100%;height:100%;display:block}
-.scene{opacity:0;transition:opacity 1.2s ease;pointer-events:none}.scene.on{opacity:1;pointer-events:auto}
-#grain{position:absolute;inset:0;pointer-events:none;opacity:.16;mix-blend-mode:multiply}
-#vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 55%,rgba(20,10,10,0) 20%,rgba(20,10,10,.96) 78%);opacity:0;transition:opacity .25s linear}
+/* ---------- the picture ---------- */
+#view{position:relative;flex:0 0 auto;width:100%;aspect-ratio:1/1;max-height:58dvh;overflow:hidden;background:#15110f}
+#cam,#zoom{position:absolute;inset:0;will-change:transform}
+#zoom{transition:transform .25s linear}
+#zoom img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 2s ease}
+#zoom img.on{opacity:1}
+#fx{position:absolute;inset:0;pointer-events:none}
+#fx>*{position:absolute;inset:0;opacity:0;transition:opacity 2.5s ease}
+#fx>.on{opacity:1}
+.mote{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff3cf;box-shadow:0 0 6px #ffe9b0;opacity:.0;animation:drift 11s linear infinite}
+@keyframes drift{0%{transform:translate(0,0);opacity:0}15%{opacity:.75}85%{opacity:.6}100%{transform:translate(26px,-90px);opacity:0}}
+#fxHeat{background:linear-gradient(180deg,rgba(255,236,190,.0),rgba(255,226,170,.22));mix-blend-mode:screen}
+#fxHeat i{position:absolute;left:-10%;right:-10%;height:16%;background:linear-gradient(180deg,rgba(255,255,255,0),rgba(255,246,214,.16),rgba(255,255,255,0));animation:heat 5s ease-in-out infinite}
+@keyframes heat{0%{transform:translateY(40%) skewX(-3deg)}50%{transform:translateY(-30%) skewX(3deg)}100%{transform:translateY(40%) skewX(-3deg)}}
+#fxLamp{background:radial-gradient(circle at 70% 52%,rgba(255,196,110,.34),rgba(255,196,110,0) 46%);mix-blend-mode:screen;animation:flick 3.7s ease-in-out infinite}
+@keyframes flick{0%,100%{filter:brightness(1)}40%{filter:brightness(.82)}55%{filter:brightness(1.08)}70%{filter:brightness(.92)}}
+#fxSun{background:linear-gradient(115deg,rgba(255,236,180,.26),rgba(255,236,180,0) 55%);mix-blend-mode:screen;animation:sun 9s ease-in-out infinite}
+@keyframes sun{50%{filter:brightness(.8)}}
+#grain{position:absolute;inset:0;pointer-events:none;opacity:.13;mix-blend-mode:multiply;width:100%;height:100%}
+#vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,rgba(16,8,8,0) 18%,rgba(16,8,8,.97) 76%);opacity:0;transition:opacity .25s linear}
+#frame{position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 70px rgba(30,16,10,.55)}
 #black{position:absolute;inset:0;background:#15110f;opacity:1;transition:opacity 1.6s ease;pointer-events:none;z-index:5}
-#hud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:center;padding:10px 14px;font:600 14px/1 'Sarabun',sans-serif;color:#fff8ea;text-shadow:0 1px 6px rgba(0,0,0,.55);z-index:4;opacity:0;transition:opacity 1s}
+#hud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:center;padding:10px 14px;font:600 14px/1 'Sarabun',sans-serif;color:#fff8ea;text-shadow:0 1px 6px rgba(0,0,0,.8);z-index:4;opacity:0;transition:opacity 1s;background:linear-gradient(rgba(20,12,8,.45),rgba(20,12,8,0))}
 #hud.on{opacity:1}
 #hud .r{display:flex;gap:12px;align-items:center}
-#en{display:flex;gap:4px;align-items:center}#en i{width:9px;height:9px;border-radius:50%;background:rgba(255,248,234,.28);transition:background .6s,transform .6s}#en i.f{background:var(--amber);box-shadow:0 0 8px rgba(233,166,70,.9)}
+#en{display:flex;gap:4px;align-items:center}#en i{width:9px;height:9px;border-radius:50%;background:rgba(255,248,234,.3);transition:background .6s,transform .6s}#en i.f{background:var(--amber);box-shadow:0 0 8px rgba(233,166,70,.9)}
 #en.bump i.f{transform:scale(1.5)}
-#panel{position:relative;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;padding:18px 24px calc(18px + env(safe-area-inset-bottom));background:linear-gradient(var(--paper),#f5e8d2)}
-#panel::before{content:"";position:absolute;left:0;right:0;top:-18px;height:18px;background:linear-gradient(rgba(251,243,228,0),var(--paper))}
-#txt{font-size:19px;line-height:1.75;min-height:3.4em;white-space:pre-line;opacity:0;transform:translateY(6px);transition:opacity .55s ease,transform .55s ease}
+/* hotspots on the picture */
+#hots{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:0;transition:opacity .8s}
+#hots.on{opacity:1;pointer-events:auto}
+.hs{position:absolute;width:15%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;cursor:pointer}
+.hs::before{content:"";position:absolute;inset:30%;border-radius:50%;border:2px solid rgba(255,250,235,.95);box-shadow:0 0 10px rgba(255,214,138,.9),inset 0 0 6px rgba(255,214,138,.6);animation:ring 2.2s ease-out infinite}
+.hs.done::before{border-color:rgba(255,250,235,.35);box-shadow:none;animation:none}
+.hs.quiet::before{display:none}
+@keyframes ring{0%{transform:scale(.6);opacity:1}100%{transform:scale(1.9);opacity:0}}
+/* ---------- words ---------- */
+#panel{position:relative;flex:1 1 auto;min-height:0;display:flex;flex-direction:column;justify-content:center;padding:16px 26px calc(18px + env(safe-area-inset-bottom));background:linear-gradient(var(--paper),#f5e8d2)}
+#txt{font-size:19px;line-height:1.8;min-height:3.6em;white-space:pre-line;opacity:0;transform:translateY(6px);transition:opacity .6s ease,transform .6s ease}
 #txt.on{opacity:1;transform:none}
 #txt.q{color:var(--soft);font-style:italic}
-#more{position:absolute;right:22px;bottom:calc(12px + env(safe-area-inset-bottom));font-size:14px;color:var(--terra);opacity:0;animation:bob 1.6s ease-in-out infinite}
-#more.on{opacity:.9}
+#txt.big{font:600 26px/1.5 'Noto Serif Thai',serif;text-align:center;letter-spacing:.04em}
+#more{position:absolute;right:22px;bottom:calc(12px + env(safe-area-inset-bottom));font:400 13px/1 'Sarabun',sans-serif;color:var(--terra);opacity:0;animation:bob 1.6s ease-in-out infinite}
+#more.on{opacity:.85}
 @keyframes bob{50%{transform:translateY(4px)}}
 #acts{display:flex;flex-direction:column;gap:10px;margin-top:14px}
 #acts:empty{display:none}
@@ -40,48 +64,47 @@ html,body{margin:0;height:100%;background:#2a211c;color:var(--ink);font-family:'
 .btn.dis{opacity:.45!important;pointer-events:none}
 .btn.go{background:var(--terra);color:#fff;text-align:center;box-shadow:0 2px 0 #9c4c33,0 8px 20px rgba(200,105,74,.35)}
 @keyframes rise{to{opacity:1;transform:none}}
-/* hold button */
-#holdW{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:12px}
+#holdW{display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:10px}
 #hold{position:relative;width:104px;height:104px;border-radius:50%;border:0;background:conic-gradient(var(--amber) calc(var(--p,0)*1turn),#ecdcc0 0);cursor:pointer;touch-action:none;transition:transform .15s}
 #hold::after{content:"";position:absolute;inset:9px;border-radius:50%;background:#fffaf0;box-shadow:inset 0 2px 8px rgba(120,80,40,.15)}
 #hold span{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;font:600 15px/1.3 'Sarabun',sans-serif;color:var(--ink);text-align:center;padding:16px}
 #hold.down{transform:scale(.95)}
 #hold.lock{filter:grayscale(.7);opacity:.6}
 #holdL{font:400 14px/1.4 'Sarabun',sans-serif;color:var(--soft);text-align:center;min-height:1.4em}
-/* hotspots */
-.hot{cursor:pointer}.hot .glow{display:none}
-#room.free .hot:not(.quiet):not(.done){animation:pulse 2.2s ease-in-out infinite}
-@keyframes pulse{0%,100%{filter:drop-shadow(0 0 2px rgba(255,255,255,.9)) drop-shadow(0 0 7px rgba(255,214,138,.95))}50%{filter:drop-shadow(0 0 1px rgba(255,255,255,.5)) drop-shadow(0 0 3px rgba(255,214,138,.5))}}
-#tail{transform-origin:214px 316px;animation:wag 1.1s ease-in-out infinite}
-@keyframes wag{50%{transform:rotate(18deg)}}
-#dog.sleep #tail{animation:none}
-.mote{animation:drift 9s linear infinite;opacity:calc(var(--shaft)*.8)}
-@keyframes drift{from{transform:translate(0,0)}to{transform:translate(18px,-46px)}}
-#lee{transition:transform 2.2s ease-in-out}
-#shimmer{opacity:0;transition:opacity 2s}#shimmer.on{opacity:.5;animation:shim 3s ease-in-out infinite}
-@keyframes shim{50%{transform:translateY(-3px) skewX(1.5deg)}}
-/* close-up cards */
-#card{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(30,20,14,.55);opacity:0;pointer-events:none;transition:opacity .7s;z-index:3;backdrop-filter:blur(2px)}
+/* close-up */
+#card{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(22,14,10,.62);opacity:0;pointer-events:none;transition:opacity .9s;z-index:3;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 #card.on{opacity:1;pointer-events:auto}
-#card .in{width:84%;border-radius:22px;background:var(--paper);padding:16px;box-shadow:0 20px 50px rgba(0,0,0,.4)}
-#card svg{width:100%;height:auto;display:block}
-.blur{filter:blur(5px);transition:filter 1.6s ease}.blur.focus{filter:blur(0)}
-#dial{width:100%;margin:14px 0 4px;accent-color:var(--terra)}
-.heart{position:absolute;font-size:22px;animation:hup 1.4s ease-out forwards;pointer-events:none;z-index:4}
-@keyframes hup{from{opacity:1;transform:translateY(0) scale(.6)}to{opacity:0;transform:translateY(-60px) scale(1.2)}}
-/* title + diary */
-#title,#diary{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;background:radial-gradient(ellipse at 50% 30%,#f7c98d,#e39a62 45%,#7a4a48 100%);color:#fff8ea;transition:opacity 1.4s ease}
-#title h1{font:600 38px/1.3 'Noto Serif Thai',serif;margin:0 0 6px;text-shadow:0 2px 20px rgba(90,40,20,.5)}
-#title .sub{font:400 17px/1.6 'Sarabun',sans-serif;opacity:.92}
-#title .day{margin:26px 0 30px;font:600 15px/1 'Sarabun',sans-serif;letter-spacing:.18em;border:1px solid rgba(255,248,234,.6);border-radius:99px;padding:9px 18px}
-#title .btn{animation-delay:.6s;min-width:180px}
-#title .ear{margin-top:18px;font:400 13.5px/1.5 'Sarabun',sans-serif;opacity:.8}
-#diary{background:#efe0c4;color:var(--ink);opacity:0;pointer-events:none}
+#card .in{position:relative;width:88%;border-radius:14px;background:#fffaf0;padding:9px 9px 12px;box-shadow:0 22px 60px rgba(0,0,0,.55);transform:rotate(-.8deg)}
+#card .pic{position:relative;width:100%;aspect-ratio:4/3;overflow:hidden;border-radius:6px;background:#2a1e18}
+#card .pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity 2.2s ease,filter 1.9s ease;animation:breathe 16s ease-in-out infinite alternate}
+@keyframes breathe{from{transform:scale(1.02)}to{transform:scale(1.1) translate(-1.5%,-1%)}}
+#card .pic img.blur{filter:blur(7px) brightness(.9)}
+.steam{position:absolute;left:38%;top:8%;width:26%;height:40%;pointer-events:none;filter:blur(9px);opacity:.55}
+.steam i{position:absolute;bottom:0;width:38%;height:60%;border-radius:50%;background:rgba(255,255,255,.75);animation:steam 4.5s ease-in infinite}
+.steam i:nth-child(2){left:40%;animation-delay:-1.6s}.steam i:nth-child(3){left:20%;animation-delay:-3s}
+@keyframes steam{0%{transform:translateY(40%) scale(.5);opacity:0}30%{opacity:.9}100%{transform:translateY(-120%) scale(1.5);opacity:0}}
+#dial{width:100%;margin:12px 0 0;accent-color:var(--terra)}
+.heart{position:absolute;font-size:22px;animation:hup 1.6s ease-out forwards;pointer-events:none;z-index:4}
+@keyframes hup{from{opacity:1;transform:translateY(0) scale(.6)}to{opacity:0;transform:translateY(-70px) scale(1.2)}}
+/* title + report */
+#title,#diary{position:absolute;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;text-align:center;padding:30px 28px calc(46px + env(safe-area-inset-bottom));color:#fff8ea;transition:opacity 1.6s ease;background:#1c1512}
+#title .bgi{position:absolute;inset:0;background:url(img/dusk.jpg) center/cover;animation:breathe 30s ease-in-out infinite alternate}
+#title::after{content:"";position:absolute;inset:0;background:linear-gradient(rgba(28,16,10,.1) 20%,rgba(28,16,10,.55) 55%,rgba(20,12,8,.96))}
+#title>*:not(.bgi){position:relative;z-index:1}
+#title h1{font:600 38px/1.3 'Noto Serif Thai',serif;margin:0 0 8px;text-shadow:0 2px 24px rgba(0,0,0,.7)}
+#title .sub{font:400 16.5px/1.7 'Sarabun',sans-serif;opacity:.92}
+#title .day{margin:22px 0 22px;font:600 14px/1 'Sarabun',sans-serif;letter-spacing:.18em;border:1px solid rgba(255,248,234,.55);border-radius:99px;padding:9px 18px}
+#title .btn{min-width:190px}
+#title .ear{margin-top:16px;font:400 13px/1.5 'Sarabun',sans-serif;opacity:.75}
+#diary{justify-content:center;background:#241a15;opacity:0;pointer-events:none;color:var(--ink)}
 #diary.on{opacity:1;pointer-events:auto}
-#diary .pg{width:100%;max-width:360px;background:repeating-linear-gradient(#fffaf0 0 33px,#e9d9bd 33px 34px);border-radius:6px;padding:20px 24px 26px;box-shadow:0 14px 40px rgba(90,60,30,.3);transform:rotate(-1.2deg);font:400 19px/34px 'Mali',cursive;text-align:left}
+#diary .pg{width:100%;max-width:370px;background:repeating-linear-gradient(#fffaf0 0 31px,#e6d5b6 31px 32px);border-radius:4px;padding:16px 22px 22px;box-shadow:0 18px 50px rgba(0,0,0,.5);transform:rotate(-1deg);font:400 17.5px/32px 'Mali',cursive;text-align:left}
 #diary .pg b{display:block;font-weight:600;color:var(--terra)}
-#diary .pg p{margin:0;opacity:0;animation:rise .9s ease forwards}
-#diary .next{margin:26px 0 16px;font:600 15px/1.6 'Sarabun',sans-serif;color:var(--soft)}
+#diary .pg p{margin:0;opacity:0;animation:rise 1s ease forwards}
+#diary .pg p.last{font-weight:600}
+#diary .next{margin:24px 0 16px;font:400 15px/1.7 'Sarabun',sans-serif;color:#e8d8be;opacity:0;transition:opacity 2s}
+#diary .next.on{opacity:1}
+#diary .btn{opacity:0;animation:none;transition:opacity 2s}#diary .btn.on{opacity:1}
 .hidden{display:none!important}
 @media (min-width:481px){#app{border-radius:26px;height:min(100dvh,900px);margin-top:max(0px,calc((100dvh - 900px)/2))}}
 </style>
@@ -89,304 +112,234 @@ html,body{margin:0;height:100%;background:#2a211c;color:var(--ink);font-family:'
 <body>
 <div id="app">
   <div id="view">
-    <!-- ========== the room ========== -->
-    <svg id="room" class="scene" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <linearGradient id="gSky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--sky1);transition:stop-color 3s"/><stop offset="1" style="stop-color:var(--sky2);transition:stop-color 3s"/></linearGradient>
-        <linearGradient id="gWall" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f9ead0"/><stop offset="1" stop-color="#efd5ae"/></linearGradient>
-        <linearGradient id="gFloor" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b98560"/><stop offset="1" stop-color="#8f5f40"/></linearGradient>
-        <linearGradient id="gShaft" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff1c9" stop-opacity=".75"/><stop offset="1" stop-color="#fff1c9" stop-opacity="0"/></linearGradient>
-        <radialGradient id="gLamp"><stop offset="0" stop-color="#ffd58a" stop-opacity=".95"/><stop offset="1" stop-color="#ffd58a" stop-opacity="0"/></radialGradient>
-        <radialGradient id="gGlow"><stop offset="0" stop-color="#fff3c4" stop-opacity=".9"/><stop offset="1" stop-color="#fff3c4" stop-opacity="0"/></radialGradient>
-      </defs>
-      <rect width="400" height="400" fill="url(#gWall)"/>
-      <!-- wallpaper dots -->
-      <g fill="#e9cfa4" opacity=".55"><circle cx="30" cy="40" r="2"/><circle cx="90" cy="20" r="2"/><circle cx="200" cy="34" r="2"/><circle cx="260" cy="16" r="2"/><circle cx="330" cy="40" r="2"/><circle cx="375" cy="96" r="2"/><circle cx="170" cy="150" r="2"/><circle cx="225" cy="196" r="2"/><circle cx="20" cy="210" r="2"/><circle cx="262" cy="232" r="2"/></g>
-      <rect y="292" width="400" height="108" fill="url(#gFloor)"/>
-      <g stroke="#7d5237" stroke-width="1" opacity=".35"><path d="M0 318H400M0 350H400M60 292V318M190 292V318M320 292V318M120 318V350M260 318V350M40 350V400M200 350V400M350 350V400"/></g>
-      <rect y="286" width="400" height="8" fill="#d9b88d"/>
-      <!-- window -->
-      <g class="hot" data-h="window"><circle class="glow" cx="92" cy="118" r="78" fill="url(#gGlow)"/>
-        <rect x="34" y="52" width="116" height="132" rx="6" fill="#8a5b3c"/>
-        <rect x="41" y="59" width="102" height="118" rx="3" fill="url(#gSky)"/>
-        <circle id="sunm" cx="112" cy="92" r="13" style="fill:var(--sun);transition:fill 3s,cx 3s,cy 3s"/>
-        <g fill="#4a3a52" opacity=".5"><rect x="41" y="148" width="20" height="29"/><rect x="63" y="138" width="16" height="39"/><rect x="82" y="152" width="24" height="25"/><rect x="109" y="143" width="14" height="34"/><rect x="125" y="156" width="18" height="21"/></g>
-        <path d="M92 59V177M41 118H143" stroke="#8a5b3c" stroke-width="5"/>
-        <path d="M30 48H154" stroke="#6e452b" stroke-width="6" stroke-linecap="round"/>
-        <path d="M34 52q14 60 0 132h-8V52z" fill="#c8694a"/><path d="M150 52q-14 60 0 132h8V52z" fill="#c8694a"/>
-      </g>
-      <polygon points="41,177 143,177 250,400 60,400" fill="url(#gShaft)" style="opacity:var(--shaft);transition:opacity 3s"/>
-      <g fill="#fff6d8"><circle class="mote" cx="110" cy="250" r="1.6"/><circle class="mote" cx="150" cy="300" r="1.2" style="animation-delay:-3s"/><circle class="mote" cx="128" cy="330" r="1.5" style="animation-delay:-6s"/><circle class="mote" cx="176" cy="282" r="1" style="animation-delay:-1.5s"/></g>
-      <!-- wedding photo -->
-      <g class="hot" data-h="photo"><circle class="glow" cx="205" cy="96" r="42" fill="url(#gGlow)"/>
-        <rect x="184" y="68" width="42" height="54" rx="3" fill="#6e452b"/><rect x="188" y="72" width="34" height="46" fill="#f3e3c8"/>
-        <circle cx="199" cy="90" r="6" fill="#d9b08c"/><path d="M191 112q8-16 16 0z" fill="#5a5a48"/><path d="M193 87q6-9 12 0" fill="#3d332c"/>
-        <circle cx="212" cy="92" r="5.5" fill="#e3bd9c"/><path d="M204 112q8-15 16 0z" fill="#c8694a"/><path d="M206 92q0-10 7-9q7-1 6 10q-2-6-6-6q-5 0-7 5z" fill="#3d332c"/>
-      </g>
-      <!-- calendar -->
-      <g><rect x="252" y="62" width="34" height="44" rx="2" fill="#fffaf0"/><rect x="252" y="62" width="34" height="11" rx="2" fill="#c8694a"/><text x="269" y="97" text-anchor="middle" font-family="Sarabun" font-weight="600" font-size="17" fill="#4a3528">อ.</text></g>
-      <!-- shelf: radio, inhalers, pillbox -->
-      <rect x="282" y="168" width="110" height="7" rx="2" fill="#8a5b3c"/><path d="M292 175v14M382 175v14" stroke="#6e452b" stroke-width="4"/>
-      <g class="hot" data-h="radio"><circle class="glow" cx="312" cy="150" r="34" fill="url(#gGlow)"/>
-        <rect x="290" y="134" width="46" height="34" rx="6" fill="#5f8f8a"/><circle cx="304" cy="151" r="9" fill="#3f6b67"/><circle cx="304" cy="151" r="4" fill="#2f5450"/><rect x="318" y="142" width="13" height="5" rx="2" fill="#f3e3c8"/><circle cx="321" cy="158" r="3" fill="#e9a646"/><circle cx="329" cy="158" r="3" fill="#f3e3c8"/><path d="M330 134l10-22" stroke="#8a8a8a" stroke-width="2" stroke-linecap="round"/></g>
-      <g id="inh"><rect x="344" y="150" width="8" height="18" rx="2" fill="#4a84c8"/><rect x="342" y="162" width="12" height="6" rx="2" fill="#3a6aa6"/><rect x="358" y="148" width="9" height="20" rx="3" fill="#6fae7c"/><rect x="358" y="148" width="9" height="6" rx="3" fill="#558f62"/></g>
-      <g class="hot quiet" data-h="pillbox"><rect x="370" y="158" width="26" height="10" rx="2" fill="#e9a646"/><path d="M374 158v10M378 158v10M382 158v10M386 158v10M390 158v10" stroke="#c48628" stroke-width="1"/><rect x="366" y="150" width="34" height="22" fill="transparent"/></g>
-      <!-- door -->
-      <rect x="352" y="196" width="48" height="96" fill="#9c6a48"/><rect x="358" y="204" width="42" height="36" fill="#8a5b3c"/><rect x="358" y="248" width="42" height="38" fill="#8a5b3c"/><circle cx="360" cy="246" r="3" fill="#e9a646"/>
-      <!-- table with pot + phone -->
-      <g class="hot" data-h="phone"><circle class="glow" cx="262" cy="246" r="26" fill="url(#gGlow)"/><rect x="250" y="240" width="26" height="13" rx="4" fill="#c8694a"/><path d="M248 240q15-12 30 0" stroke="#a9523a" stroke-width="6" fill="none" stroke-linecap="round"/><circle cx="263" cy="247" r="3.4" fill="#f3e3c8"/></g>
-      <g class="hot" data-h="pot"><circle class="glow" cx="312" cy="238" r="30" fill="url(#gGlow)"/><rect x="296" y="232" width="34" height="21" rx="5" fill="#7d8a8f"/><rect x="292" y="229" width="42" height="5" rx="2.5" fill="#5f6b70"/><circle cx="313" cy="226" r="3" fill="#3d332c"/><path d="M292 240h-5M334 240h5" stroke="#5f6b70" stroke-width="4" stroke-linecap="round"/></g>
-      <rect x="238" y="253" width="106" height="7" rx="2" fill="#a8754f"/><path d="M246 260v34M336 260v34" stroke="#8a5b3c" stroke-width="5"/>
-      <!-- fan -->
-      <g><path d="M30 292v-50" stroke="#8a8a8a" stroke-width="4"/><ellipse cx="30" cy="294" rx="14" ry="4" fill="#6e6e6e"/><circle cx="30" cy="232" r="17" fill="none" stroke="#8a8a8a" stroke-width="2.5"/><g><animateTransform attributeName="transform" type="rotate" from="0 30 232" to="360 30 232" dur="1.3s" repeatCount="indefinite"/><path d="M30 232l11-7a6 6 0 0 1 2 9zM30 232l-11 7a6 6 0 0 1-2-9zM30 232l-7-11a6 6 0 0 1 9-2z" fill="#9db6b3" opacity=".8"/></g><circle cx="30" cy="232" r="3" fill="#6e6e6e"/></g>
-      <!-- bed -->
-      <g><rect x="52" y="296" width="150" height="36" rx="6" fill="#8a5b3c"/><rect x="48" y="262" width="12" height="74" rx="4" fill="#6e452b"/><rect x="56" y="282" width="146" height="26" rx="10" fill="#fff7e8"/><rect x="62" y="272" width="40" height="18" rx="8" fill="#fffdf6"/></g>
-      <!-- Uncle Lee -->
-      <g id="lee" transform="translate(0,0)">
-        <rect x="124" y="268" width="26" height="34" rx="9" fill="#fffdf8"/><path d="M124 282q-9 6-7 20" stroke="#e3bd9c" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M150 282q9 6 7 20" stroke="#e3bd9c" stroke-width="6" fill="none" stroke-linecap="round"/>
-        <circle cx="137" cy="254" r="13" fill="#e3bd9c"/><path d="M124 252q1-15 13-15q12 0 13 15q-5-8-13-8q-8 0-13 8z" fill="#c9c6c0"/><circle cx="132" cy="256" r="1.3" fill="#4a3528"/><circle cx="142" cy="256" r="1.3" fill="#4a3528"/><path d="M134 262q3 1.6 6 0" stroke="#9c6a48" stroke-width="1.2" fill="none" stroke-linecap="round"/>
-      </g>
-      <path d="M96 300q52-16 106 0v26q0 8-8 8H104q-8 0-8-8z" fill="#5f8f8a"/><path d="M96 300q52-16 106 0v6q-54-14-106 0z" fill="#79a8a2"/>
-      <!-- Xiao Hei -->
-      <g id="dog" class="hot" data-h="dog"><circle class="glow" cx="236" cy="322" r="34" fill="url(#gGlow)"/>
-        <path id="tail" d="M214 316q-10-10-6-18" stroke="#2b2623" stroke-width="5" fill="none" stroke-linecap="round"/>
-        <ellipse cx="234" cy="324" rx="22" ry="12" fill="#2b2623"/><circle cx="254" cy="312" r="10" fill="#2b2623"/><path d="M247 305l-3-9 8 4zM258 303l5-8 2 9z" fill="#2b2623"/><circle cx="257" cy="311" r="1.5" fill="#fff"/><ellipse cx="263" cy="315" rx="3" ry="2" fill="#4a403a"/><path d="M222 334v6M244 334v6" stroke="#2b2623" stroke-width="5" stroke-linecap="round"/><path d="M246 318q6 3 12 0" stroke="#c8694a" stroke-width="2.4" fill="none"/></g>
-      <!-- heat shimmer, lamp, tint -->
-      <g id="shimmer" fill="none" stroke="#fff6d8" stroke-width="1.4" opacity="0"><path d="M60 210q6-6 12 0t12 0"/><path d="M180 240q6-6 12 0t12 0"/><path d="M290 110q6-6 12 0t12 0"/><path d="M110 60q6-6 12 0t12 0"/></g>
-      <rect width="400" height="400" style="fill:var(--tint);transition:fill 3s" pointer-events="none"/>
-      <circle cx="228" cy="214" r="150" fill="url(#gLamp)" style="opacity:var(--lamp);transition:opacity 2.5s" pointer-events="none"/>
-      <g style="opacity:var(--lamp);transition:opacity 2.5s" pointer-events="none"><path d="M228 204l-9 22h18z" fill="#ffe2a8"/><path d="M228 226v28" stroke="#6e452b" stroke-width="3"/></g>
-    </svg>
-    <!-- ========== the corridor / stairs ========== -->
-    <svg id="hall" class="scene" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid slice">
-      <rect width="400" height="400" fill="#e7d3b0"/><rect y="270" width="400" height="130" fill="#9a8f84"/><rect y="264" width="400" height="8" fill="#c9b08a"/>
-      <g id="hallDoors"></g>
-      <g id="hallEnd"><rect x="340" y="150" width="46" height="116" rx="3" fill="#5f8f8a"/><circle cx="348" cy="212" r="3" fill="#e9a646"/><rect x="351" y="164" width="24" height="16" rx="3" fill="#fffaf0"/><text x="363" y="176" text-anchor="middle" font-size="10" font-family="Sarabun" fill="#4a3528">WC</text></g>
-      <g id="stairs" class="hidden"></g>
-      <g fill="#fff1c9" opacity=".5"><polygon points="20,60 70,60 110,270 0,270"/></g><rect x="14" y="40" width="62" height="24" rx="3" fill="#fff6d8"/>
-      <g id="lee2" transform="translate(30,0)">
-        <path d="M0 262v-28M10 262v-28" stroke="#6b6a4c" stroke-width="7" stroke-linecap="round"/><rect x="-8" y="196" width="26" height="42" rx="9" fill="#fffdf8"/><path d="M18 210q8 8 4 24" stroke="#e3bd9c" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M22 234v30" stroke="#6e452b" stroke-width="3" stroke-linecap="round"/>
-        <circle cx="6" cy="182" r="13" fill="#e3bd9c"/><path d="M-7 180q1-15 13-15q12 0 13 15q-5-8-13-8q-8 0-13 8z" fill="#c9c6c0"/><circle cx="12" cy="184" r="1.3" fill="#4a3528"/>
-      </g>
-      <g id="dog2" class="hidden" transform="translate(70,0)"><ellipse cx="0" cy="254" rx="16" ry="8" fill="#2b2623"/><circle cx="15" cy="246" r="7" fill="#2b2623"/><path d="M10 241l-2-6 6 3zM18 240l4-6 1 7z" fill="#2b2623"/><path d="M-9 260v5M8 260v5" stroke="#2b2623" stroke-width="4" stroke-linecap="round"/><path d="M-15 250q-7-6-4-12" stroke="#2b2623" stroke-width="4" fill="none" stroke-linecap="round"/></g>
-      <rect width="400" height="400" id="hallTint" fill="rgba(255,190,120,0)" pointer-events="none"/>
-    </svg>
+    <div id="cam"><div id="zoom"><img id="imA" alt=""><img id="imB" alt=""></div></div>
+    <div id="fx">
+      <div id="fxSun"></div>
+      <div id="fxDust"><span class="mote" style="left:22%;top:62%"></span><span class="mote" style="left:34%;top:78%;animation-delay:-3s"></span><span class="mote" style="left:28%;top:48%;animation-delay:-6s"></span><span class="mote" style="left:44%;top:70%;animation-delay:-8s"></span><span class="mote" style="left:16%;top:74%;animation-delay:-4.5s"></span><span class="mote" style="left:52%;top:84%;animation-delay:-1.5s"></span></div>
+      <div id="fxHeat"><i style="top:20%"></i><i style="top:55%;animation-delay:-2.4s"></i></div>
+      <div id="fxLamp"></div>
+    </div>
     <svg id="grain" viewBox="0 0 200 200" preserveAspectRatio="none"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 .35  0 0 0 0 .25  0 0 0 0 .18  0 0 0 .9 0"/></filter><rect width="200" height="200" filter="url(#n)"/></svg>
+    <div id="frame"></div>
     <div id="vig"></div>
+    <div id="hots"></div>
     <div id="card"><div class="in" id="cardIn"></div></div>
     <div id="hud"><span id="clock"></span><span class="r"><span id="en"></span><span id="money"></span></span></div>
     <div id="black"></div>
   </div>
   <div id="panel"><div id="txt"></div><div id="acts"></div><div id="more">แตะเพื่อไปต่อ ▾</div></div>
   <div id="title">
-    <svg viewBox="0 0 200 150" style="width:190px;margin-bottom:18px;filter:drop-shadow(0 10px 24px rgba(90,40,20,.35))"><rect x="20" y="6" width="160" height="138" rx="10" fill="#7a4a36"/><rect x="30" y="16" width="140" height="118" rx="5" fill="#ffe2a6"/><circle cx="128" cy="52" r="20" fill="#fff6dc"/><path d="M100 16V134M30 75H170" stroke="#7a4a36" stroke-width="7"/><path d="M52 134v-26q0-8 8-10q-9-5-9-15a15 15 0 0 1 30 0q0 10-9 15q10 2 10 12v24z" fill="#5a3528"/><path d="M112 134v-12q0-12 12-12h6l-3-10 9 6 7-7 2 12q7 3 7 12v11z" fill="#3a2520"/></svg>
+    <div class="bgi"></div>
     <h1>เจ็ดวันของลุงหลี่</h1>
-    <div class="sub">ลุงหลี่อายุแปดสิบแปด อยู่ชั้นสี่ กับหมาหนึ่งตัว<br>นี่คือหนึ่งสัปดาห์ของเขา</div>
+    <div class="sub">ชายอายุแปดสิบแปด หมาอายุสิบสี่<br>ห้องหนึ่งห้องบนชั้นสี่ และหนึ่งสัปดาห์</div>
     <div class="day">วันที่ 1 · วันอังคาร</div>
     <button class="btn go" id="start">เริ่มต้นวัน</button>
-    <div class="ear">🎧 เปิดเสียงไว้ จะได้ยินห้องของลุง · ใช้เวลาราว 7 นาที</div>
+    <div class="ear">🎧 เปิดเสียงไว้ · ราว 8 นาที</div>
   </div>
-  <div id="diary"><div class="pg" id="pg"></div><div class="next">อีกสามวัน จะมีคนมาเคาะประตูห้องนี้</div><button class="btn go" id="again">เล่นวันที่ 1 อีกครั้ง</button></div>
+  <div id="diary"><div class="pg" id="pg"></div><div class="next" id="dnext">อีกสามวัน จะมีคนมาเคาะประตูห้องนี้</div><button class="btn go" id="again">เล่นวันที่ 1 อีกครั้ง</button></div>
 </div>
 <script>
 'use strict';
 const $=s=>document.querySelector(s), sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const FAST=/[?&]fast=1/.test(location.search);   // for testing: no waits
 const W=ms=>sleep(FAST?Math.min(ms,30):ms);
-const S={en:5, money:320, meds:false, sour:false, bought:false, ac:false, coughs:0, walked:false, dbl:false, seen:{}};
+const S={};
+const IMG={dawn:1,morning:1,pet:1,noon:1,dusk:1,night:1,corridor:1,stairs:1,pot:1,radio:1,dinner2:1,dinner1:1,pills:1};
+const src=k=>'img/'+k+'.jpg';
+Object.keys(IMG).forEach(k=>{ const i=new Image(); i.src=src(k); });
 
 /* ---------------- sound (all made here: no files) ---------------- */
 let AC=null, master=null, fanG=null, staticG=null;
 function audio(){ if(AC) return; try{ AC=new (window.AudioContext||window.webkitAudioContext)(); master=AC.createGain(); master.gain.value=.9; master.connect(AC.destination);
   const buf=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate), d=buf.getChannelData(0); let last=0; for(let i=0;i<d.length;i++){ const w=Math.random()*2-1; last=(last+.02*w)/1.02; d[i]=last*3.2; }
-  const src=AC.createBufferSource(); src.buffer=buf; src.loop=true; const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=320; fanG=AC.createGain(); fanG.gain.value=0; src.connect(lp); lp.connect(fanG); fanG.connect(master); src.start();
+  const s1=AC.createBufferSource(); s1.buffer=buf; s1.loop=true; const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=320; fanG=AC.createGain(); fanG.gain.value=0; s1.connect(lp); lp.connect(fanG); fanG.connect(master); s1.start();
   const wb=AC.createBuffer(1,AC.sampleRate,AC.sampleRate), wd=wb.getChannelData(0); for(let i=0;i<wd.length;i++) wd[i]=Math.random()*2-1;
   const ws=AC.createBufferSource(); ws.buffer=wb; ws.loop=true; const bp=AC.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=2400; bp.Q.value=.6; staticG=AC.createGain(); staticG.gain.value=0; ws.connect(bp); bp.connect(staticG); staticG.connect(master); ws.start(); AC._w=wb; }catch(e){ AC=null; } }
-function ramp(g,v,t){ if(!AC||!g) return; g.gain.cancelScheduledValues(AC.currentTime); g.gain.linearRampToValueAtTime(v,AC.currentTime+(t||1)); }
+function ramp(g,v,t){ if(!AC||!g) return; g.gain.cancelScheduledValues(AC.currentTime); g.gain.setValueAtTime(g.gain.value,AC.currentTime); g.gain.linearRampToValueAtTime(v,AC.currentTime+(t||1)); }
 function note(f,dur,vol,type,when){ if(!AC) return; const t=AC.currentTime+(when||0), o=AC.createOscillator(), g=AC.createGain(); o.type=type||'sine'; o.frequency.value=f;
   g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||.12,t+.02); g.gain.exponentialRampToValueAtTime(.0008,t+(dur||.8)); o.connect(g); g.connect(master); o.start(t); o.stop(t+(dur||.8)+.05); }
+function burst(freq,q,vol,dur,when,type){ if(!AC) return; const s=AC.createBufferSource(); s.buffer=AC._w; const g=AC.createGain(), f=AC.createBiquadFilter(); f.type=type||'bandpass'; f.frequency.value=freq; f.Q.value=q; const t=AC.currentTime+(when||0);
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.015); g.gain.exponentialRampToValueAtTime(.001,t+dur); s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t+dur+.03); }
 const N={C4:261.6,D4:293.7,E4:329.6,G4:392,A4:440,C5:523.3,D5:587.3,E5:659.3,G5:784,A3:220,G3:196,E3:164.8,C3:130.8};
-const sfx={ tap(){ note(N.E5,.25,.05); }, soft(){ note(N.C5,.5,.06); note(N.G4,.6,.04,'sine',.08); }, warm(){ [N.C4,N.E4,N.G4,N.C5].forEach((f,i)=>note(f,1.4,.06,'sine',i*.09)); },
-  low(){ note(N.A3,1.2,.07,'triangle'); note(N.E3,1.5,.06,'sine',.1); }, tick(){ note(1800,.03,.03,'square'); }, beat(){ note(58,.16,.22,'sine'); note(52,.2,.16,'sine',.14); },
-  cough(){ if(!AC) return; for(let k=0;k<3;k++){ const s=AC.createBufferSource(); s.buffer=AC._w; const g=AC.createGain(), f=AC.createBiquadFilter(); f.type='bandpass'; f.frequency.value=700+k*120; f.Q.value=1.2; const t=AC.currentTime+k*.26;
-      g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.34,t+.02); g.gain.exponentialRampToValueAtTime(.001,t+.19); s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t+.22); } },
-  puff(){ if(!AC) return; const s=AC.createBufferSource(); s.buffer=AC._w; const g=AC.createGain(), f=AC.createBiquadFilter(); f.type='highpass'; f.frequency.value=3000; const t=AC.currentTime; g.gain.setValueAtTime(.2,t); g.gain.exponentialRampToValueAtTime(.001,t+.3); s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t+.32); } };
+const sfx={ tap(){ note(N.E5,.25,.04); }, soft(){ note(N.C5,.5,.06); note(N.G4,.6,.04,'sine',.08); }, warm(){ [N.C4,N.E4,N.G4,N.C5].forEach((f,i)=>note(f,1.6,.06,'sine',i*.1)); },
+  low(){ note(N.A3,1.4,.07,'triangle'); note(N.E3,1.7,.06,'sine',.12); }, tick(){ note(1700,.03,.035,'square'); }, beat(){ note(58,.16,.2,'sine'); note(52,.2,.15,'sine',.14); },
+  step(){ burst(140,1.5,.22,.12); }, cough(){ for(let k=0;k<3;k++) burst(700+k*120,1.2,.34,.19,k*.26); }, puff(){ burst(3000,.7,.2,.3,0,'highpass'); }, lick(){ note(880,.08,.03); },
+  bell(){ note(N.E5,2.4,.05); note(N.G5,2.6,.04,'sine',.02); note(N.C5,3,.035,'sine',.04); } };
 /* the old tune on the radio: an original little waltz */
 const TUNE=[['E4',1],['G4',1],['A4',1],['C5',2],['A4',1],['G4',2],['E4',1],['D4',3],['E4',1],['G4',1],['A4',1],['D5',2],['C5',1],['A4',2],['G4',1],['C5',3],['E5',2],['D5',1],['C5',2],['A4',1],['G4',2],['E4',1],['G4',3],['A4',1],['G4',1],['E4',1],['D4',2],['E4',1],['C4',3]];
-function playTune(){ if(!AC) return 9000; let t=0; const b=.42; TUNE.forEach(([n,l])=>{ note(N[n],l*b+.5,.085,'triangle',t); note(N[n]/2,l*b+.3,.03,'sine',t); t+=l*b; }); return t*1000; }
+function playTune(){ if(!AC) return; let t=0; const b=.44; TUNE.forEach(([n,l])=>{ note(N[n],l*b+.6,.08,'triangle',t); note(N[n]/2,l*b+.3,.028,'sine',t); t+=l*b; }); }
 
-/* ---------------- screen helpers ---------------- */
-const PH={ dawn:['#3a3a6a','#e9a58a','rgba(60,50,110,.42)',.25,0,'#ffd0a8',[112,150]], morning:['#8fc3dd','#f6e3c0','rgba(255,220,170,.08)',.8,0,'#fff3c4',[118,96]], noon:['#7fc0e6','#e8f0e0','rgba(255,240,200,.04)',1,0,'#fffbe6',[92,70]],
-  after:['#8fc0d8','#f7dba8','rgba(255,200,130,.12)',.7,0,'#ffe9b0',[66,96]], dusk:['#5a4a7a','#f29a5c','rgba(230,120,60,.26)',.45,.25,'#ff9a52',[58,150]], night:['#151a3a','#2b2f55','rgba(20,22,60,.6)',0,1,'#e8ecff',[120,84]], dark:['#0d1026','#1b1e3c','rgba(8,10,30,.86)',0,0,'#c8d0ff',[120,84]] };
-function phase(p){ const v=PH[p], r=document.documentElement.style; r.setProperty('--sky1',v[0]); r.setProperty('--sky2',v[1]); r.setProperty('--tint',v[2]); r.setProperty('--shaft',v[3]); r.setProperty('--lamp',v[4]); r.setProperty('--sun',v[5]);
-  const s=$('#sunm'); s.style.cx=v[6][0]; s.style.cy=v[6][1]; }
+/* ---------------- the picture: dissolve, slow camera, effects ---------------- */
+let cur=0, camAnim=null;
+const CAM={ dawn:[[1.16,2,-2],[1.04,0,0]], morning:[[1.05,-1,0],[1.13,1.5,-1]], pet:[[1.2,-2,-6],[1.26,-3,-7]], noon:[[1.06,1,1],[1.14,-1.5,-1]], dusk:[[1.05,2,0],[1.2,7,2]], night:[[1.22,4,-5],[1.1,1,-2]], corridor:[[1.02,0,0],[1.05,0,0]], stairs:[[1.03,0,0],[1.07,1,-1]] };
+function camera(k){ const c=CAM[k]||CAM.morning, f=p=>`scale(${p[0]}) translate(${p[1]}%,${p[2]}%)`; if(camAnim) camAnim.cancel();
+  camAnim=$('#cam').animate([{transform:f(c[0])},{transform:f(c[1])}],{duration:FAST?100:26000,direction:'alternate',iterations:Infinity,easing:'ease-in-out'}); }
+async function show(k,ms){ const a=[$('#imA'),$('#imB')], nx=a[1-cur], old=a[cur]; nx.style.transitionDuration=(FAST?30:(ms||2000))+'ms'; old.style.transitionDuration=nx.style.transitionDuration; nx.src=src(k);
+  try{ await nx.decode(); }catch(e){} $('#zoom').style.transform=''; nx.classList.add('on'); old.classList.remove('on'); cur=1-cur; camera(k); S.pic=k; }
+function fx(list){ ['Sun','Dust','Heat','Lamp'].forEach(n=>$('#fx'+n).classList.toggle('on',(list||'').includes(n))); }
 function clock(t){ $('#clock').textContent='วันอังคาร · '+t; }
 function hud(){ $('#en').innerHTML='<span style="margin-right:4px;opacity:.85">แรง</span>'+Array.from({length:5},(_,i)=>`<i class="${i<S.en?'f':''}"></i>`).join(''); $('#money').textContent='NT$ '+S.money; }
 function energy(d){ S.en=Math.max(0,Math.min(5,S.en+d)); hud(); const e=$('#en'); e.classList.add('bump'); setTimeout(()=>e.classList.remove('bump'),600); if(d<0) sfx.low(); }
-function scene(id){ document.querySelectorAll('.scene').forEach(s=>s.classList.toggle('on',s.id===id)); }
 async function black(on,ms){ const b=$('#black'); b.style.transitionDuration=(FAST?30:(ms||1600))+'ms'; b.style.opacity=on?1:0; await W(ms||1600); }
-function leeTo(x,y){ $('#lee').setAttribute('transform',`translate(${x},${y})`); }
 let tapRes=null;
 $('#panel').addEventListener('click',e=>{ if(e.target.closest('.btn,#hold,#dial')) return; if(tapRes){ const r=tapRes; tapRes=null; r(); } });
 async function say(t,o){ const el=$('#txt'), list=[].concat(t);
-  for(const line of list){ el.classList.remove('on'); $('#more').classList.remove('on'); await W(el.textContent?420:60); el.textContent=line; el.classList.toggle('q',!!(o&&o.q)); el.classList.add('on');
-    if(o&&o.stay) return; await W(650); $('#more').classList.add('on'); if(FAST){ await sleep(20); } else await new Promise(r=>tapRes=r); sfx.tap(); }
+  for(const line of list){ el.classList.remove('on'); $('#more').classList.remove('on'); await W(el.textContent?460:60); el.textContent=line; el.classList.toggle('q',!!(o&&o.q)); el.classList.toggle('big',!!(o&&o.big)); el.classList.add('on');
+    if(o&&o.stay) return; await W(700); $('#more').classList.add('on'); if(FAST){ await sleep(15); } else await new Promise(r=>tapRes=r); sfx.tap(); }
   $('#more').classList.remove('on'); }
 function clearTxt(){ $('#txt').classList.remove('on'); $('#more').classList.remove('on'); }
 function choose(opts){ return new Promise(res=>{ const a=$('#acts'); a.innerHTML=opts.map((o,i)=>`<button class="btn${o.dis?' dis':''}${o.go?' go':''}" data-i="${i}" style="animation-delay:${.15+i*.12}s">${o.t}${o.s?`<small>${o.s}</small>`:''}</button>`).join('');
-  a.querySelectorAll('.btn').forEach(b=>b.onclick=()=>{ sfx.soft(); a.innerHTML=''; res(+b.dataset.i); }); if(FAST) setTimeout(()=>{ const b=a.querySelector('.btn:not(.dis)'); const pick=window.__pick; const el=(pick!=null&&a.querySelector(`.btn[data-i="${pick(opts)}"]:not(.dis)`))||b; if(el) el.click(); },30); }); }
-/* hold: fill while pressed, slide back when released */
+  a.querySelectorAll('.btn').forEach(b=>b.onclick=()=>{ sfx.soft(); a.innerHTML=''; res(+b.dataset.i); }); if(FAST) setTimeout(()=>{ const pick=window.__pick; const el=(pick!=null&&a.querySelector(`.btn[data-i="${pick(opts)}"]:not(.dis)`))||a.querySelector('.btn:not(.dis)'); if(el) el.click(); },30); }); }
 function hold(label, ms, hint){ return new Promise(res=>{ const a=$('#acts'); a.innerHTML=`<div id="holdW"><button id="hold"><span>${label}</span></button><div id="holdL">${hint||''}</div></div>`;
   const b=$('#hold'); let p=0, down=false, last=performance.now(), done=false;
-  const set=d=>{ down=d; b.classList.toggle('down',d); }; b.onpointerdown=e=>{ e.preventDefault(); set(true); audio(); }; b.onpointerup=b.onpointerleave=b.onpointercancel=()=>set(false);
+  const set=d=>{ down=d; b.classList.toggle('down',d); }; b.onpointerdown=e=>{ e.preventDefault(); set(true); }; b.onpointerup=b.onpointerleave=b.onpointercancel=()=>set(false);
   if(FAST) down=true;
   (function loop(now){ if(done) return; const dt=now-last; last=now; p=Math.max(0,Math.min(1,p+(down?dt/(FAST?60:ms):-dt/(ms*.7)))); b.style.setProperty('--p',p);
     if(p>=1){ done=true; sfx.warm(); a.innerHTML=''; res(); return; } requestAnimationFrame(loop); })(last); }); }
-function card(html){ $('#cardIn').innerHTML=html; $('#card').classList.add('on'); } function cardOff(){ $('#card').classList.remove('on'); }
-function hearts(n){ const v=$('#view').getBoundingClientRect(); for(let i=0;i<(n||3);i++) setTimeout(()=>{ const h=document.createElement('div'); h.className='heart'; h.textContent='🤍'; h.style.left=(v.width*.55+Math.random()*50)+'px'; h.style.top=(v.height*.72)+'px'; $('#view').appendChild(h); setTimeout(()=>h.remove(),1500); },i*220); }
+function card(k,extra){ $('#cardIn').innerHTML=`<div class="pic"><img id="cimg" src="${src(k)}" alt=""><img id="cimg2" alt="" style="opacity:0">${extra&&extra.steam?'<div class="steam"><i></i><i></i><i></i></div>':''}</div>${extra&&extra.html||''}`; $('#card').classList.add('on'); }
+function cardOff(){ $('#card').classList.remove('on'); }
+function hearts(x,y){ const v=$('#view').getBoundingClientRect(); for(let i=0;i<3;i++) setTimeout(()=>{ const h=document.createElement('div'); h.className='heart'; h.textContent='🤍'; h.style.left=(v.width*x+Math.random()*40-20)+'px'; h.style.top=(v.height*y)+'px'; $('#view').appendChild(h); setTimeout(()=>h.remove(),1700); },i*260); }
 
-/* ---------------- walking: hold to walk, let go to breathe ---------------- */
-function walk({stairs, limit, total}){ return new Promise(res=>{ const a=$('#acts'), N=total||23; a.innerHTML=`<div id="holdW"><button id="hold"><span>กดค้าง<br>เพื่อเดิน</span></button><div id="holdL"></div></div>`;
-  const b=$('#hold'), L=$('#holdL'), lee=$('#lee2'), dog=$('#dog2'), vig=$('#vig'); let prog=0, breath=1, down=false, lock=0, last=performance.now(), done=false, coughs=0, beatT=0, told=0;
+/* ---------------- walking, seen through his eyes: hold to walk, let go to breathe ---------------- */
+function walk({stairs, limit, total}){ return new Promise(res=>{ const a=$('#acts'), NS=total||23; a.innerHTML=`<div id="holdW"><button id="hold"><span>กดค้าง<br>เพื่อเดิน</span></button><div id="holdL"></div></div>`;
+  const b=$('#hold'), L=$('#holdL'), z=$('#zoom'), vig=$('#vig'); let prog=0, breath=1, down=false, lock=0, last=performance.now(), done=false, coughs=0, beatT=0, stepT=0, told=0, ph=0, shake=0;
+  z.style.transition='none'; z.style.transformOrigin=stairs?'30% 46%':'50% 27%';
   b.onpointerdown=e=>{ e.preventDefault(); if(!lock){ down=true; b.classList.add('down'); } }; b.onpointerup=b.onpointerleave=b.onpointercancel=()=>{ down=false; b.classList.remove('down'); };
-  const pos=()=>{ if(stairs){ const x=40+prog*300, y=prog*190-110; lee.setAttribute('transform',`translate(${x},${y})`); dog.setAttribute('transform',`translate(${x+34},${y})`); } else lee.setAttribute('transform',`translate(${30+prog*290},0)`); };
   (function loop(now){ if(done) return; let dt=Math.min(60,now-last); last=now; if(FAST){ dt=400; down=breath>.4&&!lock; }
-    if(lock>0){ lock-=dt; if(lock<=0){ lock=0; b.classList.remove('lock'); L.textContent='ค่อยๆ นะ… เดินทีละนิด แล้วหยุดหายใจ'; } }
-    else if(down){ prog+=dt/(stairs?15000:13000); breath-=dt/(stairs?2300:2900); beatT-=dt; if(beatT<=0){ sfx.beat(); beatT=260+breath*620; } }
+    if(lock>0){ lock-=dt; shake=Math.max(0,shake-dt/900); if(lock<=0){ lock=0; b.classList.remove('lock'); L.textContent='ทีละนิด… เดินแล้วหยุด หยุดแล้วหายใจ'; } }
+    else if(down){ prog+=dt/(stairs?15000:13500); breath-=dt/(stairs?2300:2900); ph+=dt/330; beatT-=dt; stepT-=dt; if(beatT<=0){ sfx.beat(); beatT=260+breath*620; } if(stepT<=0){ sfx.step(); stepT=640; } }
     else breath=Math.min(1,breath+dt/3400);
-    if(breath<=0&&!lock){ breath=.12; lock=2600; down=false; coughs++; prog=Math.max(0,prog-.05); b.classList.remove('down'); b.classList.add('lock'); sfx.cough(); L.textContent='แค่ก… แค่ก… ต้องหยุดก่อน'; }
-    b.style.setProperty('--p',breath); vig.style.opacity=Math.pow(1-breath,1.4).toFixed(2); pos();
-    if(!lock){ const st=Math.min(N,Math.round(prog*N)); if(!stairs) L.textContent=down?`ก้าวที่ ${st} จาก ${N}`:(breath<.98&&prog>0?'หยุดพัก… หายใจ…':(told++<1?'กดค้างไว้เพื่อเดิน ปล่อยมือเพื่อหยุดหายใจ':L.textContent)); else L.textContent=down?'ทีละขั้น…':(prog>0?'เกาะราวไว้… หายใจ…':'กดค้างไว้เพื่อลงบันได'); }
-    if(prog>=(limit||1)){ done=true; a.innerHTML=''; vig.style.opacity=limit?.55:0; res({coughs}); return; } requestAnimationFrame(loop); })(last); }); }
-function hallSetup(stairs){ const g=$('#hallDoors'), st=$('#stairs'); $('#hallEnd').classList.toggle('hidden',!!stairs); st.classList.toggle('hidden',!stairs); $('#dog2').classList.toggle('hidden',!stairs);
-  if(stairs){ g.innerHTML=''; let h='<rect width="400" height="400" fill="#e7d3b0"/>'; for(let k=0;k<12;k++){ const x=30+k*28, y=152+k*17.5; h+=`<rect x="${x}" y="${y}" width="30" height="${400-y}" fill="${k%2?'#b3a79b':'#a69a8e'}"/>`; }
-      h+='<path d="M20 106L372 326" stroke="#6e452b" stroke-width="5" stroke-linecap="round"/><text x="330" y="60" text-anchor="middle" font-family="Sarabun" font-weight="600" font-size="26" fill="#c9b08a">4F</text>'; st.innerHTML=h; $('#hallTint').setAttribute('fill','rgba(240,140,70,.2)'); $('#lee2').setAttribute('transform','translate(40,-110)'); $('#dog2').setAttribute('transform','translate(74,-110)'); }
-  else { g.innerHTML=[96,176,256].map(x=>`<rect x="${x}" y="158" width="44" height="108" rx="3" fill="#a8754f"/><circle cx="${x+8}" cy="214" r="2.6" fill="#e9a646"/><rect x="${x+12}" y="170" width="20" height="12" rx="2" fill="#f3e3c8" opacity=".7"/>`).join(''); $('#hallTint').setAttribute('fill','rgba(255,190,120,0)'); $('#lee2').setAttribute('transform','translate(30,0)'); } }
+    if(breath<=0&&!lock){ breath=.12; lock=2600; shake=1; down=false; coughs++; prog=Math.max(0,prog-.05); b.classList.remove('down'); b.classList.add('lock'); sfx.cough(); L.textContent='แค่ก… แค่ก… ต้องหยุดก่อน'; }
+    b.style.setProperty('--p',breath); vig.style.opacity=Math.pow(1-breath,1.4).toFixed(2);
+    const bob=Math.sin(ph)*1.1*(down?1:.25), sx=shake*Math.sin(now/38)*1.4; z.style.transform=`translate(${sx.toFixed(2)}%,${bob.toFixed(2)}%) scale(${(1+prog*(stairs?1.1:1.9)).toFixed(3)})`;
+    if(!lock){ const st=Math.min(NS,Math.round(prog*NS)); if(!stairs) L.textContent=down?`ก้าวที่ ${st} จาก ${NS}`:(breath<.98&&prog>0?'หยุด… หายใจ…':(told++<1?'กดค้างไว้เพื่อเดิน · ปล่อยมือเพื่อหยุดหายใจ':L.textContent)); else L.textContent=down?'ทีละขั้น…':(prog>0?'เกาะราวไว้… หายใจ…':'กดค้างไว้เพื่อลงบันได'); }
+    if(prog>=(limit||1)){ done=true; a.innerHTML=''; z.style.transition=''; vig.style.opacity=limit?.5:0; res({coughs}); return; } requestAnimationFrame(loop); })(last); }); }
 
-/* ---------------- Day 1 ---------------- */
+/* ---------------- Day 1: Tuesday ---------------- */
 async function day1(){
-  Object.assign(S,{en:5, money:320, meds:false, sour:false, bought:false, ac:false, coughs:0, walked:false, dbl:false, seen:{}}); hud(); phase('dark'); scene('room'); leeTo(-40,34); $('#dog').classList.add('sleep');
+  Object.assign(S,{en:5, money:320, meds:false, sour:false, bought:false, ac:false, coughs:0, walked:false, dbl:false, seen:{}}); hud(); fx(''); clearTxt(); $('#txt').textContent='';
   await W(900);
-  await say(['ตีห้าสี่สิบ','ผมตื่นก่อนนาฬิกาปลุกเสมอ\nเป็นมาตั้งแต่สมัยอยู่กองทัพ','แต่การตื่น กับการลุก\nเดี๋ยวนี้เป็นคนละเรื่องกัน']);
+  await say('05:40',{big:1});
+  await say(['ผมตื่นก่อนแตรปลุกมาหกสิบแปดปี\nทุกวันนี้ไม่มีแตรแล้ว ผมก็ยังตื่นก่อนมันอยู่ดี','ร่างกายจำคำสั่งได้นาน\nนานกว่าคนที่เคยออกคำสั่งจะอยู่ให้เชื่อฟัง']);
   await say('หนึ่ง… สอง…',{stay:1,q:1});
-  await hold('กดค้าง<br>เพื่อลุกนั่ง', 3600, 'ถ้าปล่อยมือ ลุงจะเอนกลับลงไป');
-  phase('dawn'); clock('05:52'); $('#hud').classList.add('on'); ramp(fanG,.05,3); await black(false,2400); leeTo(0,0); $('#dog').classList.remove('sleep');
-  await say(['…สาม ได้แล้ว','เสี่ยวเฮยรออยู่ข้างเตียงแล้ว\nหางตีพื้นดังตุบ ตุบ','ห้องนี้สิบหกตารางเมตร\nพอดีสำหรับคนหนึ่งคน กับหมาหนึ่งตัว']);
-  await morning();
-  await toilet();
-  await noon();
-  await radio();
-  await evening();
-  await dinner();
-  await night();
+  await hold('กดค้าง<br>เพื่อลุก', 3600, 'ถ้าปล่อยมือ ลุงจะเอนกลับลงไป');
+  await show('dawn',60); clock('05:52'); $('#hud').classList.add('on'); ramp(fanG,.05,3); await black(false,3000);
+  await say(['…สาม','เมื่อก่อนผมนับถึงสาม ให้ทั้งกองร้อยลุกพร้อมกัน\nเดี๋ยวนี้ผมนับให้เข่าสองข้างของตัวเอง','เสี่ยวเฮยนั่งรออยู่แล้ว\nสิบสี่ปี มันไม่เคยตื่นหลังผมเลยสักวัน','หมาแก่กับทหารแก่\nแข่งกันตื่นเช้า โดยไม่มีใครต้องไปไหน']);
+  await morning(); await toilet(); await noon(); await radio(); await evening(); await dinner(); await night();
 }
-/* the morning: tap things in the room. The phone and the pot move the day on; the pillbox does not call for attention */
-async function morning(){
-  phase('morning'); clock('06:40'); const room=$('#room'); const need=()=>S.seen.phone&&S.seen.pot;
+const HS=[['window',14,27],['photo',55,17],['radio',52,41],['pillbox',60,52,1],['phone',70,57],['pot',81,56],['dog',55,74]];
+async function morning(){ await show('morning',3200); fx('Sun Dust'); clock('06:40'); const H=$('#hots'); const need=()=>S.seen.phone&&S.seen.pot;
+  H.innerHTML=HS.map(([k,x,y,q])=>`<div class="hs${q?' quiet':''}" data-h="${k}" style="left:${x}%;top:${y}%"></div>`).join('');
   while(!need()){
-    await say(S.seen.any?'…':'เช้าแล้ว\n(แตะสิ่งของในห้อง)',{stay:1,q:1}); S.seen.any=1; room.classList.add('free');
-    const h=await new Promise(res=>{ const hs=[...room.querySelectorAll('.hot')]; hs.forEach(g=>g.onclick=()=>{ hs.forEach(x=>x.onclick=null); res(g.dataset.h); });
-      if(FAST) setTimeout(()=>{ const o=(window.__order||['dog','phone','pot']).find(k=>!S.seen[k]); room.querySelector(`.hot[data-h="${o}"]`).dispatchEvent(new Event('click')); },30); });
-    room.classList.remove('free'); sfx.soft(); const el=room.querySelector(`.hot[data-h="${h}"]`); const first=!S.seen[h]; S.seen[h]=1; if(h!=='window') el.classList.add('done');
-    if(h==='dog'){ hearts(3); await say(first?['ผมลูบหัวมัน มันหลับตาพริ้ม','เสี่ยวเฮยสิบสี่ปีแล้ว\nถ้านับเป็นคน ก็คงรุ่นราวคราวเดียวกับผม']:['มันเอาคางมาเกยที่เข่าผม']); }
-    else if(h==='photo'){ await say(first?['ซิ่วหลาน\nรูปนี้ถ่ายวันที่เราแต่งงาน','เธอไปก่อนผมหกปีแล้ว','ผมยังบอกอรุณสวัสดิ์เธอทุกเช้า\nเธอไม่เคยตอบ แต่ก็ไม่เคยว่าอะไร']:['อรุณสวัสดิ์ ซิ่วหลาน']); }
-    else if(h==='window'){ await say(first?['ข้างล่างมีเสียงรถขายน้ำเต้าหู้\nจากชั้นสี่ ได้ยินแต่ไม่เคยลงไปทัน']:['ถนนยังอยู่ที่เดิม']); }
-    else if(h==='radio'){ ramp(staticG,.05,.3); await say(first?['ซ่า… ซ่า…\nตอนเช้ามีแต่ข่าว','รายการเพลงเก่ามาตอนสี่โมงเย็น\nผมรอได้']:['ยังไม่ถึงเวลา']); ramp(staticG,0,.6); el.classList.remove('done'); }
-    else if(h==='pillbox'){ if(!S.meds){ S.meds=true; await say(['กล่องยา ช่อง "อังคาร – เช้า"','เจ็ดเม็ด\nกลืนทีละเม็ด กับน้ำอุ่นหนึ่งแก้ว','วันนี้ผมจำได้เอง']); } else await say(['ช่องเช้าว่างแล้ว']); }
+    await say(S.seen.any?'…':'เช้าแล้ว\n(แตะสิ่งที่อยู่ในห้อง)',{stay:1,q:1}); S.seen.any=1; H.classList.add('on');
+    const h=await new Promise(res=>{ const hs=[...H.querySelectorAll('.hs')]; hs.forEach(g=>g.onclick=()=>{ hs.forEach(x=>x.onclick=null); res(g.dataset.h); });
+      if(FAST) setTimeout(()=>{ const o=(window.__order||['dog','phone','pot']).find(k=>!S.seen[k]); H.querySelector(`.hs[data-h="${o}"]`).click(); },30); });
+    H.classList.remove('on'); sfx.soft(); const el=H.querySelector(`.hs[data-h="${h}"]`); const first=!S.seen[h]; S.seen[h]=1; if(h!=='window'&&h!=='radio') el.classList.add('done');
+    if(h==='dog'){ await show('pet',1800); hearts(.52,.62);
+      await say(first?['ผมวางมือลงบนหัวมัน\nมันหลับตา เหมือนรอสิ่งนี้มาทั้งคืน','หมออธิบายว่าหมาอายุเท่านี้\nหนึ่งวันของมัน ยาวเท่าหนึ่งสัปดาห์ของคน','ผมเลยพยายามไม่ให้มันต้องรอนาน']:['มันเอาคางมาเกยที่เข่าผม\nหนักพอดีมือ']); await show('morning',1800); }
+    else if(h==='photo'){ await say(first?['ซิ่วหลาน อายุยี่สิบสอง','วันนั้นเธอยืมรองเท้าพี่สาวมาใส่\nคับไปครึ่งเบอร์ เธอยิ้มทั้งวันทั้งที่เจ็บเท้า','หกปีแล้ว\nที่ผมเป็นคนเดียวในโลก ที่ยังรู้เรื่องรองเท้าคู่นั้น','อรุณสวัสดิ์']:['อรุณสวัสดิ์ ซิ่วหลาน']); }
+    else if(h==='window'){ await say(first?['ชั้นสี่ สูงพอจะมองเห็นหลังคาตลาด\nและสูงเกินกว่าผมจะลงไปถึงมัน','รถน้ำเต้าหู้มาแล้วก็ไป\nผมจำเสียงกระดิ่งได้ แต่จำรสไม่ได้แล้ว']:['ถนนยังอยู่ที่เดิม\nคนเดินบนนั้นเปลี่ยนไปทุกวัน']); }
+    else if(h==='radio'){ ramp(staticG,.05,.3); await say(first?['ตอนเช้ามีแต่ข่าว\nข่าวของโลกที่เดินเร็วกว่าผมสามเท่า','เพลงเก่ามาตอนสี่โมงเย็น\nคนแก่มีนัดอยู่ไม่กี่อย่าง นัดนี้ผมไม่เคยผิด']:['ยังไม่ถึงสี่โมง']); ramp(staticG,0,.6); }
+    else if(h==='pillbox'){ if(!S.meds){ S.meds=true; await say(['กล่องยาเจ็ดช่อง เจ็ดวัน\nอาเหมยจัดให้ทุกวันอาทิตย์ นิ้วเธอเร็วเหมือนคนนับธนบัตร','อังคาร – เช้า เจ็ดเม็ด\nผมไม่รู้ว่าเม็ดไหนรักษาอะไร รู้แต่ว่าต้องกลืนให้ครบ','ครบ\nวันนี้ไม่ต้องมีใครสั่ง']); } else await say(['ช่องเช้าว่างแล้ว']); }
     else if(h==='phone'){ await phone(); }
     else if(h==='pot'){ await pot(); }
   }
+  H.innerHTML='';
 }
 async function phone(){ clock('06:58');
-  await say(['อาเหมยอยู่ชั้นสอง ทำงานที่บ้านพักทหารผ่านศึก','เธอโทรมาทุกเช้าตอนเจ็ดโมงตรง\n"ลุงหลี่ กินยาเช้าหรือยังคะ"','ผมชอบรับสายตอนกริ่งที่สอง\nจะได้ไม่ดูเหมือนนั่งรออยู่']);
-  const T=['07:00','07:06','07:15','07:30']; let k=0;
-  while(k<T.length){ clock(T[k]); sfx.tick(); await W(500); sfx.tick(); await say(k===0?'…':k===1?'… …':k===2?'โทรศัพท์เงียบ\nนาฬิกาดังกว่าทุกวัน':'… … …',{stay:1,q:1});
+  await say(['อาเหมยอยู่ชั้นสอง ทำงานที่บ้านพักทหารผ่านศึก\nเธอดูแลคนแก่ทั้งวัน แล้วยังเหลือแรงมาดูแลอีกคนหนึ่ง','เจ็ดโมงตรง เธอจะโทรมา\n"ลุงหลี่ กินยาเช้าหรือยังคะ"','ผมรับสายตอนกริ่งที่สองเสมอ\nกริ่งแรก เอาไว้ให้ดูเหมือนผมกำลังยุ่งอยู่']);
+  const T=[['07:00','…'],['07:06','กริ่งแรกยังไม่มา'],['07:15','นาฬิกาเดินดังกว่าทุกวัน'],['07:30','ผมยกหูขึ้นฟัง มีสัญญาณ\nโทรศัพท์ไม่ได้เสีย']]; let k=0;
+  while(k<T.length){ clock(T[k][0]); sfx.tick(); await W(520); sfx.tick(); await W(520); sfx.tick(); await say(T[k][1],{stay:1,q:1});
     const c=await choose([{t:'รอต่ออีกหน่อย'},{t:'เลิกรอ'}]); if(c===1) break; k++; }
-  await say(['วันนี้วันอังคาร ผมเพิ่งนึกได้\nอาเหมยเข้าเวรดึก เช้านี้เธอเพิ่งได้นอน','ไม่เป็นไร','ไม่เป็นไรหรอก']);
+  await say(['วันอังคาร\nเธอเข้าเวรดึก เพิ่งได้หลับเมื่อเช้านี้เอง','ดีแล้ว เธอควรได้นอน','ผมวางหูลงเบาๆ\nเหมือนกลัวจะปลุกใคร']);
 }
-async function pot(){ clock('07:40'); card(`<svg viewBox="0 0 300 190"><rect width="300" height="190" rx="14" fill="#f3e3c8"/><ellipse cx="150" cy="150" rx="110" ry="14" fill="#d9b88d"/><rect x="78" y="74" width="144" height="76" rx="16" fill="#7d8a8f"/><ellipse cx="150" cy="76" rx="72" ry="14" fill="#f6efe0"/><ellipse cx="150" cy="78" rx="62" ry="10" fill="#efe3c6"/><g fill="#d8caa6"><circle cx="128" cy="78" r="4"/><circle cx="160" cy="75" r="3"/><circle cx="176" cy="81" r="4"/></g><path d="M78 100h-18M222 100h18" stroke="#5f6b70" stroke-width="10" stroke-linecap="round"/><g fill="none" stroke="#b9c48a" stroke-width="3" stroke-linecap="round" opacity=".8"><path d="M120 54q-8-10 0-20t0-20"><animate attributeName="opacity" values=".2;.9;.2" dur="3s" repeatCount="indefinite"/></path><path d="M180 50q8-10 0-20t0-20"><animate attributeName="opacity" values=".9;.2;.9" dur="3s" repeatCount="indefinite"/></path></g></svg>`);
-  await say(['ข้าวต้มหม้อนี้ ต้มไว้ตั้งแต่วันอาทิตย์','ต้มทีเดียวหม้อใหญ่ กินได้สามสี่วัน\nประหยัดแก๊ส ประหยัดแรง','วันนี้มีกลิ่นเปรี้ยวนิดๆ'],{});
-  const c=await choose([{t:'ต้มให้เดือดอีกที แล้วกิน',s:'ไม่เสียอะไรเลย'},{t:'เททิ้ง แล้วลงไปซื้อข้างล่าง',s:'สี่ชั้นลง สี่ชั้นขึ้น · ใช้แรง 2 · NT$ 60',dis:S.en<2}]); cardOff();
-  if(c===0){ S.sour=true; await say(['ต้มเดือดแล้วก็กินได้\nสมัยอยู่กองทัพ กินแย่กว่านี้ตั้งเยอะ','ผมกินไปครึ่งชาม\nที่เหลือเก็บไว้มื้อเย็น']); }
-  else { S.bought=true; await black(true,1200); S.money-=60; energy(-2); clock('08:35'); await black(false,1200);
-    await say(['กว่าจะกลับถึงห้อง เสื้อเปียกไปทั้งตัว','ข้าวต้มร้อนๆ หอมดี\nแต่ผมต้องนั่งพักเกือบครึ่งชั่วโมง กว่าจะมีแรงยกช้อน','เสี่ยวเฮยได้กินไข่เค็มไปครึ่งซีก']); }
+async function pot(){ clock('07:40'); card('pot',{steam:1});
+  await say(['ข้าวต้มหม้อนี้ ผมต้มไว้ตั้งแต่วันอาทิตย์\nต้มครั้งเดียว กินสี่วัน เป็นยุทธวิธีประหยัดแก๊ส และประหยัดเข่า','เปิดฝา\nมีกลิ่นเปรี้ยวบางๆ ลอยขึ้นมา เหมือนคำเตือนที่พูดเบาเกินไป']);
+  const c=await choose([{t:'ต้มให้เดือดอีกครั้ง แล้วกิน',s:'ไม่เสียอะไรเลย'},{t:'เททิ้ง แล้วลงไปซื้อข้างล่าง',s:'สี่ชั้นลง สี่ชั้นขึ้น · ใช้แรง 2 · NT$ 60',dis:S.en<2}]); cardOff();
+  if(c===0){ S.sour=true; await say(['ผมต้มจนเดือดพล่าน\nความร้อนฆ่าได้ทุกอย่าง ครูฝึกเคยสอนไว้','กินไปครึ่งชาม\nอีกครึ่ง เก็บไว้ให้ตัวเองตอนเย็น']); }
+  else { S.bought=true; await black(true,1200); S.money-=60; energy(-2); clock('08:35'); await black(false,1400);
+    await say(['สี่ชั้นขาลง ผมพักสองครั้ง\nสี่ชั้นขาขึ้น ผมเลิกนับ','แม่ค้าถามว่า "ลุงหายไปไหนมาตั้งนาน"\nผมบอกว่า ช่วงนี้ยุ่ง','ข้าวต้มร้อนอยู่ในมือ แต่ผมต้องนั่งอีกครึ่งชั่วโมง\nกว่ามือจะนิ่งพอถือช้อน','เสี่ยวเฮยได้ไข่เค็มไปครึ่งซีก\nมันคิดว่าวันนี้เป็นวันพิเศษ']); }
 }
 async function toilet(){ clock('09:30'); clearTxt();
-  await say(['ห้องน้ำอยู่สุดทางเดิน ใช้รวมกันทั้งชั้น','ยี่สิบสามก้าว\nผมนับไว้นานแล้ว']);
-  await black(true,900); hallSetup(false); scene('hall'); ramp(fanG,.01,1); await black(false,900);
-  await say('ทางเดิน',{stay:1,q:1}); const r=await walk({}); S.coughs=r.coughs; $('#vig').style.opacity=0;
-  if(r.coughs){ energy(-1); await say(['ถึงแล้ว\nผมยืนเกาะขอบประตูอยู่พักใหญ่',r.coughs>1?'คนหนุ่มห้องข้างๆ เดินสวนไป เขาใช้สี่วินาที\nผมใช้เกือบสิบนาที':'ยี่สิบสามก้าว ไกลขึ้นทุกปี']); }
-  else await say(['ถึงแล้ว\nเดินช้าๆ ก็ถึงเหมือนกัน','ขากลับ ยี่สิบสามก้าวเท่าเดิม']);
-  await black(true,900); scene('room'); leeTo(0,0); ramp(fanG,.05,1); clock('09:50'); await black(false,900);
+  await say(['ห้องน้ำอยู่สุดทางเดิน ใช้ร่วมกันทั้งชั้น','ยี่สิบสามก้าว\nผมวัดไว้ตั้งแต่ปีที่ยังไม่จำเป็นต้องวัด']);
+  await black(true,900); fx(''); await show('corridor',60); ramp(fanG,.008,1); await black(false,1200);
+  await say('ประตูสีเขียว ปลายทางเดิน',{stay:1,q:1}); const r=await walk({}); S.coughs=r.coughs; $('#vig').style.opacity=0;
+  if(r.coughs) { energy(-1); await say(['ถึง','ผมเกาะขอบประตู\nรอให้หน้าอกกลับมาเป็นของตัวเอง', r.coughs>1?'เด็กหนุ่มห้องสี่ศูนย์หกเดินสวนไป เขาพยักหน้าให้ผม\nสี่วินาที ผมนับให้เขา':'ยี่สิบสามก้าวเท่าเดิม\nแต่ทุกปี มันยาวขึ้นปีละนิด']); }
+  else await say(['ถึง\nเดินช้าก็ถึง ทหารราบรู้เรื่องนี้ดี','ปัญหามีอย่างเดียว\nขากลับก็ยี่สิบสามก้าว']);
+  await black(true,900); await show('morning',60); fx('Sun Dust'); ramp(fanG,.05,1); clock('09:50'); await black(false,1200);
   $('#vig').style.opacity=.5;
-  await say(['กลับถึงเตียง หน้าอกแน่นเหมือนมีคนนั่งทับ','บนชั้นมียาพ่นสองอัน\nสีฟ้า กับสีเขียว']);
-  let c=await choose([{t:'🔵 อันสีฟ้า'},{t:'🟢 อันสีเขียว'}]); sfx.puff();
-  if(c===1){ await say(['ผมกด… ไม่รู้สึกอะไรเลย\nมีแต่รสขมๆ ติดลิ้น','หมอบอกให้ใช้อันนี้ทุกวัน\nแต่มันไม่เคยช่วยตอนที่ผมต้องการ']); await choose([{t:'🔵 หยิบอันสีฟ้า'}]); sfx.puff(); }
+  await say(['กลับถึงเตียง\nมีอะไรหนักๆ นั่งทับหน้าอกผมอยู่ มันมาบ่อยจนผมเกือบจะตั้งชื่อให้','บนชั้นมียาพ่นสองอัน\nหมออธิบายแล้วว่าอันไหนใช้ตอนไหน ผมพยักหน้า หมอก็พอใจ']);
+  const c=await choose([{t:'🔵 อันสีฟ้า'},{t:'🟢 อันสีเขียว'}]); sfx.puff();
+  if(c===1){ await say(['กด\n…ไม่มีอะไรเกิดขึ้น นอกจากรสขมที่โคนลิ้น','ยาที่ไม่ทำให้รู้สึกอะไรเลย\nจะให้เชื่อได้อย่างไรว่ามันกำลังทำงาน']); await choose([{t:'🔵 หยิบอันสีฟ้า'}]); sfx.puff(); }
   $('#vig').style.opacity=0; sfx.warm();
-  await say(['โล่งทันที','อันสีฟ้านี่สิของดี\nผมพ่นมันทุกวัน วันละหลายหน','อันสีเขียว… ผมไม่เคยเข้าใจว่ามีไว้ทำไม']);
+  await say(['ลมกลับเข้ามาในอก\nเหมือนมีใครเปิดหน้าต่างให้','อันสีฟ้าไม่เคยทรยศผม\nผมเลยเรียกใช้มันทุกวัน วันละหลายครั้ง','อันสีเขียวตั้งอยู่ข้างกัน เกือบเต็มหลอด\nเหมือนทหารใหม่ที่ไม่มีใครไว้ใจให้ออกรบ']);
 }
-async function noon(){ phase('noon'); clock('13:10'); $('#shimmer').classList.add('on'); leeTo(0,0);
-  await say(['บ่ายโมง ในห้องสามสิบสามองศา','พัดลมพัดลมร้อนมาใส่หน้า','รีโมตแอร์อยู่ในลิ้นชัก\nใต้บิลค่าไฟของหน้าร้อนปีที่แล้ว','บิลใบนั้น ผมเก็บไว้เตือนตัวเอง']);
+async function noon(){ await show('noon',3200); fx('Heat'); clock('13:10');
+  await say(['บ่ายโมง สามสิบสามองศา\nพัดลมทำได้แค่ย้ายความร้อน จากมุมหนึ่งไปอีกมุมหนึ่ง','รีโมตแอร์อยู่ในลิ้นชัก ใต้บิลค่าไฟเดือนสิงหาปีก่อน\nผมเก็บบิลใบนั้นไว้ เหมือนเก็บหมายเรียก']);
   const c=await choose([{t:'เปิดแอร์สักสองชั่วโมง',s:'NT$ 40 · เงินบำนาญออกอีกหกวัน'},{t:'พัดลมก็พอ',s:'ไม่เสียเงิน'}]);
-  if(c===0){ S.ac=true; S.money-=40; hud(); $('#shimmer').classList.remove('on'); ramp(fanG,.08,2); await say(['ลมเย็นไหลลงมาแตะไหล่','ผมหลับไปโดยไม่รู้ตัว\nเสี่ยวเฮยนอนแผ่อยู่ใต้แอร์ สี่ขาชี้ฟ้า']); if(S.en<5) energy(1); }
-  else { await say(['เหงื่อไหลลงกลางหลัง','คัน\nเกาแล้วแสบ แสบแล้วก็ยังคัน','ผมเปลี่ยนเสื้อกล้ามตัวที่สองของวัน\nแล้วนอนลืมตามองเพดาน']); energy(-1); $('#shimmer').classList.remove('on'); }
+  if(c===0){ S.ac=true; S.money-=40; hud(); fx(''); ramp(fanG,.085,2); await say(['ลมเย็นแตะต้นคอ\nผมรู้สึกผิดอยู่สามนาที แล้วก็หลับ','ตื่นมา เสี่ยวเฮยนอนหงายอยู่ใต้แอร์ สี่ขาชี้ฟ้า\nอย่างน้อยในห้องนี้ ก็มีหนึ่งชีวิตที่ไม่คิดเรื่องเงิน']); if(S.en<5) energy(1); ramp(fanG,.05,2); }
+  else { await say(['เหงื่อไหลตามร่องสันหลัง\nผิวหนังคัน เหมือนมีมดเดินแถว','เกาแล้วแสบ แสบแล้วก็ยังคัน\nผมเปลี่ยนเสื้อกล้ามตัวที่สอง แล้วนอนนับรอยร้าวบนเพดาน','สิบเจ็ดรอย\nเท่าเมื่อวาน']); energy(-1); fx(''); }
 }
-async function radio(){ phase('after'); clock('16:00'); ramp(staticG,.07,.6);
-  card(`<svg viewBox="0 0 300 150"><rect width="300" height="150" rx="16" fill="#5f8f8a"/><rect x="18" y="18" width="264" height="52" rx="8" fill="#f3e3c8"/><g stroke="#8a6f5c" stroke-width="2">${Array.from({length:21},(_,i)=>`<path d="M${30+i*12} ${i%5?40:32}V52"/>`).join('')}</g><rect id="needle" x="28" y="24" width="3" height="40" fill="#c8694a"/><circle cx="60" cy="110" r="22" fill="#3f6b67"/><circle cx="60" cy="110" r="10" fill="#2f5450"/><circle cx="230" cy="110" r="16" fill="#e9a646"/><circle cx="180" cy="110" r="10" fill="#f3e3c8"/></svg><input id="dial" type="range" min="0" max="100" value="4" step="1">`);
-  await say('สี่โมงเย็น รายการเพลงเก่า\n(เลื่อนหาคลื่น)',{stay:1,q:1});
-  await new Promise(res=>{ const d=$('#dial'), nd=$('#needle'), T=63; let ok=null;
-    const up=()=>{ const v=+d.value, dist=Math.abs(v-T); nd.setAttribute('x',28+v*2.4); if(staticG&&AC) staticG.gain.setTargetAtTime(Math.min(.09,dist/250+.004),AC.currentTime,.05);
-      clearTimeout(ok); if(dist<=3) ok=setTimeout(()=>{ d.disabled=true; res(); },700); }; d.oninput=up; up(); if(FAST){ d.value=T; up(); } });
-  ramp(staticG,.004,.5); const ms=playTune(); await W(1400);
-  await say(['เพลงนี้…','ซิ่วหลานเคยเต้นเพลงนี้ในครัว\nมือหนึ่งถือตะหลิว','เธอกวักมือเรียกผม\nผมบอกว่าเข่าไม่ดี','ตอนนั้นเข่าผมยังดีอยู่']);
-  ramp(staticG,0,2); cardOff();
+async function radio(){ clock('16:00'); ramp(staticG,.07,.6); fx('Sun');
+  card('radio',{html:'<input id="dial" type="range" min="0" max="100" value="4" step="1">'});
+  await say('สี่โมงเย็น\n(เลื่อนหาคลื่น)',{stay:1,q:1});
+  await new Promise(res=>{ const d=$('#dial'), T=63; let ok=null;
+    const up=()=>{ const dist=Math.abs(+d.value-T); if(staticG&&AC) staticG.gain.setTargetAtTime(Math.min(.09,dist/250+.004),AC.currentTime,.05);
+      clearTimeout(ok); if(dist<=3) ok=setTimeout(()=>{ d.disabled=true; res(); },FAST?10:700); }; d.oninput=up; up(); if(FAST){ d.value=T; up(); } });
+  ramp(staticG,.004,.5); playTune(); await W(1800);
+  await say(['…เพลงนี้','ซิ่วหลานเคยเต้นเพลงนี้ในครัว มือหนึ่งถือตะหลิว\nน้ำมันกระเด็นใส่แขน เธอก็ไม่หยุด','เธอกวักมือเรียก\nผมบอกว่า เข่าไม่ดี','ตอนนั้นผมอายุห้าสิบเอ็ด\nเข่าผมไม่ได้เป็นอะไรเลย','เพลงนี้ยาวสามนาทีสิบวินาที\nผมมีเวลาทั้งชีวิต แต่ไม่ได้ให้เธอสามนาทีนั้น']);
+  ramp(staticG,0,2.5); cardOff(); fx('');
 }
-async function evening(){ phase('dusk'); clock('17:40');
-  await say(['เสี่ยวเฮยคาบสายจูงมาวางบนเท้าผม\nแล้วนั่งรอ','มันไม่เห่า ไม่เร่ง\nแค่มอง']);
-  const c=await choose([{t:'ไปกันเถอะ',s:S.en>=2?'สี่ชั้น':'แรงไม่พอ',dis:S.en<2},{t:'วันนี้ไม่ไหวนะ เสี่ยวเฮย'}]);
-  if(c===0){ S.walked=true; await black(true,900); hallSetup(true); scene('hall'); ramp(fanG,0,1); await black(false,900);
-    await say('บันได',{stay:1,q:1}); await walk({stairs:true, limit:.34}); energy(-2);
-    await say(['ชั้นสาม','ผมเกาะราวบันได โลกหมุนช้าๆ','เสี่ยวเฮยหยุด หันมามอง\nแล้วเดินกลับขึ้นมานั่งข้างเท้าผม','มันไม่เคยดึงสายจูงเลยสักครั้ง']);
-    await black(true,900); $('#vig').style.opacity=0; scene('room'); ramp(fanG,.05,1); await black(false,900); }
-  else await say(['มันวางคางลงบนรองเท้าผม\nไม่ได้ว่าอะไร','ผมอยากให้มันว่าบ้าง']);
-  leeTo(-52,-8); await say(['เราเลยนั่งดูถนนจากหน้าต่างด้วยกัน','เด็กนักเรียนเดินกลับบ้าน\nหมาตัวอื่นเดินผ่านไป']); leeTo(0,0);
+async function evening(){ clock('17:40');
+  await say(['เสี่ยวเฮยคาบสายจูงมาวางบนหลังเท้าผม แล้วนั่งลง\nมันไม่เห่า ไม่ขูดประตู แค่มอง','หมาที่ไม่เคยเร่ง\nเป็นหมาที่ปฏิเสธยากที่สุด']);
+  const c=await choose([{t:'"ไปกันเถอะ"',s:S.en>=2?'สี่ชั้น':'แรงไม่พอ',dis:S.en<2},{t:'"วันนี้ไม่ไหวนะ เสี่ยวเฮย"'}]);
+  if(c===0){ S.walked=true; await black(true,900); await show('stairs',60); ramp(fanG,0,1); await black(false,1200);
+    await say('สี่ชั้น',{stay:1,q:1}); await walk({stairs:true, limit:.34}); energy(-2);
+    await say(['สิบเอ็ดขั้น','ราวบันไดเย็นเฉียบ โลกหมุนช้าๆ รอบตัวผม','เสี่ยวเฮยลงไปถึงชานพักแล้ว มันหันกลับมามอง\nแล้วเดินขึ้นมาทีละขั้น มานั่งลงข้างรองเท้าผม','สิบสี่ปี มันไม่เคยดึงสายจูงเลยสักครั้ง\nผมเพิ่งเข้าใจวันนี้เอง มันไม่ได้เชื่อง มันรอ']);
+    await black(true,900); $('#vig').style.opacity=0; ramp(fanG,.05,1); await show('dusk',60); await black(false,1400); }
+  else { await say(['มันวางคางลงบนรองเท้าผม ถอนหายใจยาวหนึ่งครั้ง\nมันไม่ได้โกรธ','ผมอยากให้มันโกรธบ้าง']); await show('dusk',3200); }
+  await say(['เราเลยไปนั่งที่หน้าต่างแทน\nผมบรรยายถนนให้มันฟัง มันทำเป็นสนใจ','เด็กนักเรียนเดินกลับบ้าน ร้านบะหมี่เปิดไฟ\nหมาสีน้ำตาลตัวหนึ่งเดินผ่าน เสี่ยวเฮยกระดิกหางให้หนึ่งที','โลกอยู่ต่ำลงไปสี่ชั้น\nใกล้พอจะมองเห็น ไกลพอจะไม่ต้องทักทายใคร']);
 }
-async function dinner(){ phase('night'); clock('18:50');
-  card(`<svg viewBox="0 0 300 190" id="tbl"><rect width="300" height="190" rx="14" fill="#a8754f"/><rect x="10" y="10" width="280" height="170" rx="10" fill="#b98560"/><circle cx="92" cy="92" r="40" fill="#fffaf0"/><circle cx="92" cy="92" r="30" fill="#efe3c6"/><circle cx="208" cy="92" r="40" fill="#fffaf0"/><circle cx="208" cy="92" r="30" fill="#f6efe0"/><g stroke="#4a3528" stroke-width="5" stroke-linecap="round"><path d="M60 150h64M60 160h64"/></g><g id="cs2" stroke="#4a3528" stroke-width="5" stroke-linecap="round" style="transition:transform 1.6s ease,opacity 1.6s ease;cursor:pointer"><path d="M176 150h64M176 160h64"/><rect x="166" y="138" width="84" height="34" fill="transparent" stroke="none"/></g></svg>`);
-  await say(['มื้อเย็น','ผมวางชามสองใบ ตะเกียบสองคู่','มือมันวางเอง\nหกปีแล้วก็ยังวางเอง']);
-  await say('(เก็บตะเกียบคู่หนึ่งกลับ)',{stay:1,q:1});
-  await new Promise(res=>{ const g=$('#cs2'); g.onclick=()=>{ g.onclick=null; sfx.low(); g.style.transform='translateX(140px)'; g.style.opacity=0; setTimeout(res,FAST?30:1700); }; if(FAST) g.dispatchEvent(new Event('click')); });
-  await say(['ชามใบนั้น ผมไม่ได้เก็บ',S.sour?'ข้าวต้มที่เหลือจากเมื่อเช้า\nเปรี้ยวกว่าเดิมหน่อย แต่ก็หมดชาม':'ข้าวสวยกับผัดผักที่เหลือจากเมื่อวาน']); cardOff();
+async function dinner(){ clock('18:50'); fx('Lamp'); card('dinner2');
+  await say(['มื้อเย็น','ผมวางชามสองใบ ตะเกียบสองคู่\nมือมันทำของมันเอง ก่อนที่หัวจะทันห้าม','หกปี สองพันกว่ามื้อ\nมือผมยังไม่ได้รับแจ้งข่าว']);
+  await say('…',{stay:1,q:1});
+  await choose([{t:'เก็บตะเกียบคู่หนึ่งกลับเข้าลิ้นชัก'}]); sfx.low();
+  const c2=$('#cimg2'); c2.src=src('dinner1'); try{ await c2.decode(); }catch(e){} c2.style.opacity=1; await W(2600);
+  await say(['ผมเก็บตะเกียบ\nแต่ชามใบนั้น ผมปล่อยไว้',S.sour?'ข้าวต้มครึ่งชามจากเมื่อเช้า\nเปรี้ยวขึ้นอีกนิด ผมกินจนหมด ทหารไม่ทิ้งเสบียง':'ผัดผักที่เหลือจากเมื่อวาน กับข้าวสวยหนึ่งถ้วย\nผมเคี้ยวช้าๆ ไม่มีใครรอให้ลุกจากโต๊ะ']); cardOff();
 }
-async function night(){ clock('21:10'); leeTo(0,0);
-  if(!S.meds){
-    card(`<svg viewBox="0 0 300 170"><rect width="300" height="170" rx="14" fill="#f3e3c8"/><rect x="14" y="30" width="272" height="112" rx="10" fill="#e9a646"/>${['จ','อ','พ','พฤ','ศ','ส','อา'].map((d,i)=>`<g><rect x="${20+i*38}" y="38" width="34" height="46" rx="5" fill="${i===1?'#fffaf0':'#f6d79a'}"/><rect x="${20+i*38}" y="90" width="34" height="46" rx="5" fill="${i===1?'#fffaf0':'#f6d79a'}"/><text x="${37+i*38}" y="24" text-anchor="middle" font-family="Sarabun" font-size="13" fill="#4a3528">${d}</text>${i===1?`<g class="blur" id="pl"><g fill="#c8694a"><circle cx="66" cy="52" r="5"/><circle cx="80" cy="56" r="5"/><circle cx="70" cy="68" r="5"/></g><g fill="#5f8f8a"><ellipse cx="84" cy="70" rx="6" ry="4"/><ellipse cx="64" cy="78" rx="6" ry="4"/></g><circle cx="78" cy="78" r="4" fill="#fff"/><circle cx="74" cy="60" r="4" fill="#fff"/><g fill="#8a6f5c"><circle cx="66" cy="106" r="5"/><circle cx="80" cy="112" r="5"/><ellipse cx="72" cy="124" rx="6" ry="4"/><circle cx="84" cy="124" r="4"/></g></g>`:''}</g>`).join('')}</svg>`);
-    await say(['ก่อนนอน ผมเปิดกล่องยา','เม็ดยาเล็ก แสงไฟสลัว\nตาผมต้องใช้เวลา']);
-    await hold('กดค้าง<br>เพื่อเพ่งมอง', 1900, ''); $('#pl').classList.add('focus'); await W(1500);
-    await say(['ช่อง "อังคาร – เช้า"\nยาเจ็ดเม็ด ยังอยู่ครบ','ผมลืม','วันนี้ไม่มีใครโทรมา']);
-    const c=await choose([{t:'กินรวมกับยาก่อนนอนเสียเลย',s:'ยาของรัฐบาล ทิ้งก็เสียดาย'},{t:'ข้ามไป พรุ่งนี้ค่อยเริ่มใหม่'}]); cardOff();
-    if(c===0){ S.dbl=true; await say(['สิบเอ็ดเม็ด น้ำสองแก้ว','ทหารต้องทำภารกิจให้ครบ\nช้าไปหน่อยก็ยังดีกว่าไม่ทำ']); }
-    else await say(['ผมปิดฝากล่อง','รู้สึกเหมือนขัดคำสั่ง\nไม่รู้ว่าคำสั่งของใคร']);
-  } else await say(['ก่อนนอน ผมเปิดกล่องยา\nช่องเช้าว่างเปล่า','วันนี้ผมจำได้เอง ไม่ต้องมีใครเตือน','…แต่ก็อยากให้มีคนเตือนอยู่ดี']);
-  phase('dark'); ramp(fanG,.03,3); leeTo(-40,34); $('#dog').classList.add('sleep'); await W(2200);
-  await say(['ราตรีสวัสดิ์ ซิ่วหลาน','เสี่ยวเฮยกระโดดขึ้นเตียงไม่ไหวแล้ว\nมันนอนบนพรมข้างล่าง','ผมหย่อนมือลงไปข้างเตียง\nมันเลียปลายนิ้วผมทีหนึ่ง แล้วก็หลับ']);
-  if(S.dbl){ await black(true,1800); clock('02:10'); sfx.beat(); await W(500); sfx.beat(); await black(false,1400); $('#vig').style.opacity=.6;
-    await say(['ตีสอง','ผมตื่นมาเหงื่อแตกทั้งตัว มือสั่น ใจเต้นแรง','คงฝันร้าย','ผมนอนนิ่งๆ ในความมืด\nรอให้มันผ่านไป']); $('#vig').style.opacity=0; }
-  await black(true,2600); ramp(fanG,0,2); clearTxt(); await W(600); diary();
+async function night(){ clock('21:10'); await show('night',3200); fx('Lamp');
+  if(!S.meds){ card('pills'); $('#cimg').classList.add('blur');
+    await say(['ก่อนนอน ผมเปิดกล่องยา','แสงโคมสลัว เม็ดยาเล็ก\nตาผมต้องขอเวลา']);
+    await hold('กดค้าง<br>เพื่อเพ่งมอง', 1900, ''); $('#cimg').classList.remove('blur'); await W(2000);
+    await say(['อังคาร – เช้า\nเจ็ดเม็ด นอนเรียงกันอยู่ครบ เหมือนทหารที่ไม่มีใครมาปลุก','ผมลืม','…ไม่ใช่สิ\nวันนี้ไม่มีใครถาม ผมเลยไม่มีอะไรต้องตอบ']);
+    const c=await choose([{t:'กินรวมกับยาก่อนนอนเสียเลย',s:'ยาของหลวง ทิ้งไม่ได้'},{t:'ข้ามไป พรุ่งนี้เริ่มใหม่'}]); cardOff();
+    if(c===0){ S.dbl=true; await say(['สิบเอ็ดเม็ด น้ำสองแก้ว\nภารกิจที่ทำช้า ยังดีกว่าภารกิจที่ไม่ได้ทำ','ผมถูกฝึกมาอย่างนั้น']); }
+    else await say(['ผมปิดฝากล่อง\nเจ็ดเม็ดนั้นจะอยู่ตรงนั้นทั้งคืน เหมือนรายงานที่ไม่ได้ส่ง']);
+  } else await say(['ก่อนนอน ผมเปิดกล่องยา\nช่องเช้าว่างเปล่า วันนี้ผมทำได้เอง','น่าจะภูมิใจ\nแต่ผมกลับคิดถึงเสียงที่ถามว่า "กินยาหรือยังคะ"']);
+  ramp(fanG,.035,3);
+  await say(['เสี่ยวเฮยกระโดดขึ้นเตียงไม่ไหวมาสองปีแล้ว\nผมก็ก้มลงไปอุ้มมันไม่ไหว มาสองปีเท่ากัน','เราเลยตกลงกันได้\nผมหย่อนมือลงไป มันเอาจมูกมาแตะ']); sfx.lick();
+  await say(['ทุกคืน ผมรายงานซิ่วหลาน\nเหมือนที่เคยรายงานผู้บังคับบัญชา']);
+  await black(true,2400); fx(''); clearTxt(); await W(500); await report();
 }
-function diary(){ const L=[];
-  L.push(S.meds?'เช้านี้กินยาเองได้ ไม่ต้องมีใครเตือน':'อาเหมยไม่ได้โทรมา ผมลืมยาเช้า');
-  L.push(S.bought?'ลงไปซื้อข้าวต้ม ขึ้นมาแทบหมดแรง':'ข้าวต้มหม้อเดิม ยังกินได้');
-  L.push(S.coughs?'ไปห้องน้ำ ต้องหยุดไอ '+(S.coughs>1?'หลายหน':'หนหนึ่ง'):'ไปห้องน้ำ ยี่สิบสามก้าว ไม่ไอ');
-  L.push(S.ac?'เปิดแอร์สองชั่วโมง เหลือ NT$ '+S.money:'ไม่ได้เปิดแอร์ คันทั้งบ่าย');
-  L.push(S.walked?'พาเสี่ยวเฮยลงไปได้แค่ชั้นสาม':'ไม่ได้พาเสี่ยวเฮยลงไปเดิน');
-  if(S.dbl) L.push('กินยาเช้ารวมกับยาก่อนนอน กลางดึกใจสั่น');
-  L.push('วันนี้ไม่มีใครมาหา'); L.push('เป็นวันธรรมดาวันหนึ่ง');
-  $('#pg').innerHTML='<b>วันอังคาร</b>'+L.map((t,i)=>`<p style="animation-delay:${FAST?0:.8+i*1.1}s">${t}</p>`).join(''); $('#diary').classList.add('on'); window.__done=JSON.parse(JSON.stringify(S)); }
+async function report(){ const L=[];
+  L.push('ตื่น 05.40 ก่อนแตร');
+  L.push('ยาเช้า: '+(S.meds?'ครบ':S.dbl?'กินรวมตอนกลางคืน ครบ':'ไม่ได้กิน'));
+  L.push('เสบียง: '+(S.bought?'ลงไปซื้อ ขึ้นมาได้':'ข้าวต้มหม้อเดิม'));
+  L.push('เดินไปห้องน้ำ: ถึง'+(S.coughs?' (หยุดพัก '+S.coughs+' ครั้ง)':''));
+  L.push('อากาศ: ร้อน '+(S.ac?'เปิดแอร์สองชั่วโมง ขออภัยเรื่องค่าไฟ':'ทนได้'));
+  L.push('พาเสี่ยวเฮยลงไป: '+(S.walked?'ถึงชั้นสาม':'ไม่ได้ไป'));
+  L.push('เต้นรำ: ยังไม่ได้เต้น');
+  L.push('ผู้มาเยี่ยม: ไม่มี · สายเข้า: ไม่มี');
+  const step=FAST?0:1.25;
+  $('#pg').innerHTML='<b>รายงานประจำวัน · วันอังคาร</b>'+L.map((t,i)=>`<p style="animation-delay:${.9+i*step}s">${t}</p>`).join('')+`<p class="last" style="animation-delay:${1.6+L.length*step}s">เหตุการณ์ทั่วไป: ปกติ</p><p style="animation-delay:${3.6+L.length*step}s">ราตรีสวัสดิ์ ซิ่วหลาน</p>`;
+  $('#dnext').classList.remove('on'); $('#again').classList.remove('on'); $('#diary').classList.add('on');
+  await W((4.5+L.length*step)*1000);
+  if(S.dbl){ sfx.beat(); await W(600); sfx.beat(); $('#dnext').textContent='02:10 — ผมตื่นมาเหงื่อท่วมตัว มือสั่น ใจเต้นแรง\nคงฝันร้าย ผมนอนนิ่งๆ ในความมืด รอให้มันผ่านไป'; $('#dnext').style.whiteSpace='pre-line'; $('#dnext').classList.add('on'); await W(6500); $('#dnext').classList.remove('on'); await W(2000); }
+  $('#dnext').textContent='อีกสามวัน จะมีคนมาเคาะประตูห้องนี้'; $('#dnext').classList.add('on'); sfx.bell(); await W(2200); $('#again').classList.add('on'); window.__done=JSON.parse(JSON.stringify(S)); }
 
-$('#start').onclick=async()=>{ audio(); if(AC&&AC.state==='suspended') AC.resume(); sfx.warm(); const t=$('#title'); t.style.opacity=0; t.style.pointerEvents='none'; await W(1400); t.classList.add('hidden'); day1(); };
-$('#again').onclick=async()=>{ $('#diary').classList.remove('on'); await W(1200); day1(); };
-hud(); phase('dark');
+$('#start').onclick=async()=>{ audio(); if(AC&&AC.state==='suspended') AC.resume(); sfx.warm(); const t=$('#title'); t.style.opacity=0; t.style.pointerEvents='none'; await W(1600); t.classList.add('hidden'); day1(); };
+$('#again').onclick=async()=>{ $('#diary').classList.remove('on'); $('#black').style.opacity=1; await W(1600); day1(); };
+S.en=5; S.money=320; hud();
 </script>
 </body>
 </html>

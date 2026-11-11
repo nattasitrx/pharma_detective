@@ -236,5 +236,16 @@ a night shift, and the nightly "daily report" to his wife that always ends "noth
   ends with the report to his wife; only Friday's ends "not normal". Days 5-7 are not written yet.
   Progress and each day's choices are kept in localStorage `lee7v1` (`P`); later days read earlier choices.
   More pictures: phone, clinic, drawer, street, corridor_night, floor, door, kneel, bags, chart, dance (placeholders too).
+- Day 4 follows the home-visit game (Case D) step by step, seen from the bed (12 Nov): a wrong first move (the
+  student talks to Ah-Mei about him), the right one (kneels, ID, purpose, time, asks leave, shoes), the interview
+  (answers that stay locked until trust is high enough: `trust()`, `answer()` with `need`), a blaming "why" and its
+  repair, "what do you hope for", looking round the room with permission (he can refuse), the 13 bags, the inhalers
+  (spacer for the blue one; the soft-mist one: turn, open, press as the breath in begins), teach-back (he does it with
+  no prompts; a mistake is taken as the teacher's), the secret, and the closing summary said back by the patient.
+- More than "hold": `rub` (turn the base), `flick` (open/close the cap, put the chopsticks away), `shake`, `tapPic`,
+  `lens` (old eyes: a clear circle follows the finger over a blurred picture), `breathPress` (press as the breath in
+  begins), `ringGame` (answer on the second ring), `tapPills`, `holdFail`. All work on the close-up picture.
+- 20 more pictures for sub-scenes (inhalers, photo, bill, leash, amei, doctor, dumplings, yellow, ceiling, intro,
+  talkover, drawerask, resp_closed, resp_open, resp_demo, spacer, potfound, teachback, amei_cry, goodbye).
 - Sound is made in code. `?fast=1` runs without waits (tests); `window.__pick` / `window.__order` choose answers
   and the order of things tapped in the morning.

@@ -247,5 +247,14 @@ a night shift, and the nightly "daily report" to his wife that always ends "noth
   begins), `ringGame` (answer on the second ring), `tapPills`, `holdFail`. All work on the close-up picture.
 - 20 more pictures for sub-scenes (inhalers, photo, bill, leash, amei, doctor, dumplings, yellow, ceiling, intro,
   talkover, drawerask, resp_closed, resp_open, resp_demo, spacer, potfound, teachback, amei_cry, goodbye).
+- All seven days are written (12 Nov): Saturday (fewer pills; the student phones with the doctors' answers; he may
+  phone to tell about the fall; small pot, air-con, down to the 2nd floor), Sunday (he fills the pill box himself;
+  Ah-Mei's reason for phoning every morning; the drawer is cleared; down to the front door), Monday (four floors, the
+  street, soy milk, the bench, the whole song). Monday's report ends "normal" again, and now it is true. Then a short
+  letter to the student and three closing lines for the player (`finale`).
+- Moving is different each time: `walk` (hold; day 1 corridor), `steps` (left/right taps on the stairs; wrong foot =
+  stumble, too quick = out of breath; `from`/`limit` for one floor at a time), `feel` (night: drag a hand along the
+  wall, slowly), `rush` (day 4: tap fast, the breath runs out).
+- 5 more pictures: exitdoor, outside, bench, fillbox, drawer_clean (49 in all, still placeholders).
 - Sound is made in code. `?fast=1` runs without waits (tests); `window.__pick` / `window.__order` choose answers
   and the order of things tapped in the morning.

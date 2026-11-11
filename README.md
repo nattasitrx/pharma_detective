@@ -229,5 +229,12 @@ a night shift, and the nightly "daily report" to his wife that always ends "noth
 - Life in still pictures: slow camera drift per picture (`CAM`), dissolves between pictures (`show`), overlays
   (`fx`: sun, dust, heat, lamp), a first-person walk that zooms into the corridor/stairs picture while the button
   is held (`walk`), close-up cards with their own drift, steam, blur-to-focus.
+- Days 1-4 are done (12 Nov 2026): Tuesday (nobody phones), Wednesday (Ah-Mei phones; the clinic; she walks the dog),
+  Thursday (he sleeps through the radio, forgets again, falls in the bathroom at night and tells nobody), Friday (the
+  pharmacists' visit seen from his side: the student kneels to his eye level, asks what he hopes for, lays out the 13
+  bags, explains the green inhaler as "the night sentry"; he may or may not tell about the fall; he dances). Each day
+  ends with the report to his wife; only Friday's ends "not normal". Days 5-7 are not written yet.
+  Progress and each day's choices are kept in localStorage `lee7v1` (`P`); later days read earlier choices.
+  More pictures: phone, clinic, drawer, street, corridor_night, floor, door, kneel, bags, chart, dance (placeholders too).
 - Sound is made in code. `?fast=1` runs without waits (tests); `window.__pick` / `window.__order` choose answers
   and the order of things tapped in the morning.

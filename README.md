@@ -213,3 +213,12 @@ Test: `D2=1 CASE=d GAME_URL=http://localhost:8110/preview-d/?class=ph2026a pytho
 `ghost/index.html` is a stand-alone escape-room prototype of Case D (one room, three knowledge locks, a ghost that
 pressures and hints). It is not built from the engine: copy it to `main:ghost-d/index.html`. It is not linked from the
 case chooser, uses no server and saves nothing.
+
+## `life/` — "Seven Days of Uncle Lee" (new game, from 11 Nov 2026)
+
+A separate, small game: the player IS Uncle Lee for a week (one day per sitting). It is about feeling an old man's
+life, not about teaching the home visit; the pharmacist's visit is planned for day 4. Thai only for now, warm flat
+SVG art, portrait layout, sound made in code. One file, no build: copy `life/index.html` to `main:uncle-lee/index.html`
+(unlisted). Day 1 (Tuesday) is done. `?fast=1` runs it without waits (tests); `window.__pick` / `window.__order`
+choose the answers and the order of things tapped in the morning. The story is invented (not from the course
+materials), on purpose.

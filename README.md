@@ -217,8 +217,17 @@ case chooser, uses no server and saves nothing.
 ## `life/` — "Seven Days of Uncle Lee" (new game, from 11 Nov 2026)
 
 A separate, small game: the player IS Uncle Lee for a week (one day per sitting). It is about feeling an old man's
-life, not about teaching the home visit; the pharmacist's visit is planned for day 4. Thai only for now, warm flat
-SVG art, portrait layout, sound made in code. One file, no build: copy `life/index.html` to `main:uncle-lee/index.html`
-(unlisted). Day 1 (Tuesday) is done. `?fast=1` runs it without waits (tests); `window.__pick` / `window.__order`
-choose the answers and the order of things tapped in the morning. The story is invented (not from the course
-materials), on purpose.
+life, not about teaching the home visit; the pharmacist's visit is planned for day 4. Thai only for now. No build:
+copy the folder `life/` to `main:uncle-lee/` (unlisted). Day 1 (Tuesday) is done. The story is invented on purpose
+(not from the course materials): his late wife Xiulan, Ah-Mei on the 2nd floor who phones every morning except after
+a night shift, and the nightly "daily report" to his wife that always ends "nothing to report".
+
+- Pictures: painted-look images made with Canva's image tool, in `life/img/*.jpg` (dawn, morning, pet, noon, dusk,
+  night, corridor, stairs, pot, radio, dinner2, dinner1, pills). **The files there now are placeholders** blown up
+  from 200 px thumbnails; replace them with the full-size downloads (same names; rooms square, close-ups 4:3).
+  Hotspot positions on the morning picture are in `HS` (percent of the picture) and need a check with the real file.
+- Life in still pictures: slow camera drift per picture (`CAM`), dissolves between pictures (`show`), overlays
+  (`fx`: sun, dust, heat, lamp), a first-person walk that zooms into the corridor/stairs picture while the button
+  is held (`walk`), close-up cards with their own drift, steam, blur-to-focus.
+- Sound is made in code. `?fast=1` runs without waits (tests); `window.__pick` / `window.__order` choose answers
+  and the order of things tapped in the morning.

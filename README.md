@@ -180,6 +180,22 @@ These need Playwright with Chromium, and node 22+ for the local results server.
 Credits: cases by Prof. Chung-Yu Chen (陳崇鈺), Kaohsiung Medical University; game by Nattasit Rattanaphanit
 (ณัฐสิทธิ์ รัตนพาณิชย์). Course use only; see `LICENSE.md` on `main`.
 
+## `mk_d2.py` — Case D preview "D2" (from 11 Nov 2026)
+
+Students said the three cases feel the same. `mk_d2.py site/case-d/index.html site/preview-d/index.html` (run by
+`rebuild_cd.sh`) makes a different Case D from the built one; copy it to `main:preview-d/index.html` (unlisted). The
+live Case D is not touched. The preview has its own saves (`phd_lee2_*`), is never locked and sends no results.
+The pre/post test and the professor's content stay. Steps, added one by one:
+
+1. (done) Pre-test first; a short prologue that ends on coughing behind the door; chapter 1 opens with the
+   breathlessness scene and the hands-on inhaler lesson (it used to be in chapter 4); no intro cards or tutorial lines.
+2. Spot the mistakes in Uncle Lee's inhaler demo, in place of the myth boss.
+3. A timeline of the night he fell, in place of the contradiction chapter.
+4. A prescriber map in the medicine review.
+5. An ending that changes with what the student found.
+
+Test: `D2=1 CASE=d GAME_URL=http://localhost:8110/preview-d/?class=ph2026a python3 test_case.py zh practice`.
+
 ## `ghost/` — Case D "Blackout Night" (prototype, 10 Nov 2026)
 
 `ghost/index.html` is a stand-alone escape-room prototype of Case D (one room, three knowledge locks, a ghost that

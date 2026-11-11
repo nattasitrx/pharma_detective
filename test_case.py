@@ -233,7 +233,9 @@ with sync_playwright() as p:
     pg.click(f'.lbtn[data-lang="{LANG}"]'); time.sleep(0.2); (pg.click(f'.msel[data-mode="{MODE}"]') if pg.evaluate("()=>{const m=document.querySelector('.moderow'); return !!m && getComputedStyle(m).display!=='none'}") else None); time.sleep(0.2)
     shot(pg, '00_title')
     pg.fill('#inName', TXT['name'][LANG]); pg.fill('#inSid', 'B1090'); pg.click('#btnStart')
-    pump(pg, until=lambda: vis(pg, '#choices'))
+    GREET = "()=>!!document.querySelector('#choices:not(.hidden)')&&[...document.querySelectorAll('#choices .cbtn')].some(x=>/打招呼|問好|自我介紹|Greet|introduce|ทักทาย|แนะนำตัว/i.test(x.textContent))"
+    pump(pg, until=(lambda: pg.evaluate(GREET)) if os.environ.get('D2') else (lambda: vis(pg, '#choices')), maxn=900 if os.environ.get('D2') else 320)   # D2 preview: pre-test, attack and inhaler lesson come before the first move
+    if os.environ.get('D2'): notes['d2_open'] = pg.evaluate("()=>({inh:window.__PD__.S.inh||null, cough:window.__PD__.S.fl.coughRescue||0, step:window.__PD__.S.step, visit:window.__PD__.S.visit, pat:window.__PD__.S.pat, trust:window.__PD__.S.trust})")
     i = pg.evaluate("()=>{const b=[...document.querySelectorAll('#choices .cbtn')].find(x=>/打招呼|問好|自我介紹|Greet|introduce|ทักทาย|แนะนำตัว/i.test(x.textContent)); return b?b.dataset.i:'0'}")
     pg.click(f'#choices .cbtn[data-i="{i}"]'); time.sleep(0.3)
     pump(pg, until=lambda: vis(pg, '#board'))

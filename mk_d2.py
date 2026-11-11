@@ -11,7 +11,9 @@ Step 1 (this file so far): open with the event, cut the how-to-play parts.
 Step 2: teach-back in place of the myth boss (cd/d2_teachback.js): he shows the inhaler again and the student stops
   him at the wrong steps; then he reads out his memo, the student circles the wrong lines (the old myths) and picks
   the correction for each. S.boss keeps its shape, so the summary, ending and results are unchanged.
-Later steps (timeline, prescriber map, variable ending) are added here one by one."""
+Chapter 3 has no contradiction duel (it plays the same in Cases A and C; dropped 11 Nov): the student's finds are laid
+  out one by one and he owns up (the same admissions, the same problems revealed); the heart lock (his secret) stays.
+The timeline, prescriber map and variable ending were dropped (11 Nov): they would feel like the same game again."""
 import sys, re, os
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -129,6 +131,25 @@ r"""    await say('yeh','neutral',['李伯伯，剛才喘起來的時候，您�
     tsub('mythListH', ['📝 還沒改過來的錯誤觀念：在總結裡說清楚，就能改過來', '📝 Wrong ideas still standing: make each one clear in your summary to put it right', '📝 ความเชื่อผิดที่ยังไม่ได้แก้: พูดให้ชัดในสรุปเพื่อแก้ให้ถูก'])
     tsub('mythWarn', ['還有 {n} 個錯誤觀念沒在總結裡提到，李伯伯會照著舊想法做。要繼續修改，還是直接送出？', '{n} wrong ideas are not in your summary yet, and Uncle Lee will go on as before. Keep editing, or send anyway?', 'ยังมีความเชื่อผิดอีก {n} ข้อที่ยังไม่อยู่ในสรุป ลุงหลี่จะทำแบบเดิมต่อไป จะแก้ต่อ หรือส่งเลย?'])
     sub("</style>\n</head>", TB_CSS + "</style>\n</head>")
+
+    # ---------- chapter 3 without the contradiction duel (same as Cases A and C): he owns up as the finds are laid out ----------
+    i = s.index("  await say('chen','smug',['什麼證據不證據的！"); j = s.index("  $('#testiBanner').classList.add('hidden'); $('#testiDots').classList.add('hidden'); hideText();\n  if(S.visit>0){ resumePoint(); await heartLock(); }", i)
+    assert 'while(open()>0){' in s[i:j] and s.count("  await say('chen','smug',['什麼證據不證據的！") == 1
+    s = s[:i] + r"""  const T3=((S.seg||(S.seg={})).t3=S.seg.t3||{solved:{},tried:{},lost:{}}), solved=T3.solved, lost=T3.lost; TESTI.forEach(t=>{ if(!t.need.some(hasEv)) lost[t.id]=1; });
+  if(!T3.intro){
+    await say('chen','smug',['什麼證據不證據的！我當了一輩子兵，生活跟營區一樣，樣樣都有規矩！','Evidence? Hmph! I was a soldier all my life — I run things like a barracks, everything in order!','หลักฐานอะไรกัน! ลุงเป็นทหารมาทั้งชีวิต ใช้ชีวิตเหมือนอยู่ในค่าย ทุกอย่างมีระเบียบ!']);
+    show('yeh','R','neutral');
+    await say('yeh','neutral',['李伯伯，我們不是來挑毛病的。我們把剛才看到的東西一樣一樣放在桌上，您跟我們說說是怎麼回事，好嗎？','Uncle Lee, we are not here to find fault. We will put what we saw on the table, one thing at a time — will you tell us the story behind each?','ลุงหลี่ เราไม่ได้มาจับผิดนะ เราจะวางของที่เห็นเมื่อกี้บนโต๊ะทีละอย่าง ลุงช่วยเล่าให้ฟังหน่อยได้ไหมว่าเป็นมายังไง?']);
+    hide('yeh'); T3.intro=1; }
+  for(const s of TESTI){ if(solved[s.id]||lost[s.id]) continue; resumePoint(); if(S.visit<=0){ S.fl.duelCut=1; break; }
+    const ev=s.need.find(hasEv); emo('chen','shock');
+    await fpShow('item',ev,async()=>{ await say('me','neutral',presentAs(ev)); });
+    await sayLines(s.solve.slice(1)); reveal(s.p); solved[s.id]=1; S.usedEv.push(ev); logEvent({type:'present', st:s.id, item:ev, ok:true, auto:true}); }
+  const nLost=Object.keys(lost).length; if(nLost&&!T3.lostSaid){ T3.lostSaid=1; logEvent({type:'unprovable', st:Object.keys(lost)});
+    await say('pilly','sad',[`可惜……還有 ${nLost} 件事，我們搜查時沒找到相關的東西，他就沒有提起。`,`A pity… there ${nLost>1?'are':'is'} ${nLost} more thing${nLost>1?'s':''} we found nothing about in the search, so he never brought ${nLost>1?'them':'it'} up.`,`น่าเสียดาย… ยังมีอีก ${nLost} เรื่องที่เราหาของที่เกี่ยวข้องไม่เจอตอนค้นห้อง ลุงเลยไม่ได้พูดถึง`]); }
+""" + s[j:]
+    tsub('ch3t', ['攤開來說', 'Out in the open', 'เปิดใจคุยกัน'])
+    tsub('ch3s', ['把找到的東西放在桌上，聽他怎麼說', 'Lay out what you found and hear his side', 'วางสิ่งที่พบบนโต๊ะ แล้วฟังลุงเล่า'])
     open(dst, 'w', encoding='utf-8').write(s); print(dst, 'D2 preview built')
 
 main(sys.argv[1], sys.argv[2])

@@ -194,9 +194,11 @@ The pre/post test and the professor's content stay. Steps, added one by one:
    student circles the wrong lines (the old myths, mixed with 3 right lines) and picks the correction for each one
    caught. A wrong line left uncircled stays alive (q -1) and can still be fixed in the closing summary.
    `D2_MISS=1` makes the test miss one of each.
-3. A timeline of the night he fell, in place of the contradiction chapter.
-4. A prescriber map in the medicine review.
-5. An ending that changes with what the student found.
+3. (done) Chapter 3 has no contradiction duel (it plays the same in Cases A and C): the student's finds are laid out
+   one by one and he owns up, with the same admissions and the same problems revealed; the heart lock stays.
+
+Dropped on 11 Nov (they would feel like the same game again): timeline of the night he fell, prescriber map,
+variable ending.
 
 Test: `D2=1 CASE=d GAME_URL=http://localhost:8110/preview-d/?class=ph2026a python3 test_case.py zh practice`.
 

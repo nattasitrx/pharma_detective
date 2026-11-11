@@ -287,7 +287,7 @@ with sync_playwright() as p:
     if vis(pg, '#sDone'): pg.click('#sDone'); time.sleep(0.3)
     if vis(pg, '#modal'): pg.click('#mCard [data-mb="0"]'); time.sleep(0.3)
     notes['search_end'] = pg.evaluate("()=>({charges:window.__PD__.S.charges, visit:window.__PD__.S.visit, timeout:!!window.__PD__.S.timeout})")
-    pump(pg, until=lambda: vis(pg, '#testiUI'))
+    pump(pg, until=lambda: vis(pg, '#testiUI') or (os.environ.get('D2') and (vis(pg, '#locks') or vis(pg, '#inputBox') or vis(pg, '#tray'))))   # D2 preview: no duel
     time.sleep(0.5); shot(pg, '09_testimony')
     TESTI = pg.evaluate("()=>TESTI.map(t=>({need:[].concat(t.need)[0], near:t.near||[]}))")
     for k in range(30):

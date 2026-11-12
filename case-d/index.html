@@ -4321,7 +4321,7 @@ function acbCss(){ if($('#acbCss')) return; const st=document.createElement('sty
 #medrev .acard small{color:#6a6585;font-weight:700;font-size:12px}
 #medrev .acard .acls{display:block;font-style:normal;color:#8a4fb8;font-weight:700;font-size:11.5px;line-height:1.2;margin-top:2px}
 #medrev .acard.sel{box-shadow:0 0 0 4px #13a39a;background:#e8fbf8}
-#medrev .acard.ok{box-shadow:0 0 0 4px #18b07f;background:#eafff6}#medrev .acard.bad{box-shadow:0 0 0 4px #ff3d5c;background:#ffecee}
+#medrev .acard.soft{box-shadow:0 0 0 4px #ffc23d;background:#fffaee}#medrev .acard.ok{box-shadow:0 0 0 4px #18b07f;background:#eafff6}#medrev .acard.bad{box-shadow:0 0 0 4px #ff3d5c;background:#ffecee}
 #medrev .acb-load{display:flex;align-items:center;gap:10px;margin-top:6px}
 #medrev .acb-load .meter{flex:1;height:22px;border-radius:99px;background:#f0ecf8;overflow:hidden;box-shadow:inset 0 0 0 2px #e2dbf2}
 #medrev .acb-load .meter b{display:block;height:100%;width:0;background:linear-gradient(90deg,#ffd166,#ff3d5c);transition:width .3s}
@@ -4332,7 +4332,7 @@ function acbSortUI(m, i, n){
     const ex=EXAM(), ids=Object.keys(ACB_KEY), byId=Object.fromEntries(DRUGS.map(d=>[d.id,d])), at={};
     if(ex) for(let a=ids.length-1;a>0;a--){ const b=Math.floor(Math.random()*(a+1)); [ids[a],ids[b]]=[ids[b],ids[a]]; }
     const card=id=>{ const d=byId[id]; return `<button class="acard" data-d="${id}"><span>${esc(d.n.split(' ')[0])}<br><small>${esc(ACB_G[id]||d.g.split(/[ (]/)[0])}</small>${d.cls?`<i class="acls">${esc(L(d.cls))}</i>`:''}</span></button>`; };
-    host.innerHTML=`<div class="mr-main"><div class="mr-head"><span class="no">🚨 ${T('mission')} ${i+1}/${n}</span><span class="tx">${esc(L(['把李伯伯的藥依「抗膽鹼負擔」分類：拖進（或點選再點）下面三個籃子。','Sort Uncle Lee\'s medicines by anticholinergic load: drag them (or tap, then tap a basket) into the three baskets.','จัดยาของลุงหลี่ตาม "ภาระฤทธิ์ต้านโคลิเนอร์จิก": ลาก (หรือแตะแล้วแตะตะกร้า) ลงตะกร้าทั้งสามใบ']))}</span><span id="mrTimer"></span></div>
+    host.innerHTML=`<div class="mr-main"><div class="mr-head"><span class="no">🚨 ${T('mission')} ${i+1}/${n}</span><span class="tx">${esc(L(['把李伯伯的藥依「抗膽鹼負擔」分類：拖進（或點選再點）下面三個籃子。','Sort Uncle Lee\'s medicines by anticholinergic load: drag them (or tap, then tap a basket) into the three baskets.','จัดยาของลุงหลี่ตาม "ภาระฤทธิ์ต้านโคลิเนอร์จิก": ลาก (หรือแตะแล้วแตะตะกร้า) ลงตะกร้าทั้งสามใบ']))}<br><small style="font-weight:700;color:#c0304f">${esc(L(['計分只看🔴紅色籃子：找出 Beers 準則建議長者避免的藥。黃／白分錯不扣分。','Only the 🔴 red basket is scored: find the drugs the Beers Criteria say to avoid. Yellow vs white mistakes cost nothing.','นับคะแนนเฉพาะตะกร้า 🔴 แดง: หายาที่ Beers Criteria ให้ผู้สูงอายุเลี่ยง · ใส่เหลือง/ขาวสลับกันไม่หักคะแนน']))}</small></span><span id="mrTimer"></span></div>
       <div class="acb-tray" id="acbTray">${ids.map(card).join('')}</div>
       <div class="acb-bins">${ACB_BINS.map(([k,t])=>`<div class="acb-bin" data-bin="${k}"><h4>${esc(L(t))}</h4></div>`).join('')}</div>
       <div class="acb-load"><b style="white-space:nowrap">🧠 ${esc(L(['總負擔','Total load','ภาระรวม']))}</b><div class="meter"><b id="acbBar"></b></div><span class="acb-fx" id="acbFx">${ACB_FX.map(([e,t])=>`<span title="${esc(L(t))}">${e}</span>`).join('')}</span></div>
@@ -4356,10 +4356,11 @@ function acbSortUI(m, i, n){
       c.addEventListener('pointermove',mv); c.addEventListener('pointerup',up); c.addEventListener('pointercancel',up); }));
     const fin=()=>{ if(done) return; done=true; clearInterval(iv); D.choiceFinish=null; $('#mrTimer').innerHTML='';
       const strong=ids.filter(id=>at[id]==='strong'), ans=new Set(m.ans), hit=strong.filter(x=>ans.has(x)), extra=strong.filter(x=>!ans.has(x)), missed=m.ans.filter(x=>at[x]!=='strong');
-      const wrong=ids.filter(id=>!(ACB_KEY[id]||[]).includes(at[id]||'—'));
-      host.querySelectorAll('.acard').forEach(c=>{ const id=c.dataset.d; if(ex){ c.style.opacity='.6'; return; } c.classList.add(wrong.includes(id)?'bad':'ok'); });
+      const isS=id=>ACB_KEY[id][0]==='strong', wrong=ids.filter(id=>isS(id)!==(at[id]==='strong')), soft=ids.filter(id=>!wrong.includes(id)&&!ACB_KEY[id].includes(at[id]));
+      host.querySelectorAll('.acard').forEach(c=>{ const id=c.dataset.d; if(ex){ c.style.opacity='.6'; return; } c.classList.add(wrong.includes(id)?'bad':soft.includes(id)?'soft':'ok');
+        if(soft.includes(id)||(wrong.includes(id)&&!isS(id))){ const b=ACB_BINS.find(x=>x[0]===ACB_KEY[id][0]); c.querySelector('span').insertAdjacentHTML('beforeend',`<i class="acls" style="color:#8a6a00">➜ ${esc(L(b[1]).split(/[（(]/)[0].trim())}</i>`); } });
       const perfect=!extra.length&&!missed.length&&!wrong.length, partial=!perfect&&hit.length>0;
-      S.calc.acb={ok:perfect, wrong:wrong.length}; res({sel:strong, hit, extra, missed, perfect, partial, bins:Object.assign({},at), wrong}); };
+      S.calc.acb={ok:perfect, wrong:wrong.length, soft:soft.length}; res({sel:strong, hit, extra, missed, perfect, partial, bins:Object.assign({},at), wrong}); };
     $('#mrOk').onclick=()=>{ const left=ids.filter(id=>!at[id]); if(left.length){ sfx.error(); toast('🧠 '+L(['每個藥都要放進籃子','Put every medicine in a basket','ใส่ยาทุกตัวลงตะกร้า'])+` (${left.length})`); return; } fin(); };
     if(S.qte){ const T0=performance.now(), LIM=90; let last=LIM; $('#mrTimer').innerHTML=`<div id="qte" style="--p:100%">${LIM}</div>`;
       iv=setInterval(()=>{ const rem=Math.max(0,LIM-(performance.now()-T0)/1000), q=$('#mrTimer #qte'); if(q){ q.textContent=Math.ceil(rem); q.style.setProperty('--p',(rem/LIM*100)+'%'); }

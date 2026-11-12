@@ -158,7 +158,7 @@ const $=s=>document.querySelector(s), sleep=ms=>new Promise(r=>setTimeout(r,ms))
 const FAST=/[?&]fast=1/.test(location.search);   // for testing: no waits
 const W=ms=>sleep(FAST?Math.min(ms,30):ms);
 const S={};
-const IMG={dawn:1,morning:1,pet:1,noon:1,dusk:1,night:1,corridor:1,stairs:1,pot:1,radio:1,dinner2:1,dinner1:1,pills:1,phone:1,clinic:1,drawer:1,street:1,corridor_night:1,floor:1,door:1,kneel:1,bags:1,chart:1,dance:1,inhalers:1,photo:1,bill:1,leash:1,amei:1,doctor:1,dumplings:1,yellow:1,ceiling:1,intro:1,talkover:1,drawerask:1,resp_closed:1,spacer:1,potfound:1,teachback:1,amei_cry:1,goodbye:1,resp_open:1,resp_demo:1,exitdoor:1,outside:1,bench:1,fillbox:1,drawer_clean:1,calendar:1,tin:1,listen:1,listen2:1,lee_resp_closed:1,lee_resp_open:1,pills_am:1,pills_tue:1,pills_thu:1,pills_check:1};
+const IMG={dawn:1,morning:1,pet:1,noon:1,dusk:1,night:1,corridor:1,stairs:1,pot:1,radio:1,dinner2:1,dinner1:1,phone:1,clinic:1,drawer:1,street:1,corridor_night:1,floor:1,door:1,kneel:1,bags:1,chart:1,dance:1,inhalers:1,photo:1,bill:1,leash:1,amei:1,doctor:1,dumplings:1,yellow:1,ceiling:1,intro:1,talkover:1,drawerask:1,spacer:1,potfound:1,teachback:1,amei_cry:1,goodbye:1,resp_demo:1,exitdoor:1,outside:1,bench:1,fillbox:1,drawer_clean:1,calendar:1,tin:1,listen:1,listen2:1,lee_lee_pills_am:1,pills_tue:1,pills_thu:1,pills_check:1,stairs_am:1,stairs_am_dog:1,pot_small:1,dinner_amei:1};
 let DAY='วันอังคาร';
 let P={}; try{ P=JSON.parse(localStorage.getItem('lee7v1')||'{}')||{}; }catch(e){ P={}; }
 function saveP(){ try{ localStorage.setItem('lee7v1',JSON.stringify(P)); }catch(e){} }
@@ -188,7 +188,7 @@ function playTune(){ if(!AC) return; let t=0; const b=.44; TUNE.forEach(([n,l])=
 
 /* ---------------- the picture: dissolve, slow camera, effects ---------------- */
 let cur=0, camAnim=null;
-const CAM={ dawn:[[1.16,2,-2],[1.04,0,0]], morning:[[1.05,-1,0],[1.13,1.5,-1]], pet:[[1.2,-2,-6],[1.26,-3,-7]], noon:[[1.06,1,1],[1.14,-1.5,-1]], dusk:[[1.05,2,0],[1.2,7,2]], night:[[1.22,4,-5],[1.1,1,-2]], corridor:[[1.02,0,0],[1.05,0,0]], stairs:[[1.03,0,0],[1.07,1,-1]], corridor_night:[[1.02,0,0],[1.05,0,0]], clinic:[[1.04,-1,0],[1.12,1.5,-1.5]], street:[[1.04,0,1],[1.2,-2,-3]], floor:[[1.1,-2,1],[1.03,0,0]], door:[[1.04,-1,0],[1.16,-4,-2]], kneel:[[1.03,0,1],[1.12,0,-2]], dance:[[1.06,1,0],[1.18,-1,-2]], leash:[[1.04,0,2],[1.16,0,-3]], amei:[[1.04,-1,0],[1.16,-5,-1]], doctor:[[1.03,0,1],[1.13,0,-3]], ceiling:[[1.03,-1,-1],[1.12,1.5,1.5]], intro:[[1.03,0,1],[1.11,0,-2]], talkover:[[1.03,1,0],[1.1,-1,-1]], drawerask:[[1.03,-1,0],[1.12,-2,-2]], teachback:[[1.03,0,-1],[1.1,0,2]], amei_cry:[[1.03,0,1],[1.12,0,-3]], goodbye:[[1.03,1,0],[1.12,3,-2]], resp_demo:[[1.03,0,1],[1.12,0,-3]], exitdoor:[[1.02,0,1],[1.14,0,-3]], outside:[[1.1,0,1],[1.02,0,0]], bench:[[1.04,0,1],[1.16,2,-4]], listen:[[1.03,0,1],[1.11,0,-2]], listen2:[[1.03,0,1],[1.11,0,-2]] };
+const CAM={ dawn:[[1.16,2,-2],[1.04,0,0]], morning:[[1.05,-1,0],[1.13,1.5,-1]], pet:[[1.2,-2,-6],[1.26,-3,-7]], noon:[[1.06,1,1],[1.14,-1.5,-1]], dusk:[[1.05,2,0],[1.2,7,2]], night:[[1.22,4,-5],[1.1,1,-2]], corridor:[[1.02,0,0],[1.05,0,0]], stairs:[[1.03,0,0],[1.07,1,-1]], corridor_night:[[1.02,0,0],[1.05,0,0]], clinic:[[1.04,-1,0],[1.12,1.5,-1.5]], street:[[1.04,0,1],[1.2,-2,-3]], floor:[[1.1,-2,1],[1.03,0,0]], door:[[1.04,-1,0],[1.16,-4,-2]], kneel:[[1.03,0,1],[1.12,0,-2]], dance:[[1.06,1,0],[1.18,-1,-2]], leash:[[1.04,0,2],[1.16,0,-3]], amei:[[1.04,-1,0],[1.16,-5,-1]], doctor:[[1.03,0,1],[1.13,0,-3]], ceiling:[[1.03,-1,-1],[1.12,1.5,1.5]], intro:[[1.03,0,1],[1.11,0,-2]], talkover:[[1.03,1,0],[1.1,-1,-1]], drawerask:[[1.03,-1,0],[1.12,-2,-2]], teachback:[[1.03,0,-1],[1.1,0,2]], amei_cry:[[1.03,0,1],[1.12,0,-3]], goodbye:[[1.03,1,0],[1.12,3,-2]], resp_demo:[[1.03,0,1],[1.12,0,-3]], exitdoor:[[1.02,0,1],[1.14,0,-3]], outside:[[1.1,0,1],[1.02,0,0]], bench:[[1.04,0,1],[1.16,2,-4]], listen:[[1.03,0,1],[1.11,0,-2]], listen2:[[1.03,0,1],[1.11,0,-2]], stairs_am:[[1.03,0,0],[1.07,1,-1]], stairs_am_dog:[[1.03,0,0],[1.07,1,-1]] };
 function camera(k){ const c=CAM[k]||CAM.morning, f=p=>`scale(${p[0]}) translate(${p[1]}%,${p[2]}%)`; if(camAnim) camAnim.cancel();
   camAnim=$('#cam').animate([{transform:f(c[0])},{transform:f(c[1])}],{duration:FAST?100:26000,direction:'alternate',iterations:Infinity,easing:'ease-in-out'}); }
 async function show(k,ms){ const a=[$('#imA'),$('#imB')], nx=a[1-cur], old=a[cur]; nx.style.transitionDuration=(FAST?30:(ms||2000))+'ms'; old.style.transitionDuration=nx.style.transitionDuration; nx.src=src(k);
@@ -502,7 +502,7 @@ async function day2(){ newDay('วันพุธ'); const d1=P.d1||{}; Object.a
   cardOff(); S.meds=true;
   await say(['วันพุธเป็นวันหาหมอ\nปีที่แล้วผมไปเก้าสิบสามครั้ง สำนักงานประกันฯ คงคิดว่าผมป่วยหนัก','ความจริงง่ายกว่านั้นมาก']);
   const k=await choose([{t:'คลินิกผิวหนัง',s:'เรื่องคัน'},{t:'คลินิกหมออู๋',s:'เรื่องเข่า'}]); S.clinic=k===0?'skin':'knee';
-  await black(true,900); fx(''); await show('stairs',60); ramp(fanG,0,1); clock('08:10'); await black(false,1200);
+  await black(true,900); fx(''); await show('stairs_am',60); ramp(fanG,0,1); clock('08:10'); await black(false,1200);
   await say('วันนี้ไม่มีสายจูง มือว่างทั้งสองข้าง',{stay:1,q:1}); await steps({n:22}); $('#vig').style.opacity=0; energy(-2);
   await say(['ถึงข้างล่าง\nสี่ชั้น สิบเอ็ดนาที สถิติที่ดีที่สุดของสัปดาห์นี้']);
   await black(true,900); await show('clinic',60); clock('09:40'); await black(false,1400);
@@ -551,7 +551,7 @@ async function day3(){ newDay('วันพฤหัส'); Object.assign(S,{two:
   await say(['ผมเอนหลังลง\nจะพักสายตาสักครู่ ก่อนสี่โมง']);
   await black(true,3200); fx(''); clearTxt(); await W(700); await say('14:20',{big:1}); clearTxt(); await W(900);
   ramp(staticG,.012,1); if(AC){ ['G4','E4','D4','E4','C4'].forEach((n,i)=>note(N[n],1.4,.03,'triangle',i*.6)); } await W(3200); ramp(staticG,0,1.5);
-  await show('dusk',60); clock('18:35'); await say('18:35',{big:1}); await black(false,3000);
+  await show('leash',60); clock('18:35'); await say('18:35',{big:1}); await black(false,3000);
   await say(['ฟ้าเป็นสีส้มแล้ว\nวิทยุกำลังอ่านข่าวภาคค่ำ','ผมพลาดนัด\nนัดเดียวที่ผมไม่เคยพลาด','เสี่ยวเฮยนั่งอยู่ข้างสายจูง ไม่รู้ว่านั่งมานานเท่าไร\nผมไม่กล้าถามมัน','หัวยังหนักเหมือนสวมหมวกเหล็ก\nคืนนี้ผมวางชามใบเดียว มือเริ่มจำได้แล้ว ผมไม่รู้ว่าควรดีใจหรือเปล่า']);
   await show('night',3000); fx('Lamp'); clock('21:20'); card('pills_thu'); $('#cimg').classList.add('blur');
   await say(['ก่อนนอน ผมเปิดกล่องยา']); await lens('ลากนิ้วบนภาพ เพื่อเพ่งมองทีละช่อง',9); lensOff(true); await W(1600);
@@ -740,7 +740,7 @@ async function day5(){ newDay('วันเสาร์'); const d4=P.d4||{}; Ob
     else await say(['ผมพับกระดาษครึ่งหนึ่ง แล้วก็คลี่มันออกเหมือนเดิม']); }
   cardOff(); clock('10:00'); await say(['สิบโมง โทรศัพท์ดังอีกครั้ง\nมันไม่เคยดังสองครั้งในวันเดียว']); card('phone'); sfx.ring(); await choose([{t:'รับสาย'}]);
   await say(['"คุณปู่ครับ ผมเองครับ คุณหมอตอบกลับมาแล้วสองท่าน"','"ยาแก้แพ้ให้เหลือตัวเดียว แบบที่ไม่ง่วง ยาคลายกล้ามเนื้อเม็ดเหลืองให้หยุดครับ"\n"ส่วนยาเบาหวาน คุณหมอนัดคุณปู่ไปคุยวันพุธ ผมจะไปด้วย"','วันพุธ ผมมีนัดหาหมออยู่แล้ว\nแต่เป็นครั้งแรกที่จะมีคนไปด้วย']); cardOff();
-  card('pot',{steam:1});
+  card('pot_small',{steam:1});
   await say(['ผมล้างหม้อใบใหญ่ คว่ำไว้\nแล้วต้มข้าวต้มในหม้อใบเล็ก พอสำหรับวันนี้วันเดียว','ข้าวต้มที่ต้มวันนี้ กินวันนี้\nรสของมัน คือรสที่ผมลืมไปแล้วว่าเคยชอบ']); cardOff();
   await show('noon',3000); fx('Heat'); clock('13:00'); card('bill');
   await say(['"แอร์ยี่สิบเจ็ดองศากับพัดลม ค่าไฟวันหนึ่งไม่ถึงค่าข้าวต้มหนึ่งชามครับ\nคุณปู่จะคันน้อยลง หลับได้ แล้วก็ไม่หน้ามืด" เด็กคนนั้นคิดเลขให้ผมดูบนสมุด']);
@@ -756,9 +756,9 @@ async function day5(){ newDay('วันเสาร์'); const d4=P.d4||{}; Ob
   await say('ซ้าย ขวา ทีละขั้น',{stay:1,q:1}); const r=await steps({n:16, limit:.6}); $('#vig').style.opacity=0; energy(-2);
   await say(['ชั้นสอง\nต่ำกว่าวันอังคารหนึ่งชั้นเต็มๆ','ผมหยุด เพราะผมเลือกจะหยุด\nไม่ใช่เพราะโลกหมุน','เสี่ยวเฮยดมประตูห้องชั้นสองอยู่นาน\nมันไม่ได้ดมกลิ่นใหม่มาสองปีแล้ว']);
   await black(true,900); ramp(fanG,.05,1); await show('amei',60); clock('18:40'); await black(false,1400);
-  if(!S.told&&!S.called){ await say(['อาเหมยมาพร้อมผัดผัก\n"ลุงเดินกะเผลกนะคะ"','ผมอ้าปาก จะพูดว่า ปกติ']); await choose([{t:'บอกเธอ'}]); S.told=true; await show('amei_cry',2200);
+  if(!S.told&&!S.called){ await say(['อาเหมยมาพร้อมเกี๊ยวอีกกล่อง\n"ลุงเดินกะเผลกนะคะ"','ผมอ้าปาก จะพูดว่า ปกติ']); await choose([{t:'บอกเธอ'}]); S.told=true; await show('amei_cry',2200);
     await say(['"คืนวันพฤหัส ผมล้มในห้องน้ำ"','เธอไม่ได้ดุ เธอนั่งลงข้างผม จับแขนผมไว้สองมือ\n"ทำไมลุงไม่—" แล้วเธอก็หยุด "เจ็บตรงไหนบ้างคะ"','น้องเภสัชคนนั้นสอนเธอด้วย\nหรือไม่ก็ คนที่ห่วงใครจริงๆ จะถามเหมือนกันหมด']); }
-  else await say(['อาเหมยมาพร้อมผัดผัก\nเธอไม่ได้พูดเรื่องล้มอีก','เธอแค่เอาแผ่นกันลื่นไปปูในห้องน้ำรวม\nแล้วติดไฟดวงเล็กไว้ตรงทางเดิน ที่มันเปิดเองตอนมีคนเดินผ่าน']);
+  else await say(['อาเหมยมาพร้อมเกี๊ยวอีกกล่อง\nเธอไม่ได้พูดเรื่องล้มอีก','เธอแค่เอาแผ่นกันลื่นไปปูในห้องน้ำรวม\nแล้วติดไฟดวงเล็กไว้ตรงทางเดิน ที่มันเปิดเองตอนมีคนเดินผ่าน']);
   await show('night',3000); fx('Lamp'); clock('21:00');
   await say(['คืนนี้ผมไม่ได้กินยาเม็ดเหลือง\nความง่วงที่มา เป็นของผมเอง']);
   await black(true,2400); fx(''); clearTxt(); await W(500); P.money=S.money;
@@ -773,7 +773,7 @@ async function day6(){ newDay('วันอาทิตย์'); Object.assign(S
   clock('07:00'); card('phone'); await say('…',{stay:1,q:1}); S.ring=await ringGame();
   await say(['"ลุงหลี่ กินยาเช้าหรือยังคะ"']); cardPic('pills_am'); await tapPills(5); cardPic('phone');
   await say(['ห้าเม็ด\nเมื่อวานยังเจ็ด','"สิบโมงหนูขึ้นไปจัดยานะคะ"']); cardOff();
-  clock('10:00'); await show('amei',2400); sfx.knock();
+  clock('10:00'); await show('morning',2400); sfx.knock();
   await say(['วันอาทิตย์ อาเหมยมาจัดยาเหมือนทุกสัปดาห์']); card('fillbox');
   await say(['แต่วันนี้เธอไม่ได้จัดให้ เธอเลื่อนกล่องมาตรงหน้าผม\n"ลุงจัดเองค่ะ หนูดูเฉยๆ ตามกระดาษที่น้องเภสัชแปะไว้"']);
   await tapList(['จันทร์','อังคาร','พุธ','พฤหัส','ศุกร์','เสาร์','อาทิตย์'],'ใส่ยาช่องวัน');
@@ -794,9 +794,9 @@ async function day6(){ newDay('วันอาทิตย์'); Object.assign(S
   await say(['ชั้นหนึ่ง\nประตูตึกอยู่ตรงหน้า ห่างไปหกก้าว แดดเย็นลอดเข้ามาใต้บานประตู','ผมยืนมองมันอยู่นาน']);
   await choose([{t:'"พรุ่งนี้"'}]);
   await say(['ผมบอกเสี่ยวเฮย\nมันกระดิกหาง มันเชื่อผม','ขาขึ้นสี่ชั้น ผมพักสามครั้ง\nพักเพื่อหายใจ ไม่ใช่พักเพราะหน้ามืด สองอย่างนี้ไม่เหมือนกัน']);
-  await black(true,900); ramp(fanG,.05,1); await show('night',60); fx('Lamp'); clock('21:00'); await black(false,1400);
+  await black(true,900); ramp(fanG,.05,1); await show('night',60); fx('Lamp'); card('dinner_amei'); clock('21:00'); await black(false,1400);
   await say(['คืนนี้ผมวางชามสองใบ\nอีกใบของอาเหมย เธออยู่กินข้าวเย็นด้วย','มือผมวางถูกแล้ว เป็นครั้งแรกในรอบหกปี']);
-  await black(true,2400); fx(''); clearTxt(); await W(500);
+  cardOff(); await black(true,2400); fx(''); clearTxt(); await W(500);
   await reportCard('รายงานประจำวัน · วันอาทิตย์',['ตื่น 05.40','ลุกกลางดึก: ไม่มี','ยาเช้า: ห้าเม็ด (เคยเจ็ด)','จัดยาทั้งสัปดาห์: ด้วยมือตัวเอง','ซองยาในลิ้นชัก: ห้า (เคยสิบสาม)','เล่าเรื่องเพลงให้คนฟัง: หนึ่งครั้ง','ลงบันได: ถึงชั้นหนึ่ง เห็นประตู','ผู้ร่วมโต๊ะมื้อเย็น: หนึ่งคน','เต้นรำ: เก็บแรงไว้ พรุ่งนี้'],'เหตุการณ์ทั่วไป: ดีขึ้น','ซิ่วหลาน พรุ่งนี้ผมมีนัด\nข้างล่าง','พรุ่งนี้ วันที่เจ็ด'); dayEnd(6);
 }
 /* ---------------- Day 7: Monday — four floors ---------------- */
@@ -810,14 +810,14 @@ async function day7(){ newDay('วันจันทร์'); Object.assign(S,{r
   await say(['"ลุงหลี่ กินยาเช้าหรือยังคะ"\n"กินแล้ว"','คราวนี้เป็นความจริง ตั้งแต่ก่อนที่เธอจะถาม','"วันนี้ลุงจะไปไหนไหมคะ"\n"ลงไปข้างล่าง"','ปลายสายเงียบไปครู่หนึ่ง\n"หนูจะยืนดูจากหน้าต่างชั้นสองนะคะ"']); cardOff();
   await show('leash',2600); clock('08:00');
   await say(['เสี่ยวเฮยคาบสายจูงมารอ ตั้งแต่ผมยังไม่วางหู']); await choose([{t:'"ไปกันเถอะ"'}]);
-  await black(true,900); fx(''); await show('stairs',60); ramp(fanG,0,1); await black(false,1200);
+  await black(true,900); fx(''); await show('stairs_am_dog',60); ramp(fanG,0,1); await black(false,1200);
   const FL=[['สี่ชั้น',.0,.25,'ชั้นสาม\nที่ที่โลกเคยหมุน วันนี้มันอยู่นิ่ง'],['',.25,.5,'ชั้นสอง\nประตูห้องอาเหมยแง้มอยู่ ผมได้ยินเสียงคนกลั้นหายใจ'],['',.5,.75,'ชั้นหนึ่ง'],['',.75,1,'']];
   for(const [lab,f,t,line] of FL){ if(lab) await say(lab,{stay:1,q:1}); await steps({n:32, from:f, limit:t, easy:true}); $('#vig').style.opacity=0; if(line) await say([line]); }
   await show('exitdoor',2400); await say('ประตูตึก',{stay:1}); card('exitdoor'); await flick('up','ปัดนิ้วขึ้น เพื่อผลักประตู'); cardOff(); sfx.warm();
   $('#black').style.background='#fff6de'; await black(true,700); await show('outside',60); fx('Sun Dust'); clock('08:20'); await black(false,3200); $('#black').style.background='';
   await say(['แดดเช้า','ผมลืมไปแล้วว่ามันอุ่นแบบนี้\nเวลาที่ไม่ได้ผ่านกระจกหน้าต่าง']); sfx.bell();
   await say(['กริ๊ง กริ๊ง\nรถน้ำเต้าหู้']); await choose([{t:'ซื้อหนึ่งแก้ว',s:'NT$ 20'}]); S.money=Math.max(0,S.money-20); hud();
-  await say(['ผมจำหน้าแม่ค้าไม่ได้ แต่เธอจำผมได้\n"คุณปู่ชั้นสี่! ไม่ได้ลงมาตั้งนานเลยนะคะ"','หวาน อุ่น มีกลิ่นไหม้นิดๆ\nจำรสได้แล้ว']);
+  await say(['ผมจำหน้าเถ้าแก่ไม่ได้ แต่เขาจำผมได้\n"คุณปู่ชั้นสี่! ไม่ได้ลงมาตั้งนานเลยนะคะ"','หวาน อุ่น มีกลิ่นไหม้นิดๆ\nจำรสได้แล้ว']);
   await show('bench',3000);
   await say(['เราเดินไปถึงม้านั่งหน้าตลาด หกสิบก้าว ผมนับ\nแล้วก็เลิกนับ','เสี่ยวเฮยดมทุกอย่าง เสาไฟ ล้อจักรยาน รองเท้าเด็กนักเรียน','หมออธิบายว่า วันหนึ่งของมันยาวเท่าหนึ่งสัปดาห์ของคน\nวันนี้มันได้ใช้ครบทั้งสัปดาห์','ผมเงยหน้าขึ้นมอง\nหน้าต่างชั้นสี่ ม่านสีอิฐ จากข้างล่าง มันเล็กนิดเดียว','ที่หน้าต่างชั้นสอง อาเหมยยกมือให้']);
   await choose([{t:'ยกมือตอบ'}]);

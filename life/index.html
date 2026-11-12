@@ -84,6 +84,8 @@ html,body{-webkit-touch-callout:none;margin:0;height:100%;background:#1c1512;col
 #card .pic{position:relative;width:100%;aspect-ratio:4/3;overflow:hidden;border-radius:6px;background:#2a1e18}
 #card .pic img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:opacity 2.2s ease,filter 1.9s ease;animation:breathe 16s ease-in-out infinite alternate}
 @keyframes breathe{from{transform:scale(1.02)}to{transform:scale(1.1) translate(-1.5%,-1%)}}
+#card .pic img,#zoom img{pointer-events:none;-webkit-user-drag:none;user-drag:none}
+#card .pic{touch-action:none;cursor:grab}
 #card .pic img.blur{filter:blur(7px) brightness(.9)}
 .steam{position:absolute;left:38%;top:8%;width:26%;height:40%;pointer-events:none;filter:blur(9px);opacity:.55}
 .steam i{position:absolute;bottom:0;width:38%;height:60%;border-radius:50%;background:rgba(255,255,255,.75);animation:steam 4.5s ease-in infinite}
@@ -217,7 +219,7 @@ function cardPic(k){ const a=$('#cimg'); if(a) a.src=src(k); }
 /* ---------------- things a finger can do besides holding (on the close-up picture) ---------------- */
 const pic=()=>$('#card .pic');
 function hint(t){ const g=$('#gest'); if(g){ g.textContent=t||''; g.classList.toggle('on',!!t); } }
-function onPic(h){ const el=pic(); el.style.touchAction='none'; const L=[['pointerdown',h.down],['pointermove',h.move],['pointerup',h.up],['pointercancel',h.up]]; L.forEach(([k,f])=>f&&el.addEventListener(k,f)); return ()=>L.forEach(([k,f])=>f&&el.removeEventListener(k,f)); }
+function onPic(h){ const el=pic(); el.style.touchAction='none'; const dn=h.down; if(dn) h.down=e=>{ e.preventDefault(); dn(e); }; const L=[['pointerdown',h.down],['pointermove',h.move],['pointerup',h.up],['pointercancel',h.up]]; L.forEach(([k,f])=>f&&el.addEventListener(k,f)); return ()=>L.forEach(([k,f])=>f&&el.removeEventListener(k,f)); }
 const pos=e=>{ const r=pic().getBoundingClientRect(); return {x:(e.clientX-r.left)/r.width, y:(e.clientY-r.top)/r.height}; };
 /* rub back and forth along an axis until enough movement has added up (turning the base) */
 function rub(axis, need, label){ return new Promise(res=>{ hint(label); let last=null, sum=0, off=null; const fin=()=>{ off(); hint(''); res(); };
@@ -845,6 +847,7 @@ function drawDays(){ $('#days').innerHTML=[1,2,3,4,5,6,7].map(n=>`<button data-n
   $('#start').textContent='เริ่มวันที่ '+pickDay+' · วัน'+['','อังคาร','พุธ','พฤหัส','ศุกร์','เสาร์','อาทิตย์','จันทร์'][pickDay]; }
 drawDays();
 document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('dragstart',e=>e.preventDefault());
 $('#start').onclick=async()=>{ audio(); if(AC&&AC.state==='suspended') AC.resume(); sfx.warm(); const t=$('#title'); t.style.opacity=0; t.style.pointerEvents='none'; await W(1600); t.classList.add('hidden'); startDay(pickDay); };
 S.en=5; S.money=320; hud();
 </script>

@@ -123,6 +123,13 @@ html,body{-webkit-touch-callout:none;margin:0;height:100%;background:#1c1512;col
 #rail{position:relative;width:280px;height:54px;touch-action:none;cursor:pointer}#rail::before{content:"";position:absolute;left:0;right:0;top:23px;height:8px;border-radius:9px;background:#ecdcc0}#rail i{position:absolute;left:0;top:23px;height:8px;border-radius:9px;background:#e9a646}#rail b{position:absolute;top:5px;width:44px;height:44px;margin-left:-22px;border-radius:50%;background:#fffaf0;box-shadow:0 0 0 5px #e9a646,0 4px 10px rgba(120,80,40,.3)}
 .hidden{display:none!important}
 @media (min-width:481px){#app{border-radius:26px;height:min(100dvh,900px);margin-top:max(0px,calc((100dvh - 900px)/2))}}
+/* review 12 Nov: centred content that is taller than the screen could not be scrolled to its top */
+#diary{justify-content:flex-start}
+#panel{justify-content:flex-start;overflow-y:auto}
+#panel::before{content:"";margin-top:auto}#panel::after{content:"";margin-bottom:auto}
+#clock,#money{white-space:nowrap}
+@media (max-width:400px){#hud{font-size:12.5px;padding:9px 10px}#hud .r{gap:7px}#tr i{width:4px}#en span{display:none}}
+@media (max-height:700px){#view{max-height:47dvh}#txt{font-size:17.5px;line-height:1.7}#acts{gap:8px;margin-top:10px}.btn{padding:10px 16px}}
 </style>
 </head>
 <body>
@@ -481,9 +488,9 @@ function reportCard(title, lines, last, sign, next, extra, reply){ return new Pr
   if(next){ dn.textContent=next; dn.classList.add('on'); sfx.bell(); await W(2200); } res(); }); }
 function dayEnd(n){ P['d'+n]=JSON.parse(JSON.stringify(S)); P.done=Math.max(P.done||0,n); saveP(); window.__done=P['d'+n];
   $('#dbtn').innerHTML=(n<7?`<button class="btn go" data-go="${n+1}">ไปวันที่ ${n+1}</button>`:'')+`<button class="btn" data-go="${n}" style="text-align:center">เล่นวันที่ ${n} อีกครั้ง</button><button class="btn" data-go="0" style="text-align:center">กลับหน้าแรก</button>`;
-  $('#dbtn').querySelectorAll('.btn').forEach(b=>{ b.style.opacity=1; b.style.transform='none'; b.style.animation='none'; b.onclick=async()=>{ const g=+b.dataset.go; $('#dbtn').classList.remove('on'); $('#dbtn').innerHTML=''; $('#diary').classList.remove('on'); $('#black').style.opacity=1; await W(1600); if(g) startDay(g); else location.reload(); }; }); $('#dbtn').classList.add('on'); }
+  $('#dbtn').querySelectorAll('.btn').forEach(b=>{ b.style.opacity=1; b.style.transform='none'; b.style.animation='none'; b.onclick=async()=>{ const g=+b.dataset.go; $('#dbtn').classList.remove('on'); $('#dbtn').innerHTML=''; $('#diary').classList.remove('on'); $('#black').style.opacity=1; await W(1600); if(g) startDay(g); else location.reload(); }; }); $('#dbtn').classList.add('on'); setTimeout(()=>{ const d=$('#diary'); if(d.scrollHeight>d.clientHeight+4) d.scrollTo({top:d.scrollHeight,behavior:'smooth'}); },FAST?0:900); }
 async function rise(ms, hint){ await say('หนึ่ง… สอง…',{stay:1,q:1}); await hold('กดค้าง<br>เพื่อลุก', ms, hint||''); await show('dawn',60); $('#hud').classList.add('on'); ramp(fanG,.05,3); await black(false,3000); }
-function newDay(name){ DAY=name; Object.assign(S,{en:5, money:(P.money!=null?P.money:320)}); hud(); fx(''); clearTxt(); $('#txt').textContent=''; $('#vig').style.opacity=0; }
+function newDay(name){ DAY=name; const n=['','วันอังคาร','วันพุธ','วันพฤหัส','วันศุกร์','วันเสาร์','วันอาทิตย์','วันจันทร์'].indexOf(name), pv=P['d'+(n-1)]; Object.assign(S,{en:5, money:(pv&&pv.money!=null?pv.money:P.money!=null?P.money:320)}); hud(); fx(''); clearTxt(); $('#txt').textContent=''; $('#vig').style.opacity=0; }
 
 /* ---------------- Day 2: Wednesday — the day somebody phones ---------------- */
 async function day2(){ newDay('วันพุธ'); const d1=P.d1||{}; Object.assign(S,{ring:'',lie:false,clinic:''});
@@ -801,14 +808,14 @@ async function day6(){ newDay('วันอาทิตย์'); Object.assign(S
   await black(true,900); ramp(fanG,.05,1); await show('night',60); fx('Lamp'); card('dinner_amei'); clock('21:00'); await black(false,1400);
   await say(['คืนนี้ชามใบที่สองมีเจ้าของ\nอาเหมยอยู่กินข้าวเย็นด้วย ก่อนกลับไปเข้าเวรดึก','กินเสร็จ ผมหยิบสมุดเล่มเล็กออกมา เหมือนทุกคืน\n"เขียนอะไรทุกคืนคะ สิบเจ็ดปีแล้ว หนูไม่เคยถาม"']);
   const bk=await choose([{t:'ยื่นสมุดให้เธออ่าน'},{t:'"รายงานน่ะ ไม่มีอะไร"'}]); S.book=bk===0?'read':'keep';
-  await say(bk===0?['เธอเปิดอ่านทีละหน้า ช้าๆ\nรายงานถึงแม่ เจ็ดสิบสี่ปี สมุดสิบเก้าเล่ม เล่มนี้เล่มล่าสุด','เธอไม่ได้พูดอะไร\nเธอหยิบปากกาของผม แล้วเขียนอะไรบางอย่างต่อท้ายหน้าของวันนี้','"ห้ามแอบอ่านก่อนนอนนะ" เธอว่า\nทหารแก่ทำตามคำสั่ง']:['เธอพยักหน้า ไม่ถามต่อ\nเธอเก็บชาม ล้างตะเกียบสองคู่ วางคว่ำไว้คู่กัน','สมุดเล่มนี้ ผมยังไม่พร้อม\nแต่ผมรู้แล้วว่าวันหนึ่ง ผมจะยื่นให้เธอ']);
+  await say(bk===0?['เธอเปิดอ่านทีละหน้า ช้าๆ\nรายงานถึงแม่ เจ็ดสิบกว่าปี สมุดสิบเก้าเล่ม เล่มนี้เล่มล่าสุด','เธอไม่ได้พูดอะไร\nเธอหยิบปากกาของผม แล้วเขียนอะไรบางอย่างต่อท้ายหน้าของวันนี้','"ห้ามแอบอ่านก่อนนอนนะ" เธอว่า\nทหารแก่ทำตามคำสั่ง']:['เธอพยักหน้า ไม่ถามต่อ\nเธอเก็บชาม ล้างตะเกียบสองคู่ วางคว่ำไว้คู่กัน','สมุดเล่มนี้ ผมยังไม่พร้อม\nแต่ผมรู้แล้วว่าวันหนึ่ง ผมจะยื่นให้เธอ']);
   cardOff(); await black(true,2400); fx(''); clearTxt(); await W(500);
   await reportCard('รายงานประจำวัน · วันอาทิตย์',['ตื่น 05.40','ลุกกลางดึก: ไม่มี','ยาเช้า: ห้าเม็ด (เคยเจ็ด)','จัดยาทั้งสัปดาห์: ด้วยมือตัวเอง','ซองยาในลิ้นชัก: ห้า (เคยสิบสาม)','เล่าเรื่องเพลงให้คนฟัง: หนึ่งครั้ง','ลงบันได: ถึงชั้นหนึ่ง เห็นประตู','ผู้ร่วมโต๊ะมื้อเย็น: หนึ่งคน','เต้นรำ: เก็บแรงไว้ พรุ่งนี้','สมุดเล่มนี้: '+(S.book==='read'?'มีคนอ่านแล้วหนึ่งคน':'ยังเป็นความลับ อีกไม่นาน')],'เหตุการณ์ทั่วไป: ดีขึ้น','แม่ครับ พรุ่งนี้ผมมีนัด\nข้างล่าง','พรุ่งนี้ วันที่เจ็ด', '', S.book==='read'?'แม่คะ หนูชื่อเหมย\nวันนี้เขาจัดยาเองได้แล้ว แม่ไม่ต้องห่วงนะคะ':'เมียเจ้าดีนะ\nขอบใจเธอแทนแม่ด้วย'); dayEnd(6);
 }
 /* ---------------- Day 7: Monday — four floors ---------------- */
 async function day7(){ newDay('วันจันทร์'); Object.assign(S,{ring:''});
   await W(900); await say('05:40',{big:1});
-  await say(['วันจันทร์\nผมตื่นก่อนแตร เหมือนทุกวัน']);
+  await say(['วันจันทร์\nผมตื่นก่อนแตร เหมือนทุกวัน','วันนี้บำนาญออก\nหกวันที่นับถอยหลัง จบลงตรงนี้']); S.money+=500; hud();
   clock('05:44'); await rise(1900); await say(['…สาม\nพอดีสาม']);
   await show('morning',3000); fx('Sun Dust'); clock('06:30'); await greenRoutine(false);
   await say(['หมุน เปิด กด ปิด\nมือทำของมันเองแล้ว เหมือนที่มันเคยวางตะเกียบ']);

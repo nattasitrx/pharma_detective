@@ -223,8 +223,8 @@ copy the folder `life/` to `main:uncle-lee/` (unlisted). Day 1 (Tuesday) is done
 a night shift, and the nightly "daily report" to his wife that always ends "nothing to report".
 
 - Pictures: painted-look images made with Canva's image tool, in `life/img/*.jpg` (dawn, morning, pet, noon, dusk,
-  night, corridor, stairs, pot, radio, dinner2, dinner1, pills). **The files there now are placeholders** blown up
-  from 200 px thumbnails; replace them with the full-size downloads (same names; rooms square, close-ups 4:3).
+  night, corridor, stairs, pot, radio, dinner2, dinner1, pills). Since 12 Nov they are the real pictures, 1024 px on the long side (fetched from
+  the owner's Canva account through her own browser, then re-saved as JPEG; rooms square, close-ups 4:3).
   Hotspot positions on the morning picture are in `HS` (percent of the picture) and need a check with the real file.
 - Life in still pictures: slow camera drift per picture (`CAM`), dissolves between pictures (`show`), overlays
   (`fx`: sun, dust, heat, lamp), a first-person walk that zooms into the corridor/stairs picture while the button

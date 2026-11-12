@@ -266,3 +266,11 @@ a night shift, and the nightly "daily report" to his wife that always ends "noth
   new `calendar`, `tin`.
 - Sound is made in code. `?fast=1` runs without waits (tests); `window.__pick` / `window.__order` choose answers
   and the order of things tapped in the morning.
+
+## `mk_open_d.py` — Case D on a separate open page (12 Nov 2026)
+
+`main:case-d-open/` is the live Case D with one change: it ignores the instructor's "closed" switch, so it can be
+played while `case-d/` and the chooser still show Case D as closed. Same published texts/questions, same class links
+(`case-d-open/?class=...`), results go to the teacher server as usual. Not linked from anywhere. Rebuild it after any
+change to Case D: `python3 mk_open_d.py <main>/case-d/index.html <main>/case-d-open/index.html`. Delete the folder
+to close it.

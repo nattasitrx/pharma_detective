@@ -305,6 +305,14 @@ a night shift, and the nightly "daily report" to his wife that always ends "noth
   day 6 night he may hand her the notebook (`S.book`), and then day 6's reply is in her hand. Day 7: the yangge dance
   with his mother in the Qingdao courtyard (`yard_mom`, `yangge_mom`), Ah-Mei arriving at the bus stop after her
   night shift. New `photo`: the 2005 wedding photo (he 72, she 24). The dog is เจ้าดำ, as in Case D.
+- 12 Nov evening, review and bug test (all branches on phone/tablet/desktop, each day started fresh from the title,
+  every gesture at real speed with mouse and touch): (1) on short phones the diary page and the text panel were
+  centred with no way to scroll to their tops: now safe-centred and scrollable, the diary scrolls to its buttons,
+  and below 700 px height the picture is a little smaller; (2) a replayed day used the money of the latest day: now
+  the money the day really started with (`newDay`); (3) Monday is pension day (+NT$ 500), so he is never buying soy
+  milk with NT$ 0; (4) the wedding photo on the wall of the room pictures (morning, noon, dawn, night, pet, dance,
+  dusk = title, amei, door) now shows Lee at 72 and Ah-Mei at 24, pasted into the old frame and matched to each
+  picture's light; (5) the top bar stays on one line on narrow phones.
 - Sound is made in code. `?fast=1` runs without waits (tests); `window.__pick` / `window.__order` choose answers
   and the order of things tapped in the morning.
 

@@ -6,7 +6,11 @@
    pseudoephedrine = Case A m1) and m3 (sulfonylurea hypo = Case A m4, Case C m3). Ms Yeh names both problems at the
    start of the chapter and they are counted as found (P14, P16), so the problem list and the ranks still add up.
    With m3 gone, myth P8 (doubling missed doses at night: the secret) no longer repeats anything and is back.
-   The epilogue no longer asks for m1 / m3."""
+   The epilogue no longer asks for m1 / m3.
+4. (tester's notes, same day) Timed choices get at least the time it takes to read the options (zh 7, en 15, th 11
+   characters a second, plus 3 s): the long Thai options had 8-25 s however long they were. In the room search the
+   clues no longer light up under the mouse, and the magnifier cursor covers the whole picture, not just the clues,
+   so the student has to judge what looks wrong."""
 import os, json
 H = os.path.dirname(os.path.abspath(__file__)); f = f'{H}/d_orig.html'
 s = open(f, encoding='utf-8').read()
@@ -66,4 +70,11 @@ sub("b:mr('m3')?['🚑',['夜間低血糖跌倒住院'", "b:S.found.P8?['🚑',[
 sub("{k:'urine', ok:mr('m1')&&mr('m2'),", "{k:'urine', ok:mr('m2'),")
 sub("mr('m1')?['Clarinase 停了", "1?['Clarinase 停了")
 assert "mr('m1')" not in s and "mr('m3')" not in s
+# 4. reading time for timed choices; no clue glow in the search
+sub("    const box=$('#choices'); let h=''; const timed=o.timer&&S.qte&&!D.editPlay;",
+    "    if(o&&o.timer){ const rate={zh:7,en:15,th:11}[S.lang]||11, n=opts.reduce((a,op)=>a+L(op.t).length,0); o={...o, timer:Math.max(o.timer,Math.ceil(n/rate)+3)}; }   /* mk_dlite: time to read */\n    const box=$('#choices'); let h=''; const timed=o.timer&&S.qte&&!D.editPlay;")
+sub("#stage.searching #bg .hs:hover{filter:drop-shadow(0 0 10px #fff) drop-shadow(0 0 4px #ffe46b) brightness(1.15)}", "")
+import re as _re
+_m = _re.search(r'#stage\.searching #bg \.hs\{cursor:([^}]*)\}', s); assert _m
+s = s.replace(_m.group(0), _m.group(0) + '\n#stage.searching #bg{cursor:' + _m.group(1) + '}', 1)
 open(f, 'w', encoding='utf-8').write(s); print('lighter boss in;', len(my), 'myths')

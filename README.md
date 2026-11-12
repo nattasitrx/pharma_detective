@@ -340,3 +340,14 @@ played while `case-d/` and the chooser still show Case D as closed. Same publish
 (`case-d-open/?class=...`), results go to the teacher server as usual. Not linked from anywhere. Rebuild it after any
 change to Case D: `python3 mk_open_d.py <main>/case-d/index.html <main>/case-d-open/index.html`. Delete the folder
 to close it.
+
+### Script v6.1 (12 Nov 2026)
+The whole text of `life/index.html` was replaced with the user's rewritten script (`life_tools/v6/script_v6_1.md`,
+with its director's guide). Patches used, one per day: `life_tools/v6/v6_d*.py` (plain `sub(old,new)`).
+Besides wording: day 1 dog no longer gets salted egg; day 3 report no longer strikes the fall line; day 5 the
+"call the student" choice is always offered, air-con can be left off (`S.ac`), the player holds to wait for the dog on
+floor 2; day 6 apology for the sun-and-moon packet; day 7 hold to wait at the lamp post, the dance is seated
+(yard_mom -> amei_cry, no yangge_mom/dance picture), new letter, and a closing picture where the telephone rings and
+the player taps it (no button; a small hint after ~10 s). The three closing lines ("for you it was one hour...")
+are gone, as in the script. Saved-run key is now `lee7run3`. Pharmacy wording on day 4 is more cautious and still
+needs the instructor's check. Not done from the guide: a reduced-motion switch, a dedicated seated-dance picture.

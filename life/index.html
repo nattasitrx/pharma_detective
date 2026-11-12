@@ -160,7 +160,7 @@ const $=s=>document.querySelector(s), sleep=ms=>new Promise(r=>setTimeout(r,ms))
 const FAST=/[?&]fast=1/.test(location.search);   // for testing: no waits
 const W=ms=>sleep(FAST?Math.min(ms,30):ms);
 const S={};
-const IMG={dawn:1,morning:1,pet:1,noon:1,dusk:1,night:1,corridor:1,stairs:1,pot:1,radio:1,dinner2:1,dinner1:1,phone:1,clinic:1,drawer:1,street:1,corridor_night:1,floor:1,door:1,kneel:1,bags:1,chart:1,dance:1,inhalers:1,photo:1,bill:1,leash:1,amei:1,doctor:1,dumplings:1,yellow:1,ceiling:1,intro:1,talkover:1,drawerask:1,spacer:1,potfound:1,teachback:1,amei_cry:1,goodbye:1,resp_demo:1,exitdoor:1,outside:1,bench:1,fillbox:1,drawer_clean:1,calendar:1,tin:1,listen:1,listen2:1,lee_lee_pills_am:1,pills_tue:1,pills_thu:1,pills_check:1,stairs_am:1,stairs_am_dog:1,pot_small:1,dinner_amei:1,slippers:1,oldbag:1,kitchen_young:1,dance_young:1};
+const IMG={dawn:1,morning:1,pet:1,noon:1,dusk:1,night:1,corridor:1,stairs:1,pot:1,radio:1,dinner2:1,dinner1:1,phone:1,clinic:1,drawer:1,street:1,corridor_night:1,floor:1,door:1,kneel:1,bags:1,chart:1,dance:1,inhalers:1,photo:1,bill:1,leash:1,amei:1,doctor:1,dumplings:1,yellow:1,ceiling:1,intro:1,talkover:1,drawerask:1,spacer:1,potfound:1,teachback:1,amei_cry:1,goodbye:1,resp_demo:1,exitdoor:1,outside:1,bench:1,fillbox:1,drawer_clean:1,calendar:1,tin:1,listen:1,listen2:1,pills_am:1,lee_resp_closed:1,lee_resp_open:1,pills_tue:1,pills_thu:1,pills_check:1,stairs_am:1,stairs_am_dog:1,pot_small:1,dinner_amei:1,slippers:1,oldbag:1,kitchen_young:1,dance_young:1};
 let DAY='วันอังคาร';
 let P={}; try{ P=JSON.parse(localStorage.getItem('lee7v1')||'{}')||{}; }catch(e){ P={}; }
 function saveP(){ try{ localStorage.setItem('lee7v1',JSON.stringify(P)); }catch(e){} }

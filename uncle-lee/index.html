@@ -207,7 +207,12 @@ Object.keys(IMG).forEach(k=>{ const i=new Image(); i.src=src(k); });
 
 /* ---------------- sound (all made here: no files) ---------------- */
 let AC=null, master=null, fanG=null, staticG=null;
+/* recorded sounds (snd/*.mp3); each falls back to the old synthesised one if its file is missing */
+const SMP={}; let pantT=0;
+function smp(k,vol,rate,when){ if(!AC||FF()||!SMP[k]) return false; const s=AC.createBufferSource(); s.buffer=SMP[k]; s.playbackRate.value=rate||1; const g=AC.createGain(); g.gain.value=vol==null?.6:vol; s.connect(g); g.connect(master); s.start(AC.currentTime+(when||0)); return true; }
+function pant(v){ const t=performance.now(); if(t-pantT<1050) return; pantT=t; smp('pant',v||.55,.9+Math.random()*.2); }
 function audio(){ if(AC) return; try{ AC=new (window.AudioContext||window.webkitAudioContext)(); master=AC.createGain(); master.gain.value=.9; master.connect(AC.destination);
+  ['cough','bark','pant','grunt'].forEach(k=>fetch('snd/'+k+'.mp3').then(r=>r.ok?r.arrayBuffer():Promise.reject()).then(b=>AC.decodeAudioData(b,buf=>{ SMP[k]=buf; },()=>{})).catch(()=>{}));
   const buf=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate), d=buf.getChannelData(0); let last=0; for(let i=0;i<d.length;i++){ const w=Math.random()*2-1; last=(last+.02*w)/1.02; d[i]=last*3.2; }
   const s1=AC.createBufferSource(); s1.buffer=buf; s1.loop=true; const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=320; fanG=AC.createGain(); fanG.gain.value=0; s1.connect(lp); lp.connect(fanG); fanG.connect(master); s1.start();
   const wb=AC.createBuffer(1,AC.sampleRate,AC.sampleRate), wd=wb.getChannelData(0); for(let i=0;i<wd.length;i++) wd[i]=Math.random()*2-1;
@@ -220,7 +225,7 @@ function burst(freq,q,vol,dur,when,type){ if(!AC||FF()) return; const s=AC.creat
 const N={C4:261.6,D4:293.7,E4:329.6,G4:392,A4:440,C5:523.3,D5:587.3,E5:659.3,G5:784,A3:220,G3:196,E3:164.8,C3:130.8};
 const sfx={ tap(){ note(N.E5,.25,.04); }, soft(){ note(N.C5,.5,.06); note(N.G4,.6,.04,'sine',.08); }, warm(){ [N.C4,N.E4,N.G4,N.C5].forEach((f,i)=>note(f,1.6,.06,'sine',i*.1)); },
   low(){ note(N.A3,1.4,.07,'triangle'); note(N.E3,1.7,.06,'sine',.12); }, tick(){ note(1700,.03,.035,'square'); }, beat(){ note(58,.16,.2,'sine'); note(52,.2,.15,'sine',.14); },
-  step(){ burst(140,1.5,.22,.12); }, cough(){ for(let k=0;k<3;k++) burst(700+k*120,1.2,.34,.19,k*.26); }, puff(){ burst(3000,.7,.2,.3,0,'highpass'); }, lick(){ note(880,.08,.03); },
+  step(){ burst(140,1.5,.22,.12); }, cough(){ if(smp('cough',.75,.95+Math.random()*.1)) return; for(let k=0;k<3;k++) burst(700+k*120,1.2,.34,.19,k*.26); }, puff(){ burst(3000,.7,.2,.3,0,'highpass'); }, lick(){ note(880,.08,.03); },
   bell(){ note(N.E5,2.4,.05); note(N.G5,2.6,.04,'sine',.02); note(N.C5,3,.035,'sine',.04); } };
 /* the old tune on the radio: an original little waltz */
 const TUNE=[['E4',1],['G4',1],['A4',1],['C5',2],['A4',1],['G4',2],['E4',1],['D4',3],['E4',1],['G4',1],['A4',1],['D5',2],['C5',1],['A4',2],['G4',1],['C5',3],['E5',2],['D5',1],['C5',2],['A4',1],['G4',2],['E4',1],['G4',3],['A4',1],['G4',1],['E4',1],['D4',2],['E4',1],['C4',3]];
@@ -258,7 +263,7 @@ function hold(label, ms, hint){ return new Promise(res=>{ const a=$('#acts'); a.
 function heave(label, ms, hintT, glow){ return new Promise(res=>{ const a=$('#acts'); a.innerHTML=`<div id="holdW">${MT('ลุก')}<button id="hold"><span>${label}</span></button><div id="holdL">${hintT||'กดค้างเพื่อยันตัว · แรงหมดให้ปล่อยพัก'}</div></div>`;
   const b=$('#hold'), L=$('#holdL'), bl=$('#black'); let p=0, s=1, down=false, last=performance.now(), done=false, gave=false, n=0; if(glow) bl.style.transitionDuration='120ms';
   if(FAST){ setTimeout(()=>{ a.innerHTML=''; res(1); },30); return; }
-  b.onpointerdown=e=>{ e.preventDefault(); if(done) return; if(s<.3){ L.textContent='ยังไม่มีแรง… หายใจก่อน'; return; } down=true; gave=false; n++; b.classList.add('down'); burst(240,.7,.1,.4); L.textContent=n===1?'ฮึบ…':n===2?'ฮึ้บบ…':'ฮึ้บบบบ…'; };
+  b.onpointerdown=e=>{ e.preventDefault(); if(done) return; if(s<.3){ L.textContent='ยังไม่มีแรง… หายใจก่อน'; return; } down=true; gave=false; n++; b.classList.add('down'); smp('grunt',.5,.95+Math.random()*.1)||burst(240,.7,.1,.4); L.textContent=n===1?'ฮึบ…':n===2?'ฮึ้บบ…':'ฮึ้บบบบ…'; };
   b.onpointerup=b.onpointerleave=b.onpointercancel=()=>{ if(down&&!done) L.textContent=p>.7?'อีกนิดเดียว… หายใจ แล้วฮึบอีกที':'ตัวเอนกลับลงไป… หายใจ แล้วฮึบอีกที'; down=false; b.classList.remove('down'); };
   (function loop(now){ if(done) return; const dt=Math.min(60,now-last); last=now;
     if(down){ if(s>0){ p+=dt/(ms*.42)*(.4+.6*s); s=Math.max(0,s-dt/1200); } else { if(!gave){ gave=true; sfx.low(); b.classList.add('lock'); L.textContent='แขนสั่น… ปล่อยมือก่อน'; } p-=dt/900; } }
@@ -317,7 +322,7 @@ function steps({n, limit, from, easy, origin, zoom}){ return new Promise(res=>{ 
   const fin=()=>{ if(done) return; done=true; a.innerHTML=''; $('#zoom').style.transition=''; vig.style.opacity=end<1?.4:0; res({coughs,slips}); };
   let ending=false; const press=f=>{ if(lock||done||ending) return; const now=performance.now();
     if(f!==want){ slips++; shake=1; breath-=.12; sfx.low(); L.textContent='ผิดเท้า… เกือบไป เกาะราวไว้'; return; }
-    const quick=now-lastStep<420; lastStep=now; want=want==='L'?'R':'L'; prog=Math.min(end,prog+1/n); breath-=(easy?.03:.07)*(quick?2.2:1); bobv=1; sfx.step(); if(breath<.45) sfx.beat();
+    const quick=now-lastStep<420; lastStep=now; want=want==='L'?'R':'L'; prog=Math.min(end,prog+1/n); breath-=(easy?.03:.07)*(quick?2.2:1); bobv=1; sfx.step(); if(breath<.45){ sfx.beat(); pant(); }
     L.textContent=quick?'ช้าลงหน่อย… ทีละขั้น':(want==='L'?'ซ้าย…':'ขวา…'); a.querySelectorAll('#feet button').forEach(b=>b.classList.toggle('nx',b.dataset.f===want));
     if(prog>=end-1e-6&&!ending){ ending=true; setTimeout(fin,FAST?0:350); } };
   a.querySelectorAll('#feet button').forEach(b=>{ b.onpointerdown=e=>{ e.preventDefault(); press(b.dataset.f); }; b.classList.toggle('nx',b.dataset.f===want); });
@@ -345,7 +350,7 @@ function feel({limit}){ return new Promise(res=>{ const a=$('#acts'), end=limit|
 /* in a hurry: tap, tap, tap — and the breath runs out */
 function rush(){ return new Promise(res=>{ const a=$('#acts'); a.innerHTML=`<div id="holdW">${MT('ทาง',1)}<button id="hold"><span>แตะรัวๆ<br>เพื่อรีบ</span></button><div id="holdL"></div></div>`;
   const b=$('#hold'), L=$('#holdL'), vig=$('#vig'), set=zoomAt('50% 27%'); let prog=0, breath=1, lock=0, last=performance.now(), done=false, coughs=0, shake=0, bobv=0;
-  b.onpointerdown=e=>{ e.preventDefault(); if(lock||done) return; prog+=1/30; breath-=.062; bobv=1; sfx.step(); if(breath<.5) sfx.beat(); L.textContent='ก้าวที่ '+Math.min(23,Math.round(prog*23))+' จาก 23'; };
+  b.onpointerdown=e=>{ e.preventDefault(); if(lock||done) return; prog+=1/30; breath-=.062; bobv=1; sfx.step(); if(breath<.5){ sfx.beat(); pant(); } L.textContent='ก้าวที่ '+Math.min(23,Math.round(prog*23))+' จาก 23'; };
   (function loop(now){ if(done) return; const dt=Math.min(60,now-last); last=now;
     if(lock>0){ lock-=dt; if(lock<=0){ lock=0; b.classList.remove('lock'); L.textContent='ต้องรีบ… แต่รีบไม่ได้'; } } else breath=Math.min(1,breath+dt/5200);
     if(breath<=0&&!lock){ breath=.15; lock=2800; shake=1; coughs++; b.classList.add('lock'); sfx.cough(); L.textContent='แค่ก… แค่ก…'; }
@@ -372,7 +377,7 @@ function walk({stairs, limit, total, night, hurry}){ return new Promise(res=>{ c
   b.onpointerdown=e=>{ e.preventDefault(); if(!lock){ down=true; b.classList.add('down'); } }; b.onpointerup=b.onpointerleave=b.onpointercancel=()=>{ down=false; b.classList.remove('down'); };
   (function loop(now){ if(done) return; let dt=Math.min(60,now-last); last=now; if(FAST){ dt=400; down=breath>.4&&!lock; }
     if(lock>0){ lock-=dt; shake=Math.max(0,shake-dt/900); if(lock<=0){ lock=0; b.classList.remove('lock'); L.textContent='ทีละนิด… เดินแล้วหยุด หยุดแล้วหายใจ'; } }
-    else if(down){ prog+=dt/(stairs?15000:hurry?10500:13500); breath-=dt/(stairs?2300:night?2100:hurry?1900:2900); ph+=dt/330; beatT-=dt; stepT-=dt; if(beatT<=0){ sfx.beat(); beatT=260+breath*620; } if(stepT<=0){ sfx.step(); stepT=640; } }
+    else if(down){ prog+=dt/(stairs?15000:hurry?10500:13500); breath-=dt/(stairs?2300:night?2100:hurry?1900:2900); ph+=dt/330; beatT-=dt; stepT-=dt; if(beatT<=0){ sfx.beat(); beatT=260+breath*620; if(breath<.55) pant(.35+(.55-breath)); } if(stepT<=0){ sfx.step(); stepT=640; } }
     else breath=Math.min(1,breath+dt/3400);
     if(breath<=0&&!lock){ breath=.12; lock=2600; shake=1; down=false; coughs++; prog=Math.max(0,prog-.05); b.classList.remove('down'); b.classList.add('lock'); sfx.cough(); L.textContent='แค่ก… แค่ก… ต้องหยุดก่อน'; }
     b.style.setProperty('--p',breath); mt(prog,breath); vig.style.opacity=Math.pow(1-breath,1.4).toFixed(2);
@@ -507,7 +512,7 @@ async function report(){ const L=[];
 
 /* ---------------- shared by days 2-4 ---------------- */
 Object.assign(sfx,{ ring(){ for(let k=0;k<12;k++){ note(1320,.07,.05,'square',k*.09); note(1650,.07,.04,'square',k*.09+.045); } },
-  knock(){ for(let k=0;k<3;k++) burst(220,2,.5,.09,k*.34); }, thud(){ note(46,.5,.5,'sine'); burst(120,1,.5,.22); }, bark(){ for(let k=0;k<2;k++){ burst(520,3,.09,.12,k*.3); burst(900,3,.05,.1,k*.3+.03); } } });
+  knock(){ for(let k=0;k<3;k++) burst(220,2,.5,.09,k*.34); }, thud(){ note(46,.5,.5,'sine'); burst(120,1,.5,.22); }, bark(){ if(smp('bark',.6,.96+Math.random()*.08)) return; for(let k=0;k<2;k++){ burst(520,3,.09,.12,k*.3); burst(900,3,.05,.1,k*.3+.03); } } });
 /* the telephone: he likes to answer on the second ring */
 function ringGame(){ return new Promise(res=>{ const a=$('#acts'); let n=0, done=false, t=null;
   const fin=r=>{ if(done) return; done=true; clearTimeout(t); a.innerHTML=''; res(r); };

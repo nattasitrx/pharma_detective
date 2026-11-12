@@ -54,6 +54,11 @@ built on an older Case A, kept as `cd/a_base.html`. `rebuild_cd.sh` builds them 
 1. It applies the case add-ons to fresh copies:
    - `cd/mk_cgames.py` + `cd/c_games.js`: Case C hands-on games (hypo rescue, Fosamax morning, height).
    - `cd/mk_dsim.py` + `cd/d_isim.js`: Case D inhaler demos (MDI, spacer, Respimat) with technique scores.
+     Since 12 Nov 2026 every part of the drawing that can be tapped carries a dashed 👆 label (`SIM_TAG`, `SIM_TAGS`;
+     they follow the device and hide when the part cannot be used), the picture is captioned "tap the picture: the
+     inhaler" and the buttons "Uncle Lee's breathing"; a tap on an empty spot makes the labels wave. Students had said
+     they could not tell when to press a button and when to tap the picture. The labels name the parts, not the order,
+     so the technique score is unchanged.
    - `cd/mk_dacb.py` + `cd/d_acb.js`: Case D anticholinergic pick. Since 12 Nov 2026 it is one red basket ("avoid,
      Beers") and six cards (`ACB_IDS`; the answer `ACB_RED` = Benamine, Peace); a tap puts a card in or takes it out,
      and after Confirm each card that was picked or missed shows a one-line reason (`ACB_WHY`).

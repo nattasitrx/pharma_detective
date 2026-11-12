@@ -381,3 +381,20 @@ synthesised: `cough`, `grunt` (the free queue was busy) — drop the files in an
 - Ending: the caption now says it is the next Tuesday 07:00, the tap answers the call, two spoken lines follow, and the
   three closing lines are back. Soy-milk seller speaks as a man. New picture `busstop` (Canva MAHauSPLp2o).
 - Saved-run key `lee7run5`. Cough and grunt are still synthesised (ElevenLabs free queue busy twice).
+
+### Audit of pictures, systems and sound (13 Nov 2026, night)
+Sounds (`life/snd/`), all loaded at first tap with a synthesised fallback:
+- From the ESC-50 set (github.com/karolpiczak/ESC-50), only clips marked CC0 there, taken from freesound.org:
+  cough = 3-146873-A "Male sick cough"; knock = 1-52290-A "door knock.wav"; gulp = 3-145387-A "SwallowingLiquid.aif";
+  tick = 2-131943-A "Wind up clock with twin bell alarm"; drip = 3-166326-A "Water_dripping_echoing.wav";
+  birds = 4-223127-A "general birdsong.wav"; creak = 5-173568-A "creaking door.wav". Trimmed with ffmpeg, mono.
+- From the owner's ElevenLabs: bark, pant. `grunt` is still missing (free queue busy three times).
+- `amb(name, vol)` loops a room sound: clock while he waits by the telephone (day 1, every `ringGame`, the closing
+  picture), dripping tap on the bathroom floor (day 3), birds outside (day 7). `ambOff()` at every new day.
+- Telephone bell is now two struck gongs (still synthesised). Pills are swallowed with `gulp`, not a beep.
+Pictures: all 68 checked against the text. Changed: `pills_am` (clear box, Canva MAHaucx9ZWo). Text changed to fit
+its picture: day-2 stairs (he carries a cloth bag). Known and left: the nine visit pictures (intro, kneel, listen,
+listen2, drawerask, talkover, teachback, resp_demo, goodbye) show a different door/radio from the room pictures.
+Systems: pictures are now loaded per day (`preload`) instead of all 68 (10 MB) at the title; day-1 teaser no longer
+says he knows about Friday; floating hearts removed from the last dance; three questions to think about are added to
+the notebook once day 7 is done. Saved-run key `lee7run6`.

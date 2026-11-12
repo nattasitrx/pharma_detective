@@ -363,3 +363,10 @@ needs the instructor's check. Not done from the guide: a reduced-motion switch, 
 - New pictures: `hands` (day 7 seated dance), `sway` (day 4 ten seconds), `letter` (closing picture).
   Canva media: hands MAHauD-JYos, sway MAHauPd6i78, letter MAHauLh6rvM. `dance.jpg`, `yangge_mom.jpg` are unused.
 - Saved-run key is now `lee7run4`. The instructor check of pharmacy wording was waived by the owner (she is the author).
+
+### Recorded sounds (13 Nov 2026)
+`life/snd/*.mp3` are loaded at the first tap (`SMP`, `smp()`); each sound falls back to the old synthesised one if
+its file is missing. Made with the owner's ElevenLabs sound-effects (flow "Uncle Lee game sounds"), fetched through
+her browser, trimmed with ffmpeg (mono, 96k). Present: `bark` (first two barks of a 4 s take), `pant` (one wheezy
+breath, played about once a second when breath is low while walking / on stairs / rushing). Still missing, so still
+synthesised: `cough`, `grunt` (the free queue was busy) — drop the files in and they are used, no code change.

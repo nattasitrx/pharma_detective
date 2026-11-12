@@ -320,8 +320,8 @@ with sync_playwright() as p:
         ans = pg.evaluate(f"()=>window.__PD__.MISSIONS[{i}].ans")
         if pg.locator('#medrev .acb-bins').count():
             try:
-                for id_, bins in pg.evaluate("()=>Object.entries(ACB_KEY)"):
-                    pg.click(f'#medrev .acard[data-d="{id_}"]', timeout=8000); time.sleep(0.08); pg.click(f'#medrev .acb-bin[data-bin="{bins[0]}"] h4', timeout=8000); time.sleep(0.08)
+                for id_ in pg.evaluate("()=>ACB_RED"):   # red basket only (12 Nov 2026): a tap puts the card in
+                    pg.click(f'#medrev .acard[data-d="{id_}"]', timeout=8000); time.sleep(0.12)
             except Exception as e:
                 shot(pg, 'acb_fail'); print('ACB FAIL', pg.evaluate("()=>({hidden:document.querySelector('#medrev').className, tray:[...document.querySelectorAll('#acbTray .acard')].map(c=>c.dataset.d), bins:[...document.querySelectorAll('.acb-bin')].map(b=>b.dataset.bin+':'+[...b.querySelectorAll('.acard')].map(c=>c.dataset.d).join(',')), head:(document.querySelector('#medrev .mr-head .tx')||{}).textContent, timer:(document.querySelector('#mrTimer')||{}).textContent})")); raise
             notes['acb'] = True

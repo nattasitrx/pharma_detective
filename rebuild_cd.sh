@@ -3,7 +3,7 @@
 SP="$(cd "$(dirname "$0")" && pwd)"; cd $SP/cd || exit 1
 node --check c_games.js && node --check d_acb.js || exit 1
 cp c_orig_pregames.html c_orig.html && python3 mk_cgames.py && python3 mk_teach.py c || exit 1
-cp d_orig_presim.html d_orig.html && python3 mk_dsim.py && python3 mk_dacb.py && python3 mk_teach.py d || exit 1
+cp d_orig_presim.html d_orig.html && python3 mk_dsim.py && python3 mk_dacb.py && python3 mk_dlite.py && python3 mk_teach.py d || exit 1
 cd $SP && python3 cd/mk_cases.py $SP/build/pharma_detective_chen.html site 2>&1 | tail -2 && python3 mk_resume.py site/case-c/index.html site/case-d/index.html && python3 mk_clarity.py site/case-c/index.html site/case-d/index.html && python3 mk_lock.py site/case-c/index.html site/case-d/index.html && python3 mk_mobile.py site/case-c/index.html site/case-d/index.html && python3 mk_rank.py site/case-c/index.html site/case-d/index.html && python3 mk_zoom.py site/case-c/index.html site/case-d/index.html && python3 mk_live_d.py site/case-d/index.html || exit 1
 # Case A in the three-case site: the current build plus save-anywhere, clear right/wrong, and the live-Case-A fixes (mk_live_a.py)
 mkdir -p site/case-a && cp $SP/build/pharma_detective_chen.html site/case-a/index.html && python3 mk_resume.py site/case-a/index.html && python3 mk_clarity.py site/case-a/index.html && python3 mk_live_a.py site/case-a/index.html && python3 mk_lock.py site/case-a/index.html && python3 mk_mobile.py site/case-a/index.html && python3 mk_rank.py site/case-a/index.html && python3 mk_zoom.py site/case-a/index.html || exit 1

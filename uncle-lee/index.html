@@ -187,7 +187,7 @@ html,body{-webkit-touch-callout:none;margin:0;height:100%;background:#1c1512;col
 const $=s=>document.querySelector(s), sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const FAST=/[?&]fast=1/.test(location.search);   // for testing: no waits
 /* every tap, choice and gesture result of the day is logged; "continue" replays the log at once and carries on from there */
-const RUNKEY='lee7run5'; let RQ=[], LOG=[], RUNDAY=0;
+const RUNKEY='lee7run6'; let RQ=[], LOG=[], RUNDAY=0;
 const FF=()=>RQ.length>0, QUICK=()=>FAST||FF();
 let CALM=false; try{ const c=localStorage.getItem('lee7calm'); CALM=c==='1'||(c==null&&matchMedia('(prefers-reduced-motion: reduce)').matches); }catch(e){}
 function setCalm(v){ CALM=!!v; try{ localStorage.setItem('lee7calm',CALM?'1':'0'); }catch(e){} $('#app').classList.toggle('calm',CALM); const b=$('#pCalm'); if(b) b.textContent='ลดการเคลื่อนไหว: '+(CALM?'เปิดอยู่':'ปิดอยู่'); if(S&&S.pic) camera(S.pic); }
@@ -198,7 +198,7 @@ const REC=/[?&]rec=1/.test(location.search);
 function saveRun(){ if((FAST&&!REC)||!RUNDAY) return; try{ localStorage.setItem(RUNKEY,JSON.stringify({day:RUNDAY,log:LOG})); }catch(e){} }
 function loadRun(){ try{ const r=JSON.parse(localStorage.getItem(RUNKEY)||'null'); return r&&r.day&&r.log&&r.log.length>3?r:null; }catch(e){ return null; } }
 function clearRun(){ RUNDAY=0; try{ localStorage.removeItem(RUNKEY); }catch(e){} }
-function ffEnd(){ if(!RQ.length) $('#ffw').classList.remove('on'); }
+function ffEnd(){ if(!RQ.length){ $('#ffw').classList.remove('on'); if(typeof ambSync==='function') ambSync(); } }
 async function io(f){ if(RQ.length){ const v=RQ.shift(); LOG.push(v); ffEnd(); return v; } let v=await f(); if(v===undefined) v=0; LOG.push(v); saveRun(); return v; }
 function rnd(){ if(RQ.length){ const v=RQ.shift(); LOG.push(v); ffEnd(); return v; } const v=Math.random(); LOG.push(v); saveRun(); return v; }
 const W=ms=>sleep(FAST?Math.min(ms,30):FF()?0:ms);
@@ -208,16 +208,25 @@ let DAY='วันอังคาร';
 let P={}; try{ P=JSON.parse(localStorage.getItem('lee7v1')||'{}')||{}; }catch(e){ P={}; }
 function saveP(){ try{ localStorage.setItem('lee7v1',JSON.stringify(P)); }catch(e){} }
 const src=k=>'img/'+k+'.jpg';
-Object.keys(IMG).forEach(k=>{ const i=new Image(); i.src=src(k); });
+const LOADED={}; function preload(fs){ const t=fs.map(f=>String(f)).join(' ')+" 'dawn' 'lee_resp_closed' 'lee_resp_open' 'night' 'letter'"; (t.match(/'[a-z_0-9]+'/g)||[]).forEach(q=>{ const k=q.slice(1,-1); if(IMG[k]&&!LOADED[k]){ LOADED[k]=1; const i=new Image(); i.src=src(k); } }); }
+['dusk','dawn','morning'].forEach(k=>{ LOADED[k]=1; const i=new Image(); i.src=src(k); });
 
 /* ---------------- sound (all made here: no files) ---------------- */
 let AC=null, master=null, fanG=null, staticG=null;
 /* recorded sounds (snd/*.mp3); each falls back to the old synthesised one if its file is missing */
 const SMP={}; let pantT=0;
 function smp(k,vol,rate,when){ if(!AC||FF()||!SMP[k]) return false; const s=AC.createBufferSource(); s.buffer=SMP[k]; s.playbackRate.value=rate||1; const g=AC.createGain(); g.gain.value=vol==null?.6:vol; s.connect(g); g.connect(master); s.start(AC.currentTime+(when||0)); return true; }
+/* looping room sounds (clock, dripping tap, birds): amb(name, volume) fades one in, amb(name,0) fades it out */
+const AMB={}, AMBW={};
+function amb(k,v){ AMBW[k]=v||0; ambSync(); }
+function ambOff(){ Object.keys(AMBW).forEach(k=>AMBW[k]=0); ambSync(); }
+function ambSync(){ if(!AC) return; for(const k in AMBW){ const want=FF()?0:AMBW[k], a=AMB[k];
+  if(want>0&&!a&&SMP[k]){ const s=AC.createBufferSource(), g=AC.createGain(); s.buffer=SMP[k]; s.loop=true; g.gain.value=0; s.connect(g); g.connect(master); s.start(); AMB[k]={s,g}; ramp(g,want,1.2); }
+  else if(a&&want>0) ramp(a.g,want,1);
+  else if(a&&!want){ ramp(a.g,0,.8); const o=a.s; delete AMB[k]; setTimeout(()=>{ try{ o.stop(); }catch(e){} },1000); } } }
 function pant(v){ const t=performance.now(); if(t-pantT<1050) return; pantT=t; smp('pant',v||.55,.9+Math.random()*.2); }
 function audio(){ if(AC) return; try{ AC=new (window.AudioContext||window.webkitAudioContext)(); master=AC.createGain(); master.gain.value=.9; master.connect(AC.destination);
-  ['cough','bark','pant','grunt'].forEach(k=>fetch('snd/'+k+'.mp3').then(r=>r.ok?r.arrayBuffer():Promise.reject()).then(b=>AC.decodeAudioData(b,buf=>{ SMP[k]=buf; },()=>{})).catch(()=>{}));
+  ['cough','bark','pant','grunt','knock','gulp','creak','tick','drip','birds'].forEach(k=>fetch('snd/'+k+'.mp3').then(r=>r.ok?r.arrayBuffer():Promise.reject()).then(b=>AC.decodeAudioData(b,buf=>{ SMP[k]=buf; ambSync(); },()=>{})).catch(()=>{}));
   const buf=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate), d=buf.getChannelData(0); let last=0; for(let i=0;i<d.length;i++){ const w=Math.random()*2-1; last=(last+.02*w)/1.02; d[i]=last*3.2; }
   const s1=AC.createBufferSource(); s1.buffer=buf; s1.loop=true; const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=320; fanG=AC.createGain(); fanG.gain.value=0; s1.connect(lp); lp.connect(fanG); fanG.connect(master); s1.start();
   const wb=AC.createBuffer(1,AC.sampleRate,AC.sampleRate), wd=wb.getChannelData(0); for(let i=0;i<wd.length;i++) wd[i]=Math.random()*2-1;
@@ -392,7 +401,7 @@ function walk({stairs, limit, total, night, hurry}){ return new Promise(res=>{ c
     if(prog>=(limit||1)){ done=true; a.innerHTML=''; z.style.transition=''; vig.style.opacity=limit?.5:0; res({coughs}); return; } requestAnimationFrame(loop); })(last); }); }
 
 /* ---------------- Day 1: Tuesday ---------------- */
-async function day1(){
+async function day1(){ ambOff();
   DAY='วันอังคาร'; Object.assign(S,{en:5, money:320, meds:false, sour:false, bought:false, ac:false, coughs:0, walked:false, dbl:false, seen:{}}); hud(); fx(''); clearTxt(); $('#txt').textContent=''; $('#vig').style.opacity=0;
   await W(900);
   await say('05:40',{big:1});
@@ -427,12 +436,12 @@ async function morning(){ await show('morning',3200); fx('Sun Dust'); clock('06:
   }
   H.innerHTML='';
 }
-async function phone(){ clock('06:58');
+async function phone(){ clock('06:58'); amb('tick',.4);
   await say(['อาเหมย อายุสี่สิบเอ็ด\nภรรยาผมทำงานเป็นกะที่บ้านพักทหารผ่านศึกกังซาน กลับบ้านได้สัปดาห์ละสองสามวัน','วันที่ไม่ได้กลับ เธอดูแลคนแก่ของคนอื่นทั้งวัน\nถ้าไม่เข้าเวรดึก เธอจะโทรมาเจ็ดโมงตรง','"เหล่าหลี่ กินยาเช้าหรือยังคะ"\nเธอเรียกผมเหมือนเรียกเพื่อนรุ่นเดียวกัน ทั้งที่ผมแก่กว่าพ่อเธอ','ผมรับสายตอนกริ่งที่สองเสมอ\nกริ่งแรก เอาไว้แกล้งว่าผมไม่ได้รอ']);
   const T=[['07:00','…'],['07:06','กริ่งแรกยังไม่มา'],['07:15','นาฬิกาเดินดังกว่าทุกวัน'],['07:30','ผมวางหูกลับ\nไม่มีใครรู้ว่าผมลอง','ผมยกหูขึ้นฟัง มีสัญญาณ\nโทรศัพท์ไม่ได้เสีย']]; let k=0;
-  while(k<T.length){ clock(T[k][0]); sfx.tick(); await W(520); sfx.tick(); await W(520); sfx.tick(); if(T[k][2]) await say([T[k][2]]); await say(T[k][1],{stay:1,q:1});
+  while(k<T.length){ clock(T[k][0]); if(!SMP.tick){ sfx.tick(); await W(520); sfx.tick(); await W(520); sfx.tick(); } else await W(1400); if(T[k][2]) await say([T[k][2]]); await say(T[k][1],{stay:1,q:1});
     const c=await choose([{t:'รอต่ออีกหน่อย'},{t:'เลิกรอ'}]); if(c===1) break; k++; }
-  await say(['วันอังคาร\nเธอเข้าเวรดึก เพิ่งได้หลับเมื่อเช้านี้เอง','ดีแล้ว เธอควรได้นอน','ผมวางหูลงเบาๆ\nยังเหลือเสียงไว้ให้โทรศัพท์ดัง หากเธอตื่นขึ้นมาพอดี']);
+  await say(['วันอังคาร\nเธอเข้าเวรดึก เพิ่งได้หลับเมื่อเช้านี้เอง','ดีแล้ว เธอควรได้นอน','ผมวางหูลงเบาๆ\nยังเหลือเสียงไว้ให้โทรศัพท์ดัง หากเธอตื่นขึ้นมาพอดี']); amb('tick',0);
 }
 async function pot(){ clock('07:40'); card('pot',{steam:1});
   await say(['ข้าวต้มหม้อนี้ ผมต้มไว้ตั้งแต่วันอาทิตย์\nต้มครั้งเดียว กินสี่วัน เป็นยุทธวิธีประหยัดแก๊ส และประหยัดเข่า','เปิดฝา\nมีกลิ่นเปรี้ยวบางๆ ลอยขึ้นมา เหมือนคำเตือนที่พูดเบาเกินไป']);
@@ -514,21 +523,22 @@ async function report(){ const L=[];
   L.push('เต้นรำ: ยังไม่ได้เต้น');
   L.push('ผู้มาเยี่ยม: ไม่มี · สายเข้า: ไม่มี');
   P.money=S.money;
-  await reportCard('รายงานประจำวัน · วันอังคาร', L, 'เหตุการณ์ทั่วไป: ปกติ', 'แม่ครับ วันนี้ผมรอโทรศัพท์อยู่\nไม่ได้เป็นอะไร แค่รอ\nราตรีสวัสดิ์ครับ แม่', 'ศุกร์นี้มีคนนัดจะมา\nผมยังไม่รู้ว่าจะถามอะไรเขา', S.dbl?'02:10 — เหงื่อท่วมตัว มือสั่น ใจเต้นแรง คงฝันร้าย\nผมนอนนิ่งๆ ในความมืด รอให้มันผ่านไป':''); dayEnd(1); }
+  await reportCard('รายงานประจำวัน · วันอังคาร', L, 'เหตุการณ์ทั่วไป: ปกติ', 'แม่ครับ วันนี้ผมรอโทรศัพท์อยู่\nไม่ได้เป็นอะไร แค่รอ\nราตรีสวัสดิ์ครับ แม่', 'อีกสามวัน จะมีคนมาเคาะประตูห้องนี้\nผมยังไม่รู้', S.dbl?'02:10 — เหงื่อท่วมตัว มือสั่น ใจเต้นแรง คงฝันร้าย\nผมนอนนิ่งๆ ในความมืด รอให้มันผ่านไป':''); dayEnd(1); }
 
 /* ---------------- shared by days 2-4 ---------------- */
-Object.assign(sfx,{ ring(){ for(let k=0;k<12;k++){ note(1320,.07,.05,'square',k*.09); note(1650,.07,.04,'square',k*.09+.045); } },
-  knock(){ for(let k=0;k<3;k++) burst(220,2,.5,.09,k*.34); }, thud(){ note(46,.5,.5,'sine'); burst(120,1,.5,.22); }, bark(){ if(smp('bark',.6,.96+Math.random()*.08)) return; for(let k=0;k<2;k++){ burst(520,3,.09,.12,k*.3); burst(900,3,.05,.1,k*.3+.03); } } });
+Object.assign(sfx,{ ring(){ /* two gongs struck in turn, like the bell of an old dial telephone */ for(let k=0;k<30;k++){ const f=k%2?1865:1568, t=k*.043; note(f,.2,.03,'sine',t); note(f*2.76,.11,.011,'sine',t); note(f*5.4,.05,.004,'sine',t); } },
+  creak(){ smp('creak',.5,.95+Math.random()*.1)||note(1700,.03,.035,'square'); },
+  knock(){ if(smp('knock',.8)) return; for(let k=0;k<3;k++) burst(220,2,.5,.09,k*.34); }, thud(){ note(46,.5,.5,'sine'); burst(120,1,.5,.22); }, bark(){ if(smp('bark',.6,.96+Math.random()*.08)) return; for(let k=0;k<2;k++){ burst(520,3,.09,.12,k*.3); burst(900,3,.05,.1,k*.3+.03); } } });
 /* the telephone: he likes to answer on the second ring */
-function ringGame(){ return new Promise(res=>{ const a=$('#acts'); let n=0, done=false, t=null;
-  const fin=r=>{ if(done) return; done=true; clearTimeout(t); a.innerHTML=''; res(r); };
+function ringGame(){ return new Promise(res=>{ const a=$('#acts'); let n=0, done=false, t=null; amb('tick',.45);
+  const fin=r=>{ if(done) return; done=true; clearTimeout(t); a.innerHTML=''; amb('tick',0); res(r); };
   const go=()=>{ if(done) return; n++; sfx.ring(); if(n>5){ fin('late'); return; } t=setTimeout(go,FAST?40:2700); };
   a.innerHTML=`<button class="btn go" style="animation-delay:0s">รับสาย</button>`; a.querySelector('.btn').onclick=()=>{ sfx.soft(); fin(n<=1?'first':n===2?'second':'late'); };
-  t=setTimeout(go,FAST?20:1200); if(FAST) setTimeout(()=>{ const b=a.querySelector('.btn'); if(b&&n>=(window.__ring||2)) b.click(); else setTimeout(()=>{ const b2=a.querySelector('.btn'); if(b2) b2.click(); },120); },70); }); }
+  t=setTimeout(go,FAST?20:2600); if(FAST) setTimeout(()=>{ const b=a.querySelector('.btn'); if(b&&n>=(window.__ring||2)) b.click(); else setTimeout(()=>{ const b2=a.querySelector('.btn'); if(b2) b2.click(); },120); },70); }); }
 /* seven pills, one at a time */
 function tapPills(n){ return new Promise(res=>{ const a=$('#acts'), W7=['หนึ่ง','สอง','สาม','สี่','ห้า','หก','เจ็ด']; let k=0;
   a.innerHTML=`<button class="btn go" style="animation-delay:0s">กลืนเม็ดที่หนึ่ง</button>`; const b=a.querySelector('.btn');
-  b.onclick=()=>{ k++; note(520+k*40,.18,.05); if(k>=n){ a.innerHTML=''; res(); return; } b.textContent='กลืนเม็ดที่'+W7[k]; }; if(FAST){ for(let i=0;i<n;i++) setTimeout(()=>b.click(),20+i*5); } }); }
+  b.onclick=()=>{ k++; smp('gulp',.55,.92+Math.random()*.16)||note(520+k*40,.18,.05); if(k>=n){ a.innerHTML=''; res(); return; } b.textContent='กลืนเม็ดที่'+W7[k]; }; if(FAST){ for(let i=0;i<n;i++) setTimeout(()=>b.click(),20+i*5); } }); }
 /* a hold that gives way before the end (he cannot get up) */
 function holdFail(label, ms, at){ return new Promise(res=>{ const a=$('#acts'); a.innerHTML=`<div id="holdW">${MT('ลุก')}<button id="hold"><span>${label}</span></button><div id="holdL"></div></div>`;
   const b=$('#hold'); let p=0, down=FAST, last=performance.now(), done=false, fall=false;
@@ -546,7 +556,7 @@ function dayEnd(n){ P['d'+n]=JSON.parse(JSON.stringify(S)); P.done=Math.max(P.do
   $('#dbtn').innerHTML=(n<7?`<button class="btn go" data-go="${n+1}">ไปวันที่ ${n+1}</button>`:'')+`<button class="btn" data-go="0" style="text-align:center">กลับหน้าแรก</button>`; clearRun();
   $('#dbtn').querySelectorAll('.btn').forEach(b=>{ b.style.opacity=1; b.style.transform='none'; b.style.animation='none'; b.onclick=async()=>{ const g=+b.dataset.go; $('#dbtn').classList.remove('on'); $('#dbtn').innerHTML=''; $('#diary').classList.remove('on'); $('#black').style.opacity=1; await W(1600); if(g) startDay(g); else location.reload(); }; }); { const d=$('#diary'); if(d.scrollHeight>d.clientHeight+4) d.scrollTop=d.scrollHeight; } const db=$('#dbtn'); db.classList.add('on'); db.style.pointerEvents='none'; setTimeout(()=>{ db.style.pointerEvents=''; },FAST?0:900); }
 async function rise(ms, hint){ await show('dawn',60); await say('หนึ่ง… สอง…',{stay:1,q:1}); await heave('กดค้าง<br>เพื่อลุก', ms, hint||'', 1); $('#hud').classList.add('on'); ramp(fanG,.05,3); await black(false,3000); }
-function newDay(name){ DAY=name; const n=['','วันอังคาร','วันพุธ','วันพฤหัส','วันศุกร์','วันเสาร์','วันอาทิตย์','วันจันทร์'].indexOf(name), pv=P['d'+(n-1)]; Object.assign(S,{en:5, money:(pv&&pv.money!=null?pv.money:P.money!=null?P.money:320)}); hud(); fx(''); clearTxt(); $('#txt').textContent=''; $('#vig').style.opacity=0; }
+function newDay(name){ ambOff(); DAY=name; const n=['','วันอังคาร','วันพุธ','วันพฤหัส','วันศุกร์','วันเสาร์','วันอาทิตย์','วันจันทร์'].indexOf(name), pv=P['d'+(n-1)]; Object.assign(S,{en:5, money:(pv&&pv.money!=null?pv.money:P.money!=null?P.money:320)}); hud(); fx(''); clearTxt(); $('#txt').textContent=''; $('#vig').style.opacity=0; }
 
 /* ---------------- Day 2: Wednesday — the day somebody phones ---------------- */
 async function day2(){ newDay('วันพุธ'); const d1=P.d1||{}; Object.assign(S,{ring:'',lie:false,clinic:''});
@@ -569,7 +579,7 @@ async function day2(){ newDay('วันพุธ'); const d1=P.d1||{}; Object.a
   await say(['วันพุธเป็นวันหาหมอ\nปีที่แล้วผมไปเก้าสิบสามครั้ง สำนักงานประกันฯ คงคิดว่าผมป่วยหนัก','ความจริงง่ายกว่านั้นมาก']);
   const k=await choose([{t:'คลินิกผิวหนัง',s:'เรื่องคัน'},{t:'คลินิกหมออู๋',s:'เรื่องเข่า'}]); S.clinic=k===0?'skin':'knee';
   await black(true,900); fx(''); await show('stairs_am',60); ramp(fanG,0,1); clock('08:10'); await black(false,1200);
-  await say('วันนี้ไม่มีสายจูง มือว่างทั้งสองข้าง',{stay:1,q:1}); await steps({n:22}); $('#vig').style.opacity=0; energy(-2);
+  await say('วันนี้ไม่มีสายจูง\nมือหนึ่งถือถุงผ้าใส่บัตรนัด อีกมือเกาะราว',{stay:1,q:1}); await steps({n:22}); $('#vig').style.opacity=0; energy(-2);
   await say(['ถึงข้างล่าง\nสี่ชั้น สิบเอ็ดนาที สถิติที่ดีที่สุดของสัปดาห์นี้']);
   await black(true,900); await show('clinic',60); clock('09:40'); await black(false,1400);
   await say(['บัตรคิวของผมเลขสี่สิบเจ็ด\nบนจอเพิ่งเรียกเลขสิบสอง']);
@@ -586,7 +596,7 @@ async function day2(){ newDay('วันพุธ'); const d1=P.d1||{}; Object.a
   await say(['กลับถึงห้อง ผมเปิดลิ้นชัก','ซองที่สิบสาม\nหมอสี่คน ไม่มีคนไหนรู้ว่ามีอีกสามคน','บางซองยังไม่ได้แกะ\nฉลากทุกใบมีชื่อผมอยู่','ในห้องนี้ มีของที่เขียนชื่อผมอยู่ไม่กี่อย่าง']); cardPic('oldbag');
   await say(['ก้นลิ้นชัก มีซองยาเก่าอยู่ใบหนึ่ง กระดาษเหลือง มุมนุ่มเหมือนผ้า','ลายมืออาเหมย ปีแรกที่แต่งงาน ตัวโตเท่านิ้วโป้ง\nพระอาทิตย์หนึ่งดวง พระจันทร์หนึ่งดวง จุดเม็ดยาวาดด้วยปากกา','วันนั้นผมหาว่าเธอดูถูกผม\nเธอไม่ได้เถียง แค่เก็บปากกาลงกระเป๋า','ผมเห็นเธอร้องไห้ตอนล้างจาน\nแต่ยังไม่ยอมขอโทษ','ซองนั้นผมไม่ได้ทิ้ง\nสิบสามซองเป็นของหมอ ซองนี้เป็นของอาเหมย','ผมลูบรูปพระอาทิตย์ที่เธอวาด\nสีก็ยังไม่หลุด','มีคำหนึ่งที่ผมควรพูดตั้งแต่วันนั้น']); cardPic('tin');
   await say(['ขวดบำรุงเข่ากับใบเสร็จ ผมเก็บในกล่องขนมบนชั้น ใต้สมุดบัญชีบำนาญ\nกล่องนี้ อาเหมยไม่เคยเปิด']); cardOff();
-  await show('dusk',3000); clock('17:30'); sfx.knock();
+  await show('dusk',3000); clock('17:30'); sfx.creak();
   await say(['ห้าโมงครึ่ง เสียงไขกุญแจ\nรองเท้าแตะคู่เล็กข้างประตู ได้เจ้าของคืนมาสองชั่วโมง ก่อนเธอกลับไปเข้าเวรดึก']); await show('amei',2000);
   await say(['อาเหมย กับกล่องเกี๊ยว','"หนูห่อเยอะไป"\nเธอห่อเยอะไปแบบนี้ทุกครั้งที่กลับ เผื่อวันที่เธอไม่อยู่','เราเถียงกันเรื่องค่าไฟนิดหน่อย เธอว่าผมขี้เหนียวจนป่วย ผมว่าเธอใช้เงินแบบคนรุ่นใหม่\nเราอายุห่างกันสี่สิบเจ็ดปี บางวันคุยกันเหมือนคนละศตวรรษ','แล้วเธอก็เห็นสายจูงที่แขวนอยู่ข้างประตู\nเธอมองเจ้าดำ แล้วมองผม','"หนูพามันลงไปเดินให้นะ สิบนาที"']);
   const w=await choose([{t:'พยักหน้า'},{t:'"ไม่ต้องหรอก เธอเพิ่งเลิกงาน"'}]);
@@ -630,7 +640,7 @@ async function day3(){ newDay('วันพฤหัส'); Object.assign(S,{two:
   await show('corridor_night',60); clock('02:14'); ramp(fanG,.006,1); await black(false,1800);
   await say('ไม่ได้เปิดไฟ กลัวจะปลุกคนทั้งชั้น\nมือหนึ่งคลำผนังไป',{stay:1,q:1}); await feel({limit:.78});
   sfx.thud(); $('#black').style.transitionDuration='60ms'; $('#black').style.opacity=1; clearTxt(); $('#vig').style.opacity=0; await W(3200);
-  await show('floor',60); clock('02:19'); await black(false,5000); $('#vig').style.opacity=.35; sfx.bark();
+  await show('floor',60); clock('02:19'); amb('drip',.5); await black(false,5000); $('#vig').style.opacity=.35; sfx.bark();
   await say(['กระเบื้องเย็น','ผมไม่ได้ยินเสียงตัวเองล้ม\nได้ยินแค่เสียงไม้เท้ากลิ้งไปชนประตู','ไม้เท้าอยู่ห่างไปหนึ่งช่วงแขน\nหนึ่งช่วงแขนของคนที่ลุกไม่ขึ้น ไกลเท่ากับสี่ชั้น']); sfx.bark();
   await say(['ผมได้ยินเจ้าดำเห่าอยู่หลังประตูห้อง\nมันไม่ค่อยเห่าใครเลย','"เงียบก่อน" ผมกระซิบ\nกลัวใครจะตื่นขึ้นมาช่วย']);
   await say('…',{stay:1,q:1}); await holdFail('กดค้าง<br>เพื่อลุก',3000,.7);
@@ -640,7 +650,7 @@ async function day3(){ newDay('วันพฤหัส'); Object.assign(S,{two:
   await say('อีกครั้ง',{stay:1,q:1}); await heave('กดค้าง<br>เพื่อลุก',4400,'ช้าๆ… เกาะขอบอ่าง');
   $('#vig').style.opacity=0;
   await say(['ผมไม่ได้กลัวเจ็บ\nผมกลัวกลับไปไม่ถึงเจ้าดำ','สิบเอ็ดนาที\nผมจับเวลาจากเสียงน้ำหยด','ขากลับ ผมไม่ได้นับก้าว','เจ้าดำเลียมือผมอยู่นาน\nผมไม่บอกมันว่าผมอยู่ตรงนั้นนานเท่าไร','มันก็ไม่ถาม\nแค่เอาคางวางลงบนรองเท้าผม']);
-  await black(true,2600); clearTxt(); await W(500); P.money=S.money;
+  amb('drip',0); await black(true,2600); clearTxt(); await W(500); P.money=S.money;
   await reportCard('รายงานประจำวัน · วันพฤหัส',['ตื่น 05.41 ช้าไปหนึ่งนาที','ยาเช้า: '+(S.dbl?'กินรวมตอนกลางคืน':'ไม่ได้กิน'),'ยาเม็ดเหลือง: '+(S.two?'สองเม็ด':'หนึ่งเม็ด')+' อีกหนึ่งเม็ดก่อนนอน','วิทยุสี่โมง: พลาด','พาเจ้าดำลงไป: ไม่ได้ไป','เต้นรำ: ยังไม่ได้เต้น','02.10 ล้มในห้องน้ำ ลุกเองได้','ผู้มาเยี่ยม: ไม่มี · สายเข้า: ไม่มี'],'เหตุการณ์ทั่วไป: ปกติ','แม่ครับ ผมจับดินสอค้างอยู่ตรงคำนี้นานมาก\nผมไม่กล้าขีดมันทิ้ง ถ้าขีดทิ้ง คงต้องมีคนรู้\nแม่อย่าบอกอาเหมยนะ','พรุ่งนี้ บ่ายสองโมงครึ่ง จะมีคนมาเคาะประตู'); dayEnd(3);
 }
 /* ---------------- Day 4: Friday — the day somebody knocks. The visit follows the home-visit game (Case D), seen from the bed. ---------------- */
@@ -664,7 +674,7 @@ async function day4(){ newDay('วันศุกร์'); const anyDbl=(P.d1&&P
   await say('รีบ',{stay:1,q:1}); await rush(); $('#vig').style.opacity=0;
   await black(true,900); await show('morning',60); fx('Sun'); ramp(fanG,.05,1); clock('14:29'); await black(false,1200); $('#vig').style.opacity=.62;
   await say(['กลับถึงเตียงพอดี\nหน้าอกถูกนั่งทับเต็มน้ำหนัก ลมเข้าได้แค่ครึ่งเดียว']); sfx.knock();
-  await say(['เสียงเคาะประตู']); await show('door',1800); sfx.bark(); clock('14:30');
+  await say(['เสียงเคาะประตู']); sfx.creak(); await show('door',1800); sfx.bark(); clock('14:30');
   await say(['อาเหมยเปิดประตู\nคนเสื้อขาวสองคน คนหนึ่งผมหงอกแซม อีกคนยังเด็กมาก','ผมพยายามนั่งตัวตรง\nไม่อยากให้คนเพิ่งมาถึงเห็นว่าผมลุกเองลำบาก']);
   /* a wrong first move: he talks about the patient, not to him */
   await show('talkover',1800); trust(0);
@@ -893,7 +903,7 @@ async function day7(){ newDay('วันจันทร์'); Object.assign(S,{r
   await say(['ผมเคยลงไปหาหมอได้\nแต่วันนี้ไม่มีบัตรคิวในกระเป๋า','มีแค่สายจูง กระดาษนัด และเหรียญซื้อน้ำเต้าหู้']);
   const FL=[['สี่ชั้น',.0,.25,['ชั้นสาม\nผมหยุดพักตรงชานบันไดที่เจ้าดำเคยย้อนกลับมานั่งข้างผม','คราวนี้มันนั่งลงพร้อมกัน\nไม่ต้องเรียก']],['',.25,.5,['ชั้นสอง\nป้าห้องสองศูนย์หนึ่งถามว่า "ลงไปไหนคะ"','"พาหมาเดิน" ผมตอบ\nป้าเธอยิ้ม แล้วบอกให้เดินระวัง']],['',.5,.75,['ชั้นหนึ่ง']],['',.75,1,null]];
   for(const [lab,f,t,line] of FL){ if(lab) await say(lab,{stay:1,q:1}); await steps({n:32, from:f, limit:t, easy:true}); $('#vig').style.opacity=0; if(line) await say(line); }
-  await show('exitdoor',2400); await say('ประตูตึก',{stay:1}); card('exitdoor'); await flick('up','ปัดนิ้วขึ้น เพื่อผลักประตู'); cardOff(); sfx.warm();
+  await show('exitdoor',2400); await say('ประตูตึก',{stay:1}); card('exitdoor'); await flick('up','ปัดนิ้วขึ้น เพื่อผลักประตู'); cardOff(); sfx.creak(); amb('birds',.35);
   $('#black').style.background='#fff6de'; await black(true,700); await show('outside',60); fx('Sun Dust'); clock('08:20'); await black(false,3200); $('#black').style.background='';
   await say(['แดดเช้า','ผมหยุดตรงหน้าประตู\nแสงส่องลงที่ปลายรองเท้าพอดี','เจ้าดำก้าวนำไปหนึ่งก้าว\nแล้วหันกลับมารอ']); sfx.bell();
   await say(['กริ๊ง กริ๊ง\nรถน้ำเต้าหู้']); await choose([{t:'ซื้อหนึ่งแก้ว',s:'NT$ 20'}]); S.money=Math.max(0,S.money-20); hud();
@@ -905,12 +915,12 @@ async function day7(){ newDay('วันจันทร์'); Object.assign(S,{r
   await show('busstop',2600);
   await say(['ที่ป้ายรถเมล์ อาเหมยเพิ่งก้าวลงมา ยังสวมชุดทำงาน','เธอเห็นผมกับเจ้าดำแล้วหยุดเดิน\nยกมือให้ เหมือนวันพุธที่ผมยืนอยู่บนชั้นสี่']);
   await choose([{t:'ยกมือตอบ'}]);
-  await black(true,1600); ramp(fanG,.05,1); await show('dusk',60); fx('Sun Dust'); clock('16:00'); await black(false,2400);
+  amb('birds',0); await black(true,1600); ramp(fanG,.05,1); await show('dusk',60); fx('Sun Dust'); clock('16:00'); card('radio'); await black(false,2400);
   await say(['สี่โมงเย็น\nอาเหมยเปิดวิทยุให้ ผมไม่ต้องคลำหาคลื่น']); ramp(staticG,.004,.6); playTune(); await W(1600);
-  await say('เพลงเดิมดังขึ้น\nผมหลับตา และเห็นลานบ้านที่ชิงเต่าในฤดูหนาว',{stay:1,q:1}); await show('yard_mom',4200); fx('Sun'); await W(1200);
+  await say('เพลงเดิมดังขึ้น\nผมหลับตา และเห็นลานบ้านที่ชิงเต่าในฤดูหนาว',{stay:1,q:1}); cardOff(); await show('yard_mom',4200); fx('Sun'); await W(1200);
   await say(['แม่ถือผ้าแดง หมุนตัวหนึ่งรอบ\nแล้วยื่นมือมาหาผม','เมื่อก่อนผมปล่อยให้มือแม่ค้างอยู่แบบนั้น']);
   await choose([{t:'เดินเข้าไปหาแม่'}]); playTune();
-  await say('ผมยื่นมือไป',{stay:1,q:1}); await show('hands',5200); fx('Sun Dust'); hearts(.5,.5);
+  await say('ผมยื่นมือไป',{stay:1,q:1}); await show('hands',5200); fx('Sun Dust');
   await say(['นิ้วอาเหมยแตะเข้ากับมือผม','เมื่อลืมตา ผมยังนั่งอยู่บนเก้าอี้\nเธอนั่งอยู่ตรงข้าม','ผมขยับปลายเท้าตามเพลง\nเธอขยับตาม ผิดจังหวะเหมือนเมื่อวาน','เจ้าดำมานอนหนุนรองเท้าผม\nเราไม่ต้องลุกขึ้น ก็เต้นด้วยกันได้','สามนาทีสิบวินาที\nคราวนี้ผมไม่ปล่อยมือก่อนเพลงจบ']); ramp(staticG,0,2);
   await show('night',3200); fx('Lamp'); clock('21:00');
   await say(['คืนนี้ผมวางตะเกียบสองคู่\nอาเหมยต้องกลับไปเข้าเวร ผมกินข้าวคนเดียว','ผมล้างชามใบที่สอง คว่ำไว้ข้างชามของผม\nไม่ได้เก็บเข้าตู้','พรุ่งนี้เธอจะกลับมา\nผมรู้ว่าเธอจะโทรมาก่อน']);
@@ -923,21 +933,21 @@ async function finale(){ const pg=$('#pg'), dn=$('#dnext'); dn.classList.remove(
   pg.style.opacity=0; await W(1800);
   /* closing picture: the letter by the telephone; it rings, and the player lifts the receiver */
   pg.innerHTML=`<img id="endph" src="${src('letter')}" alt="" style="display:block;width:100%;border-radius:4px;cursor:pointer">`; pg.style.background='#fffaf0'; pg.style.padding='9px 9px 12px'; pg.style.opacity=1;
-  dn.textContent='เช้าวันอังคาร · 07:00\nจดหมายพับวางรออยู่ข้างโทรศัพท์'; dn.classList.add('on'); await W(4600);
+  amb('tick',.4); dn.textContent='เช้าวันอังคาร · 07:00\nจดหมายพับวางรออยู่ข้างโทรศัพท์'; dn.classList.add('on'); await W(4600);
   sfx.ring(); dn.textContent='กริ่งแรก\nวันนี้ผมไม่ต้องแกล้งว่ากำลังยุ่ง'; await W(3400);
   sfx.ring(); dn.textContent='กริ่งที่สอง…\n(แตะที่โทรศัพท์ เพื่อรับสาย)';
   await io(()=>new Promise(res=>{ const el=$('#endph'); const t=setInterval(()=>sfx.ring(),3200); const f=()=>{ clearInterval(t); el.onclick=null; res(0); }; el.onclick=f; if(FAST) setTimeout(f,20); }));
-  sfx.soft(); dn.textContent='"เหล่าหลี่ กินยาเช้าหรือยังคะ"'; await W(3800);
+  amb('tick',0); sfx.soft(); dn.textContent='"เหล่าหลี่ กินยาเช้าหรือยังคะ"'; await W(3800);
   dn.textContent='"กินแล้ว"\n"วันนี้ผมนั่งรอเธอโทรมา"'; await W(5200);
   dn.classList.remove('on'); await W(1400); pg.style.opacity=0; await W(2600); pg.style.display='none'; pg.style.background=''; pg.style.padding=''; dn.classList.add('big');
   for(const t of ['สำหรับคุณ\nมันคือการเยี่ยมบ้านหนึ่งชั่วโมง','สำหรับเขา\nมันคือเจ็ดวันนี้','และทุกเช้าหลังจากนี้ ที่เขารับโทรศัพท์']){ dn.textContent=t; dn.classList.add('on'); await W(4400); dn.classList.remove('on'); await W(2400); }
   dn.textContent='เจ็ดวันของลุงหลี่'; dn.classList.add('on'); await W(1500); }
 
 const DAYS={1:day1,2:day2,3:day3,4:day4,5:day5,6:day6,7:day7};
-function startDay(n,log){ $('#hud').classList.remove('on'); RUNDAY=n; LOG=[]; RQ=log?log.slice():[]; if(RQ.length) $('#ffw').classList.add('on'); saveRun(); (DAYS[n]||day1)(); }
+function startDay(n,log){ $('#hud').classList.remove('on'); preload(n===1||!DAYS[n]?[day1,morning,phone,pot,toilet,noon,radio,evening,dinner,night,report]:[DAYS[n],greenRoutine]); RUNDAY=n; LOG=[]; RQ=log?log.slice():[]; if(RQ.length) $('#ffw').classList.add('on'); saveRun(); (DAYS[n]||day1)(); }
 ['choose','hold','heave','holdFail','rub','flick','shake','tapPic','lens','breathPress','ringGame','steps','feel','rush','walk','tapPills','tapList','countHold'].forEach(n=>{ const f=window[n]; window[n]=(...a)=>io(()=>f(...a)); });
 $('#pauseB').onclick=e=>{ e.stopPropagation(); $('#pause').classList.add('on'); if(AC) AC.suspend(); };
-function archive(){ const R=P.rep||{}, pl=t=>typeof t==='string'?t:`<s>${t.strike}</s>`; $('#arch').innerHTML='<button class="btn x">ปิดสมุด</button><h2>สมุดรายงานถึงแม่</h2>'+[1,2,3,4,5,6,7].filter(n=>R[n]).map(n=>{ const r=R[n]; return `<div class="pg"><b>${r.title}</b>`+r.lines.map(t=>`<p>${pl(t)}</p>`).join('')+`<p class="last">${r.last}</p><p style="white-space:pre-line">${r.sign}</p>`+(r.reply?`<p class="reply">${r.reply}</p>`:'')+'</div>'; }).join(''); $('#arch').classList.add('on'); $('#arch').scrollTop=0; $('#arch .x').onclick=()=>$('#arch').classList.remove('on'); }
+function archive(){ const R=P.rep||{}, pl=t=>typeof t==='string'?t:`<s>${t.strike}</s>`; $('#arch').innerHTML='<button class="btn x">ปิดสมุด</button><h2>สมุดรายงานถึงแม่</h2>'+[1,2,3,4,5,6,7].filter(n=>R[n]).map(n=>{ const r=R[n]; return `<div class="pg"><b>${r.title}</b>`+r.lines.map(t=>`<p>${pl(t)}</p>`).join('')+`<p class="last">${r.last}</p><p style="white-space:pre-line">${r.sign}</p>`+(r.reply?`<p class="reply">${r.reply}</p>`:'')+'</div>'; }).join('')+((P.done||0)>=7?'<div class="pg"><b>ชวนคิดหลังเล่นจบ</b><p>ช่วงไหนที่คุณยังจำภาพหรือเสียงได้</p><p>&nbsp;</p><p>คุณรู้สึกอย่างไร ตอนลุงหลี่ถูกถามเรื่องยาข้ามหัว</p><p>&nbsp;</p><p>ถ้าได้ไปเยี่ยมบ้านคนไข้จริง คุณจะทำอะไรต่างจากเดิม</p></div>':''); $('#arch').classList.add('on'); $('#arch').scrollTop=0; $('#arch .x').onclick=()=>$('#arch').classList.remove('on'); }
 if(P.rep&&Object.keys(P.rep).length) $('#archB').style.display='block'; $('#archB').onclick=archive;
 $('#pCalm').onclick=()=>setCalm(!CALM); setCalm(CALM);
 $('#pGo').onclick=()=>{ $('#pause').classList.remove('on'); if(AC) AC.resume(); };

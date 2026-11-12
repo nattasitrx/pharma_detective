@@ -351,3 +351,15 @@ floor 2; day 6 apology for the sun-and-moon packet; day 7 hold to wait at the la
 the player taps it (no button; a small hint after ~10 s). The three closing lines ("for you it was one hour...")
 are gone, as in the script. Saved-run key is now `lee7run3`. Pharmacy wording on day 4 is more cautious and still
 needs the instructor's check. Not done from the guide: a reduced-motion switch, a dedicated seated-dance picture.
+
+### Getting up, progress bars, calm mode, three pictures (13 Nov 2026)
+- `heave()` replaces the plain hold for getting out of bed (and for getting up from the bathroom floor): holding
+  lifts him while strength (ring on the button) lasts ~1.2 s; then the arm gives way and he sinks; letting go refills
+  strength while he sinks slowly. The dawn picture brightens with progress. `rise(ms)` sets how heavy the day is.
+- Every hold / walk / stairs / wall-feel / rush control now shows its hint and a progress bar ABOVE the button
+  (`MT()`, `mt()`), because a finger covered the ring. Walk and rush also show breath there.
+- Calm mode (`CALM`, `setCalm`, key `lee7calm`, button in the pause screen; default follows prefers-reduced-motion):
+  no camera drift, bob, shake or looping animations, short fades.
+- New pictures: `hands` (day 7 seated dance), `sway` (day 4 ten seconds), `letter` (closing picture).
+  Canva media: hands MAHauD-JYos, sway MAHauPd6i78, letter MAHauLh6rvM. `dance.jpg`, `yangge_mom.jpg` are unused.
+- Saved-run key is now `lee7run4`. The instructor check of pharmacy wording was waived by the owner (she is the author).

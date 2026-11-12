@@ -76,7 +76,9 @@ html,body{-webkit-touch-callout:none;margin:0;height:100%;background:#1c1512;col
 #hold span{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;font:600 15px/1.3 'Sarabun',sans-serif;color:var(--ink);text-align:center;padding:16px}
 #hold.down{transform:scale(.95)}
 #hold.lock{filter:grayscale(.7);opacity:.6}
-#holdL{font:400 14px/1.4 'Sarabun',sans-serif;color:var(--soft);text-align:center;min-height:1.4em}
+#holdL{font:400 14px/1.4 'Sarabun',sans-serif;color:var(--soft);text-align:center;min-height:1.4em;order:-3}
+.mtw{order:-2;display:flex;align-items:center;gap:8px;font:600 12px/1 'Sarabun',sans-serif;color:var(--soft)}.mtw span{min-width:22px;text-align:right}.mtw div{width:210px;height:10px;border-radius:9px;background:#ecdcc0;overflow:hidden}.mtw i{display:block;height:100%;width:0;border-radius:9px;background:var(--terra)}#mb i{background:#e9a646;width:100%}
+#app.calm *,#app.calm *::before,#app.calm *::after{animation-duration:.01s!important;animation-iteration-count:1!important}
 /* close-up */
 #card{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(22,14,10,.62);opacity:0;pointer-events:none;transition:opacity .9s;z-index:3;backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
 #card.on{opacity:1;pointer-events:auto}
@@ -162,7 +164,7 @@ html,body{-webkit-touch-callout:none;margin:0;height:100%;background:#1c1512;col
     <div id="hud"><span id="clock"></span><span class="r"><span id="tr"></span><span id="en"></span><span id="money"></span><button id="pauseB" aria-label="พัก">⏸</button></span></div>
     <div id="black"></div>
   </div>
-  <div id="pause"><b>พักไว้ก่อน</b><div>เกมจำไว้แล้วว่าเล่นถึงตรงไหน<br>ปิดหน้านี้ได้เลย กลับมาเมื่อไรก็เล่นต่อจากตรงนี้</div><button class="btn go" id="pGo">เล่นต่อ</button><button class="btn" id="pHome">กลับหน้าแรก</button></div><div id="ffw">กำลังพากลับไปที่ค้างไว้…</div>
+  <div id="pause"><b>พักไว้ก่อน</b><div>เกมจำไว้แล้วว่าเล่นถึงตรงไหน<br>ปิดหน้านี้ได้เลย กลับมาเมื่อไรก็เล่นต่อจากตรงนี้</div><button class="btn go" id="pGo">เล่นต่อ</button><button class="btn" id="pCalm"></button><button class="btn" id="pHome">กลับหน้าแรก</button></div><div id="ffw">กำลังพากลับไปที่ค้างไว้…</div>
   <div id="panel"><div id="txt"></div><div id="acts"></div><div id="more">แตะเพื่อไปต่อ ▾</div></div>
   <div id="title">
     <div class="bgi"></div>
@@ -180,8 +182,13 @@ html,body{-webkit-touch-callout:none;margin:0;height:100%;background:#1c1512;col
 const $=s=>document.querySelector(s), sleep=ms=>new Promise(r=>setTimeout(r,ms));
 const FAST=/[?&]fast=1/.test(location.search);   // for testing: no waits
 /* every tap, choice and gesture result of the day is logged; "continue" replays the log at once and carries on from there */
-const RUNKEY='lee7run3'; let RQ=[], LOG=[], RUNDAY=0;
+const RUNKEY='lee7run4'; let RQ=[], LOG=[], RUNDAY=0;
 const FF=()=>RQ.length>0, QUICK=()=>FAST||FF();
+let CALM=false; try{ const c=localStorage.getItem('lee7calm'); CALM=c==='1'||(c==null&&matchMedia('(prefers-reduced-motion: reduce)').matches); }catch(e){}
+function setCalm(v){ CALM=!!v; try{ localStorage.setItem('lee7calm',CALM?'1':'0'); }catch(e){} $('#app').classList.toggle('calm',CALM); const b=$('#pCalm'); if(b) b.textContent='ลดการเคลื่อนไหว: '+(CALM?'เปิดอยู่':'ปิดอยู่'); if(S&&S.pic) camera(S.pic); }
+/* progress shown above the button, where a finger does not cover it */
+const MT=(lab,two)=>`<div class="mtw"><span>${lab||''}</span><div id="mt"><i></i></div></div>`+(two?`<div class="mtw"><span>ลม</span><div id="mb"><i></i></div></div>`:'');
+const mt=(p,q)=>{ const e=$('#mt i'); if(e) e.style.width=(Math.max(0,Math.min(1,p))*100)+'%'; if(q!=null){ const g=$('#mb i'); if(g){ g.style.width=(Math.max(0,Math.min(1,q))*100)+'%'; g.style.background=q<.35?'#e0435a':'#e9a646'; } } };
 const REC=/[?&]rec=1/.test(location.search);
 function saveRun(){ if((FAST&&!REC)||!RUNDAY) return; try{ localStorage.setItem(RUNKEY,JSON.stringify({day:RUNDAY,log:LOG})); }catch(e){} }
 function loadRun(){ try{ const r=JSON.parse(localStorage.getItem(RUNKEY)||'null'); return r&&r.day&&r.log&&r.log.length>3?r:null; }catch(e){ return null; } }
@@ -191,7 +198,7 @@ async function io(f){ if(RQ.length){ const v=RQ.shift(); LOG.push(v); ffEnd(); r
 function rnd(){ if(RQ.length){ const v=RQ.shift(); LOG.push(v); ffEnd(); return v; } const v=Math.random(); LOG.push(v); saveRun(); return v; }
 const W=ms=>sleep(FAST?Math.min(ms,30):FF()?0:ms);
 const S={};
-const IMG={dawn:1,morning:1,pet:1,noon:1,dusk:1,night:1,corridor:1,stairs:1,pot:1,radio:1,dinner2:1,dinner1:1,phone:1,clinic:1,drawer:1,street:1,corridor_night:1,floor:1,door:1,kneel:1,bags:1,chart:1,dance:1,inhalers:1,photo:1,bill:1,leash:1,amei:1,doctor:1,dumplings:1,yellow:1,ceiling:1,intro:1,talkover:1,drawerask:1,spacer:1,potfound:1,teachback:1,amei_cry:1,goodbye:1,resp_demo:1,exitdoor:1,outside:1,bench:1,fillbox:1,drawer_clean:1,calendar:1,tin:1,listen:1,listen2:1,pills_am:1,lee_resp_closed:1,lee_resp_open:1,pills_tue:1,pills_thu:1,pills_check:1,stairs_am:1,stairs_am_dog:1,pot_small:1,dinner_amei:1,slippers:1,oldbag:1,yard_mom:1,yangge_mom:1};
+const IMG={hands:1,sway:1,letter:1,dawn:1,morning:1,pet:1,noon:1,dusk:1,night:1,corridor:1,stairs:1,pot:1,radio:1,dinner2:1,dinner1:1,phone:1,clinic:1,drawer:1,street:1,corridor_night:1,floor:1,door:1,kneel:1,bags:1,chart:1,dance:1,inhalers:1,photo:1,bill:1,leash:1,amei:1,doctor:1,dumplings:1,yellow:1,ceiling:1,intro:1,talkover:1,drawerask:1,spacer:1,potfound:1,teachback:1,amei_cry:1,goodbye:1,resp_demo:1,exitdoor:1,outside:1,bench:1,fillbox:1,drawer_clean:1,calendar:1,tin:1,listen:1,listen2:1,pills_am:1,lee_resp_closed:1,lee_resp_open:1,pills_tue:1,pills_thu:1,pills_check:1,stairs_am:1,stairs_am_dog:1,pot_small:1,dinner_amei:1,slippers:1,oldbag:1,yard_mom:1,yangge_mom:1};
 let DAY='วันอังคาร';
 let P={}; try{ P=JSON.parse(localStorage.getItem('lee7v1')||'{}')||{}; }catch(e){ P={}; }
 function saveP(){ try{ localStorage.setItem('lee7v1',JSON.stringify(P)); }catch(e){} }
@@ -222,15 +229,15 @@ function playTune(){ if(!AC||FF()) return; let t=0; const b=.44; TUNE.forEach(([
 /* ---------------- the picture: dissolve, slow camera, effects ---------------- */
 let cur=0, camAnim=null;
 const CAM={ dawn:[[1.16,2,-2],[1.04,0,0]], morning:[[1.05,-1,0],[1.13,1.5,-1]], pet:[[1.2,-2,-6],[1.26,-3,-7]], noon:[[1.06,1,1],[1.14,-1.5,-1]], dusk:[[1.05,2,0],[1.2,7,2]], night:[[1.22,4,-5],[1.1,1,-2]], corridor:[[1.02,0,0],[1.05,0,0]], stairs:[[1.03,0,0],[1.07,1,-1]], corridor_night:[[1.02,0,0],[1.05,0,0]], clinic:[[1.04,-1,0],[1.12,1.5,-1.5]], street:[[1.04,0,1],[1.2,-2,-3]], floor:[[1.1,-2,1],[1.03,0,0]], door:[[1.04,-1,0],[1.16,-4,-2]], kneel:[[1.03,0,1],[1.12,0,-2]], dance:[[1.06,1,0],[1.18,-1,-2]], leash:[[1.04,0,2],[1.16,0,-3]], amei:[[1.04,-1,0],[1.16,-5,-1]], doctor:[[1.03,0,1],[1.13,0,-3]], ceiling:[[1.03,-1,-1],[1.12,1.5,1.5]], intro:[[1.03,0,1],[1.11,0,-2]], talkover:[[1.03,1,0],[1.1,-1,-1]], drawerask:[[1.03,-1,0],[1.12,-2,-2]], teachback:[[1.03,0,-1],[1.1,0,2]], amei_cry:[[1.03,0,1],[1.12,0,-3]], goodbye:[[1.03,1,0],[1.12,3,-2]], resp_demo:[[1.03,0,1],[1.12,0,-3]], exitdoor:[[1.02,0,1],[1.14,0,-3]], outside:[[1.1,0,1],[1.02,0,0]], bench:[[1.04,0,1],[1.16,2,-4]], listen:[[1.03,0,1],[1.11,0,-2]], listen2:[[1.03,0,1],[1.11,0,-2]], stairs_am:[[1.03,0,0],[1.07,1,-1]], stairs_am_dog:[[1.03,0,0],[1.07,1,-1]], yard_mom:[[1.04,0,0],[1.16,-2,-2]], yangge_mom:[[1.06,0,0],[1.18,0,-3]] };
-function camera(k){ const c=CAM[k]||CAM.morning, f=p=>`scale(${p[0]}) translate(${p[1]}%,${p[2]}%)`; if(camAnim) camAnim.cancel();
+function camera(k){ const c=CAM[k]||CAM.morning, f=p=>`scale(${p[0]}) translate(${p[1]}%,${p[2]}%)`; if(camAnim) camAnim.cancel(); if(CALM){ $('#cam').style.transform=f(c[0]); camAnim=null; return; } $('#cam').style.transform='';
   camAnim=$('#cam').animate([{transform:f(c[0])},{transform:f(c[1])}],{duration:FAST?100:26000,direction:'alternate',iterations:Infinity,easing:'ease-in-out'}); }
-async function show(k,ms){ const a=[$('#imA'),$('#imB')], nx=a[1-cur], old=a[cur]; nx.style.transitionDuration=(QUICK()?30:(ms||2000))+'ms'; old.style.transitionDuration=nx.style.transitionDuration; nx.src=src(k);
+async function show(k,ms){ const a=[$('#imA'),$('#imB')], nx=a[1-cur], old=a[cur]; nx.style.transitionDuration=(QUICK()?30:CALM?Math.min(ms||2000,500):(ms||2000))+'ms'; old.style.transitionDuration=nx.style.transitionDuration; nx.src=src(k);
   try{ await nx.decode(); }catch(e){} $('#zoom').style.transform=''; nx.classList.add('on'); old.classList.remove('on'); cur=1-cur; camera(k); S.pic=k; }
 function fx(list){ ['Sun','Dust','Heat','Lamp'].forEach(n=>$('#fx'+n).classList.toggle('on',(list||'').includes(n))); }
 function clock(t){ $('#clock').textContent=DAY+' · '+t; }
 function hud(){ $('#en').innerHTML='<span style="margin-right:4px;opacity:.85">แรง</span>'+Array.from({length:5},(_,i)=>`<i class="${i<S.en?'f':''}"></i>`).join(''); $('#money').textContent='NT$ '+S.money; }
 function energy(d){ S.en=Math.max(0,Math.min(5,S.en+d)); hud(); const e=$('#en'); e.classList.add('bump'); setTimeout(()=>e.classList.remove('bump'),600); if(d<0) sfx.low(); }
-async function black(on,ms){ const b=$('#black'); b.style.transitionDuration=(QUICK()?30:(ms||1600))+'ms'; b.style.opacity=on?1:0; await W(ms||1600); }
+async function black(on,ms){ if(CALM) ms=Math.min(ms||1600,600); const b=$('#black'); b.style.transitionDuration=(QUICK()?30:(ms||1600))+'ms'; b.style.opacity=on?1:0; await W(ms||1600); }
 let tapRes=null;
 $('#panel').addEventListener('click',e=>{ if(e.target.closest('.btn,#hold,#dial')) return; if(tapRes){ const r=tapRes; tapRes=null; r(); } });
 async function say(t,o){ const el=$('#txt'), list=[].concat(t);
@@ -241,12 +248,23 @@ function fit(){ if(FF()) return; requestAnimationFrame(()=>{ const p=$('#panel')
 function clearTxt(){ $('#txt').classList.remove('on'); $('#more').classList.remove('on'); }
 function choose(opts){ return new Promise(res=>{ const a=$('#acts'); a.innerHTML=opts.map((o,i)=>`<button class="btn${o.dis?' dis':''}${o.go?' go':''}" data-i="${i}" style="animation-delay:${.15+i*.12}s">${o.t}${o.s?`<small>${o.s}</small>`:''}</button>`).join('');
   fit(); a.querySelectorAll('.btn').forEach(b=>b.onclick=()=>{ sfx.soft(); a.innerHTML=''; $('#app').classList.remove('tight'); res(+b.dataset.i); }); if(FAST) setTimeout(()=>{ const pick=window.__pick; const el=(pick!=null&&a.querySelector(`.btn[data-i="${pick(opts)}"]:not(.dis)`))||a.querySelector('.btn:not(.dis)'); if(el) el.click(); },30); }); }
-function hold(label, ms, hint){ return new Promise(res=>{ const a=$('#acts'); a.innerHTML=`<div id="holdW"><button id="hold"><span>${label}</span></button><div id="holdL">${hint||''}</div></div>`;
+function hold(label, ms, hint){ return new Promise(res=>{ const a=$('#acts'); a.innerHTML=`<div id="holdW">${MT('')}<button id="hold"><span>${label}</span></button><div id="holdL">${hint||''}</div></div>`;
   const b=$('#hold'); let p=0, down=false, last=performance.now(), done=false;
   const set=d=>{ down=d; b.classList.toggle('down',d); }; b.onpointerdown=e=>{ e.preventDefault(); set(true); }; b.onpointerup=b.onpointerleave=b.onpointercancel=()=>set(false);
   if(FAST) down=true;
-  (function loop(now){ if(done) return; const dt=now-last; last=now; p=Math.max(0,Math.min(1,p+(down?dt/(FAST?60:ms):-dt/(ms*.7)))); b.style.setProperty('--p',p);
+  (function loop(now){ if(done) return; const dt=now-last; last=now; p=Math.max(0,Math.min(1,p+(down?dt/(FAST?60:ms):-dt/(ms*.7)))); b.style.setProperty('--p',p); mt(p);
     if(p>=1){ done=true; sfx.warm(); a.innerHTML=''; res(); return; } requestAnimationFrame(loop); })(last); }); }
+/* getting up: heave, run out of strength, sink back a little, heave again */
+function heave(label, ms, hintT, glow){ return new Promise(res=>{ const a=$('#acts'); a.innerHTML=`<div id="holdW">${MT('ลุก')}<button id="hold"><span>${label}</span></button><div id="holdL">${hintT||'กดค้างเพื่อยันตัว · แรงหมดให้ปล่อยพัก'}</div></div>`;
+  const b=$('#hold'), L=$('#holdL'), bl=$('#black'); let p=0, s=1, down=false, last=performance.now(), done=false, gave=false, n=0; if(glow) bl.style.transitionDuration='120ms';
+  if(FAST){ setTimeout(()=>{ a.innerHTML=''; res(1); },30); return; }
+  b.onpointerdown=e=>{ e.preventDefault(); if(done) return; if(s<.3){ L.textContent='ยังไม่มีแรง… หายใจก่อน'; return; } down=true; gave=false; n++; b.classList.add('down'); burst(240,.7,.1,.4); L.textContent=n===1?'ฮึบ…':n===2?'ฮึ้บบ…':'ฮึ้บบบบ…'; };
+  b.onpointerup=b.onpointerleave=b.onpointercancel=()=>{ if(down&&!done) L.textContent=p>.7?'อีกนิดเดียว… หายใจ แล้วฮึบอีกที':'ตัวเอนกลับลงไป… หายใจ แล้วฮึบอีกที'; down=false; b.classList.remove('down'); };
+  (function loop(now){ if(done) return; const dt=Math.min(60,now-last); last=now;
+    if(down){ if(s>0){ p+=dt/(ms*.42)*(.4+.6*s); s=Math.max(0,s-dt/1200); } else { if(!gave){ gave=true; sfx.low(); b.classList.add('lock'); L.textContent='แขนสั่น… ปล่อยมือก่อน'; } p-=dt/900; } }
+    else { s=Math.min(1,s+dt/750); if(s>=.3) b.classList.remove('lock'); p-=dt/(ms*1.7); }
+    p=Math.max(0,Math.min(1,p)); b.style.setProperty('--p',s); mt(p); if(glow) bl.style.opacity=(1-p*.6).toFixed(3); if(gave&&down&&!CALM) b.style.transform=`translateX(${(Math.sin(now/30)*2).toFixed(1)}px)`; else b.style.transform='';
+    if(p>=1){ done=true; sfx.warm(); a.innerHTML=''; res(n); return; } requestAnimationFrame(loop); })(last); }); }
 function card(k,extra){ $('#cardIn').innerHTML=`<div class="pic"><img id="cimg" src="${src(k)}" alt=""><img id="cimg2" alt="" style="opacity:0">${extra&&extra.steam?'<div class="steam"><i></i><i></i><i></i></div>':''}<div id="gest"></div></div>${extra&&extra.html||''}`; $('#card').classList.add('on'); }
 function cardOff(){ $('#card').classList.remove('on'); }
 function cardPic(k){ const a=$('#cimg'); if(a) a.src=src(k); }
@@ -291,10 +309,10 @@ function trust(d){ S.tr=Math.max(0,Math.min(10,(S.tr==null?2:S.tr)+d)); const t=
 async function answer(opts){ const i=await choose(opts.map(o=>({t:o.t, s:o.need&&S.tr<o.need?'ยังพูดไม่ออก':(o.s||''), dis:!!(o.need&&S.tr<o.need)}))); return i; }
 
 /* ---------------- other ways of moving (so that walking is not the same thing every time) ---------------- */
-function zoomAt(origin){ const z=$('#zoom'); z.style.transition='none'; z.style.transformOrigin=origin; return (prog,k,bob,sx,rot)=>{ z.style.transform=`translate(${(sx||0).toFixed(2)}%,${(bob||0).toFixed(2)}%) rotate(${(rot||0).toFixed(2)}deg) scale(${(1+prog*k).toFixed(3)})`; }; }
+function zoomAt(origin){ const z=$('#zoom'); z.style.transition='none'; z.style.transformOrigin=origin; return (prog,k,bob,sx,rot)=>{ if(CALM) bob=sx=rot=0; z.style.transform=`translate(${(sx||0).toFixed(2)}%,${(bob||0).toFixed(2)}%) rotate(${(rot||0).toFixed(2)}deg) scale(${(1+prog*k).toFixed(3)})`; }; }
 /* stairs: left foot, right foot. Too quick and he is out of breath; the wrong foot and he stumbles. */
 function steps({n, limit, from, easy, origin, zoom}){ return new Promise(res=>{ const a=$('#acts'); n=n||14; from=from||0; const end=limit==null?1:limit;
-  a.innerHTML=`<div id="holdW"><div id="feet"><button data-f="L">ซ้าย</button><div id="bre"><i></i></div><button data-f="R">ขวา</button></div><div id="holdL">แตะ ซ้าย-ขวา สลับกัน ทีละขั้น</div></div>`;
+  a.innerHTML=`<div id="holdW">${MT('ทาง')}<div id="feet"><button data-f="L">ซ้าย</button><div id="bre"><i></i></div><button data-f="R">ขวา</button></div><div id="holdL">แตะ ซ้าย-ขวา สลับกัน ทีละขั้น</div></div>`;
   const L=$('#holdL'), bar=a.querySelector('#bre i'), vig=$('#vig'), set=zoomAt(origin||'30% 46%'), K=zoom||1.1; let prog=from, breath=1, want='L', lock=0, last=performance.now(), lastStep=0, done=false, coughs=0, slips=0, shake=0, bobv=0;
   const fin=()=>{ if(done) return; done=true; a.innerHTML=''; $('#zoom').style.transition=''; vig.style.opacity=end<1?.4:0; res({coughs,slips}); };
   let ending=false; const press=f=>{ if(lock||done||ending) return; const now=performance.now();
@@ -307,11 +325,11 @@ function steps({n, limit, from, easy, origin, zoom}){ return new Promise(res=>{ 
     if(lock>0){ lock-=dt; if(lock<=0){ lock=0; L.textContent='ค่อยๆ… ซ้าย-ขวา'; } } else breath=Math.min(1,breath+dt/(easy?2600:4200));
     if(breath<=0&&!lock){ breath=.15; lock=2600; shake=1; coughs++; prog=Math.max(from,prog-1/n); sfx.cough(); L.textContent='แค่ก… แค่ก… ต้องหยุดก่อน'; }
     shake=Math.max(0,shake-dt/700); bobv=Math.max(0,bobv-dt/260); bar.style.width=(breath*100)+'%'; bar.style.background=breath<.35?'#e0435a':'#e9a646'; vig.style.opacity=Math.pow(1-breath,1.5).toFixed(2);
-    set(prog,K,bobv*1.6,shake*Math.sin(now/36)*1.5,0); requestAnimationFrame(loop); })(last);
+    mt((prog-from)/Math.max(.001,1-from)); set(prog,K,bobv*1.6,shake*Math.sin(now/36)*1.5,0); requestAnimationFrame(loop); })(last);
   if(FAST){ const t=setInterval(()=>{ if(done){ clearInterval(t); return; } breath=1; press(want); },15); } }); }
 /* in the dark: one hand on the wall. Drag slowly; hurry and he stumbles. */
 function feel({limit}){ return new Promise(res=>{ const a=$('#acts'), end=limit||1;
-  a.innerHTML=`<div id="holdW"><div id="rail"><i></i><b></b></div><div id="holdL">ลากมือไปตามผนัง ช้าๆ</div></div>`;
+  a.innerHTML=`<div id="holdW">${MT('ทาง')}<div id="rail"><i></i><b></b></div><div id="holdL">ลากมือไปตามผนัง ช้าๆ</div></div>`;
   const rail=$('#rail'), knob=rail.querySelector('b'), fill=rail.querySelector('i'), L=$('#holdL'), vig=$('#vig'), set=zoomAt('50% 27%'); let prog=0, target=0, down=false, last=performance.now(), done=false, slips=0, lock=0, shake=0;
   const at=e=>{ const r=rail.getBoundingClientRect(); return Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)); };
   rail.onpointerdown=e=>{ e.preventDefault(); if(lock) return; const v=at(e); if(Math.abs(v-prog)<.14){ down=true; target=v; try{ rail.setPointerCapture(e.pointerId); }catch(_){ } } else L.textContent='จับที่ปุ่มกลม แล้วลากช้าๆ'; };
@@ -320,18 +338,18 @@ function feel({limit}){ return new Promise(res=>{ const a=$('#acts'), end=limit|
     if(lock>0){ lock-=dt; if(lock<=0){ lock=0; L.textContent='ช้าๆ… ทีละคืบ'; } }
     else if(down){ if(target-prog>.2){ slips++; lock=1800; shake=1; down=false; prog=Math.max(0,prog-.05); sfx.low(); burst(160,1.2,.3,.15); L.textContent='เร็วไป… สะดุด มือหลุดจากผนัง'; }
       else { const d=Math.max(-dt/9000,Math.min(dt/11000,target-prog)); if(d>0&&Math.floor((prog+d)*23)!==Math.floor(prog*23)) sfx.step(); prog+=d; } }
-    shake=Math.max(0,shake-dt/800); knob.style.left=(prog*100)+'%'; fill.style.width=(prog*100)+'%'; vig.style.opacity=(.25+prog*.35).toFixed(2);
+    shake=Math.max(0,shake-dt/800); knob.style.left=(prog*100)+'%'; fill.style.width=(prog*100)+'%'; mt(prog); vig.style.opacity=(.25+prog*.35).toFixed(2);
     set(prog,1.9,Math.sin(now/420)*.5,shake*Math.sin(now/38)*1.6+Math.sin(now/900)*2.2*(.4+prog),Math.sin(now/1300)*2.4*(.3+prog));
     if(prog>=end){ done=true; a.innerHTML=''; $('#zoom').style.transition=''; res({slips}); return; } requestAnimationFrame(loop); })(last);
   if(FAST) setTimeout(()=>{ done=true; a.innerHTML=''; res({slips:0}); },30); }); }
 /* in a hurry: tap, tap, tap — and the breath runs out */
-function rush(){ return new Promise(res=>{ const a=$('#acts'); a.innerHTML=`<div id="holdW"><button id="hold"><span>แตะรัวๆ<br>เพื่อรีบ</span></button><div id="holdL"></div></div>`;
+function rush(){ return new Promise(res=>{ const a=$('#acts'); a.innerHTML=`<div id="holdW">${MT('ทาง',1)}<button id="hold"><span>แตะรัวๆ<br>เพื่อรีบ</span></button><div id="holdL"></div></div>`;
   const b=$('#hold'), L=$('#holdL'), vig=$('#vig'), set=zoomAt('50% 27%'); let prog=0, breath=1, lock=0, last=performance.now(), done=false, coughs=0, shake=0, bobv=0;
   b.onpointerdown=e=>{ e.preventDefault(); if(lock||done) return; prog+=1/30; breath-=.062; bobv=1; sfx.step(); if(breath<.5) sfx.beat(); L.textContent='ก้าวที่ '+Math.min(23,Math.round(prog*23))+' จาก 23'; };
   (function loop(now){ if(done) return; const dt=Math.min(60,now-last); last=now;
     if(lock>0){ lock-=dt; if(lock<=0){ lock=0; b.classList.remove('lock'); L.textContent='ต้องรีบ… แต่รีบไม่ได้'; } } else breath=Math.min(1,breath+dt/5200);
     if(breath<=0&&!lock){ breath=.15; lock=2800; shake=1; coughs++; b.classList.add('lock'); sfx.cough(); L.textContent='แค่ก… แค่ก…'; }
-    shake=Math.max(0,shake-dt/800); bobv=Math.max(0,bobv-dt/200); b.style.setProperty('--p',breath); vig.style.opacity=Math.pow(1-breath,1.3).toFixed(2); set(prog,1.9,bobv*1.4,shake*Math.sin(now/36)*1.6,0);
+    shake=Math.max(0,shake-dt/800); bobv=Math.max(0,bobv-dt/200); b.style.setProperty('--p',breath); mt(prog,breath); vig.style.opacity=Math.pow(1-breath,1.3).toFixed(2); set(prog,1.9,bobv*1.4,shake*Math.sin(now/36)*1.6,0);
     if(prog>=1){ done=true; a.innerHTML=''; $('#zoom').style.transition=''; res({coughs}); return; } requestAnimationFrame(loop); })(last);
   if(FAST) setTimeout(()=>{ done=true; a.innerHTML=''; res({coughs:1}); },30); }); }
 /* tap through a list (the days of the pill box) */
@@ -345,10 +363,10 @@ async function greenRoutine(full){ card('lee_resp_closed');
   if(full){ await say('พัฟที่สอง หมุนอีกครั้ง',{stay:1,q:1}); await rub('x',.9,'ลากนิ้วซ้าย-ขวา เพื่อหมุน'); note(1500,.06,.09,'square'); await breathPress(); }
   await say('ปิด',{stay:1,q:1}); await flick('down','ปัดนิ้วลง เพื่อปิดฝา'); $('#cimg2').style.opacity=0; sfx.tick(); cardOff(); }
 
-function hearts(x,y){ if(FF()) return; const v=$('#view').getBoundingClientRect(); for(let i=0;i<3;i++) setTimeout(()=>{ const h=document.createElement('div'); h.className='heart'; h.textContent='🤍'; h.style.left=(v.width*x+Math.random()*40-20)+'px'; h.style.top=(v.height*y)+'px'; $('#view').appendChild(h); setTimeout(()=>h.remove(),1700); },i*260); }
+function hearts(x,y){ if(FF()||CALM) return; const v=$('#view').getBoundingClientRect(); for(let i=0;i<3;i++) setTimeout(()=>{ const h=document.createElement('div'); h.className='heart'; h.textContent='🤍'; h.style.left=(v.width*x+Math.random()*40-20)+'px'; h.style.top=(v.height*y)+'px'; $('#view').appendChild(h); setTimeout(()=>h.remove(),1700); },i*260); }
 
 /* ---------------- walking, seen through his eyes: hold to walk, let go to breathe ---------------- */
-function walk({stairs, limit, total, night, hurry}){ return new Promise(res=>{ const a=$('#acts'), NS=total||23; a.innerHTML=`<div id="holdW"><button id="hold"><span>กดค้าง<br>เพื่อเดิน</span></button><div id="holdL"></div></div>`;
+function walk({stairs, limit, total, night, hurry}){ return new Promise(res=>{ const a=$('#acts'), NS=total||23; a.innerHTML=`<div id="holdW">${MT('ทาง',1)}<button id="hold"><span>กดค้าง<br>เพื่อเดิน</span></button><div id="holdL"></div></div>`;
   const b=$('#hold'), L=$('#holdL'), z=$('#zoom'), vig=$('#vig'); let prog=0, breath=1, down=false, lock=0, last=performance.now(), done=false, coughs=0, beatT=0, stepT=0, told=0, ph=0, shake=0;
   z.style.transition='none'; z.style.transformOrigin=stairs?'30% 46%':'50% 27%';
   b.onpointerdown=e=>{ e.preventDefault(); if(!lock){ down=true; b.classList.add('down'); } }; b.onpointerup=b.onpointerleave=b.onpointercancel=()=>{ down=false; b.classList.remove('down'); };
@@ -357,8 +375,8 @@ function walk({stairs, limit, total, night, hurry}){ return new Promise(res=>{ c
     else if(down){ prog+=dt/(stairs?15000:hurry?10500:13500); breath-=dt/(stairs?2300:night?2100:hurry?1900:2900); ph+=dt/330; beatT-=dt; stepT-=dt; if(beatT<=0){ sfx.beat(); beatT=260+breath*620; } if(stepT<=0){ sfx.step(); stepT=640; } }
     else breath=Math.min(1,breath+dt/3400);
     if(breath<=0&&!lock){ breath=.12; lock=2600; shake=1; down=false; coughs++; prog=Math.max(0,prog-.05); b.classList.remove('down'); b.classList.add('lock'); sfx.cough(); L.textContent='แค่ก… แค่ก… ต้องหยุดก่อน'; }
-    b.style.setProperty('--p',breath); vig.style.opacity=Math.pow(1-breath,1.4).toFixed(2);
-    const bob=Math.sin(ph)*1.1*(down?1:.25), sx=shake*Math.sin(now/38)*1.4+(night?Math.sin(now/900)*2.2*(.4+prog):0), rot=night?Math.sin(now/1300)*2.4*(.3+prog):0; z.style.transform=`translate(${sx.toFixed(2)}%,${bob.toFixed(2)}%) rotate(${rot.toFixed(2)}deg) scale(${(1+prog*(stairs?1.1:1.9)).toFixed(3)})`;
+    b.style.setProperty('--p',breath); mt(prog,breath); vig.style.opacity=Math.pow(1-breath,1.4).toFixed(2);
+    const bob=CALM?0:Math.sin(ph)*1.1*(down?1:.25), sx=CALM?0:shake*Math.sin(now/38)*1.4+(night?Math.sin(now/900)*2.2*(.4+prog):0), rot=night&&!CALM?Math.sin(now/1300)*2.4*(.3+prog):0; z.style.transform=`translate(${sx.toFixed(2)}%,${bob.toFixed(2)}%) rotate(${rot.toFixed(2)}deg) scale(${(1+prog*(stairs?1.1:1.9)).toFixed(3)})`;
     if(!lock){ const st=Math.min(NS,Math.round(prog*NS)); if(!stairs) L.textContent=down?(night?'มืด… ช้าๆ…':`ก้าวที่ ${st} จาก ${NS}`):(breath<.98&&prog>0?'หยุด… หายใจ…':(told++<1?'กดค้างไว้เพื่อเดิน · ปล่อยมือเพื่อหยุดหายใจ':L.textContent)); else L.textContent=down?'ทีละขั้น…':(prog>0?'เกาะราวไว้… หายใจ…':'กดค้างไว้เพื่อลงบันได'); }
     if(prog>=(limit||1)){ done=true; a.innerHTML=''; z.style.transition=''; vig.style.opacity=limit?.5:0; res({coughs}); return; } requestAnimationFrame(loop); })(last); }); }
 
@@ -369,8 +387,8 @@ async function day1(){
   await say('05:40',{big:1});
   await say(['ผมตื่นก่อนแตรปลุกมาหกสิบแปดปี\nทุกวันนี้ไม่มีแตรแล้ว ผมก็ยังตื่นก่อนมันอยู่ดี','ร่างกายจำคำสั่งได้ดี\nบางอย่างที่ผมอยากจำ กลับจำไม่ได้']);
   await say('หนึ่ง… สอง…',{stay:1,q:1});
-  await hold('กดค้าง<br>เพื่อลุก', 3600, 'ถ้าปล่อยมือ ลุงจะเอนกลับลงไป');
-  await show('dawn',60); clock('05:52'); $('#hud').classList.add('on'); ramp(fanG,.05,3); await black(false,3000);
+  await show('dawn',60); await heave('กดค้าง<br>เพื่อลุก', 3600, '', 1);
+  clock('05:52'); $('#hud').classList.add('on'); ramp(fanG,.05,3); await black(false,3000);
   await say(['…สาม','เมื่อก่อนผมนับถึงสาม ให้ทั้งกองร้อยลุกพร้อมกัน\nเดี๋ยวนี้ผมนับให้เข่าสองข้างของตัวเอง','เจ้าดำนั่งรออยู่แล้ว\nสิบสี่ปี มันไม่เคยตื่นหลังผมเลยสักวัน','หมาแก่กับทหารแก่\nแข่งกันตื่นเช้า โดยไม่มีใครต้องไปไหน']);
   await morning(); await toilet(); await noon(); await radio(); await evening(); await dinner(); await night();
 }
@@ -501,12 +519,12 @@ function tapPills(n){ return new Promise(res=>{ const a=$('#acts'), W7=['หน�
   a.innerHTML=`<button class="btn go" style="animation-delay:0s">กลืนเม็ดที่หนึ่ง</button>`; const b=a.querySelector('.btn');
   b.onclick=()=>{ k++; note(520+k*40,.18,.05); if(k>=n){ a.innerHTML=''; res(); return; } b.textContent='กลืนเม็ดที่'+W7[k]; }; if(FAST){ for(let i=0;i<n;i++) setTimeout(()=>b.click(),20+i*5); } }); }
 /* a hold that gives way before the end (he cannot get up) */
-function holdFail(label, ms, at){ return new Promise(res=>{ const a=$('#acts'); a.innerHTML=`<div id="holdW"><button id="hold"><span>${label}</span></button><div id="holdL"></div></div>`;
+function holdFail(label, ms, at){ return new Promise(res=>{ const a=$('#acts'); a.innerHTML=`<div id="holdW">${MT('ลุก')}<button id="hold"><span>${label}</span></button><div id="holdL"></div></div>`;
   const b=$('#hold'); let p=0, down=FAST, last=performance.now(), done=false, fall=false;
   b.onpointerdown=e=>{ e.preventDefault(); if(!fall){ down=true; b.classList.add('down'); } }; b.onpointerup=b.onpointerleave=b.onpointercancel=()=>{ down=false; b.classList.remove('down'); };
   (function loop(now){ if(done) return; const dt=now-last; last=now; if(fall){ p=Math.max(0,p-dt/500); if(p<=0){ done=true; a.innerHTML=''; res(); return; } }
     else { p=Math.max(0,Math.min(1,p+(down?dt/(FAST?60:ms):-dt/(ms*.7)))); if(p>=at){ fall=true; down=false; b.classList.add('lock'); sfx.low(); } }
-    b.style.setProperty('--p',p); requestAnimationFrame(loop); })(last); }); }
+    b.style.setProperty('--p',p); mt(p); requestAnimationFrame(loop); })(last); }); }
 function reportCard(title, lines, last, sign, next, extra, reply){ return new Promise(async res=>{ const step=FAST?0:1.25;
   $('#pg').innerHTML=`<b>${title}</b>`+lines.map((t,i)=>`<p style="animation-delay:${.9+i*step}s">${typeof t==='string'?t:`<s style="text-decoration-thickness:2px">${t.strike}</s>`}</p>`).join('')+`<p class="last" style="animation-delay:${1.6+lines.length*step}s">${last}</p><p style="animation-delay:${3.6+lines.length*step}s;white-space:pre-line">${sign}</p>`+(reply?`<p class="reply" style="animation-delay:${(FAST?0:7)+lines.length*step}s">${reply}</p>`:'');
   const dn=$('#dnext'), db=$('#dbtn'); dn.classList.remove('on'); db.classList.remove('on'); db.innerHTML=''; $('#pg').style.opacity=''; $('#pg').style.display=''; dn.classList.remove('big'); $('#diary').classList.add('on');
@@ -516,7 +534,7 @@ function reportCard(title, lines, last, sign, next, extra, reply){ return new Pr
 function dayEnd(n){ P['d'+n]=JSON.parse(JSON.stringify(S)); P.done=Math.max(P.done||0,n); saveP(); window.__done=P['d'+n];
   $('#dbtn').innerHTML=(n<7?`<button class="btn go" data-go="${n+1}">ไปวันที่ ${n+1}</button>`:'')+`<button class="btn" data-go="0" style="text-align:center">กลับหน้าแรก</button>`; clearRun();
   $('#dbtn').querySelectorAll('.btn').forEach(b=>{ b.style.opacity=1; b.style.transform='none'; b.style.animation='none'; b.onclick=async()=>{ const g=+b.dataset.go; $('#dbtn').classList.remove('on'); $('#dbtn').innerHTML=''; $('#diary').classList.remove('on'); $('#black').style.opacity=1; await W(1600); if(g) startDay(g); else location.reload(); }; }); { const d=$('#diary'); if(d.scrollHeight>d.clientHeight+4) d.scrollTop=d.scrollHeight; } const db=$('#dbtn'); db.classList.add('on'); db.style.pointerEvents='none'; setTimeout(()=>{ db.style.pointerEvents=''; },FAST?0:900); }
-async function rise(ms, hint){ await say('หนึ่ง… สอง…',{stay:1,q:1}); await hold('กดค้าง<br>เพื่อลุก', ms, hint||''); await show('dawn',60); $('#hud').classList.add('on'); ramp(fanG,.05,3); await black(false,3000); }
+async function rise(ms, hint){ await show('dawn',60); await say('หนึ่ง… สอง…',{stay:1,q:1}); await heave('กดค้าง<br>เพื่อลุก', ms, hint||'', 1); $('#hud').classList.add('on'); ramp(fanG,.05,3); await black(false,3000); }
 function newDay(name){ DAY=name; const n=['','วันอังคาร','วันพุธ','วันพฤหัส','วันศุกร์','วันเสาร์','วันอาทิตย์','วันจันทร์'].indexOf(name), pv=P['d'+(n-1)]; Object.assign(S,{en:5, money:(pv&&pv.money!=null?pv.money:P.money!=null?P.money:320)}); hud(); fx(''); clearTxt(); $('#txt').textContent=''; $('#vig').style.opacity=0; }
 
 /* ---------------- Day 2: Wednesday — the day somebody phones ---------------- */
@@ -608,7 +626,7 @@ async function day3(){ newDay('วันพฤหัส'); Object.assign(S,{two:
   await say(['ยังไม่ได้','ถ้าตะโกน คนทั้งชั้นจะตื่น\nพรุ่งนี้ทุกคนจะรู้ อาเหมยจะรู้','แล้วใครสักคนอาจพูดคำว่า บ้านพักคนชรา\nเจ้าดำเข้าไปอยู่ด้วยไม่ได้','มันไม่รู้ด้วยซ้ำว่าทำไมวันหนึ่งผมถึงไม่กลับห้อง']);
   const s=await choose([{t:'ตะโกนเรียกคน'},{t:'ไม่ตะโกน'}]); S.shout=s===0;
   await say(S.shout?['ผมอ้าปากตั้งใจจะตะโกน\nอากาศออกมา แต่เสียงไม่ตาม']:['ผมกัดฟัน ไม่เรียกใคร\nความเงียบง่ายกว่าการอธิบาย']);
-  await say('อีกครั้ง',{stay:1,q:1}); await hold('กดค้าง<br>เพื่อลุก',5600,'ช้าๆ… เกาะขอบอ่าง');
+  await say('อีกครั้ง',{stay:1,q:1}); await heave('กดค้าง<br>เพื่อลุก',4400,'ช้าๆ… เกาะขอบอ่าง');
   $('#vig').style.opacity=0;
   await say(['ผมไม่ได้กลัวเจ็บ\nผมกลัวกลับไปไม่ถึงเจ้าดำ','สิบเอ็ดนาที\nผมจับเวลาจากเสียงน้ำหยด','ขากลับ ผมไม่ได้นับก้าว','เจ้าดำเลียมือผมอยู่นาน\nผมไม่บอกมันว่าผมอยู่ตรงนั้นนานเท่าไร','มันก็ไม่ถาม\nแค่เอาคางวางลงบนรองเท้าผม']);
   await black(true,2600); clearTxt(); await W(500); P.money=S.money;
@@ -754,7 +772,7 @@ async function day4(){ newDay('วันศุกร์'); const anyDbl=(P.d1&&P
   await show('dusk',3000); fx(''); clock('16:00'); card('radio'); ramp(staticG,.03,.5); await W(1200); ramp(staticG,.004,.6); playTune(); await W(1600);
   await say(['สี่โมงเย็น วิทยุยังตั้งคลื่นค้างไว้จากวันอังคาร','…เพลงนี้\nสามนาทีสิบวินาที','เข่าผมไม่ดี สะโพกผมช้ำ\nเจ้าดำมองหน้าผม']);
   const dz=await choose([{t:'ลุกขึ้น'},{t:'นั่งฟังต่อ'}]); if(dz===1) await say(['ผมนั่งฟังได้สิบวินาที\nแล้วขาก็ลุกเอง']);
-  cardOff(); await show('dance',2600); fx('Sun Dust');
+  cardOff(); await show('sway',2600); fx('Sun Dust');
   await say('หนึ่ง สอง สาม\nหนึ่ง สอง สาม',{stay:1,q:1}); await hold('กดค้าง<br>เพื่อเต้น',4600,''); hearts(.5,.5);
   await say(['สิบวินาที\nผมโยกไหล่เบาๆ มือหนึ่งจับโต๊ะไว้','เจ้าดำเอาจมูกมาแตะหลังมือ\nเหมือนบอกว่า ไม่ต้องฝืน','ผมไม่ฝืน\nสิบวินาทีก็นับ']); ramp(staticG,0,2);
   await show('night',3200); fx('Lamp'); clock('21:00');
@@ -879,7 +897,7 @@ async function day7(){ newDay('วันจันทร์'); Object.assign(S,{r
   await say('เพลงเดิมดังขึ้น\nผมหลับตา และเห็นลานบ้านที่ชิงเต่าในฤดูหนาว',{stay:1,q:1}); await show('yard_mom',4200); fx('Sun'); await W(1200);
   await say(['แม่ถือผ้าแดง หมุนตัวหนึ่งรอบ\nแล้วยื่นมือมาหาผม','เมื่อก่อนผมปล่อยให้มือแม่ค้างอยู่แบบนั้น']);
   await choose([{t:'เดินเข้าไปหาแม่'}]); playTune();
-  await say('ผมยื่นมือไป',{stay:1,q:1}); await show('amei_cry',5200); fx('Sun Dust'); hearts(.5,.5);
+  await say('ผมยื่นมือไป',{stay:1,q:1}); await show('hands',5200); fx('Sun Dust'); hearts(.5,.5);
   await say(['นิ้วอาเหมยแตะเข้ากับมือผม','เมื่อลืมตา ผมยังนั่งอยู่บนเก้าอี้\nเธอนั่งอยู่ตรงข้าม','ผมขยับปลายเท้าตามเพลง\nเธอขยับตาม ผิดจังหวะเหมือนเมื่อวาน','เจ้าดำมานอนหนุนรองเท้าผม\nเราไม่ต้องลุกขึ้น ก็เต้นด้วยกันได้','สามนาทีสิบวินาที\nคราวนี้ผมไม่ปล่อยมือก่อนเพลงจบ']); ramp(staticG,0,2);
   await show('night',3200); fx('Lamp'); clock('21:00');
   await say(['คืนนี้ผมวางตะเกียบสองคู่\nอาเหมยต้องกลับไปเข้าเวร ผมกินข้าวคนเดียว','ผมล้างชามใบที่สอง คว่ำไว้ข้างชามของผม\nไม่ได้เก็บเข้าตู้','พรุ่งนี้เธอจะกลับมา\nผมรู้ว่าเธอจะโทรมาก่อน']);
@@ -891,7 +909,7 @@ async function finale(){ const pg=$('#pg'), dn=$('#dnext'); dn.classList.remove(
   pg.innerHTML=['<b>ถึง คุณนักศึกษาเภสัชที่นั่งคุยกับผมบนพื้น</b>','ผมจำชื่อคุณได้ไม่ชัด','แต่จำได้ว่าคุณรอฟังจนผมพูดจบ','วันศุกร์นี้ ถ้ายังมาตามนัด','ผมจะต้มข้าวต้มหม้อเล็ก เผื่อคุณหนึ่งชาม','ถ้าผมลงไปกับเจ้าดำอยู่','ฝากรอตรงประตูหน่อยนะ','ตอนนี้ผมเดินช้า แต่ผมจะกลับขึ้นไป','&nbsp;','หลี่ · ห้องสี่ศูนย์สาม · ชั้นสี่'].map((t,i)=>i?`<p style="animation-delay:${FAST?0:.6+i*1.5}s">${t}</p>`:t).join(''); pg.style.opacity=1; await W(21000);
   pg.style.opacity=0; await W(1800);
   /* closing picture: the letter by the telephone; it rings, and the player lifts the receiver */
-  pg.innerHTML=`<img id="endph" src="${src('phone')}" alt="" style="display:block;width:100%;border-radius:4px;cursor:pointer">`; pg.style.background='#fffaf0'; pg.style.padding='9px 9px 12px'; pg.style.opacity=1;
+  pg.innerHTML=`<img id="endph" src="${src('letter')}" alt="" style="display:block;width:100%;border-radius:4px;cursor:pointer">`; pg.style.background='#fffaf0'; pg.style.padding='9px 9px 12px'; pg.style.opacity=1;
   dn.textContent='จดหมายถูกพับวางไว้ข้างโทรศัพท์'; dn.classList.add('on'); await W(4200);
   sfx.ring(); dn.textContent='เสียงกริ่งแรกดังขึ้น'; await W(3000);
   sfx.ring(); dn.textContent='กริ่งที่สอง...';
@@ -901,8 +919,9 @@ async function finale(){ const pg=$('#pg'), dn=$('#dnext'); dn.classList.remove(
 
 const DAYS={1:day1,2:day2,3:day3,4:day4,5:day5,6:day6,7:day7};
 function startDay(n,log){ $('#hud').classList.remove('on'); RUNDAY=n; LOG=[]; RQ=log?log.slice():[]; if(RQ.length) $('#ffw').classList.add('on'); saveRun(); (DAYS[n]||day1)(); }
-['choose','hold','holdFail','rub','flick','shake','tapPic','lens','breathPress','ringGame','steps','feel','rush','walk','tapPills','tapList','countHold'].forEach(n=>{ const f=window[n]; window[n]=(...a)=>io(()=>f(...a)); });
+['choose','hold','heave','holdFail','rub','flick','shake','tapPic','lens','breathPress','ringGame','steps','feel','rush','walk','tapPills','tapList','countHold'].forEach(n=>{ const f=window[n]; window[n]=(...a)=>io(()=>f(...a)); });
 $('#pauseB').onclick=e=>{ e.stopPropagation(); $('#pause').classList.add('on'); if(AC) AC.suspend(); };
+$('#pCalm').onclick=()=>setCalm(!CALM); setCalm(CALM);
 $('#pGo').onclick=()=>{ $('#pause').classList.remove('on'); if(AC) AC.resume(); };
 $('#pHome').onclick=()=>location.reload();
 

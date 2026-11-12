@@ -264,6 +264,18 @@ a night shift, and the nightly "daily report" to his wife that always ends "noth
   secret and kept in the biscuit tin (day 2; found with permission on day 4; day 6 he folds the flyers into a boat);
   (4) pictures redone: `kneel` (natural pose), and `radio`, `chart`, `bags` with the soft-mist inhaler drawn properly;
   new `calendar`, `tin`.
+- 12 Nov, pictures matched to scenes: Lee's own hands on the soft-mist inhaler after the visit (`lee_resp_closed`,
+  `lee_resp_open`; `resp_closed`/`resp_open` removed), the student listening without an inhaler in hand (`listen`,
+  `listen2`), the right pill-box compartments for each day (`pills_am`, `pills_tue`, `pills_thu`, `pills_check`;
+  `pills` removed), morning stairs (`stairs_am`, `stairs_am_dog`), the small pot, Ah-Mei at dinner (`dinner_amei`).
+- 12 Nov, the wife thread (Xiulan) made stronger, five threads: (1) she used to look after his medicines (her
+  circles on the calendar, she answered the doctor for him, her old hand-labelled bag in the drawer `oldbag`, the
+  student's "what do you hope for" is the first such question since her, Sunday's pill box she filled for 40 years);
+  (2) answering on the second ring was her habit (told on day 6); (3) from day 4 the nightly report gets a reply in
+  her handwriting (`reportCard(..., reply)`, blue ink, font Charmonman); day 6's reply depends on (5); (4) day 7's
+  dance: the kitchen of their young years (`kitchen_young`), she holds out her hand, they dance (`dance_young`), back
+  to now with the dog; (5) her slippers and apron by the door (`slippers`, hotspot from day 1); on day 6 he keeps
+  them or boxes them (`S.slip`), which shows in the report.
 - Sound is made in code. `?fast=1` runs without waits (tests); `window.__pick` / `window.__order` choose answers
   and the order of things tapped in the morning.
 

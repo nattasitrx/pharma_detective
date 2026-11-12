@@ -54,7 +54,8 @@ built on an older Case A, kept as `cd/a_base.html`. `rebuild_cd.sh` builds them 
 1. It applies the case add-ons to fresh copies:
    - `cd/mk_cgames.py` + `cd/c_games.js`: Case C hands-on games (hypo rescue, Fosamax morning, height).
    - `cd/mk_dsim.py` + `cd/d_isim.js`: Case D inhaler demos (MDI, spacer, Respimat) with technique scores.
-   - `cd/mk_dacb.py` + `cd/d_acb.js`: Case D anticholinergic sort.
+   - `cd/mk_dacb.py` + `cd/d_acb.js`: Case D anticholinergic sort. Since 12 Nov 2026 only the red basket (the two Beers "avoid" antihistamines) is scored; a yellow/white
+     mix-up costs nothing and the card shows the right basket (`soft` in `S.calc.acb`).
    - `cd/mk_teach.py` + `cd/c_teach.js` / `cd/d_teach.js`: instructor keys and the debrief.
 2. `cd/mk_cases.py` does a three-way merge of *(cd/a_base.html → current Case A)* into each case. This way every
    engine change reaches C and D. Conflicts are resolved to the engine side; C = 3 and D = 4 conflicts are expected.

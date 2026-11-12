@@ -313,6 +313,14 @@ a night shift, and the nightly "daily report" to his wife that always ends "noth
   milk with NT$ 0; (4) the wedding photo on the wall of the room pictures (morning, noon, dawn, night, pet, dance,
   dusk = title, amei, door) now shows Lee at 72 and Ah-Mei at 24, pasted into the old frame and matched to each
   picture's light; (5) the top bar stays on one line on narrow phones.
+- 12 Nov night, tightened from about 51 to about 35 minutes (measured by `life_tools/vt.py`: plays all 7 days in fast
+  mode and adds up the waits, the reading time at 16 Thai characters a second, choices and gestures; day 4 17.8 ->
+  10.5 min). Shorter gaps between lines (320/450 ms), dissolves and fades capped at 1.8 s, faster report cards;
+  repeated or explanatory lines merged or cut (`life_tools/trim*.py`, applied once); day 4 lost the room-tidying
+  choices, the "how long have you lived here" question, the look at the inhaler shelf and the blue-inhaler item in the
+  say-back; day 6 has no morning inhaler routine; fewer stair taps. Every Case D step and every wife/mother beat is
+  still there. `life_tools/play4.py` (all branches, three screen sizes) and `gest.py` (every gesture, mouse and touch)
+  are the regression tests.
 - Sound is made in code. `?fast=1` runs without waits (tests); `window.__pick` / `window.__order` choose answers
   and the order of things tapped in the morning.
 

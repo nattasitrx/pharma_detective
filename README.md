@@ -256,5 +256,13 @@ a night shift, and the nightly "daily report" to his wife that always ends "noth
   stumble, too quick = out of breath; `from`/`limit` for one floor at a time), `feel` (night: drag a hand along the
   wall, slowly), `rush` (day 4: tap fast, the breath runs out).
 - 5 more pictures: exitdoor, outside, bench, fillbox, drawer_clean (49 in all, still placeholders).
+- 12 Nov, after the first play-through on a phone: (1) the day-end buttons stayed clickable, invisibly, over the next
+  day's text (a child with pointer-events:auto inside a hidden parent), so a tap to continue restarted or reloaded
+  the game: they are now removed on click; (2) the ending shows one thing at a time (report, letter, three lines);
+  (3) from Case D: the wall calendar full of circled appointments (day 1 he circles Wednesday; day 4 the student
+  reads it as "the days you got out to meet people"; day 6 he circles only Friday) and the supplement bought in
+  secret and kept in the biscuit tin (day 2; found with permission on day 4; day 6 he folds the flyers into a boat);
+  (4) pictures redone: `kneel` (natural pose), and `radio`, `chart`, `bags` with the soft-mist inhaler drawn properly;
+  new `calendar`, `tin`.
 - Sound is made in code. `?fast=1` runs without waits (tests); `window.__pick` / `window.__order` choose answers
   and the order of things tapped in the morning.

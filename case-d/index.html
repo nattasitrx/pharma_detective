@@ -187,7 +187,8 @@ input,textarea{font-family:var(--font);-webkit-user-select:text;user-select:text
 #bg .hs{pointer-events:none}
 #stage.searching #bg .hs{pointer-events:all}
 #stage.searching #bg .hs{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Ccircle cx='19' cy='19' r='13' fill='rgba(255,255,255,.35)' stroke='%23ff4f86' stroke-width='5'/%3E%3Cpath d='M29 29l14 14' stroke='%23ff4f86' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E") 19 19,pointer}
-#stage.searching #bg .hs:hover{filter:drop-shadow(0 0 10px #fff) drop-shadow(0 0 4px #ffe46b) brightness(1.15)}
+#stage.searching #bg{cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Ccircle cx='19' cy='19' r='13' fill='rgba(255,255,255,.35)' stroke='%23ff4f86' stroke-width='5'/%3E%3Cpath d='M29 29l14 14' stroke='%23ff4f86' stroke-width='7' stroke-linecap='round'/%3E%3C/svg%3E") 19 19,pointer}
+
 #bg .hs .mv{transition:transform .55s cubic-bezier(.3,1.5,.5,1);transform-box:fill-box}
 #bg .hs.open .mv.slide{transform:translateY(16px)}
 #bg .hs.open .mv.lift{transform:translate(-30px,-26px) rotate(-10deg)}
@@ -2587,6 +2588,7 @@ function fitChoices(box){
 function choose(opts, o){
   o=o||{};
   return new Promise(res=>{
+    if(o&&o.timer){ const rate={zh:7,en:15,th:11}[S.lang]||11, n=opts.reduce((a,op)=>a+L(op.t).length,0); o={...o, timer:Math.max(o.timer,Math.ceil(n/rate)+3)}; }   /* mk_dlite: time to read */
     const box=$('#choices'); let h=''; const timed=o.timer&&S.qte&&!D.editPlay;
     if(timed) h+=`<div id="qte">${o.timer}</div><div id="qteLbl">${esc(L(o.label||['快選！','Quick!','เลือกเร็ว!']))}</div>`;
     const order=opts.map((_,i)=>i); if(o.shuffle) for(let a=order.length-1;a>0;a--){ const b=Math.floor(Math.random()*(a+1)); [order[a],order[b]]=[order[b],order[a]]; }

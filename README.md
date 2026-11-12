@@ -370,3 +370,14 @@ its file is missing. Made with the owner's ElevenLabs sound-effects (flow "Uncle
 her browser, trimmed with ffmpeg (mono, 96k). Present: `bark` (first two barks of a 4 s take), `pant` (one wheezy
 breath, played about once a second when breath is low while walking / on stairs / rushing). Still missing, so still
 synthesised: `cough`, `grunt` (the free queue was busy) — drop the files in and they are used, no code change.
+
+### Tester round, 13 Nov 2026 (later)
+- Green inhaler every morning is now two full puffs: turn, open, press, CLOSE, turn, open, press, close (the cap must
+  be closed before the base is turned again).
+- `heave()` slowed (strength lasts 2.4 s, refills in 1.6 s); the button sits at the side, with two tall bars
+  ("ลุก" body, "แรง" strength) beside it instead of a spinning ring.
+- Trust hearts (day 4) sit on a second line under the HUD, so the pause button stays on screen.
+- "อ่านบันทึกย้อนหลัง" on the title page: every night's report is kept in `P.rep[day]` and shown in `#arch`.
+- Ending: the caption now says it is the next Tuesday 07:00, the tap answers the call, two spoken lines follow, and the
+  three closing lines are back. Soy-milk seller speaks as a man. New picture `busstop` (Canva MAHauSPLp2o).
+- Saved-run key `lee7run5`. Cough and grunt are still synthesised (ElevenLabs free queue busy twice).

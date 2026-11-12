@@ -65,6 +65,11 @@ built on an older Case A, kept as `cd/a_base.html`. `rebuild_cd.sh` builds them 
    - `cd/mk_dlite.py` (12 Nov 2026): the final battle is lighter. Myths that repeat an earlier hands-on task are
      dropped (P2 = the inhaler demo, P8 = mission 3, P13 = the CrCl calculation), leaving six; each myth has two
      short cards (right / wrong) in bigger type instead of three long ones.
+     Later the same day, chapter 4 lost the two missions that repeat earlier cases: m1 (Peace + Clarinase, double
+     pseudoephedrine = Case A m1) and m3 (sulfonylurea hypo = Case A m4, Case C m3). Ms Yeh names both at the start of
+     the chapter and P14 / P16 count as found. Case D now has 4 missions (`mk_rank.py`: S needs 3 perfect, A needs 2).
+     Myth P8 (doubling missed doses at night, the secret) no longer repeats a mission, so it is back (7 myths). The
+     epilogue: 'hypo' is good when the secret was found and P8 broken; 'urine' needs m2 only.
    - `cd/mk_teach.py` + `cd/c_teach.js` / `cd/d_teach.js`: instructor keys and the debrief.
 2. `cd/mk_cases.py` does a three-way merge of *(cd/a_base.html → current Case A)* into each case. This way every
    engine change reaches C and D. Conflicts are resolved to the engine side; C = 3 and D = 4 conflicts are expected.

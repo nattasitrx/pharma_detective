@@ -281,6 +281,17 @@ a night shift, and the nightly "daily report" to his wife that always ends "noth
   dance: the kitchen of their young years (`kitchen_young`), she holds out her hand, they dance (`dance_young`), back
   to now with the dog; (5) her slippers and apron by the door (`slippers`, hotspot from day 1); on day 6 he keeps
   them or boxes them (`S.slip`), which shows in the report.
+- 12 Nov, the story now follows the case document (`life_mom.py`, applied once): Ah-Mei is Lee's WIFE (born 1981,
+  from mainland China, shift worker at the Gangshan Veterans Home, home a few days a week, 48 years younger, they
+  quarrel at times; she calls him เหล่าหลี่), as in Case D. Xiulan is gone. The one he misses is his MOTHER in Qingdao,
+  left when he was conscripted at 15 (1948); he went back in 1988, nine years too late, and heard she had set a bowl
+  for him every night (so he sets one for Ah-Mei). The nightly report is to his mother (a notebook kept since Hainan,
+  when letters could not cross); replies from day 4 are in her voice. The wife thread now: Ah-Mei has done his pills
+  for 17 years; her first sun-and-moon packet started their first quarrel (`oldbag`, echoed by the student's chart);
+  day 6 she tells why she phones (her father died in Henan before she got back) and the second-ring habit is theirs;
+  day 6 night he may hand her the notebook (`S.book`), and then day 6's reply is in her hand. Day 7: the yangge dance
+  with his mother in the Qingdao courtyard (`yard_mom`, `yangge_mom`), Ah-Mei arriving at the bus stop after her
+  night shift. New `photo`: the 2005 wedding photo (he 72, she 24). The dog is เจ้าดำ, as in Case D.
 - Sound is made in code. `?fast=1` runs without waits (tests); `window.__pick` / `window.__order` choose answers
   and the order of things tapped in the morning.
 

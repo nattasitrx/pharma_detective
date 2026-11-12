@@ -321,6 +321,15 @@ a night shift, and the nightly "daily report" to his wife that always ends "noth
   say-back; day 6 has no morning inhaler routine; fewer stair taps. Every Case D step and every wife/mother beat is
   still there. `life_tools/play4.py` (all branches, three screen sizes) and `gest.py` (every gesture, mouse and touch)
   are the regression tests.
+- 12 Nov, later still: the owner played it on an iPhone and found the tightened version too fast ("no time to let
+  a line sink in"), so the tightening above is UNDONE: text and timings are the pre-trim ones again (about 50 min;
+  `life_tools/trim*.py` are kept only as a record). New: (1) pause and resume: every tap, choice, gesture result and
+  random draw of the day goes through `io()` / `rnd()` into a log saved in localStorage `lee7run2`; "continue" on the
+  title replays the log instantly (`FF()`: no waits, no sound) and play carries on from that line. A ⏸ button in
+  the top bar says so. `?fast=1&rec=1` records in test mode (`life_tools/resume.py`). (2) the day-end page no longer
+  scrolls by itself after the buttons appear (it mis-aimed taps) and has no "replay this day" button (days are chosen
+  on the title). (3) iPhone Safari let text and choices overlap: `#txt,#acts{flex:none}`, and when the panel would
+  overflow the picture shrinks (`#app.tight`, set by `fit()`). Not verified on real WebKit here.
 - Sound is made in code. `?fast=1` runs without waits (tests); `window.__pick` / `window.__order` choose answers
   and the order of things tapped in the morning.
 

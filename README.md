@@ -417,3 +417,19 @@ New files from the owner's ElevenLabs (same flow), each with the old synthesised
 Checked: all 14 files decode and play in Chromium over http (they never load under `file://`, so `play4.py` and
 `gest.py` do not exercise them). Nobody has listened to any of these yet. No change to the order of taps, so the
 saved-run key stays `lee7run6`.
+
+### The radio tune (13 Nov 2026, night)
+The game has no background score and should not get one; its only music is the mother's tune (`TUNE`, an original
+little waltz, about 20 s) from the radio at four o'clock. `playTune(o)` now plays it as a bowed string through an old
+radio speaker instead of plain triangle beeps: a sawtooth voice that slides between notes, late vibrato, a nasal peak
+at 1150 Hz, a band that widens with `o.clear` (0 = badly tuned: narrow and crackly; 1 = clear), plus crackle.
+- Each of the six times is different: day 1 `{clear:0,vol:.6}` with more hiss under it, day 4 `.2`, day 5 `.35`,
+  day 6 with Ah-Mei `.6`, day 7 `.8` when she switches it on, then `{clear:1,vol:1,twice:1}` for the dance: the whole
+  song twice through, the second time with a low octave under it.
+- `tuneOff(sec)` fades the tune; `ramp(staticG,0,t)` (the radio going quiet) now calls it, and a new `playTune` fades
+  the one before. Before, a tune rang on after its scene.
+- Ending: after the two spoken lines the first eight notes come back once, slower, with no radio
+  (`{dry:1,vol:.7,to:8,slow:1.3}`), while the picture fades.
+No taps were added or moved, so the saved-run key stays `lee7run6`. Rendered offline to check level and pitch
+(first notes 330/392/440/524 Hz); previews were sent to the owner. Still synthesised: a real instrument would need a
+player or a music tool (the connected ElevenLabs has no music).

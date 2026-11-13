@@ -231,7 +231,7 @@ function audio(){ if(AC) return; try{ AC=new (window.AudioContext||window.webkit
   const s1=AC.createBufferSource(); s1.buffer=buf; s1.loop=true; const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=320; fanG=AC.createGain(); fanG.gain.value=0; s1.connect(lp); lp.connect(fanG); fanG.connect(master); s1.start();
   const wb=AC.createBuffer(1,AC.sampleRate,AC.sampleRate), wd=wb.getChannelData(0); for(let i=0;i<wd.length;i++) wd[i]=Math.random()*2-1;
   const ws=AC.createBufferSource(); ws.buffer=wb; ws.loop=true; const bp=AC.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=2400; bp.Q.value=.6; staticG=AC.createGain(); staticG.gain.value=0; ws.connect(bp); bp.connect(staticG); staticG.connect(master); ws.start(); AC._w=wb; }catch(e){ AC=null; } }
-function ramp(g,v,t){ if(!AC||!g) return; g.gain.cancelScheduledValues(AC.currentTime); g.gain.setValueAtTime(g.gain.value,AC.currentTime); g.gain.linearRampToValueAtTime(v,AC.currentTime+(t||1)); }
+function ramp(g,v,t){ if(!AC||!g) return; if(g===staticG&&v===0) tuneOff(t); g.gain.cancelScheduledValues(AC.currentTime); g.gain.setValueAtTime(g.gain.value,AC.currentTime); g.gain.linearRampToValueAtTime(v,AC.currentTime+(t||1)); }
 function note(f,dur,vol,type,when){ if(!AC||FF()) return; const t=AC.currentTime+(when||0), o=AC.createOscillator(), g=AC.createGain(); o.type=type||'sine'; o.frequency.value=f;
   g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol||.12,t+.02); g.gain.exponentialRampToValueAtTime(.0008,t+(dur||.8)); o.connect(g); g.connect(master); o.start(t); o.stop(t+(dur||.8)+.05); }
 function burst(freq,q,vol,dur,when,type){ if(!AC||FF()) return; const s=AC.createBufferSource(); s.buffer=AC._w; const g=AC.createGain(), f=AC.createBiquadFilter(); f.type=type||'bandpass'; f.frequency.value=freq; f.Q.value=q; const t=AC.currentTime+(when||0);
@@ -243,7 +243,24 @@ const sfx={ tap(){ note(N.E5,.25,.04); }, soft(){ note(N.C5,.5,.06); note(N.G4,.
   bell(){ note(N.E5,2.4,.05); note(N.G5,2.6,.04,'sine',.02); note(N.C5,3,.035,'sine',.04); } };
 /* the old tune on the radio: an original little waltz */
 const TUNE=[['E4',1],['G4',1],['A4',1],['C5',2],['A4',1],['G4',2],['E4',1],['D4',3],['E4',1],['G4',1],['A4',1],['D5',2],['C5',1],['A4',2],['G4',1],['C5',3],['E5',2],['D5',1],['C5',2],['A4',1],['G4',2],['E4',1],['G4',3],['A4',1],['G4',1],['E4',1],['D4',2],['E4',1],['C4',3]];
-function playTune(){ if(!AC||FF()) return; let t=0; const b=.44; TUNE.forEach(([n,l])=>{ note(N[n],l*b+.6,.08,'triangle',t); note(N[n]/2,l*b+.3,.028,'sine',t); t+=l*b; }); }
+/* the tune as a bowed string heard through an old radio speaker: a sawtooth voice that slides between notes, with vibrato that
+   comes in late, a nasal peak and a narrow band. o.clear 0..1 = how well the radio is tuned (band width, crackle);
+   o.twice = the whole song (second time with a low octave); o.to = only the first notes; o.dry = no radio at all (the ending) */
+let TUNEOUT=null;
+function tuneOff(sec){ if(!TUNEOUT||!AC) return; try{ const g=TUNEOUT, n=AC.currentTime; g.cancelScheduledValues(n); g.setValueAtTime(g.value,n); g.linearRampToValueAtTime(0,n+(sec||.4)); }catch(e){} TUNEOUT=null; }
+function playTune(o){ o=o||{}; if(!AC||FF()) return; tuneOff(.3); const c=o.clear==null?.5:o.clear, b=.44*(o.slow||1), out=AC.createGain(); out.gain.value=o.vol==null?.8:o.vol;
+  const hp=AC.createBiquadFilter(), pk=AC.createBiquadFilter(), lp=AC.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=o.dry?110:430-c*210; pk.type='peaking'; pk.frequency.value=1150; pk.Q.value=1.5; pk.gain.value=o.dry?4:7;
+  lp.type='lowpass'; lp.frequency.value=o.dry?4800:1500+c*2300; hp.connect(pk); pk.connect(lp); lp.connect(out); out.connect(master);
+  const t0=AC.currentTime+.06, lfo=AC.createOscillator(); lfo.frequency.value=5.6; lfo.start(t0); const one=TUNE.slice(0,o.to||TUNE.length), seq=o.twice?one.concat(one):one; let t=t0, prev=0;
+  seq.forEach(([n,l],i)=>{ const f=N[n], d=l*b, os=AC.createOscillator(), g=AC.createGain(), vd=AC.createGain(); os.type='sawtooth';
+    if(prev&&prev!==f){ os.frequency.setValueAtTime(prev,t); os.frequency.exponentialRampToValueAtTime(f,t+.07); } else os.frequency.setValueAtTime(f,t);
+    vd.gain.setValueAtTime(0,t); vd.gain.linearRampToValueAtTime(f*.011,t+Math.min(d*.6,.5)); lfo.connect(vd); vd.connect(os.frequency);
+    g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(.15,t+.07); g.gain.linearRampToValueAtTime(.105,t+d*.8); g.gain.exponentialRampToValueAtTime(.0001,t+d+.14);
+    os.connect(g); g.connect(hp); os.start(t); os.stop(t+d+.2);
+    if(o.twice&&i>=one.length){ const lo=AC.createOscillator(), lg=AC.createGain(); lo.type='sine'; lo.frequency.value=f/2; lg.gain.setValueAtTime(.0001,t); lg.gain.linearRampToValueAtTime(.08,t+.08); lg.gain.exponentialRampToValueAtTime(.0001,t+d+.2); lo.connect(lg); lg.connect(out); lo.start(t); lo.stop(t+d+.25); }
+    prev=f; t+=d; });
+  lfo.stop(t+.5); if(!o.dry){ const k=Math.round((1-c)*24)+4; for(let i=0;i<k;i++) burst(2600+Math.random()*2500,.8,.012+.03*(1-c),.01+Math.random()*.02,Math.random()*(t-t0),'highpass'); }
+  TUNEOUT=out.gain; }
 
 /* ---------------- the picture: dissolve, slow camera, effects ---------------- */
 let cur=0, camAnim=null;
@@ -478,7 +495,7 @@ async function radio(){ clock('16:00'); ramp(staticG,.07,.6); fx('Sun');
   await io(()=>new Promise(res=>{ const d=$('#dial'), T=63; let ok=null;
     const up=()=>{ const dist=Math.abs(+d.value-T); if(staticG&&AC) staticG.gain.setTargetAtTime(Math.min(.09,dist/250+.004),AC.currentTime,.05);
       clearTimeout(ok); if(dist<=3) ok=setTimeout(()=>{ d.disabled=true; res(); },FAST?10:700); }; d.oninput=up; up(); if(FAST){ d.value=T; up(); } }));
-  ramp(staticG,.004,.5); playTune(); await W(1800);
+  ramp(staticG,.011,.5); playTune({clear:0,vol:.6}); await W(1800);
   await say(['…เพลงนี้','เพลงพื้นบ้านซานตง\nแม่ร้องเพลงนี้ทุกตรุษจีน ผูกผ้าแดงที่เอว แล้วเต้นยางเกอในลานบ้านที่ชิงเต่า','ตรุษจีนปีหนึ่งเก้าสี่แปด แม่กวักมือเรียกผมเข้าไปเต้นด้วย\nผมบอกว่า ผมโตแล้ว ไม่เต้นแบบเด็กๆ','ผมอายุสิบห้า\nสามเดือนต่อมา ทหารมาที่หมู่บ้าน ผมได้โตจริงๆ ในวันเดียว','เพลงนี้ยาวสามนาทีสิบวินาที\nผมมีเวลาทั้งชีวิต แต่ไม่ได้ให้แม่สามนาทีนั้น']);
   ramp(staticG,0,2.5); cardOff(); fx('');
 }
@@ -790,7 +807,7 @@ async function day4(){ newDay('วันศุกร์'); const anyDbl=(P.d1&&P
   await say(['เด็กคนนั้นแปะกระดาษแผ่นหนึ่งไว้ข้างเตียง\nพระอาทิตย์ ชามข้าว พระจันทร์ จุดสีดวงใหญ่ ไม่มีตัวหนังสือเล็กสักตัว','ผมเคยเห็นแผ่นแบบนี้มาก่อน\nบนซองยาเก่าก้นลิ้นชัก ลายมืออาเหมย ซองที่เราทะเลาะกัน เด็กคนนี้ไม่มีทางรู้','พระอาทิตย์กับพระจันทร์ไม่ได้ดูถูกใคร\nมันแค่อ่านง่าย ผมใช้เวลาสิบเจ็ดปีกว่าจะยอมรับ','"ผมจะเขียนถึงคุณหมอทั้งสี่ท่านครับ ให้เห็นยาทุกซอง\nถ้าคุณหมอตกลงปรับยา เราจะช่วยกันจัดกล่องใหม่"']); cardOff();
   await show('goodbye',2400);
   await say(['"วันศุกร์หน้าเรามาติดตามกันอีกครั้งนะครับ"\nผมอยากถามว่า กี่โมง','สุดท้ายผมถาม\nเขาหยุดจด แล้วเปิดนัดให้ผมดู','ประตูปิด\nห้องยังมีขนาดเท่าเดิม ทุกอย่างอยู่ที่เดิม','ผมมองที่พื้นตรงที่เด็กคนนั้นนั่ง\nตรงนั้นไม่มีอะไรเปลี่ยนไปเลย']); $('#tr').classList.remove('on');
-  await show('dusk',3000); fx(''); clock('16:00'); card('radio'); ramp(staticG,.03,.5); await W(1200); ramp(staticG,.004,.6); playTune(); await W(1600);
+  await show('dusk',3000); fx(''); clock('16:00'); card('radio'); ramp(staticG,.03,.5); await W(1200); ramp(staticG,.004,.6); playTune({clear:.2,vol:.7}); await W(1600);
   await say(['สี่โมงเย็น วิทยุยังตั้งคลื่นค้างไว้จากวันอังคาร','…เพลงนี้\nสามนาทีสิบวินาที','เข่าผมไม่ดี สะโพกผมช้ำ\nเจ้าดำมองหน้าผม']);
   const dz=await choose([{t:'ลุกขึ้น'},{t:'นั่งฟังต่อ'}]); if(dz===1) await say(['ผมนั่งฟังได้สิบวินาที\nแล้วขาก็ลุกเอง']);
   cardOff(); await show('sway',2600); fx('Sun Dust');
@@ -826,7 +843,7 @@ async function day5(){ newDay('วันเสาร์'); const d4=P.d4||{}; Ob
   if(S.ac){ fx(''); ramp(fanG,.08,2); S.money=Math.max(0,S.money-30); hud(); await say(['ผมเสียดายได้สิบนาที\nแล้วก็นึกถึงกระเบื้องเย็นๆ','ผมพับบิลค่าไฟไว้ใต้รีโมต\nวันนี้มันไม่ได้ขู่ผมเท่าเมื่อก่อน']); }
   else await say(['ผมเอื้อมมือไปแตะรีโมต\nแล้วหยุดไว้แค่นั้น']);
   cardOff();
-  clock('16:00'); card('radio'); ramp(staticG,.004,.6); playTune(); await W(1600);
+  clock('16:00'); card('radio'); ramp(staticG,.004,.6); playTune({clear:.35,vol:.75}); await W(1600);
   await say(['สี่โมงเย็น\nวันนี้ผมไม่พลาดนัด','เจ้าดำมองหน้าผม ผมส่ายหัว\n"วันนี้ฟังเฉยๆ เก็บแรงไว้ก่อน"']); cardOff(); ramp(fanG,.05,1);
   await show('leash',2600); clock('17:30');
   await say(['มันคาบสายจูงมาเหมือนทุกวัน\nแต่วันนี้ผมลุกก่อนที่มันจะนั่งลง']);
@@ -872,7 +889,7 @@ async function day6(){ newDay('วันอาทิตย์'); Object.assign(S
   await say(['อาเหมยพลิกปฏิทินไปหน้าสัปดาห์หน้า\nว่างเกือบทั้งหน้า เหลือวงแดงแค่สองวง','วันพุธ หาหมอ คราวนี้มีเภสัชไปด้วย']);
   await say('วันศุกร์',{stay:1,q:1}); await rub('x',1.2,'ลากนิ้ววนไปมารอบวันศุกร์ เพื่อวงปฏิทิน'); sfx.soft();
   await say(['ผมวงวันศุกร์เอง สองรอบ\nเภสัชกรมา','ใบปลิว "บำรุงเข่า บำรุงตา" ผมพับเป็นเรือ\nขวดนั้นผมเก็บไว้ให้เภสัชกรตรวจส่วนประกอบก่อน ผมไม่รีบกินให้หมด']); cardOff();
-  clock('16:00'); await show('dusk',3000); card('radio'); ramp(staticG,.004,.6); playTune(); await W(1600);
+  clock('16:00'); await show('dusk',3000); card('radio'); ramp(staticG,.004,.6); playTune({clear:.6,vol:.85}); await W(1600);
   await say(['สี่โมงเย็น อาเหมยยังอยู่\n"เพลงอะไรคะ"','"เพลงของแม่"\nผมเล่าเรื่องลานบ้านที่ชิงเต่า ผ้าแดง และวันที่ไม่ยอมเต้นกับแม่','สิบเจ็ดปี ผมไม่เคยเล่าเรื่องนี้\nเธอฟังจนจบ แล้วบอกว่า "แม่หนูก็เต้นยางเกอ ที่เหอหนานก็เต้น"','อาเหมยฮัมผิดไปหนึ่งท่อน\nผมแก้ให้ แล้วเธอฮัมผิดอีก','ผมไม่แก้แล้ว\nแค่ฟังจนเพลงจบ']); cardOff();
   await show('leash',2600); clock('17:30');
   await black(true,900); await show('stairs',60); ramp(fanG,0,1); await black(false,1200);
@@ -916,10 +933,10 @@ async function day7(){ newDay('วันจันทร์'); Object.assign(S,{r
   await say(['ที่ป้ายรถเมล์ อาเหมยเพิ่งก้าวลงมา ยังสวมชุดทำงาน','เธอเห็นผมกับเจ้าดำแล้วหยุดเดิน\nยกมือให้ เหมือนวันพุธที่ผมยืนอยู่บนชั้นสี่']);
   await choose([{t:'ยกมือตอบ'}]);
   amb('birds',0); await black(true,1600); ramp(fanG,.05,1); await show('dusk',60); fx('Sun Dust'); clock('16:00'); card('radio'); await black(false,2400);
-  await say(['สี่โมงเย็น\nอาเหมยเปิดวิทยุให้ ผมไม่ต้องคลำหาคลื่น']); ramp(staticG,.004,.6); playTune(); await W(1600);
+  await say(['สี่โมงเย็น\nอาเหมยเปิดวิทยุให้ ผมไม่ต้องคลำหาคลื่น']); ramp(staticG,.004,.6); playTune({clear:.8,vol:.9}); await W(1600);
   await say('เพลงเดิมดังขึ้น\nผมหลับตา และเห็นลานบ้านที่ชิงเต่าในฤดูหนาว',{stay:1,q:1}); cardOff(); await show('yard_mom',4200); fx('Sun'); await W(1200);
   await say(['แม่ถือผ้าแดง หมุนตัวหนึ่งรอบ\nแล้วยื่นมือมาหาผม','เมื่อก่อนผมปล่อยให้มือแม่ค้างอยู่แบบนั้น']);
-  await choose([{t:'เดินเข้าไปหาแม่'}]); playTune();
+  await choose([{t:'เดินเข้าไปหาแม่'}]); playTune({clear:1,vol:1,twice:1});
   await say('ผมยื่นมือไป',{stay:1,q:1}); await show('hands',5200); fx('Sun Dust');
   await say(['นิ้วอาเหมยแตะเข้ากับมือผม','เมื่อลืมตา ผมยังนั่งอยู่บนเก้าอี้\nเธอนั่งอยู่ตรงข้าม','ผมขยับปลายเท้าตามเพลง\nเธอขยับตาม ผิดจังหวะเหมือนเมื่อวาน','เจ้าดำมานอนหนุนรองเท้าผม\nเราไม่ต้องลุกขึ้น ก็เต้นด้วยกันได้','สามนาทีสิบวินาที\nคราวนี้ผมไม่ปล่อยมือก่อนเพลงจบ']); ramp(staticG,0,2);
   await show('night',3200); fx('Lamp'); clock('21:00');
@@ -939,7 +956,7 @@ async function finale(){ const pg=$('#pg'), dn=$('#dnext'); dn.classList.remove(
   await io(()=>new Promise(res=>{ const el=$('#endph'); const t=setInterval(()=>sfx.ring(),3200); const f=()=>{ clearInterval(t); el.onclick=null; res(0); }; el.onclick=f; if(FAST) setTimeout(f,20); }));
   amb('tick',0); sfx.soft(); dn.textContent='"เหล่าหลี่ กินยาเช้าหรือยังคะ"'; await W(3800);
   dn.textContent='"กินแล้ว"\n"วันนี้ผมนั่งรอเธอโทรมา"'; await W(5200);
-  dn.classList.remove('on'); await W(1400); pg.style.opacity=0; await W(2600); pg.style.display='none'; pg.style.background=''; pg.style.padding=''; dn.classList.add('big');
+  playTune({dry:1,vol:.7,to:8,slow:1.3}); dn.classList.remove('on'); await W(1400); pg.style.opacity=0; await W(2600); pg.style.display='none'; pg.style.background=''; pg.style.padding=''; dn.classList.add('big');
   for(const t of ['สำหรับคุณ\nมันคือการเยี่ยมบ้านหนึ่งชั่วโมง','สำหรับเขา\nมันคือเจ็ดวันนี้','และทุกเช้าหลังจากนี้ ที่เขารับโทรศัพท์']){ dn.textContent=t; dn.classList.add('on'); await W(4400); dn.classList.remove('on'); await W(2400); }
   dn.textContent='เจ็ดวันของลุงหลี่'; dn.classList.add('on'); await W(1500); }
 

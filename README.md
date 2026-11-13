@@ -398,3 +398,9 @@ listen2, drawerask, talkover, teachback, resp_demo, goodbye) show a different do
 Systems: pictures are now loaded per day (`preload`) instead of all 68 (10 MB) at the title; day-1 teaser no longer
 says he knows about Friday; floating hearts removed from the last dance; three questions to think about are added to
 the notebook once day 7 is done. Saved-run key `lee7run6`.
+
+### Grunt sound (13 Nov 2026, evening)
+`life/snd/grunt.mp3` now exists (played by `heave()` at every press; no code change). From the owner's ElevenLabs
+(flow "Uncle Lee game sounds", one 20 s take holding 12 grunts); the file is grunt no. 11 of that take
+(14.68-15.32 s), mono, 96k, peak -1.5 dB. Not yet listened to by anyone. The other grunts start at about 0.4, 1.7,
+3.1, 4.6, 5.9, 7.0, 8.8, 9.9, 10.8, 12.0 and 18.0 s if another one fits better.

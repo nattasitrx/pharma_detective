@@ -433,3 +433,17 @@ at 1150 Hz, a band that widens with `o.clear` (0 = badly tuned: narrow and crack
 No taps were added or moved, so the saved-run key stays `lee7run6`. Rendered offline to check level and pitch
 (first notes 330/392/440/524 Hz); previews were sent to the owner. Still synthesised: a real instrument would need a
 player or a music tool (the connected ElevenLabs has no music).
+
+### Script revision after a reader's review (13 Nov 2026, night)
+Asked for by the owner after a review "as a reader". 44 text changes across all seven days; no scene, choice,
+gesture, picture or pharmacy fact was added or removed. Full before/after list: `life_tools/script_changes_1113.md`.
+- Fewer closing epigrams and similes; lines where Uncle Lee explains his own feelings after the picture has already
+  shown them are cut or shortened.
+- The author's voice is out of the narration ("without knowing it was dangerous", "I do not know yet").
+- Friday: about ten "he did not say X, he said Y" comments on the student are down to the few that carry weight.
+- Monday no longer fixes everything: he needs a count of four to get up, rests five times on the way back up, the hip
+  still hurts and the diabetes medicine is still to be discussed with the doctor on Wednesday (two new lines).
+- Closing captions: the third line is gone. First line of the game: woken before the bugle for 73 years (was 68;
+  he has been a soldier since fifteen).
+Twelve lines were removed, so the order of taps changed: saved-run key is now `lee7run7` (a player in the middle of
+a day starts that day again; finished days are kept). `resume.py` uses the new key.

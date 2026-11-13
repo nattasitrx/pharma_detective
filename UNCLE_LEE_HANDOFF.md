@@ -43,6 +43,8 @@
 ## วิธีทำรูปและเสียงเพิ่ม
 - รูป: สร้างด้วย Canva (`generate-image` อ้างรูปเดิมเป็นแบบ) → เปิด `https://www.canva.com/M/<id>` ใน Chrome ของเจ้าของงาน ดึงไฟล์เต็มด้วย JS ย่อเป็น JPEG 1024px เก็บเป็น JSON ลง Downloads → stage ไฟล์ → `python3 -I life_tools/unpack_images.py <json> <src/life/img>` แล้วปิดแท็บ
   - รหัสรูปใน Canva ที่ใช้อ้างสไตล์ได้: hands `MAHauD-JYos`, sway `MAHauPd6i78`, letter `MAHauLh6rvM`, busstop `MAHauSPLp2o`, pills_am `MAHaucx9ZWo`, slippers `MAHasMokX8U`, yard_mom `MAHaslLcRNU`
+  - แก้รูปเดิมให้ตรงกัน (ทดลองแล้ว 14 พ.ย.): นำรูปจากเว็บเข้า Canva ด้วย `upload-asset-from-url` (เช่น `https://nattasitrx.github.io/pharma_detective/uncle-lee/img/leash.jpg`) แล้วสั่ง `generate-image` โดยใส่รูปเดิมกับรูปอ้างอิงเป็น `imageReferences` และบอกให้คงทุกอย่างไว้ เปลี่ยนเฉพาะจุด ได้ผลดี
+  - รูปนำร่อง: leash ที่เจ้าดำเป็นหมาดำล้วน = `MAHa0MJtDpo` (ยังไม่ได้ใส่ในเกม รอเจ้าของงานอนุญาตดึงไฟล์และเลือกขอบเขต); รูปอ้างอิงเจ้าดำ (pet) = `MAHa0Jntai0`
 - เสียง: ElevenLabs (flow "Uncle Lee game sounds", id `m5NgxV01VEsbND0gYG2R`) ได้มาแล้วคือ bark, pant, grunt, ring, thud, puff, step; คิวฟรีมักเต็ม
   - เสียงอื่นมาจากชุด ESC-50 บน GitHub เลือกเฉพาะคลิป CC0 (รายชื่อคลิปอยู่ใน README)
   - เบราว์เซอร์ในแอป Claude บันทึกไฟล์ดาวน์โหลดเป็นชื่อสุ่ม `.tmp` ใน Downloads (ดูจากขนาดและเวลา); ไฟล์เสียงไม่โหลดเมื่อเปิดเกมแบบ `file://` ต้องเปิดผ่าน http

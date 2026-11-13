@@ -463,3 +463,24 @@ From the art reviewer's and the player's findings; pictures themselves are a sep
 - `#txt` is `aria-live="polite"`; pause and day buttons have labels. Pictures still have no alt text.
 Not changed: Thai is still the only language; Friday is as long as before.
 Checked: play4 (15 runs, no errors), resume (6 cases), and a manual pass on a 360x640 screen.
+
+### Pictures made consistent (14 Nov 2026, early morning)
+Method: each current picture was imported into the owner's Canva from the public site (`upload-asset-from-url`),
+then `generate-image` was asked to edit it with reference pictures (keep everything, change one thing). Files were
+taken from the Canva media pages in the owner's Chrome and unpacked like before. Canva gives 800 px for square
+pictures there, so the square ones are 800 px enlarged to 1024.
+- Dog: `leash`, `stairs`, `stairs_am_dog`, `outside` now show the same all-black, floppy-eared dog as the room
+  pictures (reference `pet`). In `stairs` the dog now sits.
+- Pill box: `fillbox` and `chart` now show the clear box with two rows of seven, as in `pills_tue`, `pills_thu`,
+  `pills_check`. (The review first said these were 7-slot and 4-slot boxes; at full size they are the same 2x7 box.)
+- Home visit: `intro`, `kneel`, `listen`, `listen2`, `drawerask`, `talkover`, `teachback`, `resp_demo`, `goodbye`
+  now take place in Uncle Lee's room as in `door` (wedding photo, calendar, shelf with the radio, red telephone, fan,
+  dark door, green blanket) with the same dog. People and poses were kept; faces changed slightly. The new set came
+  out darker, so a gamma of 0.82 was applied to sit next to `door`. `goodbye` opens onto a dim corridor, not a garden.
+- Canva ids of the new pictures: leash MAHa0MJtDpo, stairs MAHa0OpQwq8, stairs_am_dog MAHa0ESI-ek, outside
+  MAHa0EC4XxA, fillbox MAHa0Oqdyto, chart MAHa0E78G7c, kneel MAHa0AbGuVg, intro MAHa0DzMTb8, listen MAHa0Jp7ukY,
+  listen2 MAHa0Dm6OHM, drawerask MAHa0JaqRMc, talkover MAHa0LirZjg, teachback MAHa0Dwe-6I, resp_demo MAHa0erzCBU,
+  goodbye MAHa0ZYUtKI. The old pictures are in git history (before commit "consistent dog and pill box pictures").
+- Limits met: Canva image generation cools down to about one picture every ten minutes after the first five;
+  Chrome allows one automatic download per tab, so the second file was saved from a new tab.
+Not done: `letter` (the desk differs from `phone`), Ah-Mei's age in `amei_cry`, mixed points of view.

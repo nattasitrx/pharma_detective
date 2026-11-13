@@ -9,7 +9,7 @@
 
 ## ที่เก็บงาน
 - Repo: `nattasitrx/pharma_detective`
-  - branch `source` = ต้นฉบับ: เกมอยู่ที่ `life/index.html` (ไฟล์เดียว) + `life/img/*.jpg` (68 รูป) + `life/snd/*.mp3` (9 เสียง)
+  - branch `source` = ต้นฉบับ: เกมอยู่ที่ `life/index.html` (ไฟล์เดียว) + `life/img/*.jpg` (68 รูป) + `life/snd/*.mp3` (10 เสียง)
   - branch `main` = GitHub Pages: โฟลเดอร์ `uncle-lee/` คือสำเนาของ `life/`
 - รายละเอียดทุกการแก้ไขอยู่ใน `README.md` ของ branch `source` (หัวข้อ Uncle Lee ทั้งหมด) อ่านก่อนเริ่มงาน
 - บทต้นทางและคู่มือกำกับ: `life_tools/v6/script_v6_1.md`, `life_tools/v6/director_guide.md`
@@ -42,7 +42,7 @@
 ## วิธีทำรูปและเสียงเพิ่ม
 - รูป: สร้างด้วย Canva (`generate-image` อ้างรูปเดิมเป็นแบบ) → เปิด `https://www.canva.com/M/<id>` ใน Chrome ของเจ้าของงาน ดึงไฟล์เต็มด้วย JS ย่อเป็น JPEG 1024px เก็บเป็น JSON ลง Downloads → stage ไฟล์ → `python3 -I life_tools/unpack_images.py <json> <src/life/img>` แล้วปิดแท็บ
   - รหัสรูปใน Canva ที่ใช้อ้างสไตล์ได้: hands `MAHauD-JYos`, sway `MAHauPd6i78`, letter `MAHauLh6rvM`, busstop `MAHauSPLp2o`, pills_am `MAHaucx9ZWo`, slippers `MAHasMokX8U`, yard_mom `MAHaslLcRNU`
-- เสียง: ElevenLabs (flow "Uncle Lee game sounds", id `m5NgxV01VEsbND0gYG2R`) ได้มาแล้วคือ bark กับ pant; คิวฟรีมักเต็ม
+- เสียง: ElevenLabs (flow "Uncle Lee game sounds", id `m5NgxV01VEsbND0gYG2R`) ได้มาแล้วคือ bark, pant, grunt; คิวฟรีมักเต็ม
   - เสียงอื่นมาจากชุด ESC-50 บน GitHub เลือกเฉพาะคลิป CC0 (รายชื่อคลิปอยู่ใน README)
   - ไฟล์เสียงจากเบราว์เซอร์แตกด้วย `life_tools/unpack_sounds.py`; ตัดแต่งด้วย ffmpeg (ใส่ `-ss` ก่อน `-i`)
 
@@ -53,7 +53,7 @@
 4. รูปชุดเภสัชกรเยี่ยมบ้าน 9 รูป (intro, kneel, listen, listen2, drawerask, talkover, teachback, resp_demo, goodbye) ห้องไม่ตรงกับห้องลุงวันอื่น ถ้าจะแก้ต้องวาดใหม่ทั้งชุดรวมรูป door
 5. ปฏิทินยังมีแต่วงแดง (บทพูดถึงวงน้ำเงินของอาเหมย)
 6. เช้าวันเสาร์–จันทร์ซ้ำกันมาก (พ่นสองพัฟ + กินยาทีละเม็ด) อาจย่อวันอาทิตย์กับจันทร์
-7. ไฟล์ `lee_images_claude_*.json`, `lee_sounds_claude_1.json` ใน Downloads ของเจ้าของงานลบได้
+7. ไฟล์ `lee_images_claude_*.json`, `lee_sounds_claude_1.json` และ `3f1d9402-031e-4e9e-a6f1-e9b991a22cd6.tmp` (เทคเสียงฮึบ 20 วินาที) ใน Downloads ของเจ้าของงานลบได้
 
 ## ข้อควรระวัง
 - เว็บเดียวกันมีเคส A/C/D ที่นักศึกษาใช้อยู่ อย่าแตะเว้นแต่ถูกขอ

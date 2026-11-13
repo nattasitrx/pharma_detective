@@ -447,3 +447,19 @@ gesture, picture or pharmacy fact was added or removed. Full before/after list: 
   he has been a soldier since fifteen).
 Twelve lines were removed, so the order of taps changed: saved-run key is now `lee7run7` (a player in the middle of
 a day starts that day again; finished days are kept). `resume.py` uses the new key.
+
+### Interface and game-system changes after the three-view review (14 Nov 2026)
+From the art reviewer's and the player's findings; pictures themselves are a separate job (see handoff).
+- "Tap to go on" is 15 px, bold and darker (#9c4526 on the cream panel); the pause button and the seven day buttons
+  are 40 px. Pinch-zoom is allowed again (the viewport no longer forbids it; `touch-action:manipulation` stays).
+- Title screen: days open one at a time (day n needs day n-1 finished; finished days stay open). `?all=1` opens
+  every day, for teachers and demos; `?fast=1` does too, so the test scripts are unchanged. Under the start button the
+  length of the chosen day is shown (`MINS`, estimated from the amount of text, not measured: 12, 8, 6, 20, 6, 7,
+  8 minutes) with a note on Friday that one can stop halfway and come back. Hint for iPhone silent mode.
+- Pause panel: a sound on/off button (`setMute`, key `lee7mute`, sets `master.gain`).
+- Keyboard: Space or Enter = tap to go on; 1-9 = pick a choice. Gestures still need a pointer.
+- Credits page behind a link on the title screen (design and development, case source, AI-made pictures from Canva,
+  sounds from ElevenLabs and ESC-50 CC0 clips, fonts), wording taken from `LICENSE.md`. No e-mail address on it.
+- `#txt` is `aria-live="polite"`; pause and day buttons have labels. Pictures still have no alt text.
+Not changed: Thai is still the only language; Friday is as long as before.
+Checked: play4 (15 runs, no errors), resume (6 cases), and a manual pass on a 360x640 screen.

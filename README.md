@@ -404,3 +404,16 @@ the notebook once day 7 is done. Saved-run key `lee7run6`.
 (flow "Uncle Lee game sounds", one 20 s take holding 12 grunts); the file is grunt no. 11 of that take
 (14.68-15.32 s), mono, 96k, peak -1.5 dB. Not yet listened to by anyone. The other grunts start at about 0.4, 1.7,
 3.1, 4.6, 5.9, 7.0, 8.8, 9.9, 10.8, 12.0 and 18.0 s if another one fits better.
+
+### Sound levels and four more recorded sounds (13 Nov 2026, late evening)
+Levels (no file was re-encoded; only the gains in `life/index.html` changed). Bark and pant were about 10 dB louder
+than everything else, the clock and the dripping tap the quietest: bark .6 -> .35, pant x .6, cough .75 -> 1.5,
+knock .8 -> 1.3, creak .5 -> .9, gulp .55 -> .9, clock .4/.45 -> .7/.8, drip .5 -> .9, birds .35 -> .45.
+New files from the owner's ElevenLabs (same flow), each with the old synthesised sound as fallback:
+- `ring` (`sfx.ring`, gain .55): one 1 s trill of a mechanical telephone bell (second take; the first was a 0.4 s ding).
+- `thud` (`sfx.thud`, .9): the fall in the bathroom, 0.27-1.02 s of a 2 s take.
+- `puff` (`sfx.puff`, .5): the soft-mist inhaler, first 0.5 s of a 1 s take, raised 11 dB.
+- `step` (`sfx.step`, .4): one slipper step, 1.50-1.88 s of a 2 s take; played at a slightly random speed.
+Checked: all 14 files decode and play in Chromium over http (they never load under `file://`, so `play4.py` and
+`gest.py` do not exercise them). Nobody has listened to any of these yet. No change to the order of taps, so the
+saved-run key stays `lee7run6`.

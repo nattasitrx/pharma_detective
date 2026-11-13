@@ -9,7 +9,7 @@
 
 ## ที่เก็บงาน
 - Repo: `nattasitrx/pharma_detective`
-  - branch `source` = ต้นฉบับ: เกมอยู่ที่ `life/index.html` (ไฟล์เดียว) + `life/img/*.jpg` (68 รูป) + `life/snd/*.mp3` (10 เสียง)
+  - branch `source` = ต้นฉบับ: เกมอยู่ที่ `life/index.html` (ไฟล์เดียว) + `life/img/*.jpg` (68 รูป) + `life/snd/*.mp3` (14 เสียง)
   - branch `main` = GitHub Pages: โฟลเดอร์ `uncle-lee/` คือสำเนาของ `life/`
 - รายละเอียดทุกการแก้ไขอยู่ใน `README.md` ของ branch `source` (หัวข้อ Uncle Lee ทั้งหมด) อ่านก่อนเริ่มงาน
 - บทต้นทางและคู่มือกำกับ: `life_tools/v6/script_v6_1.md`, `life_tools/v6/director_guide.md`
@@ -42,18 +42,19 @@
 ## วิธีทำรูปและเสียงเพิ่ม
 - รูป: สร้างด้วย Canva (`generate-image` อ้างรูปเดิมเป็นแบบ) → เปิด `https://www.canva.com/M/<id>` ใน Chrome ของเจ้าของงาน ดึงไฟล์เต็มด้วย JS ย่อเป็น JPEG 1024px เก็บเป็น JSON ลง Downloads → stage ไฟล์ → `python3 -I life_tools/unpack_images.py <json> <src/life/img>` แล้วปิดแท็บ
   - รหัสรูปใน Canva ที่ใช้อ้างสไตล์ได้: hands `MAHauD-JYos`, sway `MAHauPd6i78`, letter `MAHauLh6rvM`, busstop `MAHauSPLp2o`, pills_am `MAHaucx9ZWo`, slippers `MAHasMokX8U`, yard_mom `MAHaslLcRNU`
-- เสียง: ElevenLabs (flow "Uncle Lee game sounds", id `m5NgxV01VEsbND0gYG2R`) ได้มาแล้วคือ bark, pant, grunt; คิวฟรีมักเต็ม
+- เสียง: ElevenLabs (flow "Uncle Lee game sounds", id `m5NgxV01VEsbND0gYG2R`) ได้มาแล้วคือ bark, pant, grunt, ring, thud, puff, step; คิวฟรีมักเต็ม
   - เสียงอื่นมาจากชุด ESC-50 บน GitHub เลือกเฉพาะคลิป CC0 (รายชื่อคลิปอยู่ใน README)
+  - เบราว์เซอร์ในแอป Claude บันทึกไฟล์ดาวน์โหลดเป็นชื่อสุ่ม `.tmp` ใน Downloads (ดูจากขนาดและเวลา); ไฟล์เสียงไม่โหลดเมื่อเปิดเกมแบบ `file://` ต้องเปิดผ่าน http
   - ไฟล์เสียงจากเบราว์เซอร์แตกด้วย `life_tools/unpack_sounds.py`; ตัดแต่งด้วย ffmpeg (ใส่ `-ss` ก่อน `-i`)
 
 ## งานที่ค้าง / ยังไม่ได้ยืนยัน
 1. ยังไม่ได้ลองบน iPhone Safari จริง: ข้อความทับตัวเลือก, ระบบฮึบ, แถบเหนือปุ่ม
-2. เสียงใหม่ทั้งหมดยังไม่มีใครฟังยืนยัน (ไอ เคาะประตู ประตูเอี๊ยด นาฬิกา น้ำหยด นก กลืนน้ำ กริ่งโทรศัพท์สังเคราะห์)
+2. เสียงใหม่ทั้งหมดยังไม่มีใครฟังยืนยัน (ไอ เคาะประตู ประตูเอี๊ยด นาฬิกา น้ำหยด นก กลืนน้ำ และชุด 13 พ.ย. ค่ำ: กริ่งโทรศัพท์ ล้ม ยาพ่น ฝีเท้า) รวมถึงความดังที่ปรับใหม่ทั้งชุด (ค่าอยู่ใน README)
 3. เสียงฮึบตอนลุก (`snd/grunt.mp3`) ใส่แล้ว (13 พ.ย. ค่ำ, ElevenLabs, ฮึบที่ 11 ของเทค 20 วินาที) ยังไม่มีใครฟังยืนยัน — ถ้าไม่เข้า ดูเวลาของฮึบอื่นใน README
 4. รูปชุดเภสัชกรเยี่ยมบ้าน 9 รูป (intro, kneel, listen, listen2, drawerask, talkover, teachback, resp_demo, goodbye) ห้องไม่ตรงกับห้องลุงวันอื่น ถ้าจะแก้ต้องวาดใหม่ทั้งชุดรวมรูป door
 5. ปฏิทินยังมีแต่วงแดง (บทพูดถึงวงน้ำเงินของอาเหมย)
 6. เช้าวันเสาร์–จันทร์ซ้ำกันมาก (พ่นสองพัฟ + กินยาทีละเม็ด) อาจย่อวันอาทิตย์กับจันทร์
-7. ไฟล์ `lee_images_claude_*.json`, `lee_sounds_claude_1.json` และ `3f1d9402-031e-4e9e-a6f1-e9b991a22cd6.tmp` (เทคเสียงฮึบ 20 วินาที) ใน Downloads ของเจ้าของงานลบได้
+7. ไฟล์ `lee_images_claude_*.json`, `lee_sounds_claude_1.json` และไฟล์ `.tmp` สามไฟล์ (`3f1d9402-…`, `9d33401c-…`, `10533025-…` = เสียงจาก ElevenLabs) ใน Downloads ของเจ้าของงานลบได้
 
 ## ข้อควรระวัง
 - เว็บเดียวกันมีเคส A/C/D ที่นักศึกษาใช้อยู่ อย่าแตะเว้นแต่ถูกขอ

@@ -224,9 +224,9 @@ function ambSync(){ if(!AC) return; for(const k in AMBW){ const want=FF()?0:AMBW
   if(want>0&&!a&&SMP[k]){ const s=AC.createBufferSource(), g=AC.createGain(); s.buffer=SMP[k]; s.loop=true; g.gain.value=0; s.connect(g); g.connect(master); s.start(); AMB[k]={s,g}; ramp(g,want,1.2); }
   else if(a&&want>0) ramp(a.g,want,1);
   else if(a&&!want){ ramp(a.g,0,.8); const o=a.s; delete AMB[k]; setTimeout(()=>{ try{ o.stop(); }catch(e){} },1000); } } }
-function pant(v){ const t=performance.now(); if(t-pantT<1050) return; pantT=t; smp('pant',v||.55,.9+Math.random()*.2); }
+function pant(v){ const t=performance.now(); if(t-pantT<1050) return; pantT=t; smp('pant',(v||.55)*.6,.9+Math.random()*.2); }
 function audio(){ if(AC) return; try{ AC=new (window.AudioContext||window.webkitAudioContext)(); master=AC.createGain(); master.gain.value=.9; master.connect(AC.destination);
-  ['cough','bark','pant','grunt','knock','gulp','creak','tick','drip','birds'].forEach(k=>fetch('snd/'+k+'.mp3').then(r=>r.ok?r.arrayBuffer():Promise.reject()).then(b=>AC.decodeAudioData(b,buf=>{ SMP[k]=buf; ambSync(); },()=>{})).catch(()=>{}));
+  ['cough','bark','pant','grunt','knock','gulp','creak','tick','drip','birds','ring','thud','puff','step'].forEach(k=>fetch('snd/'+k+'.mp3').then(r=>r.ok?r.arrayBuffer():Promise.reject()).then(b=>AC.decodeAudioData(b,buf=>{ SMP[k]=buf; ambSync(); },()=>{})).catch(()=>{}));
   const buf=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate), d=buf.getChannelData(0); let last=0; for(let i=0;i<d.length;i++){ const w=Math.random()*2-1; last=(last+.02*w)/1.02; d[i]=last*3.2; }
   const s1=AC.createBufferSource(); s1.buffer=buf; s1.loop=true; const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=320; fanG=AC.createGain(); fanG.gain.value=0; s1.connect(lp); lp.connect(fanG); fanG.connect(master); s1.start();
   const wb=AC.createBuffer(1,AC.sampleRate,AC.sampleRate), wd=wb.getChannelData(0); for(let i=0;i<wd.length;i++) wd[i]=Math.random()*2-1;
@@ -239,7 +239,7 @@ function burst(freq,q,vol,dur,when,type){ if(!AC||FF()) return; const s=AC.creat
 const N={C4:261.6,D4:293.7,E4:329.6,G4:392,A4:440,C5:523.3,D5:587.3,E5:659.3,G5:784,A3:220,G3:196,E3:164.8,C3:130.8};
 const sfx={ tap(){ note(N.E5,.25,.04); }, soft(){ note(N.C5,.5,.06); note(N.G4,.6,.04,'sine',.08); }, warm(){ [N.C4,N.E4,N.G4,N.C5].forEach((f,i)=>note(f,1.6,.06,'sine',i*.1)); },
   low(){ note(N.A3,1.4,.07,'triangle'); note(N.E3,1.7,.06,'sine',.12); }, tick(){ note(1700,.03,.035,'square'); }, beat(){ note(58,.16,.2,'sine'); note(52,.2,.15,'sine',.14); },
-  step(){ burst(140,1.5,.22,.12); }, cough(){ if(smp('cough',.75,.95+Math.random()*.1)) return; for(let k=0;k<3;k++) burst(700+k*120,1.2,.34,.19,k*.26); }, puff(){ burst(3000,.7,.2,.3,0,'highpass'); }, lick(){ note(880,.08,.03); },
+  step(){ if(smp('step',.4,.9+Math.random()*.2)) return; burst(140,1.5,.22,.12); }, cough(){ if(smp('cough',1.5,.95+Math.random()*.1)) return; for(let k=0;k<3;k++) burst(700+k*120,1.2,.34,.19,k*.26); }, puff(){ if(smp('puff',.5,.96+Math.random()*.08)) return; burst(3000,.7,.2,.3,0,'highpass'); }, lick(){ note(880,.08,.03); },
   bell(){ note(N.E5,2.4,.05); note(N.G5,2.6,.04,'sine',.02); note(N.C5,3,.035,'sine',.04); } };
 /* the old tune on the radio: an original little waltz */
 const TUNE=[['E4',1],['G4',1],['A4',1],['C5',2],['A4',1],['G4',2],['E4',1],['D4',3],['E4',1],['G4',1],['A4',1],['D5',2],['C5',1],['A4',2],['G4',1],['C5',3],['E5',2],['D5',1],['C5',2],['A4',1],['G4',2],['E4',1],['G4',3],['A4',1],['G4',1],['E4',1],['D4',2],['E4',1],['C4',3]];
@@ -436,7 +436,7 @@ async function morning(){ await show('morning',3200); fx('Sun Dust'); clock('06:
   }
   H.innerHTML='';
 }
-async function phone(){ clock('06:58'); amb('tick',.4);
+async function phone(){ clock('06:58'); amb('tick',.7);
   await say(['อาเหมย อายุสี่สิบเอ็ด\nภรรยาผมทำงานเป็นกะที่บ้านพักทหารผ่านศึกกังซาน กลับบ้านได้สัปดาห์ละสองสามวัน','วันที่ไม่ได้กลับ เธอดูแลคนแก่ของคนอื่นทั้งวัน\nถ้าไม่เข้าเวรดึก เธอจะโทรมาเจ็ดโมงตรง','"เหล่าหลี่ กินยาเช้าหรือยังคะ"\nเธอเรียกผมเหมือนเรียกเพื่อนรุ่นเดียวกัน ทั้งที่ผมแก่กว่าพ่อเธอ','ผมรับสายตอนกริ่งที่สองเสมอ\nกริ่งแรก เอาไว้แกล้งว่าผมไม่ได้รอ']);
   const T=[['07:00','…'],['07:06','กริ่งแรกยังไม่มา'],['07:15','นาฬิกาเดินดังกว่าทุกวัน'],['07:30','ผมวางหูกลับ\nไม่มีใครรู้ว่าผมลอง','ผมยกหูขึ้นฟัง มีสัญญาณ\nโทรศัพท์ไม่ได้เสีย']]; let k=0;
   while(k<T.length){ clock(T[k][0]); if(!SMP.tick){ sfx.tick(); await W(520); sfx.tick(); await W(520); sfx.tick(); } else await W(1400); if(T[k][2]) await say([T[k][2]]); await say(T[k][1],{stay:1,q:1});
@@ -526,11 +526,11 @@ async function report(){ const L=[];
   await reportCard('รายงานประจำวัน · วันอังคาร', L, 'เหตุการณ์ทั่วไป: ปกติ', 'แม่ครับ วันนี้ผมรอโทรศัพท์อยู่\nไม่ได้เป็นอะไร แค่รอ\nราตรีสวัสดิ์ครับ แม่', 'อีกสามวัน จะมีคนมาเคาะประตูห้องนี้\nผมยังไม่รู้', S.dbl?'02:10 — เหงื่อท่วมตัว มือสั่น ใจเต้นแรง คงฝันร้าย\nผมนอนนิ่งๆ ในความมืด รอให้มันผ่านไป':''); dayEnd(1); }
 
 /* ---------------- shared by days 2-4 ---------------- */
-Object.assign(sfx,{ ring(){ /* two gongs struck in turn, like the bell of an old dial telephone */ for(let k=0;k<30;k++){ const f=k%2?1865:1568, t=k*.043; note(f,.2,.03,'sine',t); note(f*2.76,.11,.011,'sine',t); note(f*5.4,.05,.004,'sine',t); } },
-  creak(){ smp('creak',.5,.95+Math.random()*.1)||note(1700,.03,.035,'square'); },
-  knock(){ if(smp('knock',.8)) return; for(let k=0;k<3;k++) burst(220,2,.5,.09,k*.34); }, thud(){ note(46,.5,.5,'sine'); burst(120,1,.5,.22); }, bark(){ if(smp('bark',.6,.96+Math.random()*.08)) return; for(let k=0;k<2;k++){ burst(520,3,.09,.12,k*.3); burst(900,3,.05,.1,k*.3+.03); } } });
+Object.assign(sfx,{ ring(){ /* recorded bell if snd/ring.mp3 is there; else two gongs struck in turn, like the bell of an old dial telephone */ if(smp('ring',.55)) return; for(let k=0;k<30;k++){ const f=k%2?1865:1568, t=k*.043; note(f,.2,.03,'sine',t); note(f*2.76,.11,.011,'sine',t); note(f*5.4,.05,.004,'sine',t); } },
+  creak(){ smp('creak',.9,.95+Math.random()*.1)||note(1700,.03,.035,'square'); },
+  knock(){ if(smp('knock',1.3)) return; for(let k=0;k<3;k++) burst(220,2,.5,.09,k*.34); }, thud(){ if(smp('thud',.9)) return; note(46,.5,.5,'sine'); burst(120,1,.5,.22); }, bark(){ if(smp('bark',.35,.96+Math.random()*.08)) return; for(let k=0;k<2;k++){ burst(520,3,.09,.12,k*.3); burst(900,3,.05,.1,k*.3+.03); } } });
 /* the telephone: he likes to answer on the second ring */
-function ringGame(){ return new Promise(res=>{ const a=$('#acts'); let n=0, done=false, t=null; amb('tick',.45);
+function ringGame(){ return new Promise(res=>{ const a=$('#acts'); let n=0, done=false, t=null; amb('tick',.8);
   const fin=r=>{ if(done) return; done=true; clearTimeout(t); a.innerHTML=''; amb('tick',0); res(r); };
   const go=()=>{ if(done) return; n++; sfx.ring(); if(n>5){ fin('late'); return; } t=setTimeout(go,FAST?40:2700); };
   a.innerHTML=`<button class="btn go" style="animation-delay:0s">รับสาย</button>`; a.querySelector('.btn').onclick=()=>{ sfx.soft(); fin(n<=1?'first':n===2?'second':'late'); };
@@ -538,7 +538,7 @@ function ringGame(){ return new Promise(res=>{ const a=$('#acts'); let n=0, done
 /* seven pills, one at a time */
 function tapPills(n){ return new Promise(res=>{ const a=$('#acts'), W7=['หนึ่ง','สอง','สาม','สี่','ห้า','หก','เจ็ด']; let k=0;
   a.innerHTML=`<button class="btn go" style="animation-delay:0s">กลืนเม็ดที่หนึ่ง</button>`; const b=a.querySelector('.btn');
-  b.onclick=()=>{ k++; smp('gulp',.55,.92+Math.random()*.16)||note(520+k*40,.18,.05); if(k>=n){ a.innerHTML=''; res(); return; } b.textContent='กลืนเม็ดที่'+W7[k]; }; if(FAST){ for(let i=0;i<n;i++) setTimeout(()=>b.click(),20+i*5); } }); }
+  b.onclick=()=>{ k++; smp('gulp',.9,.92+Math.random()*.16)||note(520+k*40,.18,.05); if(k>=n){ a.innerHTML=''; res(); return; } b.textContent='กลืนเม็ดที่'+W7[k]; }; if(FAST){ for(let i=0;i<n;i++) setTimeout(()=>b.click(),20+i*5); } }); }
 /* a hold that gives way before the end (he cannot get up) */
 function holdFail(label, ms, at){ return new Promise(res=>{ const a=$('#acts'); a.innerHTML=`<div id="holdW">${MT('ลุก')}<button id="hold"><span>${label}</span></button><div id="holdL"></div></div>`;
   const b=$('#hold'); let p=0, down=FAST, last=performance.now(), done=false, fall=false;
@@ -640,7 +640,7 @@ async function day3(){ newDay('วันพฤหัส'); Object.assign(S,{two:
   await show('corridor_night',60); clock('02:14'); ramp(fanG,.006,1); await black(false,1800);
   await say('ไม่ได้เปิดไฟ กลัวจะปลุกคนทั้งชั้น\nมือหนึ่งคลำผนังไป',{stay:1,q:1}); await feel({limit:.78});
   sfx.thud(); $('#black').style.transitionDuration='60ms'; $('#black').style.opacity=1; clearTxt(); $('#vig').style.opacity=0; await W(3200);
-  await show('floor',60); clock('02:19'); amb('drip',.5); await black(false,5000); $('#vig').style.opacity=.35; sfx.bark();
+  await show('floor',60); clock('02:19'); amb('drip',.9); await black(false,5000); $('#vig').style.opacity=.35; sfx.bark();
   await say(['กระเบื้องเย็น','ผมไม่ได้ยินเสียงตัวเองล้ม\nได้ยินแค่เสียงไม้เท้ากลิ้งไปชนประตู','ไม้เท้าอยู่ห่างไปหนึ่งช่วงแขน\nหนึ่งช่วงแขนของคนที่ลุกไม่ขึ้น ไกลเท่ากับสี่ชั้น']); sfx.bark();
   await say(['ผมได้ยินเจ้าดำเห่าอยู่หลังประตูห้อง\nมันไม่ค่อยเห่าใครเลย','"เงียบก่อน" ผมกระซิบ\nกลัวใครจะตื่นขึ้นมาช่วย']);
   await say('…',{stay:1,q:1}); await holdFail('กดค้าง<br>เพื่อลุก',3000,.7);
@@ -903,7 +903,7 @@ async function day7(){ newDay('วันจันทร์'); Object.assign(S,{r
   await say(['ผมเคยลงไปหาหมอได้\nแต่วันนี้ไม่มีบัตรคิวในกระเป๋า','มีแค่สายจูง กระดาษนัด และเหรียญซื้อน้ำเต้าหู้']);
   const FL=[['สี่ชั้น',.0,.25,['ชั้นสาม\nผมหยุดพักตรงชานบันไดที่เจ้าดำเคยย้อนกลับมานั่งข้างผม','คราวนี้มันนั่งลงพร้อมกัน\nไม่ต้องเรียก']],['',.25,.5,['ชั้นสอง\nป้าห้องสองศูนย์หนึ่งถามว่า "ลงไปไหนคะ"','"พาหมาเดิน" ผมตอบ\nป้าเธอยิ้ม แล้วบอกให้เดินระวัง']],['',.5,.75,['ชั้นหนึ่ง']],['',.75,1,null]];
   for(const [lab,f,t,line] of FL){ if(lab) await say(lab,{stay:1,q:1}); await steps({n:32, from:f, limit:t, easy:true}); $('#vig').style.opacity=0; if(line) await say(line); }
-  await show('exitdoor',2400); await say('ประตูตึก',{stay:1}); card('exitdoor'); await flick('up','ปัดนิ้วขึ้น เพื่อผลักประตู'); cardOff(); sfx.creak(); amb('birds',.35);
+  await show('exitdoor',2400); await say('ประตูตึก',{stay:1}); card('exitdoor'); await flick('up','ปัดนิ้วขึ้น เพื่อผลักประตู'); cardOff(); sfx.creak(); amb('birds',.45);
   $('#black').style.background='#fff6de'; await black(true,700); await show('outside',60); fx('Sun Dust'); clock('08:20'); await black(false,3200); $('#black').style.background='';
   await say(['แดดเช้า','ผมหยุดตรงหน้าประตู\nแสงส่องลงที่ปลายรองเท้าพอดี','เจ้าดำก้าวนำไปหนึ่งก้าว\nแล้วหันกลับมารอ']); sfx.bell();
   await say(['กริ๊ง กริ๊ง\nรถน้ำเต้าหู้']); await choose([{t:'ซื้อหนึ่งแก้ว',s:'NT$ 20'}]); S.money=Math.max(0,S.money-20); hud();
@@ -933,7 +933,7 @@ async function finale(){ const pg=$('#pg'), dn=$('#dnext'); dn.classList.remove(
   pg.style.opacity=0; await W(1800);
   /* closing picture: the letter by the telephone; it rings, and the player lifts the receiver */
   pg.innerHTML=`<img id="endph" src="${src('letter')}" alt="" style="display:block;width:100%;border-radius:4px;cursor:pointer">`; pg.style.background='#fffaf0'; pg.style.padding='9px 9px 12px'; pg.style.opacity=1;
-  amb('tick',.4); dn.textContent='เช้าวันอังคาร · 07:00\nจดหมายพับวางรออยู่ข้างโทรศัพท์'; dn.classList.add('on'); await W(4600);
+  amb('tick',.7); dn.textContent='เช้าวันอังคาร · 07:00\nจดหมายพับวางรออยู่ข้างโทรศัพท์'; dn.classList.add('on'); await W(4600);
   sfx.ring(); dn.textContent='กริ่งแรก\nวันนี้ผมไม่ต้องแกล้งว่ากำลังยุ่ง'; await W(3400);
   sfx.ring(); dn.textContent='กริ่งที่สอง…\n(แตะที่โทรศัพท์ เพื่อรับสาย)';
   await io(()=>new Promise(res=>{ const el=$('#endph'); const t=setInterval(()=>sfx.ring(),3200); const f=()=>{ clearInterval(t); el.onclick=null; res(0); }; el.onclick=f; if(FAST) setTimeout(f,20); }));

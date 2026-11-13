@@ -2,7 +2,7 @@
 <html lang="th">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
 <title>เจ็ดวันของลุงหลี่</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -59,8 +59,8 @@ html,body{-webkit-touch-callout:none;margin:0;height:100%;background:#1c1512;col
 #txt.on{opacity:1;transform:none}
 #txt.q{color:var(--soft);font-style:italic}
 #txt.big{font:600 26px/1.5 'Noto Serif Thai',serif;text-align:center;letter-spacing:.04em}
-#more{position:absolute;right:22px;bottom:calc(12px + env(safe-area-inset-bottom));font:400 13px/1 'Sarabun',sans-serif;color:var(--terra);opacity:0;animation:bob 1.6s ease-in-out infinite}
-#more.on{opacity:.85}
+#more{position:absolute;right:22px;bottom:calc(12px + env(safe-area-inset-bottom));font:600 15px/1 'Sarabun',sans-serif;color:#9c4526;padding:8px 0 4px 14px;opacity:0;animation:bob 1.6s ease-in-out infinite}
+#more.on{opacity:1}
 @keyframes bob{50%{transform:translateY(4px)}}
 #acts{display:flex;flex-direction:column;gap:10px;margin-top:14px}
 #acts:empty{display:none}
@@ -109,7 +109,7 @@ html,body{-webkit-touch-callout:none;margin:0;height:100%;background:#1c1512;col
 #title .sub{font:400 16.5px/1.7 'Sarabun',sans-serif;opacity:.92}
 #title .day{margin:22px 0 22px;font:600 14px/1 'Sarabun',sans-serif;letter-spacing:.18em;border:1px solid rgba(255,248,234,.55);border-radius:99px;padding:9px 18px}
 #title .btn{min-width:190px}
-#title .ear{margin-top:16px;font:400 13px/1.5 'Sarabun',sans-serif;opacity:.75}
+#title .ear{margin-top:16px;font:400 13.5px/1.6 'Sarabun',sans-serif;opacity:.85;text-align:center}#credB{appearance:none;border:0;background:none;color:#fff8ea;opacity:.7;font:400 13px/1 'Sarabun',sans-serif;text-decoration:underline;margin-top:6px;padding:10px 14px;cursor:pointer}#cred{position:absolute;inset:0;z-index:41;display:none;flex-direction:column;align-items:center;overflow-y:auto;background:#241a15;color:#fff8ea;padding:26px 26px 50px;font:400 15px/1.7 'Sarabun',sans-serif;text-align:left}#cred.on{display:flex}#cred h2{font:600 22px/1.4 'Noto Serif Thai',serif;margin:14px 0 6px}#cred div{max-width:380px;width:100%}#cred p{margin:10px 0}#cred b{color:#ffd58a;font-weight:600}#cred .btn{opacity:1;transform:none;animation:none;align-self:center;margin-top:18px;flex:none}
 #diary{justify-content:center;background:#241a15;opacity:0;pointer-events:none;color:var(--ink)}
 #diary.on{opacity:1;pointer-events:auto}
 #diary .pg{width:100%;max-width:370px;background:repeating-linear-gradient(#fffaf0 0 31px,#e6d5b6 31px 32px);border-radius:4px;padding:16px 22px 22px;box-shadow:0 18px 50px rgba(0,0,0,.5);transform:rotate(-1deg);font:400 17.5px/32px 'Mali',cursive;text-align:left}
@@ -123,7 +123,7 @@ html,body{-webkit-touch-callout:none;margin:0;height:100%;background:#1c1512;col
 #diary .next{white-space:pre-line;margin:24px 0 16px;font:400 15px/1.7 'Sarabun',sans-serif;color:#e8d8be;opacity:0;transition:opacity 2s}
 #diary .next.on{opacity:1}
 #dbtn{display:flex;flex-direction:column;gap:9px;width:100%;max-width:300px;opacity:0;pointer-events:none;transition:opacity 2s}#dbtn.on{opacity:1;pointer-events:auto}
-#days{display:flex;gap:8px;margin:20px 0 20px}#days button{appearance:none;border:1px solid rgba(255,248,234,.5);background:transparent;color:#fff8ea;border-radius:99px;padding:8px 13px;font:600 13.5px/1 'Sarabun',sans-serif;cursor:pointer}#days button{min-width:36px}#days button.dn{border-color:#e9a646;color:#ffd58a}#days button.on{background:#fff8ea;color:#4a3528}
+#days{display:flex;gap:4px;margin:20px 0 20px}#days button{appearance:none;border:1px solid rgba(255,248,234,.5);background:transparent;color:#fff8ea;border-radius:99px;padding:0;height:40px;font:600 15px/1 'Sarabun',sans-serif;cursor:pointer}#days button{min-width:40px}#days button.lk{opacity:.32;border-style:dashed;cursor:default}#days button.dn{border-color:#e9a646;color:#ffd58a}#days button.on{background:#fff8ea;color:#4a3528}
 #feet{display:flex;gap:12px;align-items:center}#feet button{width:92px;height:92px;border-radius:50%;border:0;background:#fffaf0;box-shadow:0 0 0 7px #ecdcc0,inset 0 2px 8px rgba(120,80,40,.15);font:600 17px/1 'Sarabun',sans-serif;color:#8a6f5c;touch-action:none;transition:transform .1s,box-shadow .2s}#feet button.nx{box-shadow:0 0 0 7px #e9a646,inset 0 2px 8px rgba(120,80,40,.15);color:#4a3528}#feet button:active{transform:scale(.93)}
 #bre{width:58px;height:8px;border-radius:9px;background:#ecdcc0;overflow:hidden}#bre i{display:block;height:100%;width:100%;background:#e9a646}
 #rail{position:relative;width:280px;height:54px;touch-action:none;cursor:pointer}#rail::before{content:"";position:absolute;left:0;right:0;top:23px;height:8px;border-radius:9px;background:#ecdcc0}#rail i{position:absolute;left:0;top:23px;height:8px;border-radius:9px;background:#e9a646}#rail b{position:absolute;top:5px;width:44px;height:44px;margin-left:-22px;border-radius:50%;background:#fffaf0;box-shadow:0 0 0 5px #e9a646,0 4px 10px rgba(120,80,40,.3)}
@@ -142,7 +142,7 @@ html,body{-webkit-touch-callout:none;margin:0;height:100%;background:#1c1512;col
 #app.tight #view{max-height:38dvh}
 #app.tight #txt{font-size:17px;line-height:1.65;min-height:0}
 #app.tight #acts{gap:7px;margin-top:9px}#app.tight .btn{padding:9px 15px;font-size:16px}
-#pauseB{appearance:none;border:0;background:rgba(20,12,8,.35);color:#fff8ea;border-radius:99px;width:30px;height:30px;font-size:13px;line-height:30px;padding:0;margin-left:2px;cursor:pointer}
+#pauseB{appearance:none;border:0;background:rgba(20,12,8,.35);color:#fff8ea;border-radius:99px;width:40px;height:40px;font-size:15px;line-height:40px;padding:0;margin:-5px -4px -5px 4px;cursor:pointer}
 #pause,#ffw{position:absolute;inset:0;z-index:30;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(24,16,12,.93);color:#fff8ea;text-align:center;padding:30px;font:400 17px/1.8 'Sarabun',sans-serif}
 #pause.on,#ffw.on{display:flex}
 #pause b{font:600 24px/1.5 'Noto Serif Thai',serif}
@@ -168,8 +168,8 @@ html,body{-webkit-touch-callout:none;margin:0;height:100%;background:#1c1512;col
     <div id="hud"><span id="clock"></span><span class="r"><span id="tr"></span><span id="en"></span><span id="money"></span><button id="pauseB" aria-label="พัก">⏸</button></span></div>
     <div id="black"></div>
   </div>
-  <div id="arch"></div><div id="pause"><b>พักไว้ก่อน</b><div>เกมจำไว้แล้วว่าเล่นถึงตรงไหน<br>ปิดหน้านี้ได้เลย กลับมาเมื่อไรก็เล่นต่อจากตรงนี้</div><button class="btn go" id="pGo">เล่นต่อ</button><button class="btn" id="pCalm"></button><button class="btn" id="pHome">กลับหน้าแรก</button></div><div id="ffw">กำลังพากลับไปที่ค้างไว้…</div>
-  <div id="panel"><div id="txt"></div><div id="acts"></div><div id="more">แตะเพื่อไปต่อ ▾</div></div>
+  <div id="arch"></div><div id="cred"><div><h2>เจ็ดวันของลุงหลี่</h2><p>ส่วนหนึ่งของชุดเกม Pharma Detective (藥師偵探)</p><p><b>ออกแบบและพัฒนาเกม</b><br>ณัฐสิทธิ์ รัตนพาณิชย์ (Nattasit Rattanaphanit)</p><p><b>เนื้อหาเคส</b><br>ดัดแปลงจากเคสของ Prof. Chung-Yu Chen (陳崇鈺) School of Pharmacy, Kaohsiung Medical University โดยได้รับอนุญาต ชื่อและรายละเอียดบางส่วนของเรื่องเป็นเรื่องสมมติ</p><p><b>ภาพ</b><br>สร้างด้วยเครื่องมือสร้างภาพ AI ใน Canva แล้วคัดเลือกโดยผู้พัฒนา</p><p><b>เสียง</b><br>เสียงประกอบส่วนหนึ่งสร้างด้วย ElevenLabs อีกส่วนมาจากชุดข้อมูล ESC-50 (เฉพาะคลิปสัญญาอนุญาต CC0) เพลงจากวิทยุแต่งขึ้นใหม่สำหรับเกมนี้</p><p><b>ตัวอักษร</b><br>Noto Serif Thai, Sarabun, Mali, Charmonman (Google Fonts)</p><p>เกมนี้ใช้เพื่อการเรียนการสอนเท่านั้น ไม่ใช่คำแนะนำทางการแพทย์<br>© 2026 สงวนลิขสิทธิ์</p></div><button class="btn x">ปิด</button></div><div id="pause"><b>พักไว้ก่อน</b><div>เกมจำไว้แล้วว่าเล่นถึงตรงไหน<br>ปิดหน้านี้ได้เลย กลับมาเมื่อไรก็เล่นต่อจากตรงนี้</div><button class="btn go" id="pGo">เล่นต่อ</button><button class="btn" id="pSnd"></button><button class="btn" id="pCalm"></button><button class="btn" id="pHome">กลับหน้าแรก</button></div><div id="ffw">กำลังพากลับไปที่ค้างไว้…</div>
+  <div id="panel"><div id="txt" aria-live="polite"></div><div id="acts"></div><div id="more">แตะเพื่อไปต่อ ▾</div></div>
   <div id="title">
     <div class="bgi"></div>
     <h1>เจ็ดวันของลุงหลี่</h1>
@@ -178,7 +178,8 @@ html,body{-webkit-touch-callout:none;margin:0;height:100%;background:#1c1512;col
     <div id="days"></div>
     <button class="btn go" id="start">เริ่มต้นวัน</button>
     <button class="btn" id="archB">📖 อ่านบันทึกย้อนหลัง</button>
-    <div class="ear">🎧 เปิดเสียงไว้ · วันละราว 8 นาที</div>
+    <div class="ear" id="ear"></div>
+    <button id="credB">เครดิตและที่มาของภาพและเสียง</button>
   </div>
   <div id="diary"><div class="pg" id="pg"></div><div class="next" id="dnext">อีกสามวัน จะมีคนมาเคาะประตูห้องนี้</div><div id="dbtn"></div></div>
 </div>
@@ -190,6 +191,8 @@ const FAST=/[?&]fast=1/.test(location.search);   // for testing: no waits
 const RUNKEY='lee7run7'; let RQ=[], LOG=[], RUNDAY=0;
 const FF=()=>RQ.length>0, QUICK=()=>FAST||FF();
 let CALM=false; try{ const c=localStorage.getItem('lee7calm'); CALM=c==='1'||(c==null&&matchMedia('(prefers-reduced-motion: reduce)').matches); }catch(e){}
+let MUTE=false; try{ MUTE=localStorage.getItem('lee7mute')==='1'; }catch(e){}
+function setMute(v){ MUTE=!!v; try{ localStorage.setItem('lee7mute',MUTE?'1':'0'); }catch(e){} try{ if(master) master.gain.value=MUTE?0:.9; }catch(e){} const b=$('#pSnd'); if(b) b.textContent='เสียง: '+(MUTE?'ปิดอยู่ · แตะเพื่อเปิด':'เปิดอยู่ · แตะเพื่อปิด'); }
 function setCalm(v){ CALM=!!v; try{ localStorage.setItem('lee7calm',CALM?'1':'0'); }catch(e){} $('#app').classList.toggle('calm',CALM); const b=$('#pCalm'); if(b) b.textContent='ลดการเคลื่อนไหว: '+(CALM?'เปิดอยู่':'ปิดอยู่'); if(S&&S.pic) camera(S.pic); }
 /* progress shown above the button, where a finger does not cover it */
 const MT=(lab,two)=>`<div class="mtw"><span>${lab||''}</span><div id="mt"><i></i></div></div>`+(two?`<div class="mtw"><span>ลม</span><div id="mb"><i></i></div></div>`:'');
@@ -225,7 +228,7 @@ function ambSync(){ if(!AC) return; for(const k in AMBW){ const want=FF()?0:AMBW
   else if(a&&want>0) ramp(a.g,want,1);
   else if(a&&!want){ ramp(a.g,0,.8); const o=a.s; delete AMB[k]; setTimeout(()=>{ try{ o.stop(); }catch(e){} },1000); } } }
 function pant(v){ const t=performance.now(); if(t-pantT<1050) return; pantT=t; smp('pant',(v||.55)*.6,.9+Math.random()*.2); }
-function audio(){ if(AC) return; try{ AC=new (window.AudioContext||window.webkitAudioContext)(); master=AC.createGain(); master.gain.value=.9; master.connect(AC.destination);
+function audio(){ if(AC) return; try{ AC=new (window.AudioContext||window.webkitAudioContext)(); master=AC.createGain(); master.gain.value=MUTE?0:.9; master.connect(AC.destination);
   ['cough','bark','pant','grunt','knock','gulp','creak','tick','drip','birds','ring','thud','puff','step'].forEach(k=>fetch('snd/'+k+'.mp3').then(r=>r.ok?r.arrayBuffer():Promise.reject()).then(b=>AC.decodeAudioData(b,buf=>{ SMP[k]=buf; ambSync(); },()=>{})).catch(()=>{}));
   const buf=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate), d=buf.getChannelData(0); let last=0; for(let i=0;i<d.length;i++){ const w=Math.random()*2-1; last=(last+.02*w)/1.02; d[i]=last*3.2; }
   const s1=AC.createBufferSource(); s1.buffer=buf; s1.loop=true; const lp=AC.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=320; fanG=AC.createGain(); fanG.gain.value=0; s1.connect(lp); lp.connect(fanG); fanG.connect(master); s1.start();
@@ -276,6 +279,9 @@ function energy(d){ S.en=Math.max(0,Math.min(5,S.en+d)); hud(); const e=$('#en')
 async function black(on,ms){ if(CALM) ms=Math.min(ms||1600,600); const b=$('#black'); b.style.transitionDuration=(QUICK()?30:(ms||1600))+'ms'; b.style.opacity=on?1:0; await W(ms||1600); }
 let tapRes=null;
 $('#panel').addEventListener('click',e=>{ if(e.target.closest('.btn,#hold,#dial')) return; if(tapRes){ const r=tapRes; tapRes=null; r(); } });
+document.addEventListener('keydown',e=>{ if(e.repeat||e.ctrlKey||e.metaKey||e.altKey) return; if(!$('#title').classList.contains('hidden')||$('#pause').classList.contains('on')) return;
+  if(e.key===' '||e.key==='Enter'){ const f=document.activeElement; if(f&&f.closest&&f.closest('#acts,input')) return; if(tapRes){ e.preventDefault(); const r=tapRes; tapRes=null; r(); } }
+  else if(/^[1-9]$/.test(e.key)){ const b=$('#acts').querySelectorAll('.btn:not(.dis)')[+e.key-1]; if(b) b.click(); } });
 async function say(t,o){ const el=$('#txt'), list=[].concat(t);
   for(const line of list){ el.classList.remove('on'); $('#more').classList.remove('on'); await W(el.textContent?460:60); el.textContent=line; el.classList.toggle('q',!!(o&&o.q)); el.classList.toggle('big',!!(o&&o.big)); el.classList.add('on'); fit();
     if(o&&o.stay) return; await W(700); $('#more').classList.add('on'); await io(()=>FAST?sleep(15):new Promise(r=>tapRes=r)); sfx.tap(); }
@@ -966,12 +972,15 @@ function startDay(n,log){ $('#hud').classList.remove('on'); preload(n===1||!DAYS
 $('#pauseB').onclick=e=>{ e.stopPropagation(); $('#pause').classList.add('on'); if(AC) AC.suspend(); };
 function archive(){ const R=P.rep||{}, pl=t=>typeof t==='string'?t:`<s>${t.strike}</s>`; $('#arch').innerHTML='<button class="btn x">ปิดสมุด</button><h2>สมุดรายงานถึงแม่</h2>'+[1,2,3,4,5,6,7].filter(n=>R[n]).map(n=>{ const r=R[n]; return `<div class="pg"><b>${r.title}</b>`+r.lines.map(t=>`<p>${pl(t)}</p>`).join('')+`<p class="last">${r.last}</p><p style="white-space:pre-line">${r.sign}</p>`+(r.reply?`<p class="reply">${r.reply}</p>`:'')+'</div>'; }).join('')+((P.done||0)>=7?'<div class="pg"><b>ชวนคิดหลังเล่นจบ</b><p>ช่วงไหนที่คุณยังจำภาพหรือเสียงได้</p><p>&nbsp;</p><p>คุณรู้สึกอย่างไร ตอนลุงหลี่ถูกถามเรื่องยาข้ามหัว</p><p>&nbsp;</p><p>ถ้าได้ไปเยี่ยมบ้านคนไข้จริง คุณจะทำอะไรต่างจากเดิม</p></div>':''); $('#arch').classList.add('on'); $('#arch').scrollTop=0; $('#arch .x').onclick=()=>$('#arch').classList.remove('on'); }
 if(P.rep&&Object.keys(P.rep).length) $('#archB').style.display='block'; $('#archB').onclick=archive;
-$('#pCalm').onclick=()=>setCalm(!CALM); setCalm(CALM);
+$('#pCalm').onclick=()=>setCalm(!CALM); setCalm(CALM); $('#pSnd').onclick=()=>setMute(!MUTE); setMute(MUTE);
+$('#credB').onclick=()=>$('#cred').classList.add('on'); $('#cred .x').onclick=()=>$('#cred').classList.remove('on'); $('#pauseB').setAttribute('aria-label','พักเกม');
 $('#pGo').onclick=()=>{ $('#pause').classList.remove('on'); if(AC) AC.resume(); };
 $('#pHome').onclick=()=>location.reload();
 
+const OPENALL=FAST||/[?&]all=1/.test(location.search), MINS=[0,12,8,6,20,6,7,8]; /* rough reading time of each day, from its amount of text */
 let pickDay=Math.min(7,(P.done||0)+1);
-function drawDays(){ $('#days').innerHTML=[1,2,3,4,5,6,7].map(n=>`<button data-n="${n}" class="${n===pickDay?'on':''}${(P.done||0)>=n?' dn':''}">${n}</button>`).join(''); $('#days').querySelectorAll('button').forEach(b=>b.onclick=()=>{ pickDay=+b.dataset.n; drawDays(); });
+function drawDays(){ const open=n=>OPENALL||n<=(P.done||0)+1; $('#days').innerHTML=[1,2,3,4,5,6,7].map(n=>`<button data-n="${n}" aria-label="วันที่ ${n}${open(n)?'':' ยังไม่เปิด'}" class="${n===pickDay?'on':''}${(P.done||0)>=n?' dn':''}${open(n)?'':' lk'}">${n}</button>`).join(''); $('#days').querySelectorAll('button').forEach(b=>b.onclick=()=>{ if(b.classList.contains('lk')){ $('#ear').textContent='วันที่ '+b.dataset.n+' จะเปิดเมื่อเล่นวันก่อนหน้าจบ'; return; } pickDay=+b.dataset.n; drawDays(); });
+  $('#ear').innerHTML='🎧 เปิดเสียงไว้ (iPhone: ปิดโหมดเงียบ)<br>วันนี้ใช้เวลาราว '+MINS[pickDay]+' นาที'+(MINS[pickDay]>=15?' · พักกลางทางแล้วกลับมาเล่นต่อได้':'');
   $('#start').textContent='เริ่มวันที่ '+pickDay+' · วัน'+['','อังคาร','พุธ','พฤหัส','ศุกร์','เสาร์','อาทิตย์','จันทร์'][pickDay]; }
 drawDays();
 document.addEventListener('contextmenu',e=>e.preventDefault());

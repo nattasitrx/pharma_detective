@@ -673,14 +673,14 @@ async function f3(){ nd('วันจันทร์'); Object.assign(S,{ring:''
   await show('knee',2400);
   await say('หนึ่ง สอง สาม',{stay:1,q:1}); await holdFail('กดค้าง<br>เพื่อลุก',3000,.7);
   await say('หนึ่ง สอง สาม สี่ ห้า',{stay:1,q:1}); await heave('กดค้าง<br>เพื่อลุก',4400,'');
-  clearTxt(); await show('dance',3200); hearts(.5,.5); await W(FAST?50:9000); hearts(.45,.45); await W(FAST?50:7000);
+  clearTxt(); await show('dance',3200); hearts(.5,.5); await W(FAST?50:6000); await say('ยาทุกเม็ดมีเหตุผลที่ต้องกิน',{stay:1,big:1}); await W(FAST?50:5200); hearts(.45,.45); await say('เหตุผลของเขามีสี่ขา\nและรออยู่ที่ประตู',{stay:1,big:1}); await W(FAST?50:8000); clearTxt(); await W(FAST?50:1200);
   await black(true,3000); fx(''); ramp(staticG,0,3); await W(500);
   await reportCard('จดไว้ข้างปฏิทิน · วันจันทร์',['ยาพ่นสีเขียว: สองพัฟ','ยาเช้า: ช่องเช้าช่องเดียว','ลงบันได: สี่ชั้น ถึงถนน','ขาขึ้น: พักหกครั้ง สะโพกยังเจ็บ','เจ้าดำ: ได้ดมเสาไฟจนพอใจ','เพลงสี่โมง: ได้เต้น'],'ใครพาเจ้าดำลงไป: ผม','','');
   await finale4(); dayEnd(3);
 }
 async function finale4(){ const pg=$('#pg'), dn=$('#dnext'); dn.classList.remove('on'); await W(4200); pg.style.transition='opacity 1.6s'; pg.style.opacity=0; await W(1800); pg.style.display='none'; dn.classList.add('big');
-  for(const t of ['สำหรับคุณ\nมันคือการเยี่ยมบ้านหนึ่งชั่วโมง','สำหรับเขา\nมันคือสี่ชั้น']){ dn.textContent=t; dn.classList.add('on'); await W(4400); dn.classList.remove('on'); await W(2400); }
-  playTune({dry:1,vol:.7,to:8,slow:1.3}); dn.textContent='สี่ชั้นของลุงหลี่'; dn.classList.add('on'); await W(1500); }
+  playTune({dry:1,vol:.7,to:8,slow:1.3}); dn.textContent='สี่ชั้นของลุงหลี่'; dn.classList.add('on'); await W(5600); dn.classList.remove('on'); await W(2400);
+  dn.textContent='ก่อนถามว่าเขากินยาอะไร'; dn.classList.add('on'); await W(3800); dn.textContent='ก่อนถามว่าเขากินยาอะไร\nถามก่อนว่า เขาตื่นมาเพื่อใคร'; await W(3200); }
 
 const DAYS={1:f1,2:f2,3:f3};
 function startDay(n,log){ $('#hud').classList.remove('on'); preload([DAYS[n]||f1,greenRoutine]); RUNDAY=n; LOG=[]; RQ=log?log.slice():[]; if(RQ.length) $('#ffw').classList.add('on'); saveRun(); (DAYS[n]||f1)(); }

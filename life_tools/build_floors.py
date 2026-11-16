@@ -9,7 +9,7 @@ c0=s.rfind('/*',0,a); a=c0 if a-c0<400 else a
 old1=s[a:b]; s=s[:a]+'\n'+s[b:]
 a=s.find('\nasync function day2('); c0=s.rfind('/*',0,a); a=c0 if a-c0<300 else a
 b=s.find('const DAYS={')
-s=s[:a]+open('/home/claude/audit/sfx_extra.js',encoding='utf-8').read()+open('/home/claude/audit/floors_days.js',encoding='utf-8').read()+'\n'+s[b:]
+s=s[:a]+open('/home/claude/src/life_tools/sfx_extra.js',encoding='utf-8').read()+open('/home/claude/src/life_tools/floors_days.js',encoding='utf-8').read()+'\n'+s[b:]
 # 2. day table, start, end
 sub("const DAYS={1:day1,2:day2,3:day3,4:day4,5:day5,6:day6,7:day7};","const DAYS={1:f1,2:f2,3:f3};")
 sub("preload(n===1||!DAYS[n]?[day1,morning,phone,pot,toilet,noon,radio,evening,dinner,night,report]:[DAYS[n],greenRoutine]);","preload([DAYS[n]||f1,greenRoutine]);")

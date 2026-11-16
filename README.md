@@ -484,3 +484,9 @@ pictures there, so the square ones are 800 px enlarged to 1024.
 - Limits met: Canva image generation cools down to about one picture every ten minutes after the first five;
   Chrome allows one automatic download per tab, so the second file was saved from a new tab.
 Not done: `letter` (the desk differs from `phone`), Ah-Mei's age in `amei_cry`, mixed points of view.
+
+
+## Uncle Lee — "Four Floors" redesign (16 Nov 2026)
+New three-day game built around the dog, published separately at `four-floors/` on `main` (source: `floors/`). The seven-day game in `life/` / `uncle-lee/` is unchanged.
+`floors/index.html` is generated: `life_tools/build_floors.py` takes `life/index.html`, removes the seven day scripts, and inserts `life_tools/floors_days.js` (the three days) and `life_tools/sfx_extra.js`. Edit those, rebuild, then run `life_tools/floors_test.py`.
+Nine pictures were made with ChatGPT (method in `UNCLE_LEE_HANDOFF.md`). Sound changes: no clock tick while waiting for the phone, no grunt sample, slower night walk, quieter drip and birds.

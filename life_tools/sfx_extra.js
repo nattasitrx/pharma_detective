@@ -1,0 +1,3 @@
+Object.assign(sfx,{ ring(){ /* recorded bell if snd/ring.mp3 is there; else two gongs struck in turn, like the bell of an old dial telephone */ if(smp('ring',.55)) return; for(let k=0;k<30;k++){ const f=k%2?1865:1568, t=k*.043; note(f,.2,.03,'sine',t); note(f*2.76,.11,.011,'sine',t); note(f*5.4,.05,.004,'sine',t); } },
+  creak(){ smp('creak',.9,.95+Math.random()*.1)||note(1700,.03,.035,'square'); },
+  knock(){ if(smp('knock',1.3)) return; for(let k=0;k<3;k++) burst(220,2,.5,.09,k*.34); }, thud(){ if(smp('thud',.9)) return; note(46,.5,.5,'sine'); burst(120,1,.5,.22); }, bark(){ if(smp('bark',.35,.96+Math.random()*.08)) return; for(let k=0;k<2;k++){ burst(520,3,.09,.12,k*.3); burst(900,3,.05,.1,k*.3+.03); } } });

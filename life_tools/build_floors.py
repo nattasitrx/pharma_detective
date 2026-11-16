@@ -53,6 +53,19 @@ css="""
 """
 i=s.find('</style>'); s=s[:i]+css+s[i:]
 s=s.replace(" 'night' 'letter'\""," 'night'\"")
+# ---- language layer (Thai / Traditional Chinese)
+zh=open('/home/claude/src/life_tools/floors_zh.json',encoding='utf-8').read().replace('</','<\\/')
+i18=open('/home/claude/src/life_tools/i18n.js',encoding='utf-8').read().replace('__ZH__',zh)
+assert s.count('<script>')==1
+s=s.replace('<script>','<script>\n'+i18,1)
+cb='<button id="credB">'; assert cb in s
+s=s.replace(cb,'<button id="langB" data-nt aria-label="Language / 語言 / ภาษา">中文</button>'+cb,1)
+css="""#langB{appearance:none;border:1px solid rgba(255,248,234,.45);border-radius:999px;background:none;color:#fff8ea;font:600 14px/1 'Sarabun','Noto Serif TC',sans-serif;margin-top:14px;padding:9px 18px;cursor:pointer}
+html.zh body,html.zh button,html.zh #txt,html.zh #title *,html.zh #cred *,html.zh #pause *,html.zh #acts *,html.zh #clock,html.zh #more,html.zh #diary .next,html.zh #ffw{font-family:'Noto Serif TC','Songti TC','PMingLiU','Noto Serif CJK TC',serif !important}
+html.zh #diary .pg,html.zh #diary .pg *,html.zh .cal,html.zh .cal *{font-family:'LXGW WenKai TC','Noto Serif TC','Kaiti TC','DFKai-SB',serif !important}
+html.zh #langB{font-family:'Sarabun',sans-serif !important}
+"""
+assert '</style>' in s; s=s.replace('</style>',css+'</style>',1)
 open('/home/claude/src/floors/index.html','w',encoding='utf-8').write(s)
 open('/tmp/chk.js','w').write('\n'.join(re.findall(r'<script(?![^>]*src)[^>]*>(.*?)</script>',s,re.S)))
 print('size',len(s),'cut1',len(old1))

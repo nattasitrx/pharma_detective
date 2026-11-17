@@ -381,6 +381,27 @@ input,textarea{font-family:var(--font);-webkit-user-select:text;user-select:text
 .dcard.miss{box-shadow:0 0 0 5px #ffb21f;background:#fff8e0}
 .dcard.bad{box-shadow:0 0 0 5px #ff3d5c;background:#ffecee}
 .dcard .badge{position:absolute;right:5px;bottom:3px;font-size:16px}
+.mr-grid.few{grid-template-columns:repeat(3,1fr);gap:18px;padding:12px;align-content:stretch}
+.mr-grid.few .dcard{padding:16px 20px;font-size:22px;line-height:1.35;border-radius:22px;display:flex;flex-direction:column;justify-content:center}
+.mr-grid.few .dcard .src{align-self:flex-start;font-size:17px;padding:3px 12px;margin-bottom:8px;max-width:calc(100% - 56px)}
+.mr-grid.few .dcard b{font-size:32px;line-height:1.2}.mr-grid.few .dcard .g{font-size:19px;line-height:1.3;margin-top:2px}
+.mr-grid.few .dcard .sig{font-size:22px;margin-top:8px}.mr-grid.few .dcard .cls{font-size:21px;line-height:1.3;margin-top:4px}
+.mr-grid.few .dcard .zoom{width:50px;height:50px;font-size:25px;line-height:50px;right:10px;top:10px}.mr-grid.few .dcard .badge{font-size:30px}
+#medrev .bag-grid{flex:1;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:12px 0;padding:6px;min-height:0}
+#medrev .bag{--c:#3d7bff;border-radius:20px;background:#fff;box-shadow:0 0 0 4px var(--c);display:flex;flex-direction:column;overflow:hidden;min-height:0}
+#medrev .bag.sB{--c:#18b07f}#medrev .bag.sD{--c:#8b5cf6}#medrev .bag.sE{--c:#ff8a1f}
+#medrev .bag h4{margin:0;padding:9px 14px;background:var(--c);color:#fff;font-size:21px;line-height:1.25}
+#medrev .bag h4 small{display:block;font-size:16px;font-weight:800;opacity:.92}
+#medrev .bag ul{list-style:none;margin:0;padding:4px 10px;overflow:auto;flex:1}
+#medrev .bag li{padding:8px 4px;border-bottom:2px dashed #ebe8f5;cursor:pointer}#medrev .bag li:last-child{border-bottom:0}
+#medrev .bag li b{display:block;font-size:23px;line-height:1.2;color:#2a2140}
+#medrev .bag li span{display:block;font-size:16.5px;line-height:1.25;color:#8a4fb8;font-weight:700}
+#medrev .mr-main:has(.mr-grid.few) .mr-head .tx,#medrev .mr-main:has(.bag-grid) .mr-head .tx{font-size:24px}
+#medrev .mr-main:has(.bag-grid) .mr-act .hint{font-size:20px;line-height:1.3}
+#btnFloors{position:absolute;right:0;bottom:4px;font-size:21px;padding:9px 20px;text-decoration:none;white-space:nowrap}
+.rfloors{margin-top:12px;padding:10px 16px;border-radius:18px;background:linear-gradient(90deg,#fff6dc,#ffeef0);display:flex;gap:14px;align-items:center;justify-content:space-between}
+.rfloors p{margin:0;font-family:var(--tc);font-weight:900;font-size:21px;line-height:1.3;color:#7a3a12}
+.rfloors a{flex:0 0 auto;max-width:56%;font-size:18px;line-height:1.3;padding:10px 18px;text-decoration:none;text-align:center}
 .mr-act{display:flex;gap:12px;align-items:center;justify-content:flex-end}
 .mr-act .hint{flex:1;font-size:16px}
 .mr-side{background:linear-gradient(180deg,#1d2550,#2c1d55);color:#fff;border-radius:28px;padding:16px 18px;box-shadow:0 0 0 5px #fff,0 16px 40px rgba(0,0,0,.35);overflow:auto}
@@ -1014,7 +1035,7 @@ const CONFIG = {
   VISIT_MIN:60,                     // in-game visit time (minutes) — spent by actions, not real time
   COST_ASK:2, COST_SEARCH:1, COST_WRONG:3, COST_HINT:5,
   SEARCH_CHARGES:16, HEARTS:5, QTE_SEC:12, BOSS_SEC:25, TRUST_START:3,
-  PATIENCE:10, PAT_MAX:14, TRUST_TALK:4  // patience = how many information questions Uncle Lee tolerates · trust needed before he shares his secret
+  PATIENCE:13, PAT_MAX:17, TRUST_TALK:4  // patience = how many information questions Uncle Lee tolerates · trust needed before he shares his secret
 };
 const CONFIG_DEF=Object.assign({},CONFIG);
 function applyCfgSettings(){ const s=GAME_CFG.settings||{}; ['VISIT_MIN','HEARTS','SEARCH_CHARGES'].forEach(k=>{ const v=Math.round(+s[k]); CONFIG[k]=v>0?v:CONFIG_DEF[k]; }); CONFIG.TEACHER_PIN=s.TEACHER_PIN?String(s.TEACHER_PIN):CONFIG_DEF.TEACHER_PIN; }
@@ -1025,9 +1046,9 @@ const LANGS=['zh','en','th'];
 const UI = {
   ribbon:['居家藥事照護 × 推理冒險','Home-care pharmacy × Mystery adventure','เภสัชกรรมเยี่ยมบ้าน × ผจญภัยไขปริศนา'],
   t1:['藥師偵探','Pharma Detective','นักสืบเภสัช'], t2:['李伯伯的秘密','The Secret of Uncle Lee','ความลับของลุงหลี่'],
-  brief:['🏠 2022/4/29・高雄橋頭精忠新村，沒有電梯的 4 樓小套房<br>88 歲的老榮民李伯伯，2021 年看醫生 <b>93 次</b>，藥越拿越多，人卻越來越沒力氣。他一定藏著什麼秘密……<br>🎯 訪談 → 搜查 → 揭穿矛盾 → 藥物整合 → 擊敗「迷思大魔王」→ 兩週後見真章！拜訪時間只有 <b>60 分鐘</b>，四點阿梅就要出門上夜班了！',
-    '🏠 April 29, 2022 · a tiny 4th-floor room (no lift) in Jingzhong New Village, Qiaotou, Kaohsiung<br>Uncle Lee, an 88-year-old veteran, made <b>93 healthcare visits</b> in 2021 and keeps collecting medicines, yet he only grows weaker. He is hiding something…<br>🎯 Interview → Search → Expose lies → Med review → Defeat the <b>Myth Overlord</b> → see what happens two weeks later! Only <b>60 minutes</b> — at four, Ah-Mei leaves for her night shift!',
-    '🏠 29 เม.ย. 2022 · ห้องเล็กชั้น 4 (ไม่มีลิฟต์) ในหมู่บ้านจิงจง เขตเฉียวโถว เกาสง<br>ลุงหลี่ ทหารผ่านศึกวัย 88 ปี ปี 2021 ไปหาหมอ <b>93 ครั้ง</b> ยาได้มาเพิ่มเรื่อยๆ แต่ร่างกายกลับอ่อนแรงลง ลุงต้องซ่อนความลับอยู่แน่…<br>🎯 สัมภาษณ์ → ค้นห้อง → จับโกหก → ทบทวนยา → ล้ม <b>จอมมารความเชื่อผิด</b> → ดูผล 2 สัปดาห์ต่อมา! มีเวลาเยี่ยมแค่ <b>60 นาที</b> สี่โมงพี่เหมยต้องออกไปเข้าเวรดึก!'],
+  brief:['🏠 2022/4/29・高雄橋頭精忠新村，沒有電梯的 4 樓小套房<br>88 歲的老榮民李伯伯，2021 年看醫生 <b>93 次</b>，藥越拿越多，人卻越來越沒力氣。他一定藏著什麼秘密……<br>🎯 訪談 → 搜查 → 揭穿矛盾 → 藥物整合 → 擊敗「迷思大魔王」→ 兩週後見真章！拜訪時間只有 <b>70 分鐘</b>，四點阿梅就要出門上夜班了！',
+    '🏠 April 29, 2022 · a tiny 4th-floor room (no lift) in Jingzhong New Village, Qiaotou, Kaohsiung<br>Uncle Lee, an 88-year-old veteran, made <b>93 healthcare visits</b> in 2021 and keeps collecting medicines, yet he only grows weaker. He is hiding something…<br>🎯 Interview → Search → Expose lies → Med review → Defeat the <b>Myth Overlord</b> → see what happens two weeks later! Only <b>70 minutes</b> — at four, Ah-Mei leaves for her night shift!',
+    '🏠 29 เม.ย. 2022 · ห้องเล็กชั้น 4 (ไม่มีลิฟต์) ในหมู่บ้านจิงจง เขตเฉียวโถว เกาสง<br>ลุงหลี่ ทหารผ่านศึกวัย 88 ปี ปี 2021 ไปหาหมอ <b>93 ครั้ง</b> ยาได้มาเพิ่มเรื่อยๆ แต่ร่างกายกลับอ่อนแรงลง ลุงต้องซ่อนความลับอยู่แน่…<br>🎯 สัมภาษณ์ → ค้นห้อง → จับโกหก → ทบทวนยา → ล้ม <b>จอมมารความเชื่อผิด</b> → ดูผล 2 สัปดาห์ต่อมา! มีเวลาเยี่ยมแค่ <b>70 นาที</b> สี่โมงพี่เหมยต้องออกไปเข้าเวรดึก!'],
   stuName:['學生姓名','Student name','ชื่อนักศึกษา'], stuId:['學號','Student ID','รหัสนักศึกษา'], chooseAv:['角色性別','Gender','เลือกเพศ'], female:['女生','Female','หญิง'], male:['男生','Male','ชาย'], genderT:['性別','Gender','เพศ'],
   start:['開始調查 ▶','Start ▶','เริ่มสืบ ▶'], teacherBtn:['👩‍🏫 教師後台','👩‍🏫 Instructor','👩‍🏫 หน้าอาจารย์'],
   qteOpt:['限時選項（取消勾選＝不限時）','Timed choices (uncheck = no limit)','ตัวเลือกจับเวลา (ไม่ติ๊ก = ไม่จำกัด)'],
@@ -3130,7 +3151,7 @@ async function prologue(){
   await say('me','shock',['九、九十三次？！那不就差不多每週兩次？！','N-ninety-three?! That\'s almost twice a week?!','เก้า…เก้าสิบสามครั้ง?! เกือบสัปดาห์ละสองครั้งเลยนะ?!']);
   await say('yeh','smug',['藥越拿越多，他卻還是頭暈、沒力氣、一直咳痰。我們要找出他「全部」的健康與用藥問題，一個都不能漏。','More and more medicine — yet he is still dizzy, weak and coughing up phlegm. We must uncover ALL of his health and medication problems. Don\'t miss a single one.','ยาได้มาเยอะขึ้นเรื่อยๆ แต่ลุงยังเวียนหัว ไม่มีแรง ไอมีเสมหะตลอด เราต้องหาปัญหาสุขภาพและการใช้ยา "ทั้งหมด" ของลุง ห้ามพลาดแม้แต่ข้อเดียว']);
   await say('yeh','neutral',['記住三件事：建立信任、仔細觀察、用證據說話。','Remember three things: build trust, observe carefully, and let the evidence speak.','จำไว้ 3 ข้อ: สร้างความไว้ใจ สังเกตให้ละเอียด และพูดด้วยหลักฐาน']);
-  await say('pilly','neutral',['拜訪時間只有 60 分鐘喔！每問一題、每搜一個地方都會用掉時間⏰','You only have 60 minutes of visit time! Every question and every search spends time ⏰','มีเวลาเยี่ยมแค่ 60 นาทีนะ! ทุกคำถามและทุกการค้นจะใช้เวลา ⏰']);
+  await say('pilly','neutral',['拜訪時間只有 70 分鐘喔！每問一題、每搜一個地方都會用掉時間⏰','You only have 70 minutes of visit time! Every question and every search spends time ⏰','มีเวลาเยี่ยมแค่ 70 นาทีนะ! ทุกคำถามและทุกการค้นจะใช้เวลา ⏰']);
   hide('yeh'); emo('me','neutral');
   await say('sys','neutral',['——星期五下午兩點半，高雄橋頭，精忠新村。才四月底，氣溫已經 33 度，蟬叫得震耳欲聾。','— Friday, 2:30 PM. Jingzhong New Village, Qiaotou, Kaohsiung. It\'s only late April, but it\'s already 33 °C and the cicadas are deafening.','— วันศุกร์ บ่ายสองโมงครึ่ง หมู่บ้านจิงจงซินชุน เขตเฉียวโถว เกาสง เพิ่งปลายเดือนเมษายนแต่อุณหภูมิก็ 33 องศาแล้ว เสียงจักจั่นดังลั่น']);
   await say('sys','neutral',['老舊的公寓沒有電梯。你們一階一階爬上四樓，汗水順著背往下流。','The old block has no lift. You climb to the fourth floor step by step, sweat trickling down your back.','อาคารเก่าไม่มีลิฟต์ พวกคุณไต่บันไดขึ้นชั้นสี่ทีละขั้น เหงื่อไหลลงกลางหลัง']);
@@ -3231,8 +3252,8 @@ ANSWERS.meds2=async()=>{
 ANSWERS.checkup2=async()=>{ await say('chen','think',['有啊，那個肌酸酐，0.8，醫生說正常！一月的時候更低咧，0.5！所以腎臟沒問題吧？','Yes — creatinine, 0.8. The doctor said it\'s normal! In January it was even lower, 0.5! So my kidneys are fine, right?','มีสิ ไอ้ครีเอตินินน่ะ 0.8 หมอบอกว่าปกติ! เดือนมกราฯ ยังต่ำกว่านี้อีก 0.5! ไตก็ไม่มีปัญหาใช่ไหม?']);
   await coach('think',['在參考值內……但他 88 歲、62 公斤、肌肉不多——肌酸酐本來就會偏低。記住這個數字，等一下做藥物整合時要好好算一算！','Inside the reference range… but he\'s 88, 62 kg and has little muscle — his creatinine will run low anyway. Remember this number; we\'ll do the maths in the medication review!','อยู่ในค่าอ้างอิง… แต่ลุงอายุ 88 หนัก 62 กิโล กล้ามเนื้อน้อย ครีเอตินินย่อมต่ำอยู่แล้ว จำตัวเลขนี้ไว้ เดี๋ยวตอนทบทวนยาเราจะคำนวณกัน!']); S.fl.kidney=1; };
 ANSWERS.life2=async()=>{ await say('chen','sad',['我啊……最怕的就是哪天不能自己住了。這房間雖然小，是我自己的家，小黑也在這裡。','Me… what I fear most is the day I can\'t live on my own. This room is tiny, but it\'s my home — and Blackie\'s here.','ลุงน่ะ… กลัวที่สุดคือวันที่อยู่เองไม่ได้ ห้องนี้ถึงจะเล็ก แต่เป็นบ้านของลุงเอง เจ้าดำก็อยู่ที่นี่']);
-  await say('chen','neutral',['只要還能自己走、自己煮，要我怎麼配合都行！','As long as I can still walk and cook for myself, I\'ll go along with whatever you say!','ขอแค่ยังเดินเองได้ ทำกินเองได้ จะให้ลุงทำยังไงก็ยอม!']);
-  await coach('happy',['這就是他的動機——保持獨立、留在自己的家、陪著小黑。最後衛教時，從他自己的理由出發。','That\'s his motivation — staying independent, staying in his own home, staying with Blackie. In your final counselling, build on his own reasons.','นี่แหละแรงจูงใจของลุง — พึ่งตัวเองได้ อยู่บ้านตัวเอง อยู่กับเจ้าดำ ตอนให้คำแนะนำท้ายเกม ให้เริ่มจากเหตุผลของลุงเอง']); S.fl.ready=1; };
+  await say('chen','neutral',['只要還能自己走、自己煮，還能自己牽小黑下樓走走，要我怎麼配合都行！','As long as I can still walk and cook for myself — and take Blackie down for his walk myself — I\'ll go along with whatever you say!','ขอแค่ยังเดินเองได้ ทำกินเองได้ พาเจ้าดำลงไปเดินเองได้ จะให้ลุงทำยังไงก็ยอม!']);
+  await coach('happy',['這就是他的動機——保持獨立、留在自己的家、自己牽小黑走下那四層樓。最後衛教時，從他自己的理由出發。','That\'s his motivation — staying independent, staying in his own home, and walking Blackie down those four floors himself. In your final counselling, build on his own reasons.','นี่แหละแรงจูงใจของลุง — พึ่งตัวเองได้ อยู่บ้านตัวเอง และพาเจ้าดำลงสี่ชั้นไปเดินเองได้ ตอนให้คำแนะนำท้ายเกม ให้เริ่มจากเหตุผลของลุงเอง']); S.fl.ready=1; };
 ANSWERS.family2=async()=>{ if(!CH.wife) show('wife','R','neutral'); else emo('wife','neutral');
   await say('wife','neutral',['我放假回來，就幫他把一個禮拜的藥分好——早上一格、晚上一格。','When I\'m home on my day off, I sort his pills for the week — one slot for the morning, one for the evening.','วันหยุดที่พี่กลับบ้าน พี่จะจัดยาให้เขาทั้งสัปดาห์ — ช่องเช้าหนึ่ง ช่องเย็นหนึ่ง']);
   await say('wife','think',['上白班的時候，我早上會打電話叫他吃藥。藥盒就放在那張小方桌上。','When I\'m on day shifts I phone him in the morning to take them. The pillbox is on that little table.','ช่วงที่เข้ากะกลางวัน ตอนเช้าพี่จะโทรเตือนให้กินยา กล่องยาวางอยู่บนโต๊ะเล็กตัวนั้น']);
@@ -3271,9 +3292,13 @@ ANSWERS.nose=async()=>{ await say('chen','neutral',['每天早上起來，鼻水
   await coach('think',['好幾種鼻子的藥……成分會不會重複？記下來。','Several nose medicines… could the ingredients overlap? Note it.','ยาจมูกหลายตัว… ส่วนผสมซ้ำกันหรือเปล่า? จดไว้']); };
 ANSWERS.heat=async()=>{ await say('chen','smug',['熱？還好啦！電扇吹一吹就涼了。冷氣開下去，電費要多少錢你知道嗎？','Hot? It\'s fine! The fan cools me down. Do you know how much the electricity costs if I run the air-con?','ร้อนเหรอ? ไม่เท่าไรหรอก! พัดลมเป่าก็เย็นแล้ว เปิดแอร์ทีค่าไฟเท่าไรรู้ไหม?']);
   await say('pilly','think',['房間好悶……他的汗衫都濕透了耶。','It\'s so stuffy in here… his undershirt is soaked through.','ห้องอบอ้าวจัง… เสื้อกล้ามลุงเปียกโชกเลย']); S.profile.add('heat'); };
-ANSWERS.dog=async()=>{ await say('chen','happy',['小黑啊？跟我十幾年了，比人還懂事！每天早上陪我去公園。','Blackie? He\'s been with me over ten years — smarter than most people! Comes with me to the park every morning.','เจ้าดำเหรอ? อยู่กับลุงมาสิบกว่าปีแล้ว รู้ความกว่าคนอีก! ทุกเช้าไปสวนเป็นเพื่อนลุง']);
+ANSWERS.dog=async()=>{ await say('chen','happy',['小黑啊？八年前阿梅抱回來的，說這樣我就不會一個人。比人還懂事！','Blackie? Ah-Mei brought him home eight years ago — said I wouldn\'t be on my own then. Smarter than most people!','เจ้าดำเหรอ? อาเหมยพามาให้เมื่อแปดปีก่อน บอกว่าลุงจะได้ไม่ต้องอยู่คนเดียว รู้ความกว่าคนอีก!']);
+  await say('chen','neutral',['以前牠每天早上跟我下樓去公園。現在哪天我爬不動這四層樓，就是 406 那個孩子幫我牽下去。','He used to come down to the park with me every morning. These days, when I can\'t manage the four floors, the boy in 406 takes him down for me.','เมื่อก่อนมันลงไปสวนกับลุงทุกเช้า เดี๋ยวนี้วันไหนลุงลงสี่ชั้นไม่ไหว เด็กห้อง 406 ก็ช่วยพาไป']);
   await say('chen','sad',['我走到哪，牠就跟到哪。要是沒有牠，我一個人在這屋子裡……唉。','Wherever I go, he follows. Without him, alone in this room… sigh.','ลุงไปไหนมันก็ตามไปนั่น ถ้าไม่มีมัน ลุงอยู่คนเดียวในห้องนี้… เฮ้อ']);
-  if(!S.fl.dogTalk){ S.fl.dogTalk=1; addTrust(1); } };
+  if(!S.fl.dogTalk){ S.fl.dogTalk=1;   /* mk_dease: the red lead */
+    await say('sys','neutral',['（小黑嗅夠了你的鞋子，慢慢走到門邊，把掛在那裡的紅色牽繩叼過來，放在你腳邊，抬頭看著你。）','(Having sniffed your shoes long enough, Blackie pads over to the door, takes the red lead that hangs there in his mouth, lays it at your feet and looks up at you.)','(เจ้าดำดมรองเท้าคุณจนพอใจ แล้วเดินช้าๆ ไปที่ประตู คาบสายจูงสีแดงที่แขวนอยู่มาวางไว้ที่เท้าคุณ แล้วเงยหน้ามอง)']);
+    await say('chen','embarrassed',['哈，別理牠。腿腳好的人來，牠都這樣。','Ha, don\'t mind him. He does that to everyone with good legs.','ฮ่า อย่าไปสนใจมัน มันทำแบบนี้กับทุกคนที่ขาดี']);
+    addTrust(1); } };
 ANSWERS.money=async()=>{ await say('chen','neutral',['我有榮民的就養金，阿梅也會給一點。看病不用錢，政府都幫我們出！','I have my veteran\'s pension, and Ah-Mei gives me a bit. Seeing the doctor costs nothing — the government pays for us!','ลุงมีเบี้ยเลี้ยงทหารผ่านศึก พี่เหมยก็ให้บ้าง หาหมอไม่เสียเงิน รัฐบาลจ่ายให้หมด!']);
   await say('chen','smug',['能省就省——電費、菜錢，一塊都不浪費。','I save wherever I can — electricity, groceries, not a dollar wasted.','ประหยัดได้ก็ประหยัด — ค่าไฟ ค่ากับข้าว ไม่ให้เสียสักบาท']); };
 async function bmiTask(){
@@ -3675,7 +3700,7 @@ async function heartLock(){
       {t:['「您一定是忘了吃吧？年紀大了記性差，以後要記得喔！」','"You must have forgotten! Memory goes at your age — please remember next time, okay?"','"ลุงลืมกินแน่ๆ เลย อายุมากความจำก็แย่ลง ครั้งหน้าต้องจำให้ได้นะ!"']},
       {t:['（轉向阿梅）「您知道伯伯每週二、週四早上為什麼都沒有吃藥嗎？」','(Turn to Ah-Mei) "Do you know why he skips his Tuesday and Thursday morning pills?"','(หันไปหาพี่เหมย) "พี่รู้ไหมว่าทำไมลุงถึงไม่กินยามื้อเช้าทุกวันอังคารกับวันพฤหัสฯ?"']},
     ],{timer:15, shuffle:true, id:'lock2', label:['怎麼讓他安心？','How do you reassure him?','จะทำให้ลุงสบายใจยังไง?']});
-    if(c===0){ show('wife','RC','happy'); await say('yeh','happy',['阿梅姐，可以麻煩您帶小黑下樓散個步嗎？我們跟李伯伯再聊一下。','Ah-Mei, could we trouble you to take Blackie for a little walk downstairs? We\'ll chat with Uncle Lee a bit more.','พี่เหมย รบกวนพาเจ้าดำลงไปเดินเล่นข้างล่างสักพักได้ไหมคะ? เราขอคุยกับลุงหลี่อีกนิด']); await say('wife','happy',['好啊。小黑，走，散步囉！……老頭子，好好回答人家喔！','Sure. Blackie — walkies! …Old man, you answer them properly, okay?','ได้เลย เจ้าดำ ไปเดินเล่นกัน! …ตาแก่ ตอบเขาดีๆ ล่ะ!']); await say('sys','neutral',['（阿梅幫小黑扣上牽繩，門輕輕關上了。房間裡只剩收音機微弱的京劇聲。）','(Ah-Mei clips on Blackie\'s lead and the door closes softly. Only the faint Peking opera from the radio remains.)','(พี่เหมยคล้องสายจูงให้เจ้าดำ แล้วประตูก็ปิดลงเบาๆ ในห้องเหลือแค่เสียงงิ้วปักกิ่งแผ่วๆ จากวิทยุ)']); hide('wife');
+    if(c===0){ show('wife','RC','happy'); await say('yeh','happy',['阿梅姐，可以麻煩您帶小黑下樓散個步嗎？我們跟李伯伯再聊一下。','Ah-Mei, could we trouble you to take Blackie for a little walk downstairs? We\'ll chat with Uncle Lee a bit more.','พี่เหมย รบกวนพาเจ้าดำลงไปเดินเล่นข้างล่างสักพักได้ไหมคะ? เราขอคุยกับลุงหลี่อีกนิด']); await say('wife','happy',['好啊。小黑，走，散步囉！……老頭子，好好回答人家喔！','Sure. Blackie — walkies! …Old man, you answer them properly, okay?','ได้เลย เจ้าดำ ไปเดินเล่นกัน! …ตาแก่ ตอบเขาดีๆ ล่ะ!']); await say('sys','neutral',['（阿梅幫小黑扣上那條紅色牽繩，門輕輕關上了。房間裡只剩收音機微弱的京劇聲。）','(Ah-Mei clips on Blackie\'s red lead and the door closes softly. Only the faint Peking opera from the radio remains.)','(พี่เหมยคล้องสายจูงสีแดงให้เจ้าดำ แล้วประตูก็ปิดลงเบาๆ ในห้องเหลือแค่เสียงงิ้วปักกิ่งแผ่วๆ จากวิทยุ)']); hide('wife');
       addTrust(1); k++; await breakLock(n,k); break; }
     await say('chen','angry',c===1?['你看，又在怪我了……','See? You\'re blaming me again…','เห็นไหม มาโทษลุงอีกแล้ว…']:['欸！不要問她啦！','Hey! Don\'t ask her!','เฮ้ย! อย่าไปถามป้าเขา!']); await loseHeart(); } }
   if(k<n){ while(true){ const txt=await input(['💗 用你自己的話，溫柔地打開他的心','💗 In your own words, gently open his heart','💗 พูดด้วยคำพูดของคุณเอง เพื่อเปิดใจลุงอย่างอ่อนโยน'],EXAM()?'':['提示：① 同理他的感受 ② 保證保密 ③ 用開放式的問題（為什麼／怎麼了）。','Tip: ① acknowledge his feelings ② promise confidentiality ③ ask an open question (why / what happened).','คำแนะนำ: ① แสดงความเห็นใจ ② รับปากเก็บความลับ ③ ถามปลายเปิด (ทำไม / เกิดอะไรขึ้น)'],null,EXAM()?{}:{chips:HEART_CHIPS});
@@ -3685,7 +3710,7 @@ async function heartLock(){
       await say('chen','sad',['……我還是說不出口。','…I still can\'t say it.','…ลุงยังพูดไม่ออก']); await loseHeart(); } }
   $('#locks').classList.add('hidden'); await splash('unlock','blue','shatter'); $('#testiBanner').classList.add('hidden');
   await say('chen','embarrassed',['……我偷偷跟你們講，千萬不要跟阿梅說。','…I\'ll tell you quietly. Not a word to Ah-Mei.','…ลุงจะบอกแบบลับๆ นะ ห้ามบอกอาเหมยเด็ดขาด']);
-  await say('chen','sad',['阿梅上夜班的日子，早上沒辦法打電話給我……我就忘了吃早上的藥。禮拜二、禮拜四……都是那樣。','On the days Ah-Mei works nights she can\'t ring me in the morning… so I forget my morning pills. Tuesdays, Thursdays… always like that.','วันที่อาเหมยเข้าเวรดึก ตอนเช้าเขาโทรหาลุงไม่ได้… ลุงก็ลืมกินยามื้อเช้า วันอังคาร วันพฤหัส… เป็นแบบนั้นตลอด']); await say('chen','sad',['晚上想起來，我就把早上的跟晚上的一起吞下去。政府的藥，不能浪費啊。','When I remember at night, I swallow the morning ones together with the evening ones. It\'s the government\'s medicine — can\'t waste it.','พอตกกลางคืนนึกได้ ลุงก็กลืนยามื้อเช้าพร้อมกับมื้อเย็นไปเลย ยาของรัฐบาล จะทิ้งเสียเปล่าไม่ได้']); await say('chen','sad',['上個禮拜四半夜，我頭暈、冒冷汗、手一直抖……在走廊那頭的浴室跌了一跤，在地上躺了好久才爬起來。誰都沒講。','Last Thursday, in the middle of the night, I got dizzy, broke out in a cold sweat, my hands shaking… I fell in the bathroom down the corridor and lay on the floor a long time before I could get up. I told no one.','คืนวันพฤหัสที่แล้วตอนดึก ลุงเวียนหัว เหงื่อเย็นแตก มือสั่นไม่หยุด… หกล้มในห้องน้ำสุดทางเดิน นอนอยู่บนพื้นนานกว่าจะลุกขึ้นได้ ไม่ได้บอกใครเลย']);
+  await say('chen','sad',['阿梅上夜班的日子，早上沒辦法打電話給我……我就忘了吃早上的藥。禮拜二、禮拜四……都是那樣。','On the days Ah-Mei works nights she can\'t ring me in the morning… so I forget my morning pills. Tuesdays, Thursdays… always like that.','วันที่อาเหมยเข้าเวรดึก ตอนเช้าเขาโทรหาลุงไม่ได้… ลุงก็ลืมกินยามื้อเช้า วันอังคาร วันพฤหัส… เป็นแบบนั้นตลอด']); await say('chen','sad',['晚上想起來，我就把早上的跟晚上的一起吞下去。政府的藥，不能浪費啊。','When I remember at night, I swallow the morning ones together with the evening ones. It\'s the government\'s medicine — can\'t waste it.','พอตกกลางคืนนึกได้ ลุงก็กลืนยามื้อเช้าพร้อมกับมื้อเย็นไปเลย ยาของรัฐบาล จะทิ้งเสียเปล่าไม่ได้']); await say('chen','sad',['上個禮拜四半夜，我頭暈、冒冷汗、手一直抖……在走廊那頭的浴室跌了一跤，在地上躺了好久才爬起來，小黑就趴在我旁邊守著。誰都沒講。','Last Thursday, in the middle of the night, I got dizzy, broke out in a cold sweat, my hands shaking… I fell in the bathroom down the corridor and lay on the floor a long time before I could get up, with Blackie lying beside me the whole while. I told no one.','คืนวันพฤหัสที่แล้วตอนดึก ลุงเวียนหัว เหงื่อเย็นแตก มือสั่นไม่หยุด… หกล้มในห้องน้ำสุดทางเดิน นอนอยู่บนพื้นนานกว่าจะลุกขึ้นได้ เจ้าดำมานอนเฝ้าอยู่ข้างๆ ไม่ได้บอกใครเลย']);
   S.fl.trustAtLock=S.trust; await say('chen','cry',['要是阿梅知道了，一定會把我送去她上班的榮家……我就沒有自己的房間、沒有自由了……小黑也不能跟我去……','If Ah-Mei found out, she\'d send me to the veterans\' home where she works… I\'d lose my own room, my freedom… and Blackie couldn\'t come with me…','ถ้าอาเหมยรู้ ต้องส่งลุงไปบ้านพักทหารผ่านศึกที่เขาทำงานแน่ๆ… ลุงจะไม่มีห้องของตัวเอง ไม่มีอิสระ… แล้วเจ้าดำก็ไปกับลุงไม่ได้…']); reveal('P8');
   await say('yeh','neutral',['李伯伯，謝謝您願意告訴我們。把藥加倍吃——尤其是降血糖藥——半夜血糖會掉太低，那一跤很可能就是這樣來的。我們一起想個安全的辦法，讓您繼續住在自己的房間、跟小黑在一起。','Thank you for trusting us, Uncle Lee. Doubling up — especially the sugar pill — can make your sugar crash in the night; that fall very likely came from it. We\'ll work out a safe plan together, so you can keep your own room and Blackie.','ลุงหลี่ ขอบคุณที่ไว้ใจเล่าให้เราฟังนะคะ การกินยาเบิ้ล โดยเฉพาะยาเบาหวาน ทำให้น้ำตาลตกตอนกลางดึก การหกล้มครั้งนั้นน่าจะมาจากเรื่องนี้ เราจะหาวิธีที่ปลอดภัยด้วยกัน ให้ลุงได้อยู่ห้องของตัวเองกับเจ้าดำต่อไป']);
 }
@@ -3715,6 +3740,23 @@ const DRUGS=[
  {id:'karyuni', src:'E', img:'clinic_receipt', n:'Kary Uni 眼藥水', g:'pirenoxine eye drops', sig:['每日 3 次・7 天','TID · 7 days','วันละ 3 ครั้ง · 7 วัน'], cls:['白內障眼藥水（證據有限）','Cataract eye drops (weak evidence)','ยาหยอดตาต้อกระจก (หลักฐานจำกัด)']},
  {id:'artelac', src:'E', img:'clinic_receipt', n:'Artelac 眼藥水', g:'hypromellose eye drops', sig:['每日 3 次・7 天','TID · 7 days','วันละ 3 ครั้ง · 7 วัน'], cls:['人工淚液（潤滑眼藥水）','Artificial tears (lubricant)','น้ำตาเทียม (ยาหยอดหล่อลื่นตา)']},
 ];
+/* mk_dease: each mission lays out six medicines (its answers and four near misses), not all twenty */
+const MR_SHORT={m4:['kudona','sketa','famo','actibest','ponstan','mopride'], m5:['mopride','famo','galvusmet','ponstan','royamet','actibest'], m6:['benamine','artelac','dermalin','clarinase','sinbaby','karyuni']};
+const BAGX={no:['🧺 藥袋總覽','🧺 All the bags','🧺 ซองยาทั้งหมด'], tx:['20 種藥，來自 4 個地方——從來沒有人把它們放在一起看。','20 medicines from 4 places — nobody has ever looked at them together.','ยา 20 รายการ จาก 4 ที่ — ไม่เคยมีใครดูรวมกันเลย'],
+  n:['{n} 種','{n} items','{n} รายการ'], hint:['不用背。接下來一次只看一個問題，每次只擺出相關的 6 種藥。點藥名可以看藥袋。','No need to memorise them. Next we take one question at a time, with only the 6 related medicines on the table. Tap a name to see its bag.','ไม่ต้องจำ ต่อไปจะดูทีละเรื่อง แต่ละครั้งวางเฉพาะยาที่เกี่ยวข้อง 6 ตัว แตะชื่อยาเพื่อดูซองยาได้'], go:['開始 →','Start →','เริ่ม →']};
+function bagOverview(){
+  return new Promise(res=>{
+    let host=$('#medrev'); if(!host){ host=document.createElement('div'); host.id='medrev'; $('#stage').appendChild(host); }
+    host.innerHTML=`<div class="mr-main"><div class="mr-head"><span class="no">${esc(L(BAGX.no))}</span><span class="tx">${esc(L(BAGX.tx))}</span></div>
+      <div class="bag-grid">${Object.keys(SRC).map(k=>{ const ds=DRUGS.filter(d=>d.src===k); return `<div class="bag s${k}"><h4>${esc(L(SRC[k]))}<small>${esc(L(BAGX.n).replace('{n}',ds.length))}</small></h4><ul>${ds.map(d=>`<li data-z="${d.img}"><b>${esc(d.n)}</b><span>${esc(L(d.cls))}</span></li>`).join('')}</ul></div>`; }).join('')}</div>
+      <div class="mr-act"><span class="hint">${esc(L(BAGX.hint))}</span><button class="gbtn" id="bagGo">${esc(L(BAGX.go))}</button></div></div>
+      <div class="mr-side">${labPanelHTML()}</div>`;
+    host.classList.remove('hidden'); host.style.animation='none'; void host.offsetWidth; host.style.animation='';
+    $('#mrSheet').onclick=()=>zoomImg(IMG.labs);
+    host.querySelectorAll('.bag li').forEach(li=>li.onclick=()=>{ sfx.paper(); zoomImg(IMG[li.dataset.z]); });
+    $('#bagGo').onclick=()=>{ sfx.click(); host.classList.add('hidden'); res(); };
+  });
+}
 const MISSIONS=[
  {id:'m2', p:'P15', ans:['benamine','peace'], tag:['抗膽鹼','Anticholinergic','ฤทธิ์ต้านโคลิเนอร์จิก'],
   q:['88 歲、攝護腺肥大、常頭暈，半夜還要走到走廊盡頭上廁所。哪兩個藥屬於 Beers 準則建議長者避免、會嗜睡又有強烈抗膽鹼作用的第一代抗組織胺？','88, BPH, often dizzy, and he walks to the shared toilet down the corridor at night. Which two drugs are sedating, strongly anticholinergic first-generation antihistamines that the Beers Criteria say older adults should avoid?','อายุ 88 ต่อมลูกหมากโต เวียนหัวบ่อย กลางคืนยังต้องเดินไปห้องน้ำรวมสุดทางเดิน ยา 2 ตัวไหนเป็นยาแก้แพ้รุ่นแรกที่ทำให้ง่วงและมีฤทธิ์ต้านโคลิเนอร์จิกสูง ซึ่ง Beers Criteria แนะนำให้ผู้สูงอายุหลีกเลี่ยง?'],
@@ -3760,9 +3802,9 @@ function mrVerdict(m, r){ return new Promise(res=>{
 function missionUI(m, i, n){
   return new Promise(res=>{
     let host=$('#medrev'); if(!host){ host=document.createElement('div'); host.id='medrev'; $('#stage').appendChild(host); }
-    const sel=new Set(), list=DRUGS.slice(); if(EXAM()) for(let a=list.length-1;a>0;a--){ const b=Math.floor(Math.random()*(a+1)); [list[a],list[b]]=[list[b],list[a]]; }
+    const few=MR_SHORT[m.id], sel=new Set(), list=few?few.map(id=>DRUGS.find(d=>d.id===id)):DRUGS.slice(); if(EXAM()) for(let a=list.length-1;a>0;a--){ const b=Math.floor(Math.random()*(a+1)); [list[a],list[b]]=[list[b],list[a]]; }
     host.innerHTML=`<div class="mr-main"><div class="mr-head"><span class="no">🚨 ${T('mission')} ${i+1}/${n}</span><span class="tx">${esc(L(m.q))}</span><span id="mrTimer"></span></div>
-      <div class="mr-grid">${list.map((d,j)=>`<button class="dcard s${d.src}" data-d="${d.id}" style="animation-delay:${j*.03}s"><span class="src">${esc(L(SRC[d.src]))}</span><b>${esc(d.n)}</b><span class="g">${esc(d.g)}</span><span class="sig">${esc(L(d.sig))}</span><span class="cls">${esc(L(d.cls))}</span><span class="zoom" data-z="${d.img}" title="photo">🔍</span>${S.mr.tags[d.id]&&!EXAM()?`<span class="badge" title="${esc(S.mr.tags[d.id].join(', '))}">⚠️</span>`:''}</button>`).join('')}</div>
+      <div class="mr-grid${few?' few':''}">${list.map((d,j)=>`<button class="dcard s${d.src}" data-d="${d.id}" style="animation-delay:${j*.03}s"><span class="src">${esc(L(SRC[d.src]))}</span><b>${esc(d.n)}</b><span class="g">${esc(d.g)}</span><span class="sig">${esc(L(d.sig))}</span><span class="cls">${esc(L(d.cls))}</span><span class="zoom" data-z="${d.img}" title="photo">🔍</span>${S.mr.tags[d.id]&&!EXAM()?`<span class="badge" title="${esc(S.mr.tags[d.id].join(', '))}">⚠️</span>`:''}</button>`).join('')}</div>
       <div class="mr-act"><span class="hint">${T('tapBag')} · ${T('selected')}: <b id="mrCount">0</b></span><button class="gbtn" id="mrOk">${T('confirmDx')}</button></div></div>
       <div class="mr-side">${labPanelHTML()}</div>`;
     host.classList.remove('hidden'); host.style.animation='none'; void host.offsetWidth; host.style.animation='';
@@ -4027,6 +4069,8 @@ const FLOWX={
   inChamber:['輔助艙裡有藥霧：{s} 秒內吸進去','Mist in the chamber: breathe it in within {s} s','มีละอองยาในกระบอก: สูดภายใน {s} วินาที'], good:['好！藥進到肺裡了','Good — the dose reached the lungs','ดีมาก! ยาเข้าปอดแล้ว'],
   notNow:['先從嘴裡拿開再搖','Take it out of your mouth to shake it','เอาออกจากปากก่อนค่อยเขย่า'],
   puff2:['第 2 噴：整套再做一次！','Puff 2: the whole routine once more!','พัฟที่ 2: ทำทั้งชุดอีกรอบ!'],
+  whenQ:['什麼時候按？','When do you press?','กดตอนไหน?'], whenA:['先按下去，再開始吸氣','Press first, then start to breathe in','กดก่อน แล้วค่อยเริ่มสูด'], whenB:['開始慢慢吸氣，同時按下去','Start a slow breath in and press at the same moment','เริ่มสูดช้าๆ แล้วกดพร้อมกันทันที'],
+  warnAir:['吸嘴還沒放進嘴裡——現在按，藥會噴到空氣中','The mouthpiece is not in the mouth yet — pressing now would spray the dose into the air','ยังไม่ได้อมปากกระบอก กดตอนนี้ยาจะพ่นทิ้งในอากาศ'], warnSp:['還沒接上輔助器','The spacer is not fitted yet','ยังไม่ได้ต่อกระบอกช่วยสูด'],
   hintB:['💡 提示','💡 Hint','💡 คำใบ้'], next:['下一步呢？','what next?','ต่อไปทำอะไร?'], hintsUsed:['用了提示','Hints used','ใช้คำใบ้'],
   takeOut:['先從嘴裡拿出來','Take it out of his mouth first','เอาออกจากปากก่อน'], outAway:['別對著吸嘴吐氣！先拿開再吐','Not into the mouthpiece! Take it out, then breathe out','อย่าหายใจออกใส่ปากกระบอก! เอาออกก่อนแล้วค่อยหายใจออก'],
   holdNow:['嘴巴閉緊，點「閉氣」數到 10','Lips closed — tap "Hold breath" and count to 10','ปิดปากให้สนิท แตะ "กลั้นหายใจ" นับถึง 10'],
@@ -4107,6 +4151,10 @@ function inhSim(dev){
 @keyframes gzP{from{transform:scale(1)}to{transform:scale(1.12)}}
 #isim .fg-tm .mk{position:absolute;top:-4px;bottom:-4px;width:8px;border-radius:4px;background:#13a39a;left:0}
 #isim .is-sum{position:absolute;inset:0;z-index:7;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.9);border-radius:20px}
+#isim .is-ask{position:absolute;inset:0;z-index:8;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.82);border-radius:20px}
+#isim .is-ask .card{width:min(640px,92%);background:#fff;border-radius:22px;padding:18px 22px 22px;box-shadow:0 0 0 4px #3d7bff,0 12px 30px rgba(0,0,0,.2);display:flex;flex-direction:column;gap:14px}
+#isim .is-ask h3{margin:0;font-family:var(--tc);font-size:30px;text-align:center}
+#isim .is-ask .gbtn{font-size:26px;padding:16px 18px;line-height:1.3}
 #isim .is-sum .card{width:min(760px,92%);background:#fff;border-radius:22px;padding:18px 24px;box-shadow:0 0 0 4px #8c9a3e,0 12px 30px rgba(0,0,0,.2)}
 #isim .is-sum h3{margin:0 0 10px;font-family:var(--tc);font-size:28px}
 #isim .is-sum li{font-size:19px;line-height:1.45;margin:4px 0;font-weight:700}
@@ -4152,7 +4200,7 @@ function inhSim(dev){
     host.classList.remove('hidden'); typeof audioDuck==='function'&&audioDuck(1); host.style.animation='none'; void host.offsetWidth; host.style.animation='';
     const svg=$('#simSvg'), devG=$('#simDevG'), fx=$('#simFx'), bench=$('#simBench');
     const MOUTH={x:516,y:296}, SOCK=326, HOME={mdi:{x:250,y:430}, spacer:{x:170,y:250}, resp:{x:250,y:178}}[dev], SP_HOME={x:540,y:480};
-    const WIN=ex?(dev==='resp'?3.4:3.0):(dev==='resp'?4.0:3.5), INHALE=7.0;   // seconds: a slow 7-second breath; the press must land in its first part
+    const WIN=ex?(dev==='resp'?4.0:3.5):(dev==='resp'?5.0:4.5), INHALE=7.0;   // seconds: a slow 7-second breath; the press must land in its first part
     let tries=0, allErrs=[], firstErrs=null, firstSc=null, hint0=0, finished=false, raf=0, s, timers=[], hintsN=0, idleT=0;
     const later=(fn,ms)=>{ const t=setTimeout(()=>{ if(!finished) fn(); },ms); timers.push(t); return t; };
     const reset=()=>{ timers.forEach(clearTimeout); timers=[]; cancelAnimationFrame(raf);
@@ -4234,7 +4282,7 @@ function inhSim(dev){
     function tapBody(){ if(s.busy||finished) return;
       if(dev==='spacer'&&!s.attached){ if(s.capOn){ bub(L(FLOWX.capFirst)); sfx.error(); return; } tween(()=>s.pos,p=>{ s.pos=p; },{x:SP_HOME.x-SOCK,y:SP_HOME.y},420,()=>{ s.attached=true; draw(); sfx.clack(); mark('attach'); }); return; }
       if(s.atMouth){ if(s.inhaling){ if(dev!=='spacer') press(); return; } return takeOut(); }
-      if(dev!=='resp'&&s.capOn){ bub(L(FLOWX.capFirst)); err('capOn',1); return; }
+      if(dev!=='resp'&&s.capOn){ bub(L(FLOWX.capFirst)); sfx.error(); return; }
       if(dev==='resp'&&!s.capOpen){ bub(L(FLOWX.openFirst)); sfx.error(); return; }
       const get=dev==='spacer'?()=>s.sp:()=>s.pos, set=dev==='spacer'?p=>{ s.sp=p; }:p=>{ s.pos=p; };
       tween(get,set,MOUTH,480,()=>{ s.atMouth=true; draw(); sfx.select(); mark('mouth'); }); }
@@ -4269,14 +4317,24 @@ function inhSim(dev){
       if(dev==='spacer'){ if(s.chamberN){ s.good=true; mist('lungs'); bub(L(FLOWX.good),1200); mark('in'); } else { err('noPress'); failPuff(); } return; }
       if(!s.pressed){ err('noPress'); failPuff(); return; }
       if(s.good){ bub(L(FLOWX.good),1200); mark('press'); } else failPuff(); }
-    function press(){ if(s.busy||finished) return;
+    /* the timing of the press is a decision, not a reflex: asked when the canister is tapped before any breath */
+    function askWhen(){ s.busy=true; sfx.click();
+      const box=document.createElement('div'); box.className='is-ask'; const opts=[['first',FLOWX.whenA],['with',FLOWX.whenB]]; if(Math.random()<.5) opts.reverse();
+      box.innerHTML=`<div class="card"><h3>👆 ${esc(L(FLOWX.whenQ))}</h3>${opts.map(([k,t])=>`<button class="gbtn blue" data-w="${k}">${esc(L(t))}</button>`).join('')}</div>`; bench.appendChild(box);
+      box.querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{ const k=b.dataset.w; box.remove(); s.busy=false; sfx.click(); logEvent({type:'inhWhen', dev, pick:k});
+        if(k==='with'){ breatheIn(); later(()=>{ if(s.inhaling&&!s.pressed) press(); },350); } else press(true); }); }
+    function press(first){ if(s.busy||finished) return;
       const part=devG.querySelector(dev==='resp'?'.sd-btn':'.sd-can'); part.animate([{transform:'translateY(0)'},{transform:dev==='resp'?'translateY(5px)':'translateY(14px)'},{transform:'translateY(0)'}],{duration:220});
+      /* presses that are only someone finding the controls never fire and are never scored */
+      if(dev!=='resp'&&s.capOn){ bub(L(FLOWX.capFirst)); sfx.error(); return; }
+      if(dev==='spacer'&&!s.attached){ bub(L(FLOWX.warnSp),2200); sfx.error(); return; }
+      if(dev!=='spacer'&&!s.atMouth){ bub(L(FLOWX.warnAir),2200); sfx.error(); return; }
+      if(dev!=='spacer'&&!s.inhaling&&first!==true){ askWhen(); return; }
       if(dev==='resp'){ if(!s.turned){ err('noTurn'); bub(L(SIMX.nothing)); return; } s.turned=false;
         if(!s.capOpen){ err('capShut'); bub(L(SIMX.nothing)); failPuff(); return; } }
-      else { if(s.capOn){ err('capOn'); bub(L(SIMX.nothing)); return; } if(!s.shaken) err('noShake'); }
-      if(dev==='spacer'){ if(!s.attached){ err('noSpacer'); mist('air'); return; } if(s.chamberN&&!s.inhaling) err('twoPuff'); s.chamberN++; s.chamber=performance.now(); mist('chamber'); mark('press');
+      else if(!s.shaken) err('noShake');
+      if(dev==='spacer'){ if(s.chamberN&&!s.inhaling) err('twoPuff'); s.chamberN++; s.chamber=performance.now(); mist('chamber'); mark('press');
         if(!ex) hint(L(FLOWX.inChamber).replace('{s}',5)); return; }
-      if(!s.atMouth){ err('air'); mist('air'); failPuff(); return; }
       if(!s.inhaling){ err('early'); cough(); mist('throat'); failPuff(); return; }
       if(s.pressed) return; s.pressed=true; const t=(performance.now()-s.t0)/1000;
       if(t<=WIN){ s.good=true; mist('lungs'); sfx.select(); } else { err('late2'); mist('throat'); } }
@@ -4298,12 +4356,12 @@ function inhSim(dev){
       devG.querySelectorAll('.sd-base').forEach(e=>e.addEventListener('click',ev=>{ ev.stopPropagation(); tapBase(); }));
       devG.querySelectorAll('[data-p="body"],.sd-sp').forEach(e=>e.addEventListener('click',ev=>{ ev.stopPropagation(); tapBody(); }));
     }
-    bench.addEventListener('click',e=>{ if(finished||e.target.closest('[data-p],.is-sum,.sd-tag')) return; $$('#simTags .sd-tag').forEach(t=>{ t.classList.remove('flash'); void t.offsetWidth; t.classList.add('flash'); }); });
+    bench.addEventListener('click',e=>{ if(finished||e.target.closest('[data-p],.is-sum,.is-ask,.sd-tag')) return; $$('#simTags .sd-tag').forEach(t=>{ t.classList.remove('flash'); void t.offsetWidth; t.classList.add('flash'); }); });
     $('#simShake').onclick=shake; $('#simIn').onclick=breatheIn; if($('#simHintBtn')) $('#simHintBtn').onclick=showHint;
     const hb=(el,d,u)=>{ el.addEventListener('pointerdown',e=>{ e.preventDefault(); try{ el.setPointerCapture(e.pointerId); }catch(_){} d(); }); ['pointerup','pointercancel','pointerleave'].forEach(t=>el.addEventListener(t,u)); };
     hb($('#simOut'),outDown,outUp); hb($('#simHold'),holdDown,holdUp);
     $('#simDone').onclick=()=>{ if(!finished) finish(); };
-    function finish(){ if(finished) return; finished=true; timers.forEach(clearTimeout); cancelAnimationFrame(raf); clearInterval(outIv); clearInterval(holdIv); [s.outH,s.inH].forEach(h=>h&&h.stop(.2)); s.outH=s.inH=null; $('#simHand').classList.add('hidden');
+    function finish(){ if(finished) return; finished=true; timers.forEach(clearTimeout); cancelAnimationFrame(raf); clearInterval(outIv); clearInterval(holdIv); [s.outH,s.inH].forEach(h=>h&&h.stop(.2)); s.outH=s.inH=null; $('#simHand').classList.add('hidden'); bench.querySelectorAll('.is-ask').forEach(e=>e.remove());
       if(s.good&&!s.held&&!holdIv) err('noHold',1);
       if(dev==='resp'){ if(!s.puffs&&!s.good) err('noDose',1); else if(s.puffs<2) err('onePuff',1); if(s.capOpen) err('noClose',1); }
       else { if(!s.good) err('noDose',1); else if(dev==='mdi'&&!s.capOn) err('noRecap',1); }
@@ -4455,7 +4513,8 @@ async function chapter4(){
   reveal('P13');
   if(S.fl.kidney&&!EXAM()) await say('yeh','happy',['你在訪談時就問了腎臟的事——很有遠見！','You asked about his kidneys back in the interview — great foresight!','คุณถามเรื่องไตตั้งแต่ตอนสัมภาษณ์ — มองการณ์ไกลมาก!']);
   await say('yeh','angry',['可是看看這 20 種藥……四個地方開的，沒有一位醫師把它們放在一起看過，也沒有人依他的年紀和腎功能檢視過！','But look at these 20 medicines… from four different places — no doctor has ever looked at them together, and nobody has checked them against his age and kidneys!','แต่ดูยา 20 ตัวนี้สิ… จาก 4 ที่ ไม่เคยมีหมอคนไหนดูรวมกัน และไม่มีใครทบทวนตามอายุและการทำงานของไตของลุงเลย!']);
-  await say('pilly','shock',['藥袋危機！一共 4 個任務：點選有問題的藥（可以複選），再按「確認診斷」！','Med-bag crisis! 4 missions: tap the problem drugs (several may apply), then press "Confirm"!','วิกฤตซองยา! มี 4 ภารกิจ: แตะเลือกยาที่มีปัญหา (เลือกได้หลายตัว) แล้วกด "ยืนยัน"!']);
+  hideAll(); hideText(); await bagOverview(); show('me','L','neutral'); show('yeh','R','smug');   /* mk_dease */
+  await say('pilly','shock',['藥袋危機！一共 4 個任務，一次只看一個問題、只擺出相關的 6 種藥：點選有問題的藥（可以複選），再按「確認診斷」！','Med-bag crisis! 4 missions, one question at a time with only the 6 related medicines on the table: tap the problem drugs (several may apply), then press "Confirm"!','วิกฤตซองยา! มี 4 ภารกิจ ดูทีละเรื่อง วางเฉพาะยาที่เกี่ยวข้อง 6 ตัว: แตะเลือกยาที่มีปัญหา (เลือกได้หลายตัว) แล้วกด "ยืนยัน"!']);
   /* mk_dlite: two problems the student already caught in Cases A and C are named, not asked again */
   show('yeh','R','smug'); await say('yeh','smug',['有兩個問題你在前面的案例已經抓過了，這裡直接記下來：Peace 加 Clarinase 是兩份偽麻黃鹼（攝護腺肥大更尿不出來）；glipizide 這類磺醯尿素，老人家很容易低血糖。','Two problems you already caught in earlier cases, so we just note them: Peace plus Clarinase is a double dose of pseudoephedrine (even harder to pee with his BPH), and glipizide, a sulfonylurea, easily causes hypos in older people.','มีสองเรื่องที่คุณเคยจับได้แล้วในเคสก่อน จดไว้เลย: Peace กับ Clarinase มี pseudoephedrine ซ้ำสองต่อ (ต่อมลูกหมากโตยิ่งปัสสาวะไม่ออก) และ glipizide กลุ่ม sulfonylurea ทำให้ผู้สูงอายุน้ำตาลต่ำได้ง่าย']);
   [[['peace','clarinase'],['偽麻黃鹼重複','Duplicate decongestant','ยาลดคัดจมูกซ้ำซ้อน'],'P14'],[['minidiab'],['低血糖','Hypo risk','น้ำตาลต่ำ'],'P16']].forEach(([ids,tg,p])=>{ ids.forEach(id=>(S.mr.tags[id]=S.mr.tags[id]||[]).push(L(tg))); reveal(p); }); await sleep(1400);
@@ -4660,7 +4719,7 @@ function epiOutcomes(){
      b:['😵‍💫',['新舊藥袋搞混','Mixed up old and new bags','สับสนซองยาเก่ากับใหม่'],['他沒完全聽懂新的吃法，床底下的舊藥和新藥混在一起吃。','He never fully understood the new plan and mixed the old pills from under the bed with the new ones.','ลุงไม่เข้าใจวิธีใหม่ทั้งหมด เลยกินยาเก่าจากใต้เตียงปนกับยาใหม่']]},
    {k:'follow', ok:fu, g:['📞',['追蹤電話接通了','Your follow-up call went through','โทรติดตามผลได้ตามนัด'],['你約好的兩週追蹤，讓陳藥師和醫師能及時調整。','The two-week follow-up you arranged let Pharmacist Chen and the doctors adjust things in time.','การนัดติดตาม 2 สัปดาห์ที่คุณนัดไว้ ทำให้เภสัชกรเฉินกับแพทย์ปรับแผนได้ทันเวลา']],
      b:['📵',['沒有人追蹤','Nobody followed up','ไม่มีใครติดตาม'],['沒有約好追蹤，問題要等到出事才會被發現。','No follow-up was arranged, so problems only surface when something goes wrong.','ไม่ได้นัดติดตาม ปัญหาจะถูกพบก็ต่อเมื่อเกิดเรื่องขึ้นแล้ว']]},
-   {k:'life', ok:!alive('P3')&&(!!S.fl.ready||!alive('P6')), g:['🐕',['吃得好，又能帶小黑散步','Eating well, walking Blackie again','กินได้ดี กลับไปพาเจ้าดำเดินเล่นได้อีก'],['少量煮、不再吃酸掉的稀飯，還申請了榮民送餐；假牙每天刷，牙齦消腫，咬得動肉了。每天早上又帶小黑去公園散步。','Small fresh portions, no more sour porridge, and veterans\' meal delivery arranged; dentures brushed daily, gums no longer swollen — he can chew meat again. Every morning he walks Blackie to the park.','ทำอาหารทีละน้อย ไม่กินข้าวต้มบูดอีก และได้บริการส่งอาหารทหารผ่านศึกแล้ว แปรงฟันปลอมทุกวัน เหงือกยุบบวม กลับมาเคี้ยวเนื้อได้ ทุกเช้าพาเจ้าดำไปเดินเล่นที่สวน']],
+   {k:'life', ok:!alive('P3')&&(!!S.fl.ready||!alive('P6')), g:['🐕',['吃得好，又能帶小黑散步','Eating well, walking Blackie again','กินได้ดี กลับไปพาเจ้าดำเดินเล่นได้อีก'],['少量煮、不再吃酸掉的稀飯，還申請了榮民送餐；假牙每天刷，牙齦消腫，咬得動肉了。每天早上又自己牽著小黑下樓去公園散步。','Small fresh portions, no more sour porridge, and veterans\' meal delivery arranged; dentures brushed daily, gums no longer swollen — he can chew meat again. Every morning he walks Blackie down to the park himself.','ทำอาหารทีละน้อย ไม่กินข้าวต้มบูดอีก และได้บริการส่งอาหารทหารผ่านศึกแล้ว แปรงฟันปลอมทุกวัน เหงือกยุบบวม กลับมาเคี้ยวเนื้อได้ ทุกเช้าพาเจ้าดำลงไปเดินเล่นที่สวนเอง']],
      b:['🍚',['還是吃隔夜的酸稀飯','Still eating sour leftover porridge','ยังกินข้าวต้มค้างคืนเปรี้ยวๆ'],['一鍋稀飯照樣吃三四天，拉了兩次肚子；牙齦腫痛，吃不下肉，體重掉了 2 公斤。','One pot of porridge still lasts three or four days — diarrhoea twice; sore gums, no meat, and he\'s lost 2 kg.','ข้าวต้มหม้อเดียวยังกินสามสี่วัน ท้องเสียไปสองรอบ เหงือกบวมเจ็บ กินเนื้อไม่ได้ น้ำหนักลดไป 2 กิโล']]},
    (()=>{ const left=mythsAlive(); return {k:'myths', ok:!left.length, g:['🧠',UI.mythRowG,UI.mythRowGd],
      b:['👿',T('mythRowB').replace('{n}',left.length), MYTH_SEVERITY.filter(p=>left.includes(p)).map(p=>L(MYTH_FX[p].n)+' → '+L(MYTH_FX[p].fx)).join('\n')], wide:true}; })(),
@@ -4693,7 +4752,7 @@ async function epilogue(){
       :['上禮拜他突然完全尿不出來，肚子脹得好痛，叫救護車去急診插了尿管。醫生說跟鼻子和過敏的藥有關……','Last week he suddenly couldn\'t pee at all — his belly swelled up and hurt terribly. The ambulance took him to the ER and they put in a catheter. The doctor said it was the nose and allergy pills…','สัปดาห์ก่อนเขาปัสสาวะไม่ออกเลยกะทันหัน ท้องอืดปวดมาก ต้องเรียกรถพยาบาลไปห้องฉุกเฉินใส่สายสวน หมอบอกว่าเกี่ยวกับยาจมูกและยาแก้แพ้…']);
     hide('wife'); }
   else { show('chen','C',tier==='best'?'happy':'neutral');
-    await say('chen',tier==='best'?'happy':'neutral',tier==='best'||tier==='good'?['藥師又爬上來啦！我現在照著那張大字用藥表吃，頭比較不暈，也比較有力氣，又可以帶小黑去公園了！','The pharmacists climbed all the way up again! I follow that big-print chart now — less dizzy, more strength, and I can walk Blackie to the park again!','เภสัชกรปีนขึ้นมาอีกแล้ว! ตอนนี้ลุงกินยาตามตารางตัวหนังสือใหญ่นั่น เวียนหัวน้อยลง มีแรงขึ้น พาเจ้าดำไปสวนได้อีกแล้ว!']
+    await say('chen',tier==='best'?'happy':'neutral',tier==='best'||tier==='good'?['藥師又爬上來啦！我現在照著那張大字用藥表吃，頭比較不暈，也比較有力氣，又可以自己牽著小黑走下四層樓去公園了！','The pharmacists climbed all the way up again! I follow that big-print chart now — less dizzy, more strength, and I can walk Blackie down the four floors to the park myself again!','เภสัชกรปีนขึ้นมาอีกแล้ว! ตอนนี้ลุงกินยาตามตารางตัวหนังสือใหญ่นั่น เวียนหัวน้อยลง มีแรงขึ้น ลงบันไดสี่ชั้นพาเจ้าดำไปสวนเองได้อีกแล้ว!']
       :['還好啦……有些有改，有些我還是搞不太清楚。','So-so… some things changed, some I still don\'t really get.','ก็พอได้… บางอย่างก็เปลี่ยน บางอย่างลุงก็ยังงงอยู่']);
     const left=mythsAlive(), p0=MYTH_SEVERITY.find(p=>left.includes(p)); if(p0) await say('chen','think',T('chenStill2').replace('{q}',L(mythOf(p0).m))); }
   const msg={best:['每一個建議都落實了。這就是藥師在社區裡能帶來的改變。','Every piece of advice was put into practice. That\'s the difference a community pharmacist can make.','ทุกคำแนะนำถูกนำไปใช้จริง นี่แหละความเปลี่ยนแปลงที่เภสัชกรชุมชนทำได้'],
@@ -7033,7 +7092,17 @@ function renderTitleChars(){
 function renderModeRow(){ $$('.msel').forEach(b=>{ b.classList.toggle('on',b.dataset.mode===S.mode); b.disabled=!!MODE_FORCED&&b.dataset.mode!==MODE_FORCED; b.textContent=T('mode_'+b.dataset.mode); });
   const h=$('#modeHelp'); if(h) h.innerHTML=(MODE_FORCED?`<span class="lk">${T('modeLocked')}</span> · `:'')+esc(T('modeH_'+S.mode)); }
 const cleared=()=>{ try{ return localStorage.getItem('phd_lee_cleared')==='1'; }catch(e){ return false; } };
+/* mk_dease */
+const FLOORS={url:()=>'../four-floors/?lang='+(S.lang==='th'?'th':'zh'),
+  name:['李伯伯的四層樓','Uncle Lee\'s Four Floors','สี่ชั้นของลุงหลี่'],
+  line:['問他吃什麼藥之前，先問他，是為了誰醒來。','Before you ask what medicines he takes, ask who he wakes up for.','ก่อนถามว่าเขากินยาอะไร ถามก่อนว่า เขาตื่นมาเพื่อใคร'],
+  go:['🐕 接著玩《李伯伯的四層樓》：同一個家，從小黑的紅色牽繩看三天','🐕 Play next: "Uncle Lee\'s Four Floors" — the same home, three days around Blackie\'s red lead (in Chinese or Thai)','🐕 เล่นต่อ: "สี่ชั้นของลุงหลี่" บ้านหลังเดิม สามวันรอบสายจูงสีแดงของเจ้าดำ'],
+  btn:['🐕 接著玩：李伯伯的四層樓 →','🐕 Play next: Four Floors →','🐕 เล่นต่อ: สี่ชั้นของลุงหลี่ →']};
+const floorsHTML=()=>`<div class="rfloors"><p>「${esc(L(FLOORS.line))}」</p><a class="gbtn gold" href="${FLOORS.url()}" target="_blank" rel="noopener">${esc(L(FLOORS.go))}</a></div>`;
+/* the results page is engine code (merged from Case A), so the band is added after it is drawn, not in its template */
+{ const r0=results; results=async function(){ await r0.apply(this,arguments); try{ const b=$('#rRep'); if(b&&!$('#results .rfloors')) b.parentNode.insertAdjacentHTML('beforebegin',floorsHTML()); }catch(e){} }; }
 function renderTitleBtns(){ const st=badgeStore(), n=BADGES.filter(x=>st[x.id]).length; const bb=$('#btnBadges'), cb=$('#btnChSel');
+  const lg=$('#logo'); if(lg&&cleared()){ let fb=$('#btnFloors'); if(!fb){ fb=document.createElement('a'); fb.id='btnFloors'; fb.className='gbtn gold'; fb.target='_blank'; fb.rel='noopener'; lg.appendChild(fb); } fb.href=FLOORS.url(); fb.textContent=L(FLOORS.btn); }
   if(bb) bb.textContent='🏅 '+n+'/'+BADGES.length; if(cb){ cb.textContent=T('chSel'); cb.classList.remove('lock'); } }
 /* chapter practice (open from the start): jump into one chapter with a ready-made state; nothing is recorded */
 function buildPracticeState(ch){

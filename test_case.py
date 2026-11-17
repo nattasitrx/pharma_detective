@@ -315,6 +315,8 @@ with sync_playwright() as p:
     pump(pg, until=lambda: vis(pg, '#medrev'), pick=0)
     NM = pg.evaluate("()=>window.__PD__.MISSIONS.length")
     for i in range(NM):
+        if pg.locator('#bagGo').count() and vis(pg, '#medrev'):   # Case D: the four bags at a glance (17 Nov 2026)
+            shot(pg, '11_bags'); notes['bags'] = pg.locator('#medrev .bag li').count(); pg.click('#bagGo'); time.sleep(0.5)
         pump(pg, until=lambda: vis(pg, '#medrev') and pg.evaluate("()=>!!document.querySelector('#mrOk') && !document.querySelector('#medrev [data-d].ok, #medrev [data-d].miss, #medrev [data-d].bad') && ![...document.querySelectorAll('#medrev [data-d]')].some(c=>c.style.opacity)"), pick=0)
         if i == 3: reload_resume(pg, 'ch4', lambda: vis(pg, '#medrev') and pg.evaluate("()=>!!document.querySelector('#mrOk')"))
         ans = pg.evaluate(f"()=>window.__PD__.MISSIONS[{i}].ans")

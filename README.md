@@ -509,3 +509,27 @@ Changes in `cd/c_games.js` (first applied with `cd/fix_games_17nov.py`, whose `s
   an error (`tooLong`): the owner's decision, 17 Nov (a first version that made `tooStrict` a tip was live for ~20 min).
 - Nothing here changes score, rank or ending (the mini-game results are only recorded).
 Tests: `hypo_test.py`, `test_case.py` (selector `#cgWaitBox button[data-m="15"]`).
+
+### Case D: story tied to Four Floors, easier chapter 4 (17 Nov 2026)
+Case D had no student data yet; these changes come from reading the code and from what happened in Case C.
+All of it is in `cd/mk_dease.py` (run by `rebuild_cd.sh` after `mk_dlite.py`) and `cd/d_isim.js`.
+- Story (the dog only; the facts of the course document are untouched): Ah-Mei brought Blackie eight years ago; he used
+  to go down with Lee every morning and now the boy in 406 takes him on the days Lee cannot manage the stairs (the old
+  line said "every morning", against "some mornings" in the profile); the first time the student asks about the dog he
+  brings the red lead to the student; Lee's hope adds walking Blackie down himself (mentor's note too); on the night
+  of the fall Blackie lay beside him; the good ending says "down the four floors to the park myself".
+- Four Floors: the results page ends with its closing line and a link; the title page shows a gold link under the logo
+  once the case has been finished on that device (`phd_lee_cleared`). Link: `../four-floors/?lang=zh|th` (English
+  players get the Chinese version; the game has no English). The results page is engine code merged from Case A, so
+  the band is added after `results()` has drawn (a change inside its template is lost in the merge: conflicts take
+  the engine side).
+- Med bags: every mission used to show all 20 medicines as 20 small cards (unreadable on a phone: 102 x 46 px a card).
+  Now `bagOverview()` shows the four bags once (names and classes, nothing to answer), then each mission lays out six
+  large cards: its two answers and four near misses (`MR_SHORT`), like the red-basket mission. Scoring is unchanged.
+- Inhaler simulator: tapping the canister / dose button with the mouthpiece in the mouth and no breath started now
+  asks "when do you press?" (press first, then breathe = the real `early` mistake; start a slow breath and press
+  together = starts the breath and presses). Presses away from the mouth, before the spacer is fitted, or with the
+  cap on never fire and are never scored (`air`, `noSpacer`, `capOn` cannot happen any more; labels stay for old
+  records). Press window in the 7 s breath: practice 4.5 s (was 3.5; Respimat 5.0, was 4.0), exam 3.5 / 4.0.
+- Settings: patience 10 -> 13 (max 17, as Case C), visit time 60 -> 70 min (title and Pilly's line say 70).
+Tests: `inhwhen_test.py` (new), `inhscore_test.py`, `CASE=d test_case.py th|zh practice` (clicks `#bagGo`).

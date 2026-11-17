@@ -176,6 +176,8 @@ const FLOWX={
   inChamber:['輔助艙裡有藥霧：{s} 秒內吸進去','Mist in the chamber: breathe it in within {s} s','มีละอองยาในกระบอก: สูดภายใน {s} วินาที'], good:['好！藥進到肺裡了','Good — the dose reached the lungs','ดีมาก! ยาเข้าปอดแล้ว'],
   notNow:['先從嘴裡拿開再搖','Take it out of your mouth to shake it','เอาออกจากปากก่อนค่อยเขย่า'],
   puff2:['第 2 噴：整套再做一次！','Puff 2: the whole routine once more!','พัฟที่ 2: ทำทั้งชุดอีกรอบ!'],
+  whenQ:['什麼時候按？','When do you press?','กดตอนไหน?'], whenA:['先按下去，再開始吸氣','Press first, then start to breathe in','กดก่อน แล้วค่อยเริ่มสูด'], whenB:['開始慢慢吸氣，同時按下去','Start a slow breath in and press at the same moment','เริ่มสูดช้าๆ แล้วกดพร้อมกันทันที'],
+  warnAir:['吸嘴還沒放進嘴裡——現在按，藥會噴到空氣中','The mouthpiece is not in the mouth yet — pressing now would spray the dose into the air','ยังไม่ได้อมปากกระบอก กดตอนนี้ยาจะพ่นทิ้งในอากาศ'], warnSp:['還沒接上輔助器','The spacer is not fitted yet','ยังไม่ได้ต่อกระบอกช่วยสูด'],
   hintB:['💡 提示','💡 Hint','💡 คำใบ้'], next:['下一步呢？','what next?','ต่อไปทำอะไร?'], hintsUsed:['用了提示','Hints used','ใช้คำใบ้'],
   takeOut:['先從嘴裡拿出來','Take it out of his mouth first','เอาออกจากปากก่อน'], outAway:['別對著吸嘴吐氣！先拿開再吐','Not into the mouthpiece! Take it out, then breathe out','อย่าหายใจออกใส่ปากกระบอก! เอาออกก่อนแล้วค่อยหายใจออก'],
   holdNow:['嘴巴閉緊，點「閉氣」數到 10','Lips closed — tap "Hold breath" and count to 10','ปิดปากให้สนิท แตะ "กลั้นหายใจ" นับถึง 10'],
@@ -256,6 +258,10 @@ function inhSim(dev){
 @keyframes gzP{from{transform:scale(1)}to{transform:scale(1.12)}}
 #isim .fg-tm .mk{position:absolute;top:-4px;bottom:-4px;width:8px;border-radius:4px;background:#13a39a;left:0}
 #isim .is-sum{position:absolute;inset:0;z-index:7;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.9);border-radius:20px}
+#isim .is-ask{position:absolute;inset:0;z-index:8;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.82);border-radius:20px}
+#isim .is-ask .card{width:min(640px,92%);background:#fff;border-radius:22px;padding:18px 22px 22px;box-shadow:0 0 0 4px #3d7bff,0 12px 30px rgba(0,0,0,.2);display:flex;flex-direction:column;gap:14px}
+#isim .is-ask h3{margin:0;font-family:var(--tc);font-size:30px;text-align:center}
+#isim .is-ask .gbtn{font-size:26px;padding:16px 18px;line-height:1.3}
 #isim .is-sum .card{width:min(760px,92%);background:#fff;border-radius:22px;padding:18px 24px;box-shadow:0 0 0 4px #8c9a3e,0 12px 30px rgba(0,0,0,.2)}
 #isim .is-sum h3{margin:0 0 10px;font-family:var(--tc);font-size:28px}
 #isim .is-sum li{font-size:19px;line-height:1.45;margin:4px 0;font-weight:700}
@@ -301,7 +307,7 @@ function inhSim(dev){
     host.classList.remove('hidden'); typeof audioDuck==='function'&&audioDuck(1); host.style.animation='none'; void host.offsetWidth; host.style.animation='';
     const svg=$('#simSvg'), devG=$('#simDevG'), fx=$('#simFx'), bench=$('#simBench');
     const MOUTH={x:516,y:296}, SOCK=326, HOME={mdi:{x:250,y:430}, spacer:{x:170,y:250}, resp:{x:250,y:178}}[dev], SP_HOME={x:540,y:480};
-    const WIN=ex?(dev==='resp'?3.4:3.0):(dev==='resp'?4.0:3.5), INHALE=7.0;   // seconds: a slow 7-second breath; the press must land in its first part
+    const WIN=ex?(dev==='resp'?4.0:3.5):(dev==='resp'?5.0:4.5), INHALE=7.0;   // seconds: a slow 7-second breath; the press must land in its first part
     let tries=0, allErrs=[], firstErrs=null, firstSc=null, hint0=0, finished=false, raf=0, s, timers=[], hintsN=0, idleT=0;
     const later=(fn,ms)=>{ const t=setTimeout(()=>{ if(!finished) fn(); },ms); timers.push(t); return t; };
     const reset=()=>{ timers.forEach(clearTimeout); timers=[]; cancelAnimationFrame(raf);
@@ -383,7 +389,7 @@ function inhSim(dev){
     function tapBody(){ if(s.busy||finished) return;
       if(dev==='spacer'&&!s.attached){ if(s.capOn){ bub(L(FLOWX.capFirst)); sfx.error(); return; } tween(()=>s.pos,p=>{ s.pos=p; },{x:SP_HOME.x-SOCK,y:SP_HOME.y},420,()=>{ s.attached=true; draw(); sfx.clack(); mark('attach'); }); return; }
       if(s.atMouth){ if(s.inhaling){ if(dev!=='spacer') press(); return; } return takeOut(); }
-      if(dev!=='resp'&&s.capOn){ bub(L(FLOWX.capFirst)); err('capOn',1); return; }
+      if(dev!=='resp'&&s.capOn){ bub(L(FLOWX.capFirst)); sfx.error(); return; }
       if(dev==='resp'&&!s.capOpen){ bub(L(FLOWX.openFirst)); sfx.error(); return; }
       const get=dev==='spacer'?()=>s.sp:()=>s.pos, set=dev==='spacer'?p=>{ s.sp=p; }:p=>{ s.pos=p; };
       tween(get,set,MOUTH,480,()=>{ s.atMouth=true; draw(); sfx.select(); mark('mouth'); }); }
@@ -418,14 +424,24 @@ function inhSim(dev){
       if(dev==='spacer'){ if(s.chamberN){ s.good=true; mist('lungs'); bub(L(FLOWX.good),1200); mark('in'); } else { err('noPress'); failPuff(); } return; }
       if(!s.pressed){ err('noPress'); failPuff(); return; }
       if(s.good){ bub(L(FLOWX.good),1200); mark('press'); } else failPuff(); }
-    function press(){ if(s.busy||finished) return;
+    /* the timing of the press is a decision, not a reflex: asked when the canister is tapped before any breath */
+    function askWhen(){ s.busy=true; sfx.click();
+      const box=document.createElement('div'); box.className='is-ask'; const opts=[['first',FLOWX.whenA],['with',FLOWX.whenB]]; if(Math.random()<.5) opts.reverse();
+      box.innerHTML=`<div class="card"><h3>👆 ${esc(L(FLOWX.whenQ))}</h3>${opts.map(([k,t])=>`<button class="gbtn blue" data-w="${k}">${esc(L(t))}</button>`).join('')}</div>`; bench.appendChild(box);
+      box.querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{ const k=b.dataset.w; box.remove(); s.busy=false; sfx.click(); logEvent({type:'inhWhen', dev, pick:k});
+        if(k==='with'){ breatheIn(); later(()=>{ if(s.inhaling&&!s.pressed) press(); },350); } else press(true); }); }
+    function press(first){ if(s.busy||finished) return;
       const part=devG.querySelector(dev==='resp'?'.sd-btn':'.sd-can'); part.animate([{transform:'translateY(0)'},{transform:dev==='resp'?'translateY(5px)':'translateY(14px)'},{transform:'translateY(0)'}],{duration:220});
+      /* presses that are only someone finding the controls never fire and are never scored */
+      if(dev!=='resp'&&s.capOn){ bub(L(FLOWX.capFirst)); sfx.error(); return; }
+      if(dev==='spacer'&&!s.attached){ bub(L(FLOWX.warnSp),2200); sfx.error(); return; }
+      if(dev!=='spacer'&&!s.atMouth){ bub(L(FLOWX.warnAir),2200); sfx.error(); return; }
+      if(dev!=='spacer'&&!s.inhaling&&first!==true){ askWhen(); return; }
       if(dev==='resp'){ if(!s.turned){ err('noTurn'); bub(L(SIMX.nothing)); return; } s.turned=false;
         if(!s.capOpen){ err('capShut'); bub(L(SIMX.nothing)); failPuff(); return; } }
-      else { if(s.capOn){ err('capOn'); bub(L(SIMX.nothing)); return; } if(!s.shaken) err('noShake'); }
-      if(dev==='spacer'){ if(!s.attached){ err('noSpacer'); mist('air'); return; } if(s.chamberN&&!s.inhaling) err('twoPuff'); s.chamberN++; s.chamber=performance.now(); mist('chamber'); mark('press');
+      else if(!s.shaken) err('noShake');
+      if(dev==='spacer'){ if(s.chamberN&&!s.inhaling) err('twoPuff'); s.chamberN++; s.chamber=performance.now(); mist('chamber'); mark('press');
         if(!ex) hint(L(FLOWX.inChamber).replace('{s}',5)); return; }
-      if(!s.atMouth){ err('air'); mist('air'); failPuff(); return; }
       if(!s.inhaling){ err('early'); cough(); mist('throat'); failPuff(); return; }
       if(s.pressed) return; s.pressed=true; const t=(performance.now()-s.t0)/1000;
       if(t<=WIN){ s.good=true; mist('lungs'); sfx.select(); } else { err('late2'); mist('throat'); } }
@@ -447,12 +463,12 @@ function inhSim(dev){
       devG.querySelectorAll('.sd-base').forEach(e=>e.addEventListener('click',ev=>{ ev.stopPropagation(); tapBase(); }));
       devG.querySelectorAll('[data-p="body"],.sd-sp').forEach(e=>e.addEventListener('click',ev=>{ ev.stopPropagation(); tapBody(); }));
     }
-    bench.addEventListener('click',e=>{ if(finished||e.target.closest('[data-p],.is-sum,.sd-tag')) return; $$('#simTags .sd-tag').forEach(t=>{ t.classList.remove('flash'); void t.offsetWidth; t.classList.add('flash'); }); });
+    bench.addEventListener('click',e=>{ if(finished||e.target.closest('[data-p],.is-sum,.is-ask,.sd-tag')) return; $$('#simTags .sd-tag').forEach(t=>{ t.classList.remove('flash'); void t.offsetWidth; t.classList.add('flash'); }); });
     $('#simShake').onclick=shake; $('#simIn').onclick=breatheIn; if($('#simHintBtn')) $('#simHintBtn').onclick=showHint;
     const hb=(el,d,u)=>{ el.addEventListener('pointerdown',e=>{ e.preventDefault(); try{ el.setPointerCapture(e.pointerId); }catch(_){} d(); }); ['pointerup','pointercancel','pointerleave'].forEach(t=>el.addEventListener(t,u)); };
     hb($('#simOut'),outDown,outUp); hb($('#simHold'),holdDown,holdUp);
     $('#simDone').onclick=()=>{ if(!finished) finish(); };
-    function finish(){ if(finished) return; finished=true; timers.forEach(clearTimeout); cancelAnimationFrame(raf); clearInterval(outIv); clearInterval(holdIv); [s.outH,s.inH].forEach(h=>h&&h.stop(.2)); s.outH=s.inH=null; $('#simHand').classList.add('hidden');
+    function finish(){ if(finished) return; finished=true; timers.forEach(clearTimeout); cancelAnimationFrame(raf); clearInterval(outIv); clearInterval(holdIv); [s.outH,s.inH].forEach(h=>h&&h.stop(.2)); s.outH=s.inH=null; $('#simHand').classList.add('hidden'); bench.querySelectorAll('.is-ask').forEach(e=>e.remove());
       if(s.good&&!s.held&&!holdIv) err('noHold',1);
       if(dev==='resp'){ if(!s.puffs&&!s.good) err('noDose',1); else if(s.puffs<2) err('onePuff',1); if(s.capOpen) err('noClose',1); }
       else { if(!s.good) err('noDose',1); else if(dev==='mdi'&&!s.capOn) err('noRecap',1); }

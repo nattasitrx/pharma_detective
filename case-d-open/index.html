@@ -3959,7 +3959,7 @@ function inhScore(dev, errs, hints, ever){ const st=SIM_STEPS[dev].map(x=>x[0]),
   return {ok, max:st.length, hints:hints||0, pts:Math.max(0,ok-(hints||0)), bad}; }
 const INH_DV=[['mdi','🔵'],['spacer','🫙'],['resp','🟢']], INH_PT=10;      // 10 game points per checklist step
 const INH_T={tab:['吸入器衛教','Inhaler teaching','สอนใช้ยาพ่น'], tot:['吸入器技術總分','Inhaler technique total','คะแนนเทคนิคยาพ่นรวม'],
-  h:['親手示範三種吸入器，每種 8 個步驟。第一次示範就做對的步驟才得分；每用一次提示扣 1 分。每 1 分＝遊戲分數 +10。','You demonstrated three inhalers, 8 steps each. A step scores only if it was right in your first demonstration; each hint costs 1 point. Each point = +10 game score.','สาธิตยาพ่น 3 แบบด้วยตัวเอง แบบละ 8 ขั้นตอน ได้คะแนนเฉพาะขั้นที่ทำถูกในการสาธิตครั้งแรก ใช้คำใบ้หนึ่งครั้งหัก 1 คะแนน · 1 คะแนน = +10 คะแนนเกม']};
+  h:['三種吸入器，各把 8 個步驟排出順序。第一次排的順序裡，位置正確的步驟才得分；每用一次提示扣 1 分。每 1 分＝遊戲分數 +10。','Three inhalers, 8 steps each to put in order. A step scores if it was in the right place in your first order; each hint costs 1 point. Each point = +10 game score.','เรียงขั้นตอนยาพ่น 3 แบบ แบบละ 8 ขั้น ได้คะแนนตามขั้นที่อยู่ถูกลำดับในการเรียงครั้งแรก ใช้คำใบ้หนึ่งครั้งหัก 1 คะแนน · 1 คะแนน = +10 คะแนนเกม']};
 function inhTotal(){ const sc=(S.inh&&S.inh.sc)||{}; return INH_DV.reduce((a,[d])=>a+((sc[d]&&sc[d].pts)||0),0); }
 function inhMax(){ return INH_DV.reduce((a,[d])=>a+SIM_STEPS[d].length,0); }
 function inhPoints(){ const i=S.inh; if(!i) return 0; return (i.rescue?25:0)+(i.sc?inhTotal()*INH_PT:[i.steps,i.order,i.dose].filter(Boolean).length*25); }
@@ -4055,6 +4055,7 @@ function simFaceSVG(){ const O=SIM_O, SK='#e2ab80', SH='#c08458', HR='#d2d5dc', 
    Taps on the device (cap · canister · body · spacer · base · dose button) + four body buttons (shake · breathe out · breathe in · hold breath).
    The breath in is slow and automatic; the press must land in its first moment (green zone). ===== */
 Object.assign(SIM_ERR,{
+  order:['順序不對：對照上面的正確順序','The order is off — compare it with the correct order above','ลำดับยังไม่ถูก เทียบกับลำดับที่ถูกด้านบน'],
   late2:['按得太晚：氣快吸完才按，藥大多沒吸進去','Pressed too late — the breath was nearly over, so most of the dose missed','กดช้าไป หายใจเข้าเกือบสุดแล้วค่อยกด ยาเข้าไปได้น้อย'],
   noPress:['吸了氣卻沒按：這一口沒有藥','Breathed in but never pressed — that breath carried no medicine','สูดหายใจแต่ไม่ได้กด ลมหายใจนั้นไม่มียา'],
 });
@@ -4106,6 +4107,28 @@ const FLOW_T={
   open:['點綠色蓋子，把它完全打開','Tap the green cap to flip it fully open','แตะฝาสีเขียวเพื่อเปิดให้สุด','🔓'],
   close:['點蓋子蓋上','Tap the cap to close it','แตะฝาเพื่อปิด','🧢'],
 };
+/* ---- order mode: the cards, the correct orders, the words ---- */
+const INH={order:true};   // false = the hands-on simulator (kept below; its tests set this)
+const ORD_CARDS={
+  mdi:{cap:['拔掉蓋子','Take the cap off','ถอดฝาครอบ','🧢'], shake:['上下搖 4–5 下','Shake it 4–5 times','เขย่า 4–5 ครั้ง','👋'], out:['離開吸嘴，把氣吐乾淨','Breathe out fully, away from the mouthpiece','หายใจออกให้สุด (หันออกจากปากกระบอก)','😮‍💨'],
+    mouth:['含住吸嘴，嘴唇包緊','Mouthpiece in, lips sealed','อมปากกระบอก ปิดปากให้สนิท','👄'], in:['開始慢慢深吸氣','Start a slow, deep breath in','เริ่มสูดหายใจเข้าช้าๆ ลึกๆ','🌬️'], press:['按藥罐 1 下','Press the canister once','กดกระป๋องยา 1 ครั้ง','👆'],
+    hold:['閉氣數到 10','Hold the breath for a count of 10','กลั้นหายใจ นับ 1 ถึง 10','🤐'], recap:['蓋回蓋子','Put the cap back on','ปิดฝาครอบกลับ','✅']},
+  spacer:{cap:['拔掉蓋子','Take the cap off','ถอดฝาครอบ','🧢'], shake:['上下搖 4–5 下','Shake it 4–5 times','เขย่า 4–5 ครั้ง','👋'], attach:['把吸入器插進輔助器','Push the inhaler into the spacer','เสียบยาพ่นเข้ากระบอกช่วยสูด','🔌'],
+    out:['離開吸嘴，把氣吐乾淨','Breathe out fully, away from the mouthpiece','หายใจออกให้สุด (หันออกจากปากกระบอก)','😮‍💨'], mouth:['含住輔助器的吸嘴','Lips around the spacer mouthpiece','อมปากกระบอกช่วยสูด','👄'],
+    press:['按藥罐 1 下','Press the canister once','กดกระป๋องยา 1 ครั้ง','👆'], in:['慢慢深吸氣','Breathe in slowly and deeply','สูดหายใจเข้าช้าๆ ลึกๆ','🌬️'], hold:['閉氣數到 10','Hold the breath for a count of 10','กลั้นหายใจ นับ 1 ถึง 10','🤐']},
+  resp:{turn:['蓋子蓋著，轉底座到「喀」','Cap closed: turn the base until it clicks','ปิดฝาไว้ หมุนฐานจนได้ยินเสียงคลิก','🔄'], open:['打開綠色蓋子','Flip the green cap open','เปิดฝาสีเขียวให้สุด','🔓'], out:['離開吸嘴，把氣吐乾淨','Breathe out fully, away from the mouthpiece','หายใจออกให้สุด (หันออกจากปากกระบอก)','😮‍💨'],
+    mouth:['含住吸嘴，不擋住通氣孔','Lips on, air vents uncovered','อมปากกระบอก ไม่บังรูอากาศ','👄'], in:['開始慢慢深吸氣','Start a slow, deep breath in','เริ่มสูดหายใจเข้าช้าๆ ลึกๆ','🌬️'], press:['按灰色按鈕','Press the grey dose button','กดปุ่มสีเทาปล่อยยา','👆'],
+    hold:['閉氣數到 10','Hold the breath for a count of 10','กลั้นหายใจ นับ 1 ถึง 10','🤐'], close:['蓋上蓋子','Close the cap','ปิดฝา','✅']}};
+const ORD_VALID={mdi:[['cap','shake','out','mouth','in','press','hold','recap'],['shake','cap','out','mouth','in','press','hold','recap']],
+  spacer:[['cap','shake','attach','out','mouth','press','in','hold'],['shake','cap','attach','out','mouth','press','in','hold'],['cap','attach','shake','out','mouth','press','in','hold']],
+  resp:[['turn','open','out','mouth','in','press','hold','close']]};
+const ORDX={how:['依正確順序點卡片（點已排好的可以拿回去），再按「▶ 示範」。','Tap the cards in the right order (tap a placed card to take it back), then press ▶ Demonstrate.','แตะการ์ดตามลำดับที่ถูก (แตะใบที่วางแล้วเพื่อเอาออก) แล้วกด ▶ สาธิต'],
+  howEx:['依你教病人的順序排好卡片，再按「▶ 示範」。沒有提示。','Put the cards in the order you would teach a patient, then press ▶ Demonstrate. No hints.','เรียงการ์ดตามลำดับที่คุณจะสอนผู้ป่วย แล้วกด ▶ สาธิต ไม่มีคำใบ้'],
+  pool:['步驟卡（順序已打亂）','Step cards (shuffled)','การ์ดขั้นตอน (สลับไว้)'], seq:['你排的順序','Your order','ลำดับของคุณ'], clear:['↺ 清空','↺ Clear','↺ ล้าง'],
+  go:['▶ 照這個順序示範','▶ Demonstrate in this order','▶ สาธิตตามลำดับนี้'], hint:['💡 提示（−1 分）','💡 Hint (−1)','💡 คำใบ้ (−1)'], skip:['⏩ 跳過動畫','⏩ Skip the animation','⏩ ข้ามอนิเมชัน'],
+  cut:['排錯的卡片拿回去了，從那裡再排','The cards that were out of place went back — carry on from there','เอาใบที่ยังไม่ถูกออกให้แล้ว เรียงต่อจากตรงนั้น'], need:['先把 8 張卡都排好','Place all 8 cards first','วางการ์ดให้ครบ 8 ใบก่อน'],
+  redo:['↺ 重新排','↺ Reorder','↺ เรียงใหม่'], right:['順序完全正確！','The order is exactly right!','เรียงถูกทุกขั้น!'], firstNote:['分數以第一次排的為準','The score counts your first order','คะแนนนับจากการเรียงครั้งแรก'],
+  twice:['Spiolto 一次是 2 噴：蓋上蓋子後，整套再做一次。','Spiolto is 2 puffs a dose: after closing the cap, do the whole routine once more.','Spiolto ครั้งละ 2 พัฟ: ปิดฝาแล้วทำทั้งชุดนี้ซ้ำอีกรอบ']};
 function inhSim(dev){
   if(!$('#isimCss2')){ const st=document.createElement('style'); st.id='isimCss2'; st.textContent=`
 #isim{position:absolute;left:34px;right:34px;top:94px;bottom:16px;z-index:24;display:flex;flex-direction:column;background:rgba(255,255,255,.98);border-radius:28px;padding:12px 16px;box-shadow:0 0 0 5px #fff,0 0 0 10px #8c9a3e,0 16px 40px rgba(0,0,0,.35);animation:enterC .4s cubic-bezier(.2,1.2,.4,1);-webkit-user-select:none;user-select:none}
@@ -4155,6 +4178,35 @@ function inhSim(dev){
 #isim .is-ask .card{width:min(640px,92%);background:#fff;border-radius:22px;padding:18px 22px 22px;box-shadow:0 0 0 4px #3d7bff,0 12px 30px rgba(0,0,0,.2);display:flex;flex-direction:column;gap:14px}
 #isim .is-ask h3{margin:0;font-family:var(--tc);font-size:30px;text-align:center}
 #isim .is-ask .gbtn{font-size:26px;padding:16px 18px;line-height:1.3}
+#isim.order .is-side,#isim.order #simTags,#isim.order .is-cap,#isim.order #simHand,#isim.order .is-hint,#isim.order #simTm{display:none!important}
+#isim.order #simSvg{pointer-events:none}
+#isim.order.picking .is-bench,#isim.order.picking .io-list{display:none}
+#isim.order:not(.picking) .io-pick{display:none}
+#isim .io-pick{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:16px;min-height:0;min-width:0}
+#isim .io-col{display:flex;flex-direction:column;min-height:0;border-radius:20px;padding:10px 14px 12px;background:#f1f4ea}
+#isim .io-col.seq{background:#eef3fb}
+#isim .io-col h4,#isim .io-list h4{margin:0 0 6px;font-size:22px;line-height:1.2;color:#4a4a12}
+#isim .io-rows{flex:1;display:grid;grid-template-rows:repeat(8,1fr);gap:7px;min-height:0}
+#isim .io-card,#isim .io-slot,#isim .io-list .li{position:relative;display:flex;align-items:center;gap:10px;border-radius:14px;padding:0 14px;min-height:0;text-align:left;font-weight:900;font-size:25px;line-height:1.12;color:#2a2140}
+#isim .io-card{background:#fff;box-shadow:0 0 0 3px #c9d3b0,0 4px 0 #b3bd96}
+#isim .io-card i,#isim .io-list .li i{font-style:normal;font-size:28px;flex:0 0 auto}
+#isim .io-card span{flex:1}
+#isim .io-card.used{visibility:hidden}
+#isim .io-card.on{box-shadow:0 0 0 3px #7aa7f5,0 4px 0 #5b86d0;background:#fafcff}
+#isim .io-card em{font-style:normal;flex:0 0 auto;color:#9aa3b5;font-size:22px}
+#isim .io-slot{border:3px dashed #b9c6de;background:rgba(255,255,255,.5)}
+#isim .n{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:#3d7bff;color:#fff;font-size:21px;display:flex;align-items:center;justify-content:center}
+#isim .io-slot .n{background:#c3cde0}
+#isim .io-act{display:flex;gap:10px;margin-top:10px;justify-content:flex-end}
+#isim .io-act .gbtn{font-size:22px;padding:10px 16px}#isim .io-act .gbtn.dim{opacity:.5}
+#isim .io-list{width:380px;flex:0 0 auto;display:flex;flex-direction:column;gap:6px;min-height:0}
+#isim .io-list .li{flex:1;font-size:21px;background:#f4f7fb;box-shadow:inset 0 0 0 2px #dfe5ef}
+#isim .io-list .li span{flex:1}
+#isim .io-list .li.now{background:#fff6c8;box-shadow:inset 0 0 0 3px #ffb300}
+#isim .io-list .li.ok{background:#eafff6;box-shadow:inset 0 0 0 2px #18b07f}#isim .io-list .li.bad{background:#ffecee;box-shadow:inset 0 0 0 2px #ff3d5c}
+#isim .io-list .li u{text-decoration:none;flex:0 0 auto;font-size:24px}#isim .io-list .li.ok u::before{content:'✅'}#isim .io-list .li.bad u::before{content:'❌'}
+#isim .io-list .gbtn{font-size:18px;padding:8px 10px;margin:4px 8px 6px}
+#isim.order .is-bench .is-meter{position:absolute;right:12px;top:12px;width:104px;height:170px;z-index:2;background:rgba(244,247,251,.9)}
 #isim .is-sum .card{width:min(760px,92%);background:#fff;border-radius:22px;padding:18px 24px;box-shadow:0 0 0 4px #8c9a3e,0 12px 30px rgba(0,0,0,.2)}
 #isim .is-sum h3{margin:0 0 10px;font-family:var(--tc);font-size:28px}
 #isim .is-sum li{font-size:19px;line-height:1.45;margin:4px 0;font-weight:700}
@@ -4377,7 +4429,105 @@ function inhSim(dev){
       bench.appendChild(sum);
       const a=$('#simAgain'); if(a) a.onclick=()=>{ sfx.click(); sum.remove(); finished=false; reset(); };
       $('#simCont').onclick=()=>{ sfx.click(); typeof audioDuck==='function'&&audioDuck(0); host.classList.add('hidden'); host.innerHTML=''; res({ok, errs:allErrs, firstErrs, tries, hints:hintsN, score:firstSc}); }; }
-    reset();
+    /* ===== order mode (17 Nov 2026, owner's request): no hands-on controls. The eight steps are shuffled cards; the student
+       puts them in order, then the picture acts out exactly that order (a wrong order shows its consequence).
+       Score: the steps that are in the right relative order (longest common run with a correct order), first try counts;
+       a hint costs a point. ===== */
+    function orderMode(){
+      clearTimeout(idleT); host.classList.add('order','picking'); $('#simSn').textContent=''; $('#simPf').textContent='';
+      const CARDS=ORD_CARDS[dev], VALID=ORD_VALID[dev], keys=VALID[0].slice(), CK={mouth:'lips','in':'slow'};
+      const cardH=k=>`<i>${CARDS[k][3]}</i><span>${esc(L(CARDS[k]))}</span>`;
+      const pool=keys.slice(); do{ for(let a=pool.length-1;a>0;a--){ const b=Math.floor(Math.random()*(a+1)); [pool[a],pool[b]]=[pool[b],pool[a]]; } }while(VALID.some(v=>v.every((k,i)=>k===pool[i])));
+      let seq=keys.map(()=>null), tr=0, first=null, firstE=null, lastE=[], hintN=0, hint0=0, skip=false, pendingIn=false, breathP=null, errsP=[];
+      const body=host.querySelector('.is-body'); bench.appendChild(host.querySelector('.is-meter'));   // the lungs stay in view beside the face
+      body.insertAdjacentHTML('beforeend',`<div class="io-pick"><div class="io-col"><h4>🃏 ${esc(L(ORDX.pool))}</h4><div class="io-rows" id="ioPool"></div></div>
+        <div class="io-col seq"><h4>🔢 ${esc(L(ORDX.seq))}</h4><div class="io-rows" id="ioSeq"></div>
+          <div class="io-act"><button class="gbtn gray" id="ioClear">${esc(L(ORDX.clear))}</button>${ex?'':`<button class="gbtn gold" id="ioHint">${esc(L(ORDX.hint))}</button>`}<button class="gbtn green" id="ioGo">${esc(L(ORDX.go))}</button></div></div></div>
+        <div class="io-list" id="ioList"></div>`);
+      const render=()=>{ tx(L(ex?ORDX.howEx:ORDX.how));
+        $('#ioPool').innerHTML=pool.map(k=>`<button class="io-card${seq.includes(k)?' used':''}" data-k="${k}">${cardH(k)}</button>`).join('');
+        $('#ioSeq').innerHTML=keys.map((_,i)=>seq[i]?`<button class="io-card on" data-i="${i}"><b class="n">${i+1}</b>${cardH(seq[i])}<em>✕</em></button>`:`<div class="io-slot"><b class="n">${i+1}</b></div>`).join('');
+        $('#ioGo').classList.toggle('dim',seq.includes(null));
+        /* a card goes into the first empty place; taking a card back leaves its place empty for the next one */
+        $('#ioPool').querySelectorAll('.io-card').forEach(b=>b.onclick=()=>{ const i=seq.indexOf(null); if(i<0||seq.includes(b.dataset.k)) return; seq[i]=b.dataset.k; sfx.select(); render(); });
+        $('#ioSeq').querySelectorAll('.io-card').forEach(b=>b.onclick=()=>{ seq[+b.dataset.i]=null; sfx.paper(); render(); }); };
+      $('#ioClear').onclick=()=>{ seq=keys.map(()=>null); sfx.click(); render(); };
+      if($('#ioHint')) $('#ioHint').onclick=()=>{ const gap=seq.indexOf(null), pre=gap<0?seq:seq.slice(0,gap), v=VALID.find(v=>pre.every((k,i)=>v[i]===k));
+        if(v){ if(gap<0) return; const k=v[gap], at=seq.indexOf(k); if(at>=0) seq[at]=null; seq[gap]=k; }   // the next right card, into the first empty place
+        else { let n=0; VALID.forEach(v=>{ let i=0; while(i<pre.length&&v[i]===pre[i]) i++; n=Math.max(n,i); }); seq=seq.map((k,i)=>i<n?k:null); toast('💡 '+L(ORDX.cut)); }
+        hintN++; sfx.click(); render(); };
+      $('#ioGo').onclick=()=>{ if(seq.includes(null)){ sfx.error(); toast('🔢 '+L(ORDX.need)); return; } sfx.click(); play(); };
+      /* the steps that sit in the right relative order: longest common subsequence with the closest correct order */
+      const grade=()=>{ let best=null; VALID.forEach(v=>{ const n=seq.length, dp=Array.from({length:n+1},()=>new Array(n+1).fill(0));
+          for(let i=n-1;i>=0;i--) for(let j=n-1;j>=0;j--) dp[i][j]=seq[i]===v[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
+          const keep=new Set(); let i=0,j=0; while(i<n&&j<n){ if(seq[i]===v[j]){ keep.add(seq[i]); i++; j++; } else if(dp[i+1][j]>=dp[i][j+1]) i++; else j++; }
+          if(!best||keep.size>best.size) best=keep; });
+        const badK=keys.filter(k=>!best.has(k)), bad=badK.map(k=>CK[k]||k), h=hintN-hint0;
+        return {badK, sc:{ok:keys.length-bad.length, max:keys.length, hints:h, pts:Math.max(0,keys.length-bad.length-h), bad}}; };
+      const W=ms=>new Promise(r=>setTimeout(r,skip?0:ms));
+      const tw=(get,set,to,ms)=>new Promise(r=>tween(get,set,to,skip?1:ms,r));
+      const E=k=>{ if(!errsP.includes(k)) errsP.push(k); if(!ex) toast('⚠️ '+L(SIM_ERR[k])); sfx.error(); };
+      const getP=dev==='spacer'?()=>s.sp:()=>s.pos, setP=dev==='spacer'?p=>{ s.sp=p; }:p=>{ s.pos=p; };
+      const fromMouth=async()=>{ s.atMouth=false; await tw(getP,setP,dev==='spacer'?SP_HOME:HOME,420); draw(); };
+      const prep=()=>{ if(s.exhaled&&!s.good){ s.exhaled=false; s.lungs=.55; draw(); } };   // a step that takes time after breathing out: the lungs fill again
+      const A={
+        cap:async()=>{ if(s.atMouth){ bub(L(FLOWX.takeOut)); sfx.error(); await W(800); return; } prep(); s.capOn=false; sfx.capOff(); draw(); await W(650); },
+        shake:async()=>{ if(s.atMouth){ bub(L(FLOWX.notNow)); sfx.error(); await W(800); return; } prep(); const P=dev==='spacer'&&s.attached?'sp':'pos', base={...s[P]};
+          for(let n=1;n<=8;n++){ if(n<8) sfx.shake(n); s[P]={x:base.x,y:base.y+(n<8?(n%2?-22:22):0)}; draw(); await W(85); }
+          s.shaken=true; await W(250); },
+        attach:async()=>{ if(s.capOn){ bub(L(FLOWX.capFirst)); E('capOn'); await W(900); return; } prep(); await tw(()=>s.pos,p=>{ s.pos=p; },{x:s.sp.x-SOCK,y:s.sp.y},420); s.attached=true; draw(); sfx.clack(); await W(350); },
+        turn:async()=>{ if(s.atMouth){ bub(L(FLOWX.takeOut)); sfx.error(); await W(800); return; } if(s.capOpen) E('openTurn'); prep();
+          devG.querySelector('.sd-stripes').animate([{transform:'translateY(0)'},{transform:'translateY(14px)'},{transform:'translateY(-6px)'},{transform:'translateY(0)'}],{duration:500}); sfx.ratchet(); bub(L(SIMX.click),900); s.turned=true; await W(750); },
+        open:async()=>{ if(s.atMouth){ bub(L(FLOWX.takeOut)); sfx.error(); await W(800); return; } prep(); s.capOpen=true; sfx.capOff(); draw(); await W(650); },
+        out:async()=>{ if(s.atMouth){ E('outIn'); bub(L(FLOWX.outAway),1800); } else bench.classList.add('face-open'); sfx.sigh();
+          while(s.lungs>.07){ s.lungs=Math.max(.06,s.lungs-.04); draw(); await W(55); } s.exhaled=true; bench.classList.remove('face-open'); await W(300); },
+        mouth:async()=>{ if(dev!=='resp'&&dev!=='spacer'&&s.capOn){ bub(L(FLOWX.capFirst)); E('capOn'); await W(900); return; }
+          if(dev==='resp'&&!s.capOpen){ bub(L(FLOWX.openFirst)); E('capShut'); await W(900); return; }
+          await tw(getP,setP,MOUTH,480); s.atMouth=true; draw(); sfx.select(); await W(350); },
+        in:async next=>{ if(!s.atMouth){ bub(L(FLOWX.mouthFirst)); sfx.error(); } if(s.lungs>.4) E('noOut');
+          const from=s.lungs, dur=2600, h=skip?null:sfxLoop('in',{sec:dur/1000}), wet=dev==='spacer'&&s.atMouth&&s.chamberN>0;
+          if(wet){ s.good=true; mist('lungs'); }
+          breathP=(async()=>{ const t0=performance.now(); for(;;){ const k=skip?1:Math.min(1,(performance.now()-t0)/dur); s.lungs=from+(1-from)*k; draw(); if(k>=1) break; await W(40); } h&&h.stop(.2); })();
+          if(dev!=='spacer'&&next==='press'&&s.atMouth){ pendingIn=true; await W(600); return; }   // the press lands inside this breath
+          await breathP; if(wet) bub(L(FLOWX.good),1200); else if(s.atMouth&&!errsP.includes('early')) E('noPress'); await W(300); },
+        press:async()=>{ const part=devG.querySelector(dev==='resp'?'.sd-btn':'.sd-can'); part.animate([{transform:'translateY(0)'},{transform:dev==='resp'?'translateY(5px)':'translateY(14px)'},{transform:'translateY(0)'}],{duration:220});
+          const inB=pendingIn; pendingIn=false;
+          if(dev==='resp'){ if(!s.turned){ E('noTurn'); bub(L(SIMX.nothing)); if(inB) await breathP; await W(900); return; } s.turned=false;
+            if(!s.capOpen){ E('capShut'); bub(L(SIMX.nothing)); await W(900); return; } }
+          else { if(s.capOn){ E('capOn'); bub(L(SIMX.nothing)); await W(900); return; } if(!s.shaken) E('noShake'); }
+          if(dev==='spacer'){ if(!s.attached){ E('noSpacer'); mist('air'); await W(900); return; } s.chamberN++; s.chamber=performance.now(); mist('chamber'); await W(750); return; }
+          if(!s.atMouth){ E('air'); mist('air'); await W(900); return; }
+          if(inB){ s.good=true; mist('lungs'); sfx.select(); await breathP; bub(L(FLOWX.good),1200); await W(350); return; }
+          E('early'); cough(); mist('throat'); await W(1000); },
+        hold:async()=>{ if(!s.good){ bub(L(FLOWX.nothingHold)); sfx.error(); await W(900); return; } const cnt=svg.querySelector('.sd-count');
+          for(let n=1;n<=10;n++){ cnt.textContent=n; sfx.tock(n); await W(210); } cnt.textContent=''; s.held=true; await W(200); },
+        recap:async()=>{ if(s.atMouth) await fromMouth(); if(s.good&&!s.held) E('noHold'); s.capOn=true; sfx.capOn(); draw(); await W(550); },
+        close:async()=>{ if(s.atMouth) await fromMouth(); if(s.good&&!s.held) E('noHold'); s.capOpen=false; sfx.capOn(); draw(); await W(550); },
+      };
+      async function play(){ tr++; skip=false; pendingIn=false; errsP=[]; reset(); clearTimeout(idleT); $('#simSn').textContent=''; host.classList.remove('picking');
+        const g=grade(), list=$('#ioList');
+        list.innerHTML=`<h4>${esc(L(ORDX.seq))}</h4>${seq.map((k,i)=>`<div class="li" data-i="${i}"><b class="n">${i+1}</b>${cardH(k)}<u></u></div>`).join('')}<button class="gbtn gray" id="ioSkip">${esc(L(ORDX.skip))}</button>`;
+        $('#ioSkip').onclick=()=>{ skip=true; };
+        for(let i=0;i<seq.length;i++){ const k=seq[i], li=list.querySelector(`.li[data-i="${i}"]`); li.classList.add('now'); tx(`${i+1}. ${CARDS[k][3]} ${L(CARDS[k])}`);
+          await A[k](seq[i+1]); li.classList.remove('now'); li.classList.add(ex?'done':g.badK.includes(k)?'bad':'ok'); await W(250); }
+        const sk=$('#ioSkip'); if(sk) sk.remove();
+        if(s.atMouth){ await fromMouth(); } if(s.good&&!s.held) E('noHold'); if(!s.good&&!errsP.length) E('noDose');
+        s.lungs=Math.min(s.lungs,.5); draw(); if(!skip) sfx.sigh();
+        const sc=g.sc, ok=!sc.bad.length; if(!ok&&!errsP.length) errsP.push('order'); if(ok) errsP=[];
+        if(!first){ first=sc; firstE=errsP.slice(); } lastE=errsP.slice(); hint0=hintN;
+        logEvent({type:'inhSim', dev, mode:'order', order:seq.slice(), errs:lastE, ok, try:tr, puffs:0, good:s.good?1:0, hints:hintN, pts:sc.pts, steps:sc.ok, max:sc.max});
+        const end=()=>{ finished=true; timers.forEach(clearTimeout); typeof audioDuck==='function'&&audioDuck(0); host.classList.add('hidden'); host.innerHTML=''; res({ok, errs:lastE, firstErrs:firstE, tries:tr, hints:ex?0:hintN, score:first}); };
+        if(ex){ sfx.select(); setTimeout(end,500); return; }
+        if(ok) sfx.get(); else sfx.error();
+        const shown=tr>1?first:sc, sum=document.createElement('div'); sum.className='is-sum';
+        sum.innerHTML=`<div class="card"><h3>${ok?'🎉 '+esc(L(ORDX.right)):'🔧 '+esc(L(SIMX.fixes))}</h3><div class="is-score"><b>📋 ${esc(L(SIMX.scoreT))} ${shown.pts}/${shown.max}</b>${shown.hints?`<small>💡 −${shown.hints}</small>`:''}${tr>1?`<small>${esc(L(ORDX.firstNote))}</small>`:''}<ul>${SIM_STEPS[dev].map(([k,l])=>`<li class="${shown.bad.includes(k)?'no':'ok'}">${shown.bad.includes(k)?'❌':'✅'} ${esc(L(l))}</li>`).join('')}</ul></div>${ok?'':`<ul>${lastE.map(k=>`<li>${esc(L(SIM_ERR[k]))}</li>`).join('')}</ul>`}${dev==='resp'?`<p class="is-hn">🟢 ${esc(L(ORDX.twice))}</p>`:''}
+          <div class="act">${ok||tr>=2?'':`<button class="gbtn gray" id="simAgain">${esc(L(ORDX.redo))}</button>`}<button class="gbtn green" id="simCont">${esc(L(SIMX.cont))}</button></div></div>`;
+        bench.appendChild(sum);
+        const a=$('#simAgain'); if(a) a.onclick=()=>{ sfx.click(); sum.remove(); reset(); clearTimeout(idleT); $('#simSn').textContent=''; host.classList.add('picking'); render(); };
+        $('#simCont').onclick=()=>{ sfx.click(); end(); }; }
+      render();
+    }
+    reset(); if(INH.order) orderMode();
   });
 }
 /* ---- mission 2, hands-on: pick the medicines the Beers Criteria say to avoid (strongly anticholinergic) into one red basket.
@@ -4467,7 +4617,7 @@ async function inhalerTask(){
     await say('chen','happy',['看好了，小老弟！','Watch closely, young comrade!','ดูให้ดีนะ สหายน้อย!']);
     await say('sys','neutral',['（他拔掉蓋子，直接把吸嘴塞進嘴裡，「噗」一聲先按了下去，接著急急吸了一小口氣——立刻嗆咳，把藥吐進衛生紙裡，再把蓋子蓋回去。）','(He pulls off the cap, pops the mouthpiece straight into his mouth, presses — pfft! — then gasps a quick, short breath, coughs at once and spits into a tissue, and puts the cap back on.)','(ลุงถอดฝาออก ยัดปากกระบอกเข้าปากทันที กด "ฟึ่บ" ไปก่อน แล้วค่อยรีบสูดหายใจสั้นๆ ทีหนึ่ง ไอสำลักทันที บ้วนยาลงกระดาษทิชชู แล้วปิดฝากลับ)']);
     await say('chen','embarrassed',['咳……這藥每次都苦苦的，大半都吐到衛生紙上了。','*cough*… it always tastes awful — most of it ends up in the tissue.','แค่ก… ยานี่ขมทุกที ส่วนใหญ่ก็บ้วนลงทิชชูหมด']);
-    await say('yeh','smug',['看出問題了嗎？這是示範用的吸入器——你親手做一次正確的給他看！','Spot the problems? Here\'s a demo inhaler — show him the right way with your own hands!','เห็นปัญหาไหม? นี่คือยาพ่นตัวอย่าง ลองสาธิตวิธีที่ถูกให้ลุงดูด้วยมือคุณเอง!']);
+    await say('yeh','smug',['看出問題了嗎？這是示範用的吸入器——把正確的步驟排出來，示範給他看！','Spot the problems? Here\'s a demo inhaler — put the steps in the right order and show him!','เห็นปัญหาไหม? นี่คือยาพ่นตัวอย่าง เรียงขั้นตอนที่ถูก แล้วสาธิตให้ลุงดู!']);
     hideText();
     const m=await inhSim('mdi'); r.steps=m.ok; r.stepsSel=m.firstErrs; r.mdiErrs=m.errs; r.mdiTries=m.tries; (r.sc=r.sc||{}).mdi=m.score;
     if(EXAM()){ sfx.select(); toast(T('examNoted')); await sleep(700); }

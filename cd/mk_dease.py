@@ -104,7 +104,7 @@ sub('.dcard .badge{position:absolute;right:5px;bottom:3px;font-size:16px}',
 #medrev .bag li span{display:block;font-size:16.5px;line-height:1.25;color:#8a4fb8;font-weight:700}
 #medrev .mr-main:has(.mr-grid.few) .mr-head .tx,#medrev .mr-main:has(.bag-grid) .mr-head .tx{font-size:24px}
 #medrev .mr-main:has(.bag-grid) .mr-act .hint{font-size:20px;line-height:1.3}
-#btnFloors{position:absolute;right:0;bottom:4px;font-size:21px;padding:9px 20px;text-decoration:none;white-space:nowrap}
+#btnFloors{position:absolute;left:calc(100% + 26px);top:0;font-size:21px;padding:9px 20px;text-decoration:none;white-space:nowrap}
 .rfloors{margin-top:12px;padding:10px 16px;border-radius:18px;background:linear-gradient(90deg,#fff6dc,#ffeef0);display:flex;gap:14px;align-items:center;justify-content:space-between}
 .rfloors p{margin:0;font-family:var(--tc);font-weight:900;font-size:21px;line-height:1.3;color:#7a3a12}
 .rfloors a{flex:0 0 auto;max-width:56%;font-size:18px;line-height:1.3;padding:10px 18px;text-decoration:none;text-align:center}""")

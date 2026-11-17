@@ -10,7 +10,7 @@ with sync_playwright() as p:
     def run(dev, steps, lang='zh'):
         pg=b.new_page(viewport={'width':1440,'height':810}); errs=[]; pg.on('pageerror',lambda e: errs.append(str(e))); pg.route('**/*fonts.g*/**', lambda r: r.abort())
         pg.goto(f'http://localhost:8100/case-d/?lang={lang}'); time.sleep(2.5)
-        pg.evaluate("(d)=>{ document.querySelector('#title').classList.add('hidden'); window.__r=null; inhSim(d).then(r=>window.__r=r); }", dev); time.sleep(1.2)
+        pg.evaluate("(d)=>{ document.querySelector('#title').classList.add('hidden'); INH.order=false; window.__r=null; inhSim(d).then(r=>window.__r=r); }", dev); time.sleep(1.2)
         for st in steps:
             if st=='hint': pg.evaluate("()=>document.querySelector('#simHintBtn').click()")
             else: pg.evaluate("(s)=>document.querySelector('#simDevG '+s).dispatchEvent(new MouseEvent('click',{bubbles:true}))", st)

@@ -12,7 +12,7 @@ with sync_playwright() as p:
     def start(dev, lang='th', vp=None):
         pg=b.new_page(**(vp or {'viewport':{'width':1440,'height':810}})); pg._errs=[]; pg.on('pageerror',lambda e: pg._errs.append(str(e))); pg.route('**/*fonts.g*/**', lambda r: r.abort())
         pg.goto(f'http://localhost:8100/case-d/?lang={lang}'); time.sleep(2.5)
-        pg.evaluate("(d)=>{ document.querySelector('#title').classList.add('hidden'); window.__r=null; inhSim(d).then(r=>window.__r=r); }", dev); time.sleep(1.2); return pg
+        pg.evaluate("(d)=>{ document.querySelector('#title').classList.add('hidden'); INH.order=false; window.__r=null; inhSim(d).then(r=>window.__r=r); }", dev); time.sleep(1.2); return pg
     def tap(pg, sel): pg.click(sel if sel.startswith('#sim') or sel.startswith('.is-') else '#simDevG '+sel); time.sleep(0.4)
     def hold(pg, sel, secs):
         bb=pg.locator(sel).bounding_box(); pg.mouse.move(bb['x']+bb['width']/2, bb['y']+bb['height']/2); pg.mouse.down(); time.sleep(secs); pg.mouse.up(); time.sleep(0.3)

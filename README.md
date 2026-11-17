@@ -533,3 +533,17 @@ All of it is in `cd/mk_dease.py` (run by `rebuild_cd.sh` after `mk_dlite.py`) an
   records). Press window in the 7 s breath: practice 4.5 s (was 3.5; Respimat 5.0, was 4.0), exam 3.5 / 4.0.
 - Settings: patience 10 -> 13 (max 17, as Case C), visit time 60 -> 70 min (title and Pilly's line say 70).
 Tests: `inhwhen_test.py` (new), `inhscore_test.py`, `CASE=d test_case.py th|zh practice` (clicks `#bagGo`).
+
+### Case D inhaler game: put the steps in order (17 Nov 2026, same day, owner's request)
+The hands-on simulator had two kinds of controls at once (labels on the picture and breathing buttons) and the owner
+still could not tell where to look. Now `inhSim()` runs in order mode (`INH.order=true` in `cd/d_isim.js`):
+- eight shuffled step cards per inhaler (`ORD_CARDS`); a tap puts a card into the first empty place, a tap on a placed
+  card takes it back and leaves its place empty; `▶` plays the picture in exactly that order (`orderMode()` → `play()`),
+  so a wrong order shows its consequence (press before the breath = cough, and so on); `⏩` skips the animation.
+- correct orders are in `ORD_VALID` (cap/shake either way round; with the spacer, shaking before or after fitting it).
+- score, still out of 8 per inhaler and first try only: the steps that sit in the right relative order (longest common
+  subsequence with the closest correct order); a hint (places the next right card, or takes back the wrong ones) costs
+  a point. Results keep the same shape (`S.inh.sc`, `inhSim` log events, now with `mode:'order'` and `order:[...]`).
+- Respimat's second puff is not acted out: the summary says the whole routine is done twice.
+- The hands-on code is still in the file (`INH.order=false`); `inhscore_test.py` and `inhwhen_test.py` test it that
+  way. New test: `inhorder_test.py`. `test_case.py` places a correct order.

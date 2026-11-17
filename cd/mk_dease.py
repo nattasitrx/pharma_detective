@@ -112,6 +112,10 @@ sub("""  await say('pilly','shock',['藥袋危機！一共 4 個任務：點選�
     """  hideAll(); hideText(); await bagOverview(); show('me','L','neutral'); show('yeh','R','smug');   /* mk_dease */
   await say('pilly','shock',['藥袋危機！一共 4 個任務，一次只看一個問題、只擺出相關的 6 種藥：點選有問題的藥（可以複選），再按「確認診斷」！','Med-bag crisis! 4 missions, one question at a time with only the 6 related medicines on the table: tap the problem drugs (several may apply), then press "Confirm"!','วิกฤตซองยา! มี 4 ภารกิจ ดูทีละเรื่อง วางเฉพาะยาที่เกี่ยวข้อง 6 ตัว: แตะเลือกยาที่มีปัญหา (เลือกได้หลายตัว) แล้วกด "ยืนยัน"!']);""")
 
+# ---------- 3b. the inhaler game is an ordering task now (d_isim.js, INH_ORDER): Ms Yeh's cue says so ----------
+sub("這是示範用的吸入器——你親手做一次正確的給他看！", "這是示範用的吸入器——把正確的步驟排出來，示範給他看！")
+sub("Here\\'s a demo inhaler — show him the right way with your own hands!", "Here\\'s a demo inhaler — put the steps in the right order and show him!")
+sub("นี่คือยาพ่นตัวอย่าง ลองสาธิตวิธีที่ถูกให้ลุงดูด้วยมือคุณเอง!", "นี่คือยาพ่นตัวอย่าง เรียงขั้นตอนที่ถูก แล้วสาธิตให้ลุงดู!")
 # ---------- 4. settings ----------
 sub("  VISIT_MIN:60,   ", "  VISIT_MIN:70,   ")
 sub("  PATIENCE:10, PAT_MAX:14, TRUST_TALK:4", "  PATIENCE:13, PAT_MAX:17, TRUST_TALK:4")

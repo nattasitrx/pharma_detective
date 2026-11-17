@@ -72,6 +72,17 @@ def handle_sim(pg):
     done = notes.setdefault('sim_done', [])
     if not dev or dev in done: return False
     done.append(dev); time.sleep(0.6); shot(pg, f'sim_{dev}')
+    if pg.locator('#ioPool').count():   # the inhaler game is an ordering task (17 Nov 2026): place a correct order, watch, continue
+        for k in pg.evaluate("(d)=>ORD_VALID[d][0]", dev): pg.click(f'#ioPool .io-card[data-k="{k}"]'); time.sleep(0.08)
+        shot(pg, f'sim_{dev}_order'); pg.click('#ioGo'); time.sleep(0.5)
+        if dev != 'mdi' and pg.locator('#ioSkip').count(): pg.click('#ioSkip')
+        t0 = time.time()
+        while time.time() - t0 < 40 and not pg.locator('#simCont').count(): time.sleep(0.2)
+        notes.setdefault('sim', {})[dev] = pg.evaluate("()=>{const l=(window.__PD__.S.log||[]).filter(e=>e.type==='inhSim'); return l.length?l[l.length-1]:null}")
+        if dev == 'mdi' and RES:
+            pg.click('#simCont'); time.sleep(0.8); pump(pg, until=lambda: vis(pg, '#isim') and pg.evaluate("()=>{const d=document.querySelector('#simDevG .sd-dev'); return !!d&&d.dataset.dev==='spacer'}"), maxn=60)
+            reload_resume(pg, 'inh', lambda: vis(pg, '#isim') or vis(pg, '#choices'))
+        return True
     def tap(sel): pg.click(sel if sel.startswith('#sim') else '#simDevG ' + sel); time.sleep(0.35)
     def wait_in():
         t0 = time.time()

@@ -85,8 +85,8 @@ def patch(path):
         ("    reveal(m.p);\n  }\n", "    reveal(m.p);\n  }\n  resumePoint();\n"),
     ]
     if case == 'c':
-        P.append(("hideAll(); hideText(); const fz=await fosaGame(); S.calc.fosa={ok:fz.ok, errs:fz.errs}; logEvent({type:'fosaGame', ok:fz.ok, errs:fz.errs});",
-                  "if(!S.calc.fosa){ hideAll(); hideText(); const fz=await fosaGame(); S.calc.fosa={ok:fz.ok, errs:fz.errs}; logEvent({type:'fosaGame', ok:fz.ok, errs:fz.errs}); saveMid(); }"))
+        P.append(("hideAll(); hideText(); const fz=await fosaGame(); S.calc.fosa={ok:fz.ok, errs:fz.errs, strict:!!fz.strict}; logEvent({type:'fosaGame', ok:fz.ok, errs:fz.errs, strict:!!fz.strict});",
+                  "if(!S.calc.fosa){ hideAll(); hideText(); const fz=await fosaGame(); S.calc.fosa={ok:fz.ok, errs:fz.errs, strict:!!fz.strict}; logEvent({type:'fosaGame', ok:fz.ok, errs:fz.errs, strict:!!fz.strict}); saveMid(); }"))
     if case == 'd':
         P += [
             ("  await inhalerTask();", "  await part('inh', inhalerTask, true);"),

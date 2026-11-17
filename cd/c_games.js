@@ -237,7 +237,8 @@ function fosaGame(){
     errs:FOSA_ERR, scene, side, drop:()=>{}, onDone:()=>done()});
   cgFlow(C, FL, ['週三早上 6:30，她剛起床。陪她把這週的 Fosamax 吃對：點桌上的東西來用。卡住了就按「💡 提示」。','Wednesday, 6:30 — she\'s just up. Help her take this week\'s Fosamax the right way: tap things on the table to use them. Stuck? Tap "💡 Hint".','เช้าวันพุธ 6:30 ป้าเพิ่งตื่น พาป้ากิน Fosamax ของสัปดาห์นี้ให้ถูกวิธี: แตะของบนโต๊ะเพื่อใช้ ถ้าติดอยู่ แตะ "💡 คำใบ้"']);
   if(C.ex) $('#cgTx').textContent=L(['陪王太太完成這週的 Fosamax，從起床到吃早餐。','Walk Mrs. Wang through this week\'s Fosamax, from waking up to breakfast.','พาป้าหวังกิน Fosamax ของสัปดาห์นี้ ตั้งแต่ตื่นนอนจนถึงมื้อเช้า'])+' '+L(CGX.examNote);
-  const G={ml:0, kind:'water', swallowed:false, wait:false, after:false, min:30, doseAt:null, want:null, wantT:0, gone:new Set(), pouring:false};
+  const G={ml:0, kind:'water', swallowed:false, wait:false, after:false, min:30, doseAt:null, want:null, wantT:0, gone:new Set(), pouring:false, strict:false};
+  { const n0=C.note; C.note=out=>(G.strict?`<p class="cg-hn">💡 ${esc(L(FOSA_ERR.tooStrict))}</p>`:'')+(n0?n0(out):''); }
   const hm=m=>m>=60?'7:00':'6:'+String(m).padStart(2,'0');
   /* when she took it and how long ago (practice also shows when breakfast is allowed) */
   const doseCard=()=>{ const d=$('#cgDose'); if(G.doseAt==null){ d.style.display='none'; return; } d.style.display='';
@@ -252,7 +253,9 @@ function fosaGame(){
     const iv=setInterval(()=>{ G.ml=Math.min(220,G.ml+22); glass(); if(G.ml>=220){ clearInterval(iv); G.pouring=false; if(G.pourH){ G.pourH.stop(.12); G.pourH=null; }
       if(k==='water'){ C.mark('pour'); bub(L(['一大杯白開水，好。','A full glass of plain water — good.','น้ำเปล่าเต็มแก้ว ดีแล้ว']),1500); }
       else { C.err('wrongDrink'); bub(L(['配這個不行嗎？','Can\'t I take it with this?','กินกับอันนี้ไม่ได้เหรอ?']),1600); C.later(()=>{ if(!G.swallowed){ G.ml=0; G.kind='water'; glass(); } },1400); } } },45); }
-  function swallow(){ if(G.swallowed||G.pouring) return; if(!G.ml) C.err('dry'); else if(G.kind==='bad') C.err('wrongDrink');
+  function swallow(){ if(G.swallowed||G.pouring) return;
+    if(!G.ml){ sfx.blip('chen'); bub(L(['（拿起藥）要配什麼喝呢？','(picks up the tablet) What shall I take it with?','(หยิบยาขึ้นมา) จะกินกับอะไรดีล่ะ?']),2600); return; }
+    if(G.kind==='bad') C.err('wrongDrink');
     G.swallowed=true; G.doseAt=G.min; doseCard(); consume('fosa'); tile('fosa').classList.add('gone'); G.ml=0; glass(); sfx.gulp(); C.mark('swallow'); bub(L(['好，吞下去了！','Done — swallowed!','กลืนแล้ว!']),1400); C.later(startWait,900); }
   /* the 30 minutes: she asks for four things (three not allowed, one allowed); the student taps Wait or OK for each.
      The clock stands still while she is asking (and briefly after), so there is time to read and decide. */
@@ -274,7 +277,7 @@ function fosaGame(){
     C.guide(); G.wantT=C.later(()=>resolveWant('timeout'),WIN); }
   function resolveWant(ch){ const ev=G.want; if(!ev) return; G.want=null; G.hold=performance.now()+1400; clearTimeout(G.wantT); $('#cgAsk').classList.add('hidden');
     if(ev==='lie'&&ch==='stop'){ $('#cgWho').classList.remove('lying'); art('neutral'); } else if(tile(ev)) tile(ev).classList.remove('want');
-    if(OKW.has(ev)){ if(ch==='stop'){ C.err('tooStrict'); bub(L(['咦？連這個也不行嗎……','Oh — not even that?','อ้าว แค่นี้ก็ไม่ได้เหรอ…']),1700); }
+    if(OKW.has(ev)){ if(ch==='stop'){ if(!G.strict&&!C.ex) toast('💡 '+L(FOSA_ERR.tooStrict)); G.strict=true; bub(L(['咦？連這個也不行嗎……','Oh — not even that?','อ้าว แค่นี้ก็ไม่ได้เหรอ…']),1700); }
       else { sfx.select(); art('happy'); bub(L(ev==='water'?['（喝了幾口白開水）','(sips some plain water)','(จิบน้ำเปล่า)']:['好～','Okay~','โอเค~']),1400); } }
     else if(ch==='stop'){ sfx.select(); if(ev==='lie') art('happy'); bub(L(ev==='lie'?['好啦，我坐著。','Fine — I\'ll sit up.','ก็ได้ นั่งก็ได้']:['好，等 7 點再說。','Okay, after seven then.','โอเค รอเจ็ดโมงก่อน']),1500); }
     else { C.err(ev==='lie'?'lieDown':ev==='pills'?'earlyPills':'early'); consume(ev); if(ev==='lie') C.later(()=>{ if(G.want!=='lie'){ $('#cgWho').classList.remove('lying'); art('neutral'); } },2600); bub(L(ev==='lie'?['呼……（躺下了）','Zzz… (lies down)','ครอก… (นอนลงแล้ว)']:['（她吃下去了）','(she has it)','(ป้ากินไปแล้ว)']),1500); }
@@ -292,7 +295,7 @@ function fosaGame(){
   function afterAns(ch){ G.askA=false; $('#cgAsk').classList.add('hidden'); ['food','pills'].forEach(k=>tile(k).classList.remove('want'));
     if(ch==='ok'){ ['food','pills'].forEach(k=>{ if(!G.gone.has(k)) consume(k); }); sfx.chew(); art('happy'); bub(L(AFT.ate),1600); checkAfter(); return; }
     C.err('noAfter'); art('sad'); bub(L(AFT.no)); C.guide(); C.later(askAfter,2200); }
-  function checkAfter(){ if(G.gone.has('food')&&G.gone.has('pills')){ if(G.askA){ G.askA=false; $('#cgAsk').classList.add('hidden'); } C.mark('after'); C.later(()=>C.finish({min:G.min}),900); } }
+  function checkAfter(){ if(G.gone.has('food')&&G.gone.has('pills')){ if(G.askA){ G.askA=false; $('#cgAsk').classList.add('hidden'); } C.mark('after'); C.later(()=>C.finish({min:G.min, strict:!!G.strict}),900); } }
   ['water','coffee','milk','juice'].forEach(k=>tile(k).addEventListener('click',()=>{ if(C.finished) return;
     if(!G.swallowed) return pour(k); if(G.wait){ if(k!=='water'){ C.err('early'); bub(L(['（她喝了一口）','(she takes a sip)','(ป้าจิบไปหนึ่งอึก)']),1300); } } }));
   tile('fosa').addEventListener('click',()=>{ if(!C.finished) swallow(); });
@@ -304,7 +307,7 @@ function fosaGame(){
     after:['她還沒吃早餐和其他的藥喔……就這樣結束嗎？','She hasn\'t had breakfast or her other pills yet… finish now?','ป้ายังไม่ได้กินข้าวเช้ากับยาอื่นเลย… จะจบแค่นี้เหรอ?']}, fNudged=new Set();
   function done(){ const k=C.ex?null:!G.swallowed?'dose':!G.after?'wait':!(G.gone.has('food')&&G.gone.has('pills'))?'after':null;   // a step still missing: say so once (practice)
     if(k&&!fNudged.has(k)){ fNudged.add(k); sfx.error(); bub(L(FON[k]),2800); C.guide(); return; }
-    if(!G.swallowed) C.errs.add('noDose'); else if(!(G.gone.has('food')&&G.gone.has('pills'))) C.errs.add('noAfter'); C.finish({min:G.min}); }
+    if(!G.swallowed) C.errs.add('noDose'); else if(!(G.gone.has('food')&&G.gone.has('pills'))) C.errs.add('noAfter'); C.finish({min:G.min, strict:!!G.strict}); }
   return C.result;
 }
 
@@ -314,56 +317,70 @@ const HYPO_ERR={
   under:['糖不夠：一次要給 15–20 g（例如 3–4 顆糖果、半杯果汁或 4 顆葡萄糖錠）','Not enough sugar — give 15–20 g at a time (e.g. 3–4 candies, half a cup of juice or 4 glucose tablets)','น้ำตาลไม่พอ ต้องให้ครั้งละ 15–20 ก. (เช่น ลูกอม 3–4 เม็ด น้ำผลไม้ครึ่งแก้ว หรือเม็ดกลูโคส 4 เม็ด)'],
   tooMuch:['一次給太多：15–20 g 就好，給太多會讓血糖反彈太高','Too much at once — 15–20 g is enough; more overshoots','ให้มากไปในครั้งเดียว 15–20 ก. ก็พอ มากไปน้ำตาลจะพุ่งสูง'],
   tooSoon:['還沒等 15 分鐘就重測：數值還沒反應出來','Rechecked before 15 minutes — the reading hasn\'t caught up yet','วัดซ้ำก่อนครบ 15 นาที ค่ายังไม่ขึ้น'],
+  tooLong:['等太久才重測：15 分鐘就該再測一次，還低的話才能及時再給糖','Waited too long — recheck at 15 minutes, so a second dose is not delayed if she is still low','รอนานเกินไป ควรวัดซ้ำที่ 15 นาที ถ้ายังต่ำจะได้ให้น้ำตาลซ้ำได้ทัน'],
   noRecheck:['處理後要再測一次，確定回到 70 以上','Recheck after treating to make sure she\'s back above 70','หลังแก้ไขต้องวัดซ้ำให้แน่ใจว่ากลับมาเกิน 70'],
   noSnack:['回到 70 以上後，她還沒吃午餐：要吃點東西，避免再掉','Back above 70 — but she skipped lunch: she needs a snack so it doesn\'t drop again','กลับมาเกิน 70 แล้ว แต่ป้ายังไม่ได้กินข้าวเที่ยง ต้องกินอะไรรองท้อง ไม่ให้ตกอีก'],
 };
 function hypoGame(){
   const FL=[['check',['先點血糖機，量她的血糖','First tap the meter to check her sugar','แตะเครื่องวัดเพื่อวัดน้ำตาลก่อน'],'🩸','.tile[data-item="meter"]',['量了血糖','Sugar checked','วัดน้ำตาลแล้ว']],
     ['treat',['給她 15–20 g 的糖：糖果點 3–4 下、果汁點 1 下，或葡萄糖錠點 4 下','Give her 15–20 g of sugar: tap the candy 3–4 times, the juice once, or the glucose tablets 4 times','ให้น้ำตาล 15–20 ก.: แตะลูกอม 3–4 ครั้ง น้ำส้ม 1 ครั้ง หรือเม็ดกลูโคส 4 ครั้ง'],'🍬','.tile[data-item="candy"]',['給了糖','Sugar given','ให้น้ำตาลแล้ว']],
-    ['wait',['點「⏩ 等 15 分鐘」','Tap "⏩ Wait 15 min"','แตะ "⏩ รอ 15 นาที"'],'⏱️','#cgWait15',['等了 15 分鐘','15 minutes passed','ผ่านไป 15 นาที']],
+    ['wait',['選「⏩ 15 分鐘」：等 15 分鐘再重測','Choose "⏩ 15 min": wait 15 minutes, then recheck','เลือก "⏩ 15 นาที": รอ 15 นาทีแล้วค่อยวัดซ้ำ'],'⏱️','#cgWaitBox button[data-m="15"]',['等了 15 分鐘','15 minutes passed','ผ่านไป 15 นาที']],
     ['recheck',['再點血糖機，重測一次','Tap the meter again to recheck','แตะเครื่องวัดอีกครั้งเพื่อวัดซ้ำ'],'🔁','.tile[data-item="meter"]',['重測：回到 70 以上','Rechecked: above 70','วัดซ้ำ: เกิน 70 แล้ว']],
     ['snack',['回到 70 以上了！她沒吃午餐：點蘇打餅乾給她墊肚子','Back above 70! She skipped lunch — tap the crackers for a snack','กลับมาเกิน 70 แล้ว! ป้ายังไม่ได้กินข้าวเที่ยง แตะขนมปังกรอบให้ป้ารองท้อง'],'🍞','.tile[data-item="bread"]',['','','']]];
   const scene=`<div class="who" id="cgWho" style="right:16px;top:16px;width:290px;height:440px"><div class="bub" id="cgBub"></div><div class="art">${charSVG('chen','sad')}</div></div>
     <div style="position:absolute;left:24px;top:20px;width:150px" id="cgClock">${cgClockSVG(0)}</div>
-    <div style="position:absolute;left:190px;top:34px;font-weight:900;font-size:20px;color:#b4621a;line-height:1.4"><span id="cgWait" style="font-size:32px;color:#3a2a1c">+0 ${esc(L(FLOWG.min))}</span><br><button class="gbtn gray" id="cgWait15" style="font-size:19px;padding:8px 16px;margin-top:6px">${esc(L(FLOWG.wait15))}</button></div>
+    <div style="position:absolute;left:190px;top:34px;font-weight:900;font-size:20px;color:#b4621a;line-height:1.4"><span id="cgWait" style="font-size:32px;color:#3a2a1c">+0 ${esc(L(FLOWG.min))}</span></div>
+    <div class="cg-read" id="cgWaitBox" style="left:350px;top:150px;width:520px;display:none"><div style="font-weight:900;font-size:25px;color:#5a4a3a;margin-bottom:12px">⏱️ ${esc(L(['給糖之後，等多久再重測血糖？','After the sugar: how long until you recheck?','ให้น้ำตาลแล้ว รอนานเท่าไรค่อยวัดซ้ำ?']))}</div><div style="display:flex;gap:14px;justify-content:center">${[5,15,30].map(m=>`<button class="gbtn gold" data-m="${m}" style="font-size:27px;padding:14px 20px">⏩ ${m} ${esc(L(FLOWG.min))}</button>`).join('')}</div></div>
     <div class="cg-read" style="left:24px;top:210px;width:300px"><div style="font-weight:900;color:#5a4a3a">🩸 ${esc(L(['血糖','Blood sugar','น้ำตาลในเลือด']))}</div><b id="cgBg">— —</b><div id="cgBgOld" style="font-weight:800;font-size:16px;color:#8a7a6a;margin:-2px 0 4px"></div><div style="font-weight:900;color:#5a4a3a">🍬 ${esc(L(['已給的糖','Sugar given','ให้น้ำตาลแล้ว']))}: <b id="cgG" style="display:inline;font-size:26px">0</b> g</div></div>
     ${cgTile('meter',['血糖機','Glucose meter','เครื่องวัดน้ำตาล'],24,476)}${cgTile('gluc',['葡萄糖錠','Glucose tablets','เม็ดกลูโคส'],154,476)}${cgTile('candy',['硬糖','Hard candy','ลูกอมแข็ง'],284,476)}${cgTile('juice',['柳橙汁（半杯）','Orange juice (½ cup)','น้ำส้ม (ครึ่งแก้ว)'],414,476)}${cgTile('bread',['蘇打餅乾','Crackers','ขนมปังกรอบ'],544,476)}`;
   const gd=null, hside=gd?`<div class="box" style="align-items:stretch;text-align:left"><div style="font-weight:900;color:#c0392b;font-size:15px">💊 ${esc(L(['她在吃','She takes','ป้ากินยานี้อยู่']))}</div><b style="font-size:17px;line-height:1.25">${esc(gd.n)}</b><span style="font-size:14px;color:#6a6585">${esc(gd.g)}</span><span style="font-weight:800;font-size:15px;line-height:1.35;color:#8a4fb8">${esc(L(gd.cls))}</span></div>`:'';
   const C=cgPanel({title:['🩸 實作：低血糖急救','🩸 Hands-on: hypo rescue','🩸 ลงมือ: แก้น้ำตาลต่ำ'], task:['王太太在發抖冒冷汗，還沒吃午餐。處理到她安全為止。','Mrs. Wang is shaky and sweaty and hasn\'t had lunch. Handle it until she\'s safe.','ป้าหวังมือสั่นเหงื่อแตก ยังไม่ได้กินข้าวเที่ยง ดูแลจนป้าปลอดภัย'],
     errs:HYPO_ERR, scene, side:hside, drop:()=>{}, onDone:()=>done()});
   cgFlow(C, FL, ['王太太在發抖、冒冷汗。你會怎麼處理？點桌上的東西或按鈕。卡住了就按「💡 提示」。','Mrs. Wang is shaky and sweaty. What will you do? Tap things on the table or the button. Stuck? Tap "💡 Hint".','ป้าหวังมือสั่น เหงื่อแตก คุณจะทำอย่างไร? แตะของบนโต๊ะหรือปุ่ม ถ้าติดอยู่ แตะ "💡 คำใบ้"']); if(C.ex) $('#cgTx').textContent=L(['王太太在發抖冒冷汗，還沒吃午餐。處理到她安全為止。','Mrs. Wang is shaky and sweaty and hasn\'t had lunch. Handle it until she\'s safe.','ป้าหวังมือสั่นเหงื่อแตก ยังไม่ได้กินข้าวเที่ยง ดูแลจนป้าปลอดภัย'])+' '+L(CGX.examNote);
-  const G={bg:58, g:0, roundG:0, waited:-1, checked:false, rechecked:false, ok:false, snack:false, checks:0, busy:false, nudged:new Set()};
+  const G={bg:58, g:0, roundG:0, waited:0, checked:false, rechecked:false, ok:false, snack:false, checks:0, busy:false, nudged:new Set()};
   const bub=(t,ms)=>{ $('#cgBub').textContent=t; if(ms) C.later(()=>{ if($('#cgBub').textContent===t) $('#cgBub').textContent=''; },ms); };
   const tile=k=>$(`#cgScene .tile[data-item="${k}"]`);
   const show=v=>{ const e=$('#cgBg'); e.textContent=v+' mg/dL'; e.style.color=v<70?'#c0172f':'#18b07f'; $('#cgBgOld').textContent=''; sfx.beep(); };
   const HY={old:['這是 15 分鐘前的數值，現在呢？','That was 15 minutes ago — what is it now?','ค่านี้วัดเมื่อ 15 นาทีที่แล้ว ตอนนี้ล่ะ?'],
+    just:['才剛吃下去，數值還不會變……要等多久再測呢？','I only just had it — the reading won\'t have moved yet… how long shall we wait?','เพิ่งกินไปเอง ค่ายังไม่เปลี่ยนหรอก… รอนานเท่าไรดี?'],
+    ago:['這是 {m} 分鐘前的數值','That was {m} minutes ago','ค่านี้วัดเมื่อ {m} นาทีที่แล้ว'],
     wonder:['15 分鐘了……我的血糖上來了沒？','15 minutes now… is my sugar back up?','15 นาทีแล้ว… น้ำตาลป้าขึ้นหรือยังนะ?'], passed:['（過了 15 分鐘）','(15 minutes later)','(ผ่านไป 15 นาที)'],
     sure:['確定她安全了嗎？還沒重測血糖喔。','Sure she\'s safe? Her sugar hasn\'t been rechecked.','แน่ใจหรือว่าป้าปลอดภัยแล้ว? ยังไม่ได้วัดน้ำตาลซ้ำเลย'],
     lunch:['……不過我中午還沒吃飯呢。','…but I still haven\'t had lunch.','…ว่าแต่เที่ยงนี้ป้ายังไม่ได้กินข้าวเลยนะ'],
     none:['她還在發抖、冒冷汗……就這樣結束嗎？','She\'s still shaking and sweating… finish now?','ป้ายังมือสั่น เหงื่อออกอยู่เลย… จะจบแค่นี้เหรอ?'],
     snack:['血糖回來了，可是她中午還沒吃飯……就這樣結束嗎？','Her sugar is back, but she still hasn\'t had lunch… finish now?','น้ำตาลกลับมาแล้ว แต่ป้ายังไม่ได้กินข้าวเที่ยงเลย… จะจบแค่นี้เหรอ?']};
   const glowMeter=()=>{ if(!C.ex) tile('meter').classList.add('cg-glow'); };
+  const box=$('#cgWaitBox'), boxOn=on=>{ box.style.display=on?'':'none'; if(!on) box.classList.remove('cg-glow'); };
+  const gave=()=>{ boxOn(true); if(G.roundG>=15) C.mark('treat'); };   // enough sugar is in: the next decision is the wait
+  let juiceT=0;   // a double tap on the juice is not a second half cup
   bub(L(['手好抖……頭暈……','My hands are shaking… so dizzy…','มือสั่นจัง… เวียนหัว…']));
   tile('meter').addEventListener('click',()=>{ if(C.finished||G.busy) return; G.checks++;
     if(!G.checked){ G.checked=true; show(G.bg); C.mark('check'); return; }
     if(!G.roundG&&!G.ok){ show(G.bg); return; }
     if(G.ok){ show(G.bg); return; }
-    if(G.waited<15){ C.err('tooSoon'); show(60); return; }
+    if(G.waited<=0){ show(G.bg); bub(L(HY.just),2600); if(!C.ex) box.classList.add('cg-glow'); return; }   // no time has passed yet: nothing to read, nothing to mark down
+    if(G.waited<15){ C.err('tooSoon'); show(62); bub(L(['還是有點暈……','Still a bit dizzy…','ยังเวียนหัวอยู่นิด…']),2000); return; }
     if(G.roundG<15) C.err('under'); G.bg=G.roundG>=15?(G.roundG>24?168:94):G.roundG>=8?66:60; G.rechecked=true; show(G.bg);
     if(G.bg>=70){ G.ok=true; C.mark('recheck'); $('#cgWho .art').innerHTML=charSVG('chen','happy'); bub(L(['好多了……手不抖了。','Much better… the shaking\'s gone.','ดีขึ้นเยอะ… มือหายสั่นแล้ว']),2200);
       C.later(()=>{ if(!G.snack&&!C.finished) bub(L(HY.lunch)); },2400); }
-    else { bub(L(['還是有點暈……','Still a bit dizzy…','ยังเวียนหัวอยู่นิด…']),2000); G.roundG=0; G.waited=-1; $('#cgWait').textContent='+0 '+L(FLOWG.min); C.unmark('treat','wait','recheck'); } });
+    else { bub(L(['還是有點暈……','Still a bit dizzy…','ยังเวียนหัวอยู่นิด…']),2000); G.roundG=0; G.waited=0; boxOn(false); $('#cgClock').innerHTML=cgClockSVG(0); $('#cgWait').textContent='+0 '+L(FLOWG.min); C.unmark('treat','wait','recheck'); } });
   tile('gluc').addEventListener('click',()=>{ if(C.finished||G.ok) return; if(G.waited>=15){ bub(L(FLOWG.recheckFirst),1400); return; }
     G.g+=4; G.roundG+=4; $('#cgG').textContent=G.g; sfx.chew(); bub(L(['（嚼一顆葡萄糖錠）','(chews a glucose tablet)','(เคี้ยวเม็ดกลูโคส)']),900);
-    if(G.roundG>24) C.err('tooMuch'); C.guide(); });
+    if(G.roundG>24) C.err('tooMuch'); gave(); C.guide(); });
   [['candy',5,['（含一顆糖果）','(sucks a candy)','(อมลูกอมหนึ่งเม็ด)']],['juice',15,['（喝了半杯柳橙汁）','(drinks half a cup of orange juice)','(ดื่มน้ำส้มครึ่งแก้ว)']]].forEach(([k,g,say])=>tile(k).addEventListener('click',()=>{ if(C.finished||G.ok) return; if(G.waited>=15){ bub(L(FLOWG.recheckFirst),1400); return; }
+    if(k==='juice'){ const n=performance.now(); if(n-juiceT<700) return; juiceT=n; }
     G.g+=g; G.roundG+=g; $('#cgG').textContent=G.g; k==='juice'?sfx.sip():sfx.chew(); bub(L(say),900);
-    if(G.roundG>24) C.err('tooMuch'); C.guide(); }));
+    if(G.roundG>24) C.err('tooMuch'); gave(); C.guide(); }));
   tile('bread').addEventListener('click',()=>{ if(C.finished) return; if(!G.ok&&G.waited>=15){ C.err('noRecheck'); bub(L(FLOWG.recheckFirst),1600); glowMeter(); return; } if(!G.ok){ C.err('slowCarb'); return; } if(G.snack) return; G.snack=true; C.mark('snack'); sfx.crunch();
     bub(L(['謝謝你，我中午都忘了吃飯……','Thank you — I forgot to eat lunch…','ขอบใจนะ เที่ยงนี้ลืมกินข้าวเลย…']),2000); C.later(()=>C.finish({g:G.g, bg:G.bg, checks:G.checks}),1200); });
-  $('#cgWait15').onclick=()=>{ if(C.finished||G.busy) return; if(!G.roundG){ bub(L(FLOWG.treatFirst),1400); sfx.error(); return; } if(G.waited>=15) return;
-    C.mark('treat'); G.busy=true; sfx.whoosh(); let m=0; const iv=setInterval(()=>{ m++; $('#cgClock').innerHTML=cgClockSVG(m); $('#cgWait').textContent='+'+m+' '+L(FLOWG.min); if(m%5===0) sfx.tick(); if(m>=15){ clearInterval(iv); G.waited=15; G.busy=false; C.mark('wait');
-      const e=$('#cgBg'); e.style.color='#b8aca0'; $('#cgBgOld').textContent=L(HY.old); bub(L(C.ex?HY.passed:HY.wonder)); glowMeter(); } },70); };
+  box.querySelectorAll('button').forEach(wb=>wb.onclick=()=>{ if(C.finished||G.busy) return; if(!G.roundG){ bub(L(FLOWG.treatFirst),1400); sfx.error(); return; }
+    if(G.waited>=15){ bub(L(FLOWG.recheckFirst),1400); glowMeter(); return; }
+    const end=G.waited+(+wb.dataset.m); C.mark('treat'); G.busy=true; sfx.whoosh(); box.classList.remove('cg-glow'); let m=G.waited;
+    const iv=setInterval(()=>{ m++; $('#cgClock').innerHTML=cgClockSVG(m); $('#cgWait').textContent='+'+m+' '+L(FLOWG.min); if(m%5===0) sfx.tick(); if(m<end) return;
+      clearInterval(iv); G.waited=end; G.busy=false; const e=$('#cgBg'); e.style.color='#b8aca0';
+      if(end>=30) C.err('tooLong');
+      if(end>=15){ boxOn(false); C.mark('wait'); $('#cgBgOld').textContent=L(HY.old); bub(L(C.ex?HY.passed:HY.wonder)); glowMeter(); }
+      else { $('#cgBgOld').textContent=L(HY.ago).replace('{m}',end); bub(L(['（過了 '+end+' 分鐘）','('+end+' minutes later)','(ผ่านไป '+end+' นาที)']),1800); } },70); });
   function done(){   // a step still missing: she says so once per step (practice), the next Done ends the game
     const k=C.ex?null:!G.g?'none':!G.rechecked?'sure':(G.ok&&!G.snack)?'snack':null;
     if(k&&!G.nudged.has(k)){ G.nudged.add(k); sfx.error(); bub(L(HY[k]),2800); if(k==='sure') glowMeter(); else if(k==='snack') tile('bread').classList.add('cg-glow'); return; }

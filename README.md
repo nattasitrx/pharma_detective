@@ -490,3 +490,22 @@ Not done: `letter` (the desk differs from `phone`), Ah-Mei's age in `amei_cry`, 
 New three-day game built around the dog, published separately at `four-floors/` on `main` (source: `floors/`). The seven-day game in `life/` / `uncle-lee/` is unchanged.
 `floors/index.html` is generated: `life_tools/build_floors.py` takes `life/index.html`, removes the seven day scripts, and inserts `life_tools/floors_days.js` (the three days) and `life_tools/sfx_extra.js`. Edit those, rebuild, then run `life_tools/floors_test.py`.
 Nine pictures were made with ChatGPT (method in `UNCLE_LEE_HANDOFF.md`). Sound changes: no clock tick while waiting for the phone, no grunt sample, slower night walk, quieter drip and birds.
+
+### Case C mini-games after three classes (17 Nov 2026)
+Data: 129 Case C records, classes of 9, 12 and 16 Nov. The 9 Nov fixes worked for the height game (clean first try
+11/31 -> 27/30 -> 15/17) and for "forgot to recheck" (18 -> 7 -> 4), but in the hypo game the mistakes moved:
+"rechecked too soon" (7 -> 11 -> 13) and "too much sugar" (14 -> 10 -> 15 of 25), usually together. Cause: the only way
+to let time pass was a small grey "wait 15 min" button under the clock, so students gave sugar, tapped the meter at
+once, saw 60 and gave more (up to 163 g). In the Fosamax game the commonest "errors" were `tooStrict` (said Wait to
+plain water / sitting / walking, about half of students) and `dry` (tapped the tablet before any water).
+Changes in `cd/c_games.js` (applied with `cd/fix_games_17nov.py`; `cd/mk_cgames.py` and `mk_resume.py` record `strict`):
+- Hypo: once sugar is given a card in the middle asks "how long until you recheck?" with 5 / 15 / 30 min. The wait is
+  now the student's decision: 5 then meter = `tooSoon` (reads 62), 30 = new `tooLong`, 15 = fine; waits add up.
+  Tapping the meter before any wait is no longer an error (she says the reading has not moved; the card glows).
+  The step list moves on to "wait" as soon as 15 g is in (it used to keep saying "give sugar"). A double tap on the
+  juice within 0.7 s counts once.
+- Fosamax: tapping the tablet with an empty glass no longer swallows it dry: she picks it up and asks what to take it
+  with (`dry` cannot happen any more; the label stays for old records). `tooStrict` is a tip (💡 toast and a line in
+  the summary), not an error; the result carries `strict:true`.
+- Nothing here changes score, rank or ending (the mini-game results are only recorded).
+Tests: `hypo_test.py`, `test_case.py` (selector `#cgWaitBox button[data-m="15"]`).

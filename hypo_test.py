@@ -17,7 +17,7 @@ with sync_playwright() as p:
             for _ in range(n): T(k); time.sleep(0.25)
         if name=='candy x4': pg.screenshot(path='t15/hypo_candy.png')
         grams=pg.inner_text('#cgG')
-        pg.evaluate("()=>document.querySelector('#cgWait15').click()"); time.sleep(1.8); T('meter'); time.sleep(0.6); bg=pg.inner_text('#cgBg'); T('bread'); time.sleep(2.0)
+        pg.evaluate("()=>document.querySelector('#cgWaitBox button[data-m=\"15\"]').click()"); time.sleep(1.8); T('meter'); time.sleep(0.6); bg=pg.inner_text('#cgBg'); T('bread'); time.sleep(2.0)
         print('   ',name,'grams',grams,'recheck',bg)
         for _ in range(10):
             r=pg.evaluate("()=>window.__hr")

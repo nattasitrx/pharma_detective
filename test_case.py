@@ -124,11 +124,11 @@ def handle_cg(pg):
     def log(k):
         time.sleep(1.6); notes.setdefault('cg', {})[k] = pg.evaluate("(k)=>{const c=window.__PD__.S.calc[k]; return c?{ok:c.ok, errs:c.errs}:null}", k)
     def tapt(k): pg.click(T(k)); time.sleep(0.3)
-    if pg.locator('#cgWait15').count() and 'hypo' not in done:
+    if pg.locator('#cgWaitBox').count() and 'hypo' not in done:
         done.append('hypo'); time.sleep(0.5); shot(pg, 'cg_hypo')
         tapt('meter')
         for _ in range(4): tapt('gluc')
-        pg.click('#cgWait15'); time.sleep(1.6); tapt('meter'); time.sleep(0.4); tapt('bread'); time.sleep(1.6)
+        pg.click('#cgWaitBox button[data-m="15"]'); time.sleep(1.6); tapt('meter'); time.sleep(0.4); tapt('bread'); time.sleep(1.6)
         if pg.locator('#cgCont').count(): pg.click('#cgCont')
         log('hypo'); return True
     if pg.locator('#cgGlass').count() and 'fosa' not in done:

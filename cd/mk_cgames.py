@@ -55,7 +55,7 @@ if False: sub("""  await say('pilly','shock',['藥袋危機！一共 6 個任務
 sub("""  await say('yeh','smug',['別擔心，我們會把這些整理成「藥事照護建議」交給您的醫師。不過在那之前……',""",
     """  await say('chen','think',['對了，明天禮拜三，又要吃那顆骨頭的藥了……','Oh — tomorrow\\'s Wednesday, bone-pill day again…','จริงสิ พรุ่งนี้วันพุธ ต้องกินยากระดูกอีกแล้ว…']);
   await coach('smug',['那我們現在就一起演練一次週三早上！','Then let\\'s rehearse Wednesday morning together, right now!','งั้นมาซ้อมเช้าวันพุธด้วยกันเลย!']);
-  hideAll(); hideText(); const fz=await fosaGame(); S.calc.fosa={ok:fz.ok, errs:fz.errs, strict:!!fz.strict}; logEvent({type:'fosaGame', ok:fz.ok, errs:fz.errs, strict:!!fz.strict});
+  hideAll(); hideText(); const fz=await fosaGame(); S.calc.fosa={ok:fz.ok, errs:fz.errs}; logEvent({type:'fosaGame', ok:fz.ok, errs:fz.errs});
   if(EXAM()){ sfx.select(); toast(T('examNoted')); }
   show('chen','C','happy'); show('me','L','neutral'); show('yeh','R','smug');
   await say('chen','happy',['原來吃一顆藥有這麼多眉角……我會照著做！','Who knew one pill came with so many rules… I\\'ll do it this way!','ใครจะรู้ว่ายาเม็ดเดียวมีกฎเยอะขนาดนี้… ป้าจะทำตามนี้นะ!']);

@@ -498,14 +498,14 @@ Data: 129 Case C records, classes of 9, 12 and 16 Nov. The 9 Nov fixes worked fo
 to let time pass was a small grey "wait 15 min" button under the clock, so students gave sugar, tapped the meter at
 once, saw 60 and gave more (up to 163 g). In the Fosamax game the commonest "errors" were `tooStrict` (said Wait to
 plain water / sitting / walking, about half of students) and `dry` (tapped the tablet before any water).
-Changes in `cd/c_games.js` (applied with `cd/fix_games_17nov.py`; `cd/mk_cgames.py` and `mk_resume.py` record `strict`):
+Changes in `cd/c_games.js` (first applied with `cd/fix_games_17nov.py`, whose `strict` parts were then taken out by hand):
 - Hypo: once sugar is given a card in the middle asks "how long until you recheck?" with 5 / 15 / 30 min. The wait is
   now the student's decision: 5 then meter = `tooSoon` (reads 62), 30 = new `tooLong`, 15 = fine; waits add up.
   Tapping the meter before any wait is no longer an error (she says the reading has not moved; the card glows).
   The step list moves on to "wait" as soon as 15 g is in (it used to keep saying "give sugar"). A double tap on the
   juice within 0.7 s counts once.
 - Fosamax: tapping the tablet with an empty glass no longer swallows it dry: she picks it up and asks what to take it
-  with (`dry` cannot happen any more; the label stays for old records). `tooStrict` is a tip (💡 toast and a line in
-  the summary), not an error; the result carries `strict:true`.
+  with (`dry` cannot happen any more; the label stays for old records). `tooStrict` stays an error and 30 min stays
+  an error (`tooLong`): the owner's decision, 17 Nov (a first version that made `tooStrict` a tip was live for ~20 min).
 - Nothing here changes score, rank or ending (the mini-game results are only recorded).
 Tests: `hypo_test.py`, `test_case.py` (selector `#cgWaitBox button[data-m="15"]`).

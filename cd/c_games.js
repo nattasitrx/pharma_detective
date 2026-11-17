@@ -237,8 +237,7 @@ function fosaGame(){
     errs:FOSA_ERR, scene, side, drop:()=>{}, onDone:()=>done()});
   cgFlow(C, FL, ['週三早上 6:30，她剛起床。陪她把這週的 Fosamax 吃對：點桌上的東西來用。卡住了就按「💡 提示」。','Wednesday, 6:30 — she\'s just up. Help her take this week\'s Fosamax the right way: tap things on the table to use them. Stuck? Tap "💡 Hint".','เช้าวันพุธ 6:30 ป้าเพิ่งตื่น พาป้ากิน Fosamax ของสัปดาห์นี้ให้ถูกวิธี: แตะของบนโต๊ะเพื่อใช้ ถ้าติดอยู่ แตะ "💡 คำใบ้"']);
   if(C.ex) $('#cgTx').textContent=L(['陪王太太完成這週的 Fosamax，從起床到吃早餐。','Walk Mrs. Wang through this week\'s Fosamax, from waking up to breakfast.','พาป้าหวังกิน Fosamax ของสัปดาห์นี้ ตั้งแต่ตื่นนอนจนถึงมื้อเช้า'])+' '+L(CGX.examNote);
-  const G={ml:0, kind:'water', swallowed:false, wait:false, after:false, min:30, doseAt:null, want:null, wantT:0, gone:new Set(), pouring:false, strict:false};
-  { const n0=C.note; C.note=out=>(G.strict?`<p class="cg-hn">💡 ${esc(L(FOSA_ERR.tooStrict))}</p>`:'')+(n0?n0(out):''); }
+  const G={ml:0, kind:'water', swallowed:false, wait:false, after:false, min:30, doseAt:null, want:null, wantT:0, gone:new Set(), pouring:false};
   const hm=m=>m>=60?'7:00':'6:'+String(m).padStart(2,'0');
   /* when she took it and how long ago (practice also shows when breakfast is allowed) */
   const doseCard=()=>{ const d=$('#cgDose'); if(G.doseAt==null){ d.style.display='none'; return; } d.style.display='';
@@ -277,7 +276,7 @@ function fosaGame(){
     C.guide(); G.wantT=C.later(()=>resolveWant('timeout'),WIN); }
   function resolveWant(ch){ const ev=G.want; if(!ev) return; G.want=null; G.hold=performance.now()+1400; clearTimeout(G.wantT); $('#cgAsk').classList.add('hidden');
     if(ev==='lie'&&ch==='stop'){ $('#cgWho').classList.remove('lying'); art('neutral'); } else if(tile(ev)) tile(ev).classList.remove('want');
-    if(OKW.has(ev)){ if(ch==='stop'){ if(!G.strict&&!C.ex) toast('💡 '+L(FOSA_ERR.tooStrict)); G.strict=true; bub(L(['咦？連這個也不行嗎……','Oh — not even that?','อ้าว แค่นี้ก็ไม่ได้เหรอ…']),1700); }
+    if(OKW.has(ev)){ if(ch==='stop'){ C.err('tooStrict'); bub(L(['咦？連這個也不行嗎……','Oh — not even that?','อ้าว แค่นี้ก็ไม่ได้เหรอ…']),1700); }
       else { sfx.select(); art('happy'); bub(L(ev==='water'?['（喝了幾口白開水）','(sips some plain water)','(จิบน้ำเปล่า)']:['好～','Okay~','โอเค~']),1400); } }
     else if(ch==='stop'){ sfx.select(); if(ev==='lie') art('happy'); bub(L(ev==='lie'?['好啦，我坐著。','Fine — I\'ll sit up.','ก็ได้ นั่งก็ได้']:['好，等 7 點再說。','Okay, after seven then.','โอเค รอเจ็ดโมงก่อน']),1500); }
     else { C.err(ev==='lie'?'lieDown':ev==='pills'?'earlyPills':'early'); consume(ev); if(ev==='lie') C.later(()=>{ if(G.want!=='lie'){ $('#cgWho').classList.remove('lying'); art('neutral'); } },2600); bub(L(ev==='lie'?['呼……（躺下了）','Zzz… (lies down)','ครอก… (นอนลงแล้ว)']:['（她吃下去了）','(she has it)','(ป้ากินไปแล้ว)']),1500); }
@@ -295,7 +294,7 @@ function fosaGame(){
   function afterAns(ch){ G.askA=false; $('#cgAsk').classList.add('hidden'); ['food','pills'].forEach(k=>tile(k).classList.remove('want'));
     if(ch==='ok'){ ['food','pills'].forEach(k=>{ if(!G.gone.has(k)) consume(k); }); sfx.chew(); art('happy'); bub(L(AFT.ate),1600); checkAfter(); return; }
     C.err('noAfter'); art('sad'); bub(L(AFT.no)); C.guide(); C.later(askAfter,2200); }
-  function checkAfter(){ if(G.gone.has('food')&&G.gone.has('pills')){ if(G.askA){ G.askA=false; $('#cgAsk').classList.add('hidden'); } C.mark('after'); C.later(()=>C.finish({min:G.min, strict:!!G.strict}),900); } }
+  function checkAfter(){ if(G.gone.has('food')&&G.gone.has('pills')){ if(G.askA){ G.askA=false; $('#cgAsk').classList.add('hidden'); } C.mark('after'); C.later(()=>C.finish({min:G.min}),900); } }
   ['water','coffee','milk','juice'].forEach(k=>tile(k).addEventListener('click',()=>{ if(C.finished) return;
     if(!G.swallowed) return pour(k); if(G.wait){ if(k!=='water'){ C.err('early'); bub(L(['（她喝了一口）','(she takes a sip)','(ป้าจิบไปหนึ่งอึก)']),1300); } } }));
   tile('fosa').addEventListener('click',()=>{ if(!C.finished) swallow(); });
@@ -307,7 +306,7 @@ function fosaGame(){
     after:['她還沒吃早餐和其他的藥喔……就這樣結束嗎？','She hasn\'t had breakfast or her other pills yet… finish now?','ป้ายังไม่ได้กินข้าวเช้ากับยาอื่นเลย… จะจบแค่นี้เหรอ?']}, fNudged=new Set();
   function done(){ const k=C.ex?null:!G.swallowed?'dose':!G.after?'wait':!(G.gone.has('food')&&G.gone.has('pills'))?'after':null;   // a step still missing: say so once (practice)
     if(k&&!fNudged.has(k)){ fNudged.add(k); sfx.error(); bub(L(FON[k]),2800); C.guide(); return; }
-    if(!G.swallowed) C.errs.add('noDose'); else if(!(G.gone.has('food')&&G.gone.has('pills'))) C.errs.add('noAfter'); C.finish({min:G.min, strict:!!G.strict}); }
+    if(!G.swallowed) C.errs.add('noDose'); else if(!(G.gone.has('food')&&G.gone.has('pills'))) C.errs.add('noAfter'); C.finish({min:G.min}); }
   return C.result;
 }
 

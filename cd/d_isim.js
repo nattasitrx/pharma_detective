@@ -58,7 +58,7 @@ const SIM_ERR={
 };
 /* ---- technique score (asked for by the course professor): 8 checklist steps per inhaler.
    A step scores if the FIRST demonstration has no mistake on it; each hint costs 1 point. ---- */
-const INH_STEP_OF={capOn:'cap',capShut:'open',noShake:'shake',noOut:'out',outIn:'out',air:'lips',early:'press',twoPuff:'press',noDose:'press',onePuff:'press',fast:'slow',short:'slow',late:'slow',noHold:'hold',noRecap:'recap',noClose:'close',openTurn:'turn',noTurn:'turn',noSpacer:'attach'};
+const INH_STEP_OF={capOn:'cap',capShut:'open',noShake:'shake',noOut:'out',outIn:'out',air:'lips',early:'press',twoPuff:'press',noDose:'press',onePuff:'press',fast:'slow',short:'slow',late:'slow',noHold:'hold',holdOrder:'hold',noPress:'press',noRecap:'recap',noClose:'close',openTurn:'turn',noTurn:'turn',noSpacer:'attach'};
 const INH_FLOW_OF={cap:'cap',shake:'shake',attach:'attach',out:'out',lips:'mouth',press:'press',slow:'in',hold:'hold',recap:'recap',turn:'turn',open:'open',close:'close'};   // checklist step → simulator action
 /* a step is lost if a mistake was made on it, or if it was never done (ever = the actions done in this demonstration) */
 function inhScore(dev, errs, hints, ever){ const st=SIM_STEPS[dev].map(x=>x[0]), done=ever?new Set(ever):null,
@@ -162,6 +162,8 @@ function simFaceSVG(){ const O=SIM_O, SK='#e2ab80', SH='#c08458', HR='#d2d5dc', 
    Taps on the device (cap · canister · body · spacer · base · dose button) + four body buttons (shake · breathe out · breathe in · hold breath).
    The breath in is slow and automatic; the press must land in its first moment (green zone). ===== */
 Object.assign(SIM_ERR,{
+  noPress:['吸了氣卻沒有按藥：這口氣裡沒有藥','Breathed in without pressing — that breath carried no medicine','สูดเข้าไปแล้วแต่ยังไม่ได้กดยา ลมหายใจนั้นไม่มียา'],
+  holdOrder:['閉氣的時機不對：吸完藥要馬上閉氣約 10 秒，再做別的','The breath-hold is in the wrong place — hold for about 10 s right after the dose, before anything else','กลั้นหายใจผิดจังหวะ: สูดยาเสร็จต้องกลั้นราว 10 วินาทีทันที ก่อนทำอย่างอื่น'],
   order:['順序不對：對照上面的正確順序','The order is off — compare it with the correct order above','ลำดับยังไม่ถูก เทียบกับลำดับที่ถูกด้านบน'],
   late2:['按得太晚：氣快吸完才按，藥大多沒吸進去','Pressed too late — the breath was nearly over, so most of the dose missed','กดช้าไป หายใจเข้าเกือบสุดแล้วค่อยกด ยาเข้าไปได้น้อย'],
   noPress:['吸了氣卻沒按：這一口沒有藥','Breathed in but never pressed — that breath carried no medicine','สูดหายใจแต่ไม่ได้กด ลมหายใจนั้นไม่มียา'],
@@ -234,6 +236,7 @@ const ORDX={how:['依正確順序點卡片（點已排好的可以拿回去）�
   pool:['步驟卡（順序已打亂）','Step cards (shuffled)','การ์ดขั้นตอน (สลับไว้)'], seq:['你排的順序','Your order','ลำดับของคุณ'], clear:['↺ 清空','↺ Clear','↺ ล้าง'],
   go:['▶ 照這個順序示範','▶ Demonstrate in this order','▶ สาธิตตามลำดับนี้'], hint:['💡 提示（−1 分）','💡 Hint (−1)','💡 คำใบ้ (−1)'], skip:['⏩ 跳過動畫','⏩ Skip the animation','⏩ ข้ามอนิเมชัน'],
   cut:['排錯的卡片拿回去了，從那裡再排','The cards that were out of place went back — carry on from there','เอาใบที่ยังไม่ถูกออกให้แล้ว เรียงต่อจากตรงนั้น'], need:['先把 8 張卡都排好','Place all 8 cards first','วางการ์ดให้ครบ 8 ใบก่อน'],
+  wrong:['順序還不對','The order is not right yet','ลำดับยังไม่ถูก'], mis:['位置不對的步驟','In the wrong place','ขั้นที่อยู่ผิดตำแหน่ง'], rightO:['正確順序','The correct order','ลำดับที่ถูก'],
   redo:['↺ 重新排','↺ Reorder','↺ เรียงใหม่'], right:['順序完全正確！','The order is exactly right!','เรียงถูกทุกขั้น!'], firstNote:['分數以第一次排的為準','The score counts your first order','คะแนนนับจากการเรียงครั้งแรก'],
   twice:['Spiolto 一次是 2 噴：蓋上蓋子後，整套再做一次。','Spiolto is 2 puffs a dose: after closing the cap, do the whole routine once more.','Spiolto ครั้งละ 2 พัฟ: ปิดฝาแล้วทำทั้งชุดนี้ซ้ำอีกรอบ']};
 function inhSim(dev){
@@ -312,6 +315,8 @@ function inhSim(dev){
 #isim .io-list .li.now{background:#fff6c8;box-shadow:inset 0 0 0 3px #ffb300}
 #isim .io-list .li.ok{background:#eafff6;box-shadow:inset 0 0 0 2px #18b07f}#isim .io-list .li.bad{background:#ffecee;box-shadow:inset 0 0 0 2px #ff3d5c}
 #isim .io-list .li u{text-decoration:none;flex:0 0 auto;font-size:24px}#isim .io-list .li.ok u::before{content:'✅'}#isim .io-list .li.bad u::before{content:'❌'}
+#isim .is-score .io-mis{margin:6px 0 0;font-size:18px;line-height:1.3;color:#3a3550}#isim .is-score .io-mis b{color:#d81b3c}
+#isim .is-score ol{margin:4px 0 0;padding-left:30px;columns:2;column-gap:26px;font-size:17px;line-height:1.45;font-weight:700;color:#2a2140}#isim .is-score ol li.no{color:#d81b3c}
 #isim .io-list .gbtn{font-size:18px;padding:8px 10px;margin:4px 8px 6px}
 #isim.order .is-bench .is-meter{position:absolute;right:12px;top:12px;width:104px;height:170px;z-index:2;background:rgba(244,247,251,.9)}
 #isim .is-sum .card{width:min(760px,92%);background:#fff;border-radius:22px;padding:18px 24px;box-shadow:0 0 0 4px #8c9a3e,0 12px 30px rgba(0,0,0,.2)}
@@ -565,15 +570,15 @@ function inhSim(dev){
         hintN++; sfx.click(); render(); };
       $('#ioGo').onclick=()=>{ if(seq.includes(null)){ sfx.error(); toast('🔢 '+L(ORDX.need)); return; } sfx.click(); play(); };
       /* the steps that sit in the right relative order: longest common subsequence with the closest correct order */
-      const grade=()=>{ let best=null; VALID.forEach(v=>{ const n=seq.length, dp=Array.from({length:n+1},()=>new Array(n+1).fill(0));
+      const grade=()=>{ let best=null, near=VALID[0]; VALID.forEach(v=>{ const n=seq.length, dp=Array.from({length:n+1},()=>new Array(n+1).fill(0));
           for(let i=n-1;i>=0;i--) for(let j=n-1;j>=0;j--) dp[i][j]=seq[i]===v[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
           const keep=new Set(); let i=0,j=0; while(i<n&&j<n){ if(seq[i]===v[j]){ keep.add(seq[i]); i++; j++; } else if(dp[i+1][j]>=dp[i][j+1]) i++; else j++; }
-          if(!best||keep.size>best.size) best=keep; });
+          if(!best||keep.size>best.size){ best=keep; near=v; } });
         const badK=keys.filter(k=>!best.has(k)), bad=badK.map(k=>CK[k]||k), h=hintN-hint0;
-        return {badK, sc:{ok:keys.length-bad.length, max:keys.length, hints:h, pts:Math.max(0,keys.length-bad.length-h), bad}}; };
+        return {badK, near, sc:{ok:keys.length-bad.length, max:keys.length, hints:h, pts:Math.max(0,keys.length-bad.length-h), bad}}; };
       const W=ms=>new Promise(r=>setTimeout(r,skip?0:ms));
       const tw=(get,set,to,ms)=>new Promise(r=>tween(get,set,to,skip?1:ms,r));
-      const E=k=>{ if(!errsP.includes(k)) errsP.push(k); if(!ex) toast('⚠️ '+L(SIM_ERR[k])); sfx.error(); };
+      const E=k=>{ if(!SIM_ERR[k]) k='order'; if(!errsP.includes(k)) errsP.push(k); if(!ex) toast('⚠️ '+L(SIM_ERR[k])); sfx.error(); };
       const getP=dev==='spacer'?()=>s.sp:()=>s.pos, setP=dev==='spacer'?p=>{ s.sp=p; }:p=>{ s.pos=p; };
       const fromMouth=async()=>{ s.atMouth=false; await tw(getP,setP,dev==='spacer'?SP_HOME:HOME,420); draw(); };
       const prep=()=>{ if(s.exhaled&&!s.good){ s.exhaled=false; s.lungs=.55; draw(); } };   // a step that takes time after breathing out: the lungs fill again
@@ -608,17 +613,17 @@ function inhSim(dev){
           E('early'); cough(); mist('throat'); await W(1000); },
         hold:async()=>{ if(!s.good){ bub(L(FLOWX.nothingHold)); sfx.error(); await W(900); return; } const cnt=svg.querySelector('.sd-count');
           for(let n=1;n<=10;n++){ cnt.textContent=n; sfx.tock(n); await W(210); } cnt.textContent=''; s.held=true; await W(200); },
-        recap:async()=>{ if(s.atMouth) await fromMouth(); if(s.good&&!s.held) E('noHold'); s.capOn=true; sfx.capOn(); draw(); await W(550); },
-        close:async()=>{ if(s.atMouth) await fromMouth(); if(s.good&&!s.held) E('noHold'); s.capOpen=false; sfx.capOn(); draw(); await W(550); },
+        recap:async()=>{ if(s.atMouth) await fromMouth(); if(s.good&&!s.held) E('holdOrder'); s.capOn=true; sfx.capOn(); draw(); await W(550); },
+        close:async()=>{ if(s.atMouth) await fromMouth(); if(s.good&&!s.held) E('holdOrder'); s.capOpen=false; sfx.capOn(); draw(); await W(550); },
       };
-      async function play(){ tr++; skip=false; pendingIn=false; errsP=[]; reset(); clearTimeout(idleT); $('#simSn').textContent=''; host.classList.remove('picking');
+      async function play(){ tr++; skip=false; pendingIn=false; errsP=[]; reset(); clearTimeout(idleT); $('#simSn').textContent=''; $('#simPf').textContent=''; host.classList.remove('picking');
         const g=grade(), list=$('#ioList');
         list.innerHTML=`<h4>${esc(L(ORDX.seq))}</h4>${seq.map((k,i)=>`<div class="li" data-i="${i}"><b class="n">${i+1}</b>${cardH(k)}<u></u></div>`).join('')}<button class="gbtn gray" id="ioSkip">${esc(L(ORDX.skip))}</button>`;
         $('#ioSkip').onclick=()=>{ skip=true; };
         for(let i=0;i<seq.length;i++){ const k=seq[i], li=list.querySelector(`.li[data-i="${i}"]`); li.classList.add('now'); tx(`${i+1}. ${CARDS[k][3]} ${L(CARDS[k])}`);
           await A[k](seq[i+1]); li.classList.remove('now'); li.classList.add(ex?'done':g.badK.includes(k)?'bad':'ok'); await W(250); }
         const sk=$('#ioSkip'); if(sk) sk.remove();
-        if(s.atMouth){ await fromMouth(); } if(s.good&&!s.held) E('noHold'); if(!s.good&&!errsP.length) E('noDose');
+        if(s.atMouth){ await fromMouth(); } if(s.good&&!s.held) E('holdOrder'); if(!s.good&&!errsP.length) E('noDose');
         s.lungs=Math.min(s.lungs,.5); draw(); if(!skip) sfx.sigh();
         const sc=g.sc, ok=!sc.bad.length; if(!ok&&!errsP.length) errsP.push('order'); if(ok) errsP=[];
         if(!first){ first=sc; firstE=errsP.slice(); } lastE=errsP.slice(); hint0=hintN;
@@ -626,11 +631,12 @@ function inhSim(dev){
         const end=()=>{ finished=true; timers.forEach(clearTimeout); typeof audioDuck==='function'&&audioDuck(0); host.classList.add('hidden'); host.innerHTML=''; res({ok, errs:lastE, firstErrs:firstE, tries:tr, hints:ex?0:hintN, score:first}); };
         if(ex){ sfx.select(); setTimeout(end,500); return; }
         if(ok) sfx.get(); else sfx.error();
-        const shown=tr>1?first:sc, sum=document.createElement('div'); sum.className='is-sum';
-        sum.innerHTML=`<div class="card"><h3>${ok?'🎉 '+esc(L(ORDX.right)):'🔧 '+esc(L(SIMX.fixes))}</h3><div class="is-score"><b>📋 ${esc(L(SIMX.scoreT))} ${shown.pts}/${shown.max}</b>${shown.hints?`<small>💡 −${shown.hints}</small>`:''}${tr>1?`<small>${esc(L(ORDX.firstNote))}</small>`:''}<ul>${SIM_STEPS[dev].map(([k,l])=>`<li class="${shown.bad.includes(k)?'no':'ok'}">${shown.bad.includes(k)?'❌':'✅'} ${esc(L(l))}</li>`).join('')}</ul></div>${ok?'':`<ul>${lastE.map(k=>`<li>${esc(L(SIM_ERR[k]))}</li>`).join('')}</ul>`}${dev==='resp'?`<p class="is-hn">🟢 ${esc(L(ORDX.twice))}</p>`:''}
+        const sum=document.createElement('div'); sum.className='is-sum';
+        sum.innerHTML=`<div class="card"><h3>${ok?'🎉 '+esc(L(ORDX.right)):'🔧 '+esc(L(ORDX.wrong))}</h3><div class="is-score"><b>📋 ${esc(L(SIMX.scoreT))} ${first.pts}/${first.max}</b>${first.hints?`<small>💡 −${first.hints}</small>`:''}${tr>1?`<small>${esc(L(ORDX.firstNote))}</small>`:''}
+          ${ok?'':`<p class="io-mis">❌ ${esc(L(ORDX.mis))}: <b>${g.badK.map(k=>esc(L(CARDS[k]))).join(' · ')}</b></p><p class="io-mis">✅ ${esc(L(ORDX.rightO))}:</p><ol>${g.near.map(k=>`<li class="${g.badK.includes(k)?'no':''}">${CARDS[k][3]} ${esc(L(CARDS[k]))}</li>`).join('')}</ol>`}</div>${ok?'':`<ul>${lastE.map(k=>`<li>${esc(L(SIM_ERR[k]))}</li>`).join('')}</ul>`}${dev==='resp'?`<p class="is-hn">🟢 ${esc(L(ORDX.twice))}</p>`:''}
           <div class="act">${ok||tr>=2?'':`<button class="gbtn gray" id="simAgain">${esc(L(ORDX.redo))}</button>`}<button class="gbtn green" id="simCont">${esc(L(SIMX.cont))}</button></div></div>`;
         bench.appendChild(sum);
-        const a=$('#simAgain'); if(a) a.onclick=()=>{ sfx.click(); sum.remove(); reset(); clearTimeout(idleT); $('#simSn').textContent=''; host.classList.add('picking'); render(); };
+        const a=$('#simAgain'); if(a) a.onclick=()=>{ sfx.click(); sum.remove(); reset(); clearTimeout(idleT); $('#simSn').textContent=''; $('#simPf').textContent=''; host.classList.add('picking'); render(); };
         $('#simCont').onclick=()=>{ sfx.click(); end(); }; }
       render();
     }

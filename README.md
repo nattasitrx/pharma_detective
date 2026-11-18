@@ -547,3 +547,10 @@ still could not tell where to look. Now `inhSim()` runs in order mode (`INH.orde
 - Respimat's second puff is not acted out: the summary says the whole routine is done twice.
 - The hands-on code is still in the file (`INH.order=false`); `inhscore_test.py` and `inhwhen_test.py` test it that
   way. New test: `inhorder_test.py`. `test_case.py` places a correct order.
+- 18 Nov 2026, owner's report (green inhaler: closed the cap before the breath-hold, reordered, and the card still said
+  the cap step was wrong): the summary used to show the FIRST order's checklist on every try, so a correct second order
+  still carried the first one's cross, and a misplaced step read as a step not done ("cap not closed", "no
+  breath-hold"). Now the card speaks about this order only: "in the wrong place: …" plus the correct order; the score
+  that counts (first order) is stated apart. New error words `holdOrder` and `noPress` (the latter had no text: an
+  order with "breathe in" not followed by "press" showed an empty message). `inhorder_test.py` plays 40 random orders
+  per inhaler to the end.

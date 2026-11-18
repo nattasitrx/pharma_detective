@@ -59,6 +59,25 @@ with sync_playwright() as p:
     pg.click('#ioClear'); place(pg, ['open','turn','mouth','out','press','in','close','hold']); card=run(pg); r,e=finish(pg)
     check('resp: a jumbled order scores low and lists what went wrong', r and not r['ok'] and r['score']['pts']<=5 and len(r['errs'])>=1, r)
     check('resp: no JS errors', not e, e)
+    # green inhaler, the owner's case (18 Nov 2026): cap closed before the breath-hold, then reordered correctly
+    pg=start('resp'); place(pg, ['turn','open','out','mouth','in','press','close','hold']); card=run(pg, shot='ord_resp_swap1')
+    check('resp: close before hold → 7/8, says "in the wrong place" and never "cap not closed"', '7/8' in card and 'ผิดตำแหน่ง' in card and 'ไม่ปิดฝา' not in card and 'ไม่ได้กลั้น' not in card, card[:300])
+    pg.click('#simAgain'); time.sleep(0.4); pg.click('#ioSeq .io-card[data-i="6"]'); pg.click('#ioSeq .io-card[data-i="7"]'); place(pg, ['hold','close']); card=run(pg, shot='ord_resp_swap2')
+    check('resp: second order right → no cross anywhere on the card, first score (7/8) stated apart', '❌' not in card and '7/8' in card and 'เรียงถูกทุกขั้น' in card and pg.locator('#ioList .li.bad').count()==0, card[:300])
+    r,e=finish(pg); check('resp: result ok on the second order, first errors kept for the record', r and r['ok'] and r['firstErrs']==['holdOrder'] and not r['errs'] and not e, (r,e))
+    # any order at all must play to the end: 40 random orders per inhaler, animation skipped
+    for dev in ('mdi','spacer','resp'):
+        pg=start(dev)
+        out=pg.evaluate("""async (dev)=>{ const W=ms=>new Promise(r=>setTimeout(r,ms)), bad=[]; const keys=ORD_VALID[dev][0];
+          for(let n=0;n<40;n++){ const o=keys.slice(); for(let a=o.length-1;a>0;a--){ const b=Math.floor(Math.random()*(a+1)); [o[a],o[b]]=[o[b],o[a]]; }
+            if(n){ window.__r=null; inhSim(dev).then(r=>window.__r=r); await W(120); }
+            o.forEach(k=>document.querySelector(`#ioPool .io-card[data-k="${k}"]`).click()); document.querySelector('#ioGo').click(); await W(30); const sk=document.querySelector('#ioSkip'); if(sk) sk.click();
+            let t=0; while(!document.querySelector('.is-sum')&&t<80){ await W(50); t++; }
+            if(!document.querySelector('.is-sum')){ bad.push(['stuck',o.join()]); break; }
+            document.querySelector('#simCont').click(); await W(60); const r=window.__r, valid=ORD_VALID[dev].some(v=>v.join()===o.join());
+            if(!r||r.ok!==valid||(!valid&&(!r.errs.length||r.score.pts>=8))||(valid&&r.errs.length)) bad.push([o.join(), JSON.stringify(r)]); }
+          return bad; }""", dev)
+        check(f'{dev}: 40 random orders all play to the end with a consistent result', not out and not pg._errs, (out[:2], pg._errs[:2])); pg.close()
     # phone size
     pg=start('mdi', lang='zh', vp=PH); place(pg, ['cap','shake','out']); pg.screenshot(path=f'{OUT}/ord_pick_ph.png')
     fs=pg.evaluate("()=>{const c=document.querySelector('#ioPool .io-card span'); const r=c.getBoundingClientRect(); return [parseFloat(getComputedStyle(c).fontSize)*document.querySelector('#isim').getBoundingClientRect().width/document.querySelector('#isim').offsetWidth, [...document.querySelectorAll('#ioPool .io-card,#ioSeq .io-card')].every(c=>c.scrollHeight<=c.clientHeight+1)]}")

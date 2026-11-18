@@ -554,3 +554,8 @@ still could not tell where to look. Now `inhSim()` runs in order mode (`INH.orde
   that counts (first order) is stated apart. New error words `holdOrder` and `noPress` (the latter had no text: an
   order with "breathe in" not followed by "press" showed an empty message). `inhorder_test.py` plays 40 random orders
   per inhaler to the end.
+- 18 Nov 2026, the Four Floors link (owner: the gold pill floated on the title page and did not read as another game):
+  now one card in both places (`floorsCard()` in `cd/mk_dease.py`): dark card with a gold rim, the picture
+  `../four-floors/img/leash.jpg`, a "Secret game unlocked!" tag, the name, "this time you are Uncle Lee…", and
+  "for a free moment · not scored". Title page: right of the logo, once `phd_lee_cleared` is set. Results page: a row
+  above the buttons, with the closing line.

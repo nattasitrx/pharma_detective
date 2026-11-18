@@ -56,14 +56,19 @@ sub("const cleared=()=>{ try{ return localStorage.getItem('phd_lee_cleared')==='
 const FLOORS={url:()=>'../four-floors/?lang='+(S.lang==='th'?'th':'zh'),
   name:['李伯伯的四層樓','Uncle Lee\\'s Four Floors','สี่ชั้นของลุงหลี่'],
   line:['問他吃什麼藥之前，先問他，是為了誰醒來。','Before you ask what medicines he takes, ask who he wakes up for.','ก่อนถามว่าเขากินยาอะไร ถามก่อนว่า เขาตื่นมาเพื่อใคร'],
-  go:['🐕 接著玩《李伯伯的四層樓》：同一個家，從小黑的紅色牽繩看三天','🐕 Play next: "Uncle Lee\\'s Four Floors" — the same home, three days around Blackie\\'s red lead (in Chinese or Thai)','🐕 เล่นต่อ: "สี่ชั้นของลุงหลี่" บ้านหลังเดิม สามวันรอบสายจูงสีแดงของเจ้าดำ'],
-  btn:['🐕 接著玩：李伯伯的四層樓 →','🐕 Play next: Four Floors →','🐕 เล่นต่อ: สี่ชั้นของลุงหลี่ →']};
-const floorsHTML=()=>`<div class="rfloors"><p>「${esc(L(FLOORS.line))}」</p><a class="gbtn gold" href="${FLOORS.url()}" target="_blank" rel="noopener">${esc(L(FLOORS.go))}</a></div>`;
+  tag:['🔓 解鎖隱藏遊戲！','🔓 Secret game unlocked!','🔓 ปลดล็อกเกมลับ!'],
+  sub:['這次換你當李伯伯：三天、四層樓、一條紅色牽繩。','This time you are Uncle Lee: three days, four floors and one red lead.','คราวนี้คุณเป็นลุงหลี่: สามวัน สี่ชั้น กับสายจูงสีแดงของเจ้าดำ'],
+  free:['有空再玩 · 不算分數','For a free moment · not scored · in Chinese or Thai','เล่นตอนว่างๆ · ไม่นับคะแนน'], play:['▶ 去玩','▶ Play','▶ เล่นเลย']};
+/* one card for both places (title page once the case is finished, results page): it has to read as another game, unlocked */
+const floorsCard=(id,row)=>{ const tag=`<em>${esc(L(FLOORS.tag))}</em>`, img='<img src="../four-floors/img/leash.jpg" alt="" onerror="this.remove()">', nm=`<b>${esc(L(FLOORS.name))}</b>`;
+  return `<a class="fcard${row?' row':''}" ${id?`id="${id}" `:''}href="${FLOORS.url()}" target="_blank" rel="noopener">${row?'':tag}${img}<span class="ft">${row?`<span class="top">${tag}${nm}</span><q>${esc(L(FLOORS.line))}</q><small>${esc(L(FLOORS.sub))} ${esc(L(FLOORS.free))}</small>`:`${nm}<span>${esc(L(FLOORS.sub))}</span><small>${esc(L(FLOORS.free))}</small>`}</span><i>${esc(L(FLOORS.play))}</i></a>`; };
+const floorsHTML=()=>`<div class="rfloors">${floorsCard('',1)}</div>`;
 /* the results page is engine code (merged from Case A), so the band is added after it is drawn, not in its template */
 { const r0=results; results=async function(){ await r0.apply(this,arguments); try{ const b=$('#rRep'); if(b&&!$('#results .rfloors')) b.parentNode.insertAdjacentHTML('beforebegin',floorsHTML()); }catch(e){} }; }""")
 sub("function renderTitleBtns(){ const st=badgeStore(), n=BADGES.filter(x=>st[x.id]).length; const bb=$('#btnBadges'), cb=$('#btnChSel');",
     "function renderTitleBtns(){ const st=badgeStore(), n=BADGES.filter(x=>st[x.id]).length; const bb=$('#btnBadges'), cb=$('#btnChSel');\n"
-    "  const lg=$('#logo'); if(lg&&cleared()){ let fb=$('#btnFloors'); if(!fb){ fb=document.createElement('a'); fb.id='btnFloors'; fb.className='gbtn gold'; fb.target='_blank'; fb.rel='noopener'; lg.appendChild(fb); } fb.href=FLOORS.url(); fb.textContent=L(FLOORS.btn); }")
+    "  const lg=$('#logo'); if(lg&&cleared()){ const old=$('#btnFloors'); if(old) old.remove(); lg.insertAdjacentHTML('beforeend',floorsCard('btnFloors',0)); }")
+
 # ---------- 3. chapter 4: the four bags at a glance, then six large cards per mission ----------
 sub("const MISSIONS=[", """/* mk_dease: each mission lays out six medicines (its answers and four near misses), not all twenty */
 const MR_SHORT={m4:['kudona','sketa','famo','actibest','ponstan','mopride'], m5:['mopride','famo','galvusmet','ponstan','royamet','actibest'], m6:['benamine','artelac','dermalin','clarinase','sinbaby','karyuni']};
@@ -104,10 +109,22 @@ sub('.dcard .badge{position:absolute;right:5px;bottom:3px;font-size:16px}',
 #medrev .bag li span{display:block;font-size:16.5px;line-height:1.25;color:#8a4fb8;font-weight:700}
 #medrev .mr-main:has(.mr-grid.few) .mr-head .tx,#medrev .mr-main:has(.bag-grid) .mr-head .tx{font-size:24px}
 #medrev .mr-main:has(.bag-grid) .mr-act .hint{font-size:20px;line-height:1.3}
-#btnFloors{position:absolute;left:calc(100% + 26px);top:0;font-size:21px;padding:9px 20px;text-decoration:none;white-space:nowrap}
-.rfloors{margin-top:12px;padding:10px 16px;border-radius:18px;background:linear-gradient(90deg,#fff6dc,#ffeef0);display:flex;gap:14px;align-items:center;justify-content:space-between}
-.rfloors p{margin:0;font-family:var(--tc);font-weight:900;font-size:21px;line-height:1.3;color:#7a3a12}
-.rfloors a{flex:0 0 auto;max-width:56%;font-size:18px;line-height:1.3;padding:10px 18px;text-decoration:none;text-align:center}""")
+.fcard{position:relative;display:flex;align-items:center;gap:16px;text-decoration:none;color:#fff;border-radius:24px;padding:14px 18px 14px 14px;background:linear-gradient(135deg,#2a2150,#4b2f72 60%,#7c3a5c);box-shadow:0 0 0 4px #ffcf4d,0 10px 24px rgba(30,20,60,.4);animation:fpop .5s ease-out,fglow 2.6s ease-in-out .5s infinite}
+@keyframes fpop{0%{transform:scale(.88) rotate(-2deg);opacity:0}60%{transform:scale(1.04)}100%{transform:none;opacity:1}}
+@keyframes fglow{50%{box-shadow:0 0 0 4px #ffe27a,0 0 28px 8px rgba(255,207,77,.7)}}
+.fcard img{width:118px;height:118px;border-radius:18px;object-fit:cover;flex:0 0 auto;box-shadow:0 0 0 3px rgba(255,255,255,.75)}
+.fcard .ft{flex:1;display:flex;flex-direction:column;min-width:0;line-height:1.25;text-align:left}
+.fcard em{position:absolute;left:16px;top:-20px;font-style:normal;font-weight:900;font-size:21px;line-height:1.2;color:#4a2a00;background:linear-gradient(#ffe88a,#ffb300);padding:5px 16px;border-radius:999px;box-shadow:0 3px 0 #c98500;transform:rotate(-3deg);white-space:nowrap}
+.fcard b{font-family:var(--tc);font-size:29px;line-height:1.2;color:#ffe9a8}
+.fcard .ft span{font-size:18.5px;font-weight:700;color:#f3ecff;margin-top:2px}
+.fcard q{font-size:17px;font-weight:700;font-style:italic;color:#ffd9a8;margin-top:2px}
+.fcard small{font-size:17px;font-weight:900;color:#ffc2d2;margin-top:4px}
+.fcard i{font-style:normal;flex:0 0 auto;font-weight:900;font-size:22px;color:#4a2a00;background:linear-gradient(#ffe88a,#ffb300);padding:10px 18px;border-radius:999px;box-shadow:0 4px 0 #c98500;white-space:nowrap}
+#btnFloors{position:absolute;left:calc(100% + 26px);top:64px;width:520px}
+#btnFloors i{position:absolute;right:16px;bottom:-18px}
+.rfloors{margin-top:12px}.fcard.row{padding:9px 18px 9px 10px;gap:14px}.fcard.row img{width:78px;height:78px;border-radius:14px}
+.fcard.row .top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0}.fcard.row em{position:static;transform:none;font-size:17px;padding:3px 12px;box-shadow:0 2px 0 #c98500}
+.fcard.row b{font-size:25px}.fcard.row q{font-size:17.5px;margin-top:3px}.fcard.row small{font-size:15.5px;margin-top:2px;color:#e9dcff;font-weight:700}""")
 sub("""  await say('pilly','shock',['藥袋危機！一共 4 個任務：點選有問題的藥（可以複選），再按「確認診斷」！','Med-bag crisis! 4 missions: tap the problem drugs (several may apply), then press "Confirm"!','วิกฤตซองยา! มี 4 ภารกิจ: แตะเลือกยาที่มีปัญหา (เลือกได้หลายตัว) แล้วกด "ยืนยัน"!']);""",
     """  hideAll(); hideText(); await bagOverview(); show('me','L','neutral'); show('yeh','R','smug');   /* mk_dease */
   await say('pilly','shock',['藥袋危機！一共 4 個任務，一次只看一個問題、只擺出相關的 6 種藥：點選有問題的藥（可以複選），再按「確認診斷」！','Med-bag crisis! 4 missions, one question at a time with only the 6 related medicines on the table: tap the problem drugs (several may apply), then press "Confirm"!','วิกฤตซองยา! มี 4 ภารกิจ ดูทีละเรื่อง วางเฉพาะยาที่เกี่ยวข้อง 6 ตัว: แตะเลือกยาที่มีปัญหา (เลือกได้หลายตัว) แล้วกด "ยืนยัน"!']);""")

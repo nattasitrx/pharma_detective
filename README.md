@@ -559,3 +559,5 @@ still could not tell where to look. Now `inhSim()` runs in order mode (`INH.orde
   `../four-floors/img/leash.jpg`, a "Secret game unlocked!" tag, the name, "this time you are Uncle Lee…", and
   "for a free moment · not scored". Title page: right of the logo, once `phd_lee_cleared` is set. Results page: a row
   above the buttons, with the closing line.
+  Same day: the card pulses (`fpulse`: grows and shrinks with a glow every 1.5 s; 6% on the title page, 2% in the
+  results row so it stays inside the panel; off under `prefers-reduced-motion`).

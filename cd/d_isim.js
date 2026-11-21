@@ -162,6 +162,7 @@ function simFaceSVG(){ const O=SIM_O, SK='#e2ab80', SH='#c08458', HR='#d2d5dc', 
    Taps on the device (cap · canister · body · spacer · base · dose button) + four body buttons (shake · breathe out · breathe in · hold breath).
    The breath in is slow and automatic; the press must land in its first moment (green zone). ===== */
 Object.assign(SIM_ERR,{
+  respShake:['Respimat 不用搖：它是彈簧推出的柔霧，不是加壓藥罐','A Respimat is not shaken: it is a spring-driven soft mist, not a pressurised canister','Respimat ไม่ต้องเขย่า: เป็นละอองฝอยจากแรงสปริง ไม่ใช่กระป๋องอัดแก๊ส'],
   noPress:['吸了氣卻沒有按藥：這口氣裡沒有藥','Breathed in without pressing — that breath carried no medicine','สูดเข้าไปแล้วแต่ยังไม่ได้กดยา ลมหายใจนั้นไม่มียา'],
   holdOrder:['閉氣的時機不對：吸完藥要馬上閉氣約 10 秒，再做別的','The breath-hold is in the wrong place — hold for about 10 s right after the dose, before anything else','กลั้นหายใจผิดจังหวะ: สูดยาเสร็จต้องกลั้นราว 10 วินาทีทันที ก่อนทำอย่างอื่น'],
   order:['順序不對：對照上面的正確順序','The order is off — compare it with the correct order above','ลำดับยังไม่ถูก เทียบกับลำดับที่ถูกด้านบน'],
@@ -220,23 +221,29 @@ const FLOW_T={
 const INH={order:true};   // false = the hands-on simulator (kept below; its tests set this)
 const ORD_CARDS={
   mdi:{cap:['拔掉蓋子','Take the cap off','ถอดฝาครอบ','🧢'], shake:['上下搖 4–5 下','Shake it 4–5 times','เขย่า 4–5 ครั้ง','👋'], out:['離開吸嘴，把氣吐乾淨','Breathe out fully, away from the mouthpiece','หายใจออกให้สุด (หันออกจากปากกระบอก)','😮‍💨'],
-    mouth:['含住吸嘴，嘴唇包緊','Mouthpiece in, lips sealed','อมปากกระบอก ปิดปากให้สนิท','👄'], in:['開始慢慢深吸氣','Start a slow, deep breath in','เริ่มสูดหายใจเข้าช้าๆ ลึกๆ','🌬️'], press:['按藥罐 1 下','Press the canister once','กดกระป๋องยา 1 ครั้ง','👆'],
+    mouth:['含住吸嘴，嘴唇包緊','Mouthpiece in, lips sealed','อมปากกระบอก ปิดปากให้สนิท','👄'], pressin:['開始慢慢深吸氣，同時按藥罐 1 下','Start a slow, deep breath in and press once, together','เริ่มสูดช้าๆ ลึกๆ พร้อมกับกดยา 1 ครั้ง','👆'],
+    pressfirst:['先按完藥，再開始吸氣','Press the dose first, then start to breathe in','กดยาให้เสร็จก่อน แล้วค่อยเริ่มสูด','⏱️'], fast:['用力快速吸一大口','Breathe in fast and hard','สูดเข้าเร็วๆ แรงๆ','⚡'],
     hold:['閉氣數到 10','Hold the breath for a count of 10','กลั้นหายใจ นับ 1 ถึง 10','🤐'], recap:['蓋回蓋子','Put the cap back on','ปิดฝาครอบกลับ','✅']},
   spacer:{cap:['拔掉蓋子','Take the cap off','ถอดฝาครอบ','🧢'], shake:['上下搖 4–5 下','Shake it 4–5 times','เขย่า 4–5 ครั้ง','👋'], attach:['把吸入器插進輔助器','Push the inhaler into the spacer','เสียบยาพ่นเข้ากระบอกช่วยสูด','🔌'],
     out:['離開吸嘴，把氣吐乾淨','Breathe out fully, away from the mouthpiece','หายใจออกให้สุด (หันออกจากปากกระบอก)','😮‍💨'], mouth:['含住輔助器的吸嘴','Lips around the spacer mouthpiece','อมปากกระบอกช่วยสูด','👄'],
-    press:['按藥罐 1 下','Press the canister once','กดกระป๋องยา 1 ครั้ง','👆'], in:['慢慢深吸氣','Breathe in slowly and deeply','สูดหายใจเข้าช้าๆ ลึกๆ','🌬️'], hold:['閉氣數到 10','Hold the breath for a count of 10','กลั้นหายใจ นับ 1 ถึง 10','🤐']},
+    press:['按藥罐 1 下','Press the canister once','กดกระป๋องยา 1 ครั้ง','👆'], in:['慢慢深吸氣','Breathe in slowly and deeply','สูดหายใจเข้าช้าๆ ลึกๆ','🌬️'], hold:['閉氣數到 10','Hold the breath for a count of 10','กลั้นหายใจ นับ 1 ถึง 10','🤐'],
+    two:['連按藥罐 2 下','Press the canister twice in a row','กดยา 2 ครั้งติดกัน','✌️'], fast:['用力快速吸一大口','Breathe in fast and hard','สูดเข้าเร็วๆ แรงๆ','⚡']},
   resp:{turn:['蓋子蓋著，轉底座到「喀」','Cap closed: turn the base until it clicks','ปิดฝาไว้ หมุนฐานจนได้ยินเสียงคลิก','🔄'], open:['打開綠色蓋子','Flip the green cap open','เปิดฝาสีเขียวให้สุด','🔓'], out:['離開吸嘴，把氣吐乾淨','Breathe out fully, away from the mouthpiece','หายใจออกให้สุด (หันออกจากปากกระบอก)','😮‍💨'],
-    mouth:['含住吸嘴，不擋住通氣孔','Lips on, air vents uncovered','อมปากกระบอก ไม่บังรูอากาศ','👄'], in:['開始慢慢深吸氣','Start a slow, deep breath in','เริ่มสูดหายใจเข้าช้าๆ ลึกๆ','🌬️'], press:['按灰色按鈕','Press the grey dose button','กดปุ่มสีเทาปล่อยยา','👆'],
+    mouth:['含住吸嘴，不擋住通氣孔','Lips on, air vents uncovered','อมปากกระบอก ไม่บังรูอากาศ','👄'], pressin:['開始慢慢深吸氣，同時按灰色按鈕','Start a slow, deep breath in and press the button, together','เริ่มสูดช้าๆ ลึกๆ พร้อมกับกดปุ่มสีเทา','👆'],
+    shake:['上下搖 4–5 下','Shake it 4–5 times','เขย่า 4–5 ครั้ง','👋'], fast:['用力快速吸一大口','Breathe in fast and hard','สูดเข้าเร็วๆ แรงๆ','⚡'],
     hold:['閉氣數到 10','Hold the breath for a count of 10','กลั้นหายใจ นับ 1 ถึง 10','🤐'], close:['蓋上蓋子','Close the cap','ปิดฝา','✅']}};
-const ORD_VALID={mdi:[['cap','shake','out','mouth','in','press','hold','recap'],['shake','cap','out','mouth','in','press','hold','recap']],
+const ORD_VALID={mdi:[['cap','shake','out','mouth','pressin','hold','recap'],['shake','cap','out','mouth','pressin','hold','recap']],
   spacer:[['cap','shake','attach','out','mouth','press','in','hold'],['shake','cap','attach','out','mouth','press','in','hold'],['cap','attach','shake','out','mouth','press','in','hold']],
-  resp:[['turn','open','out','mouth','in','press','hold','close']]};
-const ORDX={how:['依正確順序點圖卡（再點一下可以拿回去），再按「▶ 示範」。','Tap the pictures in the right order (tap one again to take it back), then press ▶ Demonstrate.','แตะรูปตามลำดับที่ถูก (แตะซ้ำเพื่อเอาออก) แล้วกด ▶ สาธิต'],
-  howEx:['依你教病人的順序排好卡片，再按「▶ 示範」。沒有提示。','Put the cards in the order you would teach a patient, then press ▶ Demonstrate. No hints.','เรียงการ์ดตามลำดับที่คุณจะสอนผู้ป่วย แล้วกด ▶ สาธิต ไม่มีคำใบ้'],
+  resp:[['turn','open','out','mouth','pressin','hold','close']]};
+/* decoys: cards that are not part of the routine (the board has as many places as real steps). 'pressin' stands for two checklist steps. */
+const ORD_DECOY={mdi:['pressfirst','fast'], spacer:['two','fast'], resp:['shake','fast']};
+const ORD_CK={mouth:['lips'], 'in':['slow'], pressin:['press','slow']};
+const ORDX={how:['依正確順序點圖卡（再點一下拿回去）。有 2 張是不該做的陷阱卡，不用排。','Tap the pictures in the right order (tap again to take one back). 2 cards are things not to do: leave them out.','แตะรูปตามลำดับที่ถูก (แตะซ้ำเพื่อเอาออก) มีการ์ดหลอก 2 ใบที่ไม่ควรทำ ไม่ต้องใช้'],
+  howEx:['依你教病人的順序排好圖卡；有 2 張是不該做的，不用排。沒有提示。','Put the pictures in the order you would teach a patient; 2 cards are things not to do. No hints.','เรียงรูปตามลำดับที่คุณจะสอนผู้ป่วย มีการ์ดหลอก 2 ใบที่ไม่ควรทำ ไม่มีคำใบ้'],
   pool:['步驟卡（順序已打亂）','Step cards (shuffled)','การ์ดขั้นตอน (สลับไว้)'], seq:['你排的順序','Your order','ลำดับของคุณ'], clear:['↺ 清空','↺ Clear','↺ ล้าง'],
   go:['▶ 照這個順序示範','▶ Demonstrate in this order','▶ สาธิตตามลำดับนี้'], hint:['💡 提示（−1 分）','💡 Hint (−1)','💡 คำใบ้ (−1)'], skip:['⏩ 跳過動畫','⏩ Skip the animation','⏩ ข้ามอนิเมชัน'],
-  cut:['排錯的卡片拿回去了，從那裡再排','The cards that were out of place went back — carry on from there','เอาใบที่ยังไม่ถูกออกให้แล้ว เรียงต่อจากตรงนั้น'], need:['先把 8 張卡都排好','Place all 8 cards first','วางการ์ดให้ครบ 8 ใบก่อน'],
-  wrong:['順序還不對','The order is not right yet','ลำดับยังไม่ถูก'], mis:['位置不對的步驟','In the wrong place','ขั้นที่อยู่ผิดตำแหน่ง'], rightO:['正確順序','The correct order','ลำดับที่ถูก'],
+  cut:['排錯的卡片拿回去了，從那裡再排','The cards that were out of place went back — carry on from there','เอาใบที่ยังไม่ถูกออกให้แล้ว เรียงต่อจากตรงนั้น'], need:['先把每一格都排滿','Fill every place first','วางการ์ดให้ครบทุกช่องก่อน'],
+  wrong:['順序還不對','The order is not right yet','ลำดับยังไม่ถูก'], mis:['位置不對的步驟','In the wrong place','ขั้นที่อยู่ผิดตำแหน่ง'], gone:['漏掉的步驟','Left out','ขั้นที่ขาดไป'], decoy:['不該做的（陷阱卡）','Not part of the routine (decoys)','ไม่ควรทำ (การ์ดหลอก)'], rightO:['正確順序','The correct order','ลำดับที่ถูก'],
   redo:['↺ 重新排','↺ Reorder','↺ เรียงใหม่'], right:['順序完全正確！','The order is exactly right!','เรียงถูกทุกขั้น!'], firstNote:['分數以第一次排的為準','The score counts your first order','คะแนนนับจากการเรียงครั้งแรก'],
   twice:['Spiolto 一次是 2 噴：蓋上蓋子後，整套再做一次。','Spiolto is 2 puffs a dose: after closing the cap, do the whole routine once more.','Spiolto ครั้งละ 2 พัฟ: ปิดฝาแล้วทำทั้งชุดนี้ซ้ำอีกรอบ']};
 /* ---- order mode: a small picture for every step card (21 Nov 2026, owner: "choosing words alone, I cannot see it").
@@ -266,6 +273,7 @@ function ordScene(dev,k){
   let g='';
   if(k==='cap') g=mdiSolo({cap:'translate(150,-6) rotate(14)'})+curve(318,170,350,128,388,160,C.red,8);
   else if(k==='recap') g=mdiSolo({cap:'translate(120,-4)'})+curve(420,150,380,112,336,158,C.grn,8)+txt(470,236,'✅',40);
+  else if(k==='shake'&&dev==='resp') g=device(300,44,.7,{})+arrow(410,150,410,62,C.red,9)+arrow(410,150,410,238,C.red,9)+txt(500,160,'×4–5',44,C.red);
   else if(k==='shake') g=mdiSolo({})+arrow(410,150,410,62,C.red,9)+arrow(410,150,410,238,C.red,9)+[[222,60],[222,150],[376,60]].map(([x,y])=>`<path d="M${x} ${y} q${x<300?-16:16} 22 0 44" stroke="${C.red}" stroke-width="6" fill="none" stroke-linecap="round" opacity=".7"/>`).join('')+txt(488,160,'×4–5',44,C.red);
   else if(k==='attach') g=device(520,150,.6,{cap:OFF,gap:70})+arrow(256,236,306,236,C.red,9);
   else if(k==='turn') g=device(300,14,.68,{})+curve(244,212,300,262,358,214,C.red,8)+txt(450,226,'↻',58,C.red);
@@ -273,9 +281,18 @@ function ordScene(dev,k){
   else if(k==='close') g=device(300,44,.7,{})+curve(396,82,392,30,350,34,C.grn,8)+txt(470,236,'✅',40);
   else if(k==='out') g=face('face-open')+away()+air(-1);
   else if(k==='mouth') g=face('face-seal')+atMouth();
-  else if(k==='in') g=face('face-seal')+atMouth({mist:sp})+(sp?arrow(M.x-150,M.y-50,M.x-34,M.y-28,C.blue,8)+arrow(M.x-150,M.y+50,M.x-34,M.y+28,C.blue,8):dev==='mdi'?arrow(M.x-180,M.y+52,M.x-30,M.y+38,C.blue,8)+txt(M.x-215,M.y+60,'💨',34):arrow(M.x-175,M.y+70,M.x-40,M.y+44,C.blue,9)+arrow(M.x-60,M.y+104,M.x-10,M.y+52,C.blue,8)+txt(M.x-215,M.y+88,'💨',38));
-  else if(k==='press') g=face('face-seal')+atMouth({mist:sp})+(()=>{ const p=dev==='resp'?btn:sp?spCan:{x:can.x,y:can.y+8}, top=Math.max(8,p.y-58); return arrow(p.x,top,p.x,p.y-5,C.red,10)+txt(p.x-44,Math.max(40,p.y-14),'👇',36)+(sp?'':[[-6,-16,7],[-18,8,6],[-28,-6,5]].map(([a,b,r])=>`<circle cx="${M.x+a-(dev==='resp'?0:4)}" cy="${M.y+b}" r="${r}" fill="#fff" stroke="#9fc3dc" stroke-width="2.5" opacity="0"/>`).join('')); })();
-  else if(k==='hold') g=face('')+away()+txt(M.x-115,sp?112:M.y+6,'10',88,C.blue)+txt(M.x-115,sp?158:M.y+54,'⏱',38);
+  else { const P=dev==='resp'?btn:sp?spCan:{x:can.x,y:can.y+8}, top=Math.max(8,P.y-58);
+    const pressA=dx=>arrow(P.x+(dx||0),top,P.x+(dx||0),P.y-5,C.red,10), hand=txt(P.x-44,Math.max(40,P.y-14),'👇',36);
+    const inA=w=>sp?arrow(M.x-150,M.y-50,M.x-34,M.y-28,C.blue,w||8)+arrow(M.x-150,M.y+50,M.x-34,M.y+28,C.blue,w||8):dev==='mdi'?arrow(M.x-180,M.y+52,M.x-30,M.y+38,C.blue,w||8):arrow(M.x-175,M.y+70,M.x-40,M.y+44,C.blue,w||9)+arrow(M.x-60,M.y+104,M.x-10,M.y+52,C.blue,w||8);
+    const wind=sp?'':txt(M.x-215,dev==='mdi'?M.y+60:M.y+88,'💨',36), num=(x,y,n,c)=>`<circle cx="${x}" cy="${y}" r="19" fill="${c}" stroke="#fff" stroke-width="4"/>`+`<text x="${x}" y="${y+9}" text-anchor="middle" font-size="26" font-weight="900" fill="#fff" font-family="sans-serif">${n}</text>`;
+    const scene=face('face-seal')+atMouth({mist:sp});
+    if(k==='in') g=scene+inA()+wind;
+    else if(k==='press') g=scene+pressA()+hand;
+    else if(k==='pressin') g=scene+pressA()+hand+inA()+wind;                                                   // together: no numbers
+    else if(k==='pressfirst') g=scene+pressA()+inA()+num(P.x+30,top+16,1,C.red)+num(M.x-205,M.y+50,2,C.blue);   // one, then the other
+    else if(k==='two') g=scene+pressA(-13)+pressA(13)+txt(P.x-58,Math.max(40,P.y-14),'×2',38,C.red);
+    else if(k==='fast') g=scene+inA(13)+txt(sp?M.x-196:M.x-225,sp?M.y+16:dev==='mdi'?M.y+62:M.y+90,'⚡',44); }
+  if(k==='hold') g=face('')+away()+txt(M.x-115,sp?112:M.y+6,'10',88,C.blue)+txt(M.x-115,sp?158:M.y+54,'⏱',38);
   const svg=`<svg class="io-th" viewBox="0 0 640 270" preserveAspectRatio="xMidYMid meet">${g}</svg>`;
   return svg.replace(/id="(\w+)"/g,'id="th_$1"').replace(/url\(#(\w+)\)/g,'url(#th_$1)');
 }
@@ -333,20 +350,20 @@ function inhSim(dev){
 #isim.order.picking .is-bench,#isim.order.picking .io-list{display:none}
 #isim.order:not(.picking) .io-pick{display:none}
 #isim .io-pick{flex:1;display:flex;flex-direction:column;gap:8px;min-height:0;min-width:0}
-#isim #ioPool{flex:1;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1fr;gap:10px;min-height:0}
+#isim #ioPool{flex:1;display:grid;grid-template-columns:repeat(5,1fr);grid-template-rows:1fr 1fr;gap:10px;min-height:0}
 #isim .io-card,#isim .io-slot,#isim .io-list .li{position:relative;display:flex;align-items:center;gap:10px;border-radius:14px;padding:0 14px;min-height:0;text-align:left;font-weight:900;font-size:25px;line-height:1.12;color:#2a2140}
 #isim .io-card{background:#fff;box-shadow:0 0 0 3px #c9d3b0,0 4px 0 #b3bd96}
 #isim .io-card i,#isim .io-list .li i{font-style:normal;font-size:28px;flex:0 0 auto}
 #isim .io-th{display:block;min-height:0;min-width:0;border-radius:10px;background:linear-gradient(#f3f8fc,#e3edf5);pointer-events:none}
 #isim .io-tile{flex-direction:column;align-items:stretch;gap:3px;padding:6px 8px 6px;text-align:center}
 #isim .io-tile .io-th{flex:1;width:100%}
-#isim .io-tile span{flex:0 0 auto;display:flex;align-items:center;justify-content:center;min-height:58px;font-size:24px;line-height:1.15}
+#isim .io-tile span{flex:0 0 auto;display:flex;align-items:center;justify-content:center;min-height:82px;font-size:24px;line-height:1.14}
 #isim .io-tile.used{box-shadow:0 0 0 3px #7aa7f5,0 4px 0 #5b86d0;background:#f1f6ff}
 #isim .io-tile.used .io-th,#isim .io-tile.used span{opacity:.38}
 #isim .io-tile .n{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);width:74px;height:74px;font-size:44px;box-shadow:0 0 0 5px #fff,0 4px 10px rgba(0,0,0,.25)}
 #isim .io-bot{flex:0 0 auto;display:flex;align-items:center;gap:10px;border-radius:16px;padding:6px 10px;background:#eef3fb}
 #isim .io-bot h4{flex:0 0 auto;margin:0;width:92px;font-size:18px;line-height:1.2;color:#3a4a6a}
-#isim #ioSeq{flex:1;display:grid;grid-template-columns:repeat(8,1fr);gap:7px;height:104px;min-width:0}
+#isim #ioSeq{flex:1;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:7px;height:104px;min-width:0}
 #isim #ioSeq .io-card,#isim #ioSeq .io-slot{flex-direction:column;align-items:stretch;justify-content:center;gap:1px;padding:4px 5px;text-align:center;overflow:hidden}
 #isim #ioSeq .io-card{box-shadow:0 0 0 3px #7aa7f5,0 3px 0 #5b86d0;background:#fafcff}
 #isim #ioSeq .io-th{flex:1;width:100%}
@@ -596,12 +613,12 @@ function inhSim(dev){
        a hint costs a point. ===== */
     function orderMode(){
       clearTimeout(idleT); host.classList.add('order','picking'); $('#simSn').textContent=''; $('#simPf').textContent='';
-      const CARDS=ORD_CARDS[dev], VALID=ORD_VALID[dev], keys=VALID[0].slice(), CK={mouth:'lips','in':'slow'};
+      const CARDS=ORD_CARDS[dev], VALID=ORD_VALID[dev], keys=VALID[0].slice(), DECOY=ORD_DECOY[dev]||[], ALL=keys.concat(DECOY), CKS=k=>ORD_CK[k]||[k], MAX=keys.reduce((n,k)=>n+CKS(k).length,0);   // keys = the real steps = the places
       const cardH=k=>`<i>${CARDS[k][3]}</i><span>${esc(L(CARDS[k]))}</span>`;
-      const pool=keys.slice(); do{ for(let a=pool.length-1;a>0;a--){ const b=Math.floor(Math.random()*(a+1)); [pool[a],pool[b]]=[pool[b],pool[a]]; } }while(VALID.some(v=>v.every((k,i)=>k===pool[i])));
+      const pool=ALL.slice(); do{ for(let a=pool.length-1;a>0;a--){ const b=Math.floor(Math.random()*(a+1)); [pool[a],pool[b]]=[pool[b],pool[a]]; } }while(VALID.some(v=>v.every((k,i)=>k===pool[i])));
       let seq=keys.map(()=>null), tr=0, first=null, firstE=null, lastE=[], hintN=0, hint0=0, skip=false, pendingIn=false, breathP=null, errsP=[];
       const body=host.querySelector('.is-body'); bench.appendChild(host.querySelector('.is-meter'));   // the lungs stay in view beside the face
-      const thumb={}; keys.forEach(k=>{ thumb[k]=ordScene(dev,k); });
+      const thumb={}; ALL.forEach(k=>{ thumb[k]=ordScene(dev,k); });
       body.insertAdjacentHTML('beforeend',`<div class="io-pick"><div id="ioPool"></div>
         <div class="io-bot"><h4>🔢 ${esc(L(ORDX.seq))}</h4><div id="ioSeq"></div></div>
         <div class="io-act"><button class="gbtn gray" id="ioClear">${esc(L(ORDX.clear))}</button>${ex?'':`<button class="gbtn gold" id="ioHint">${esc(L(ORDX.hint))}</button>`}<button class="gbtn green" id="ioGo">${esc(L(ORDX.go))}</button></div></div>
@@ -622,12 +639,15 @@ function inhSim(dev){
         hintN++; sfx.click(); render(); };
       $('#ioGo').onclick=()=>{ if(seq.includes(null)){ sfx.error(); toast('🔢 '+L(ORDX.need)); return; } sfx.click(); play(); };
       /* the steps that sit in the right relative order: longest common subsequence with the closest correct order */
-      const grade=()=>{ let best=null, near=VALID[0]; VALID.forEach(v=>{ const n=seq.length, dp=Array.from({length:n+1},()=>new Array(n+1).fill(0));
-          for(let i=n-1;i>=0;i--) for(let j=n-1;j>=0;j--) dp[i][j]=seq[i]===v[j]?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
-          const keep=new Set(); let i=0,j=0; while(i<n&&j<n){ if(seq[i]===v[j]){ keep.add(seq[i]); i++; j++; } else if(dp[i+1][j]>=dp[i][j+1]) i++; else j++; }
-          if(!best||keep.size>best.size){ best=keep; near=v; } });
-        const badK=keys.filter(k=>!best.has(k)), bad=badK.map(k=>CK[k]||k), h=hintN-hint0;
-        return {badK, near, sc:{ok:keys.length-bad.length, max:keys.length, hints:h, pts:Math.max(0,keys.length-bad.length-h), bad}}; };
+      /* the real steps that sit in the right relative order: heaviest common subsequence with the closest correct order
+         (a card that stands for two checklist steps weighs two); a decoy on the board pushes a real step out */
+      const grade=()=>{ let best=null, bw=-1, near=VALID[0]; VALID.forEach(v=>{ const n=seq.length, m=v.length, dp=Array.from({length:n+1},()=>new Array(m+1).fill(0));
+          for(let i=n-1;i>=0;i--) for(let j=m-1;j>=0;j--) dp[i][j]=seq[i]===v[j]?dp[i+1][j+1]+CKS(v[j]).length:Math.max(dp[i+1][j],dp[i][j+1]);
+          const keep=new Set(); let i=0,j=0; while(i<n&&j<m){ if(seq[i]===v[j]){ keep.add(seq[i]); i++; j++; } else if(dp[i+1][j]>=dp[i][j+1]) i++; else j++; }
+          if(dp[0][0]>bw){ bw=dp[0][0]; best=keep; near=v; } });
+        const badK=keys.filter(k=>!best.has(k)), bad=[].concat(...badK.map(CKS)), h=hintN-hint0;
+        return {badK, near, mis:badK.filter(k=>seq.includes(k)), gone:badK.filter(k=>!seq.includes(k)), decoy:seq.filter(k=>DECOY.includes(k)),
+          sc:{ok:MAX-bad.length, max:MAX, hints:h, pts:Math.max(0,MAX-bad.length-h), bad}}; };
       const W=ms=>new Promise(r=>setTimeout(r,skip?0:ms));
       const tw=(get,set,to,ms)=>new Promise(r=>tween(get,set,to,skip?1:ms,r));
       const E=k=>{ if(!SIM_ERR[k]) k='order'; if(!errsP.includes(k)) errsP.push(k); if(!ex) toast('⚠️ '+L(SIM_ERR[k])); sfx.error(); };
@@ -636,7 +656,7 @@ function inhSim(dev){
       const prep=()=>{ if(s.exhaled&&!s.good){ s.exhaled=false; s.lungs=.55; draw(); } };   // a step that takes time after breathing out: the lungs fill again
       const A={
         cap:async()=>{ if(s.atMouth){ bub(L(FLOWX.takeOut)); sfx.error(); await W(800); return; } prep(); s.capOn=false; sfx.capOff(); draw(); await W(650); },
-        shake:async()=>{ if(s.atMouth){ bub(L(FLOWX.notNow)); sfx.error(); await W(800); return; } prep(); const P=dev==='spacer'&&s.attached?'sp':'pos', base={...s[P]};
+        shake:async()=>{ if(s.atMouth){ bub(L(FLOWX.notNow)); sfx.error(); await W(800); return; } prep(); if(dev==='resp') E('respShake'); const P=dev==='spacer'&&s.attached?'sp':'pos', base={...s[P]};
           for(let n=1;n<=8;n++){ if(n<8) sfx.shake(n); s[P]={x:base.x,y:base.y+(n<8?(n%2?-22:22):0)}; draw(); await W(85); }
           s.shaken=true; await W(250); },
         attach:async()=>{ if(s.capOn){ bub(L(FLOWX.capFirst)); E('capOn'); await W(900); return; } prep(); await tw(()=>s.pos,p=>{ s.pos=p; },{x:s.sp.x-SOCK,y:s.sp.y},420); s.attached=true; draw(); sfx.clack(); await W(350); },
@@ -663,6 +683,11 @@ function inhSim(dev){
           if(!s.atMouth){ E('air'); mist('air'); await W(900); return; }
           if(inB){ s.good=true; mist('lungs'); sfx.select(); await breathP; bub(L(FLOWX.good),1200); await W(350); return; }
           E('early'); cough(); mist('throat'); await W(1000); },
+        pressin:async()=>{ await A.in('press'); await A.press(); },                                 // together
+        pressfirst:async()=>{ await A.press(); await A.in(); },                                     // Uncle Lee's way: the dose is gone before the breath
+        two:async()=>{ await A.press(); await A.press(); E('twoPuff'); },
+        fast:async()=>{ if(!s.atMouth){ bub(L(FLOWX.mouthFirst)); sfx.error(); } if(s.lungs>.4) E('noOut'); E('fast');
+          if(dev==='spacer'&&s.atMouth&&s.chamberN>0){ s.good=true; mist('throat'); } const from=s.lungs; for(let n=1;n<=8;n++){ s.lungs=from+(1-from)*n/8; draw(); await W(45); } await W(500); },
         hold:async()=>{ if(!s.good){ bub(L(FLOWX.nothingHold)); sfx.error(); await W(900); return; } const cnt=svg.querySelector('.sd-count');
           for(let n=1;n<=10;n++){ cnt.textContent=n; sfx.tock(n); await W(210); } cnt.textContent=''; s.held=true; await W(200); },
         recap:async()=>{ if(s.atMouth) await fromMouth(); if(s.good&&!s.held) E('holdOrder'); s.capOn=true; sfx.capOn(); draw(); await W(550); },
@@ -673,7 +698,7 @@ function inhSim(dev){
         list.innerHTML=`<h4>${esc(L(ORDX.seq))}</h4>${seq.map((k,i)=>`<div class="li" data-i="${i}"><b class="n">${i+1}</b>${cardH(k)}<u></u></div>`).join('')}<button class="gbtn gray" id="ioSkip">${esc(L(ORDX.skip))}</button>`;
         $('#ioSkip').onclick=()=>{ skip=true; };
         for(let i=0;i<seq.length;i++){ const k=seq[i], li=list.querySelector(`.li[data-i="${i}"]`); li.classList.add('now'); tx(`${i+1}. ${CARDS[k][3]} ${L(CARDS[k])}`);
-          await A[k](seq[i+1]); li.classList.remove('now'); li.classList.add(ex?'done':g.badK.includes(k)?'bad':'ok'); await W(250); }
+          await A[k](seq[i+1]); li.classList.remove('now'); li.classList.add(ex?'done':g.badK.includes(k)||DECOY.includes(k)?'bad':'ok'); await W(250); }
         const sk=$('#ioSkip'); if(sk) sk.remove();
         if(s.atMouth){ await fromMouth(); } if(s.good&&!s.held) E('holdOrder'); if(!s.good&&!errsP.length) E('noDose');
         s.lungs=Math.min(s.lungs,.5); draw(); if(!skip) sfx.sigh();
@@ -685,7 +710,7 @@ function inhSim(dev){
         if(ok) sfx.get(); else sfx.error();
         const sum=document.createElement('div'); sum.className='is-sum';
         sum.innerHTML=`<div class="card"><h3>${ok?'🎉 '+esc(L(ORDX.right)):'🔧 '+esc(L(ORDX.wrong))}</h3><div class="is-score"><b>📋 ${esc(L(SIMX.scoreT))} ${first.pts}/${first.max}</b>${first.hints?`<small>💡 −${first.hints}</small>`:''}${tr>1?`<small>${esc(L(ORDX.firstNote))}</small>`:''}
-          ${ok?'':`<p class="io-mis">❌ ${esc(L(ORDX.mis))}: <b>${g.badK.map(k=>esc(L(CARDS[k]))).join(' · ')}</b></p><p class="io-mis">✅ ${esc(L(ORDX.rightO))}:</p><ol>${g.near.map(k=>`<li class="${g.badK.includes(k)?'no':''}">${CARDS[k][3]} ${esc(L(CARDS[k]))}</li>`).join('')}</ol>`}</div>${ok?'':`<ul>${lastE.map(k=>`<li>${esc(L(SIM_ERR[k]))}</li>`).join('')}</ul>`}${dev==='resp'?`<p class="is-hn">🟢 ${esc(L(ORDX.twice))}</p>`:''}
+          ${ok?'':`${[['decoy','🚫'],['gone','❌'],['mis','❌']].map(([q,ic])=>g[q].length?`<p class="io-mis">${ic} ${esc(L(ORDX[q]))}: <b>${g[q].map(k=>esc(L(CARDS[k]))).join(' · ')}</b></p>`:'').join('')}<p class="io-mis">✅ ${esc(L(ORDX.rightO))}:</p><ol>${g.near.map(k=>`<li class="${g.badK.includes(k)?'no':''}">${CARDS[k][3]} ${esc(L(CARDS[k]))}</li>`).join('')}</ol>`}</div>${ok?'':`<ul>${lastE.map(k=>`<li>${esc(L(SIM_ERR[k]))}</li>`).join('')}</ul>`}${dev==='resp'?`<p class="is-hn">🟢 ${esc(L(ORDX.twice))}</p>`:''}
           <div class="act">${ok||tr>=2?'':`<button class="gbtn gray" id="simAgain">${esc(L(ORDX.redo))}</button>`}<button class="gbtn green" id="simCont">${esc(L(SIMX.cont))}</button></div></div>`;
         bench.appendChild(sum);
         const a=$('#simAgain'); if(a) a.onclick=()=>{ sfx.click(); sum.remove(); reset(); clearTimeout(idleT); $('#simSn').textContent=''; $('#simPf').textContent=''; host.classList.add('picking'); render(); };

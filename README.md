@@ -575,3 +575,13 @@ still could not tell where to look. Now `inhSim()` runs in order mode (`INH.orde
   picture tiles; a placed tile stays in place, dimmed, with its number (tap it again to take it back); the order
   strip below shows the eight places with small pictures. Ids inside the pictures get a `th_` prefix because the big
   animation SVG is `display:none` while the cards show, and a gradient found in a hidden SVG does not paint.
+- Same day, second round (owner): (1) with the blue inhaler and the Respimat, "start a slow deep breath in" and
+  "press" were two cards, so a student who put press first while meaning "together" was marked wrong. They are one
+  card now (`pressin`: start a slow, deep breath in and press at the same moment); it stands for two checklist steps
+  (`ORD_CK`), so each inhaler is still out of 8. The spacer keeps press and breathe apart (press, then breathe).
+  (2) Decoys (`ORD_DECOY`): two cards per inhaler that are not part of the routine; the board has one place per real
+  step (7, 8, 7), the pool has two more. Blue: "press the dose first, then start to breathe in" (Uncle Lee's way,
+  `early`) and "breathe in fast and hard" (`fast`). Spacer: "press twice in a row" (`twoPuff`), "fast and hard".
+  Respimat: "shake it 4–5 times" (`respShake`: a Respimat is not shaken) and "fast and hard". A decoy on the board
+  pushes a real step out; the summary lists decoys used, steps left out and steps in the wrong place separately.
+  Pool grid is 5 x 2 now.

@@ -561,3 +561,17 @@ still could not tell where to look. Now `inhSim()` runs in order mode (`INH.orde
   above the buttons, with the closing line.
   Same day: the card pulses (`fpulse`: grows and shrinks with a glow every 1.5 s; 6% on the title page, 2% in the
   results row so it stays inside the panel; off under `prefers-reduced-motion`).
+
+### Case D, 21 Nov 2026 (owner's play-through)
+- Mission 1/4 (red basket, `cd/d_acb.js`): the explanation says the tiotropium in Spiolto is anticholinergic too, yet
+  Spiolto in the basket was marked wrong. Now Spiolto is neither required nor an error (`ACB_OKAY`): its card always
+  gets a blue note (anticholinergic, counts toward the burden, but inhaled and needed for COPD: keep it, watch urine
+  flow). The question says what is asked: the 2 oral, sedating, strongly anticholinergic medicines Beers says to avoid.
+  The written explanation (`mk_dease.py` 3c) says why Spiolto is not one of the two. Checked against the AGS Beers
+  lists as summarised by MSD Manual and Drugs.com: first-generation antihistamines (diphenhydramine, triprolidine) are
+  listed; inhaled tiotropium is not named there (neither listed nor expressly excluded).
+- Inhaler order game: every step card has a picture (`ordScene(dev,key)` in `cd/d_isim.js`), composed from the same
+  drawings the animation uses (the face, the three devices) frozen in that step's state, plus arrows. Layout: 4 x 2
+  picture tiles; a placed tile stays in place, dimmed, with its number (tap it again to take it back); the order
+  strip below shows the eight places with small pictures. Ids inside the pictures get a `th_` prefix because the big
+  animation SVG is `display:none` while the cards show, and a gradient found in a hidden SVG does not paint.

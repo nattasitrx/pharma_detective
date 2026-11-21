@@ -231,7 +231,7 @@ const ORD_CARDS={
 const ORD_VALID={mdi:[['cap','shake','out','mouth','in','press','hold','recap'],['shake','cap','out','mouth','in','press','hold','recap']],
   spacer:[['cap','shake','attach','out','mouth','press','in','hold'],['shake','cap','attach','out','mouth','press','in','hold'],['cap','attach','shake','out','mouth','press','in','hold']],
   resp:[['turn','open','out','mouth','in','press','hold','close']]};
-const ORDX={how:['依正確順序點卡片（點已排好的可以拿回去），再按「▶ 示範」。','Tap the cards in the right order (tap a placed card to take it back), then press ▶ Demonstrate.','แตะการ์ดตามลำดับที่ถูก (แตะใบที่วางแล้วเพื่อเอาออก) แล้วกด ▶ สาธิต'],
+const ORDX={how:['依正確順序點圖卡（再點一下可以拿回去），再按「▶ 示範」。','Tap the pictures in the right order (tap one again to take it back), then press ▶ Demonstrate.','แตะรูปตามลำดับที่ถูก (แตะซ้ำเพื่อเอาออก) แล้วกด ▶ สาธิต'],
   howEx:['依你教病人的順序排好卡片，再按「▶ 示範」。沒有提示。','Put the cards in the order you would teach a patient, then press ▶ Demonstrate. No hints.','เรียงการ์ดตามลำดับที่คุณจะสอนผู้ป่วย แล้วกด ▶ สาธิต ไม่มีคำใบ้'],
   pool:['步驟卡（順序已打亂）','Step cards (shuffled)','การ์ดขั้นตอน (สลับไว้)'], seq:['你排的順序','Your order','ลำดับของคุณ'], clear:['↺ 清空','↺ Clear','↺ ล้าง'],
   go:['▶ 照這個順序示範','▶ Demonstrate in this order','▶ สาธิตตามลำดับนี้'], hint:['💡 提示（−1 分）','💡 Hint (−1)','💡 คำใบ้ (−1)'], skip:['⏩ 跳過動畫','⏩ Skip the animation','⏩ ข้ามอนิเมชัน'],
@@ -239,6 +239,46 @@ const ORDX={how:['依正確順序點卡片（點已排好的可以拿回去）�
   wrong:['順序還不對','The order is not right yet','ลำดับยังไม่ถูก'], mis:['位置不對的步驟','In the wrong place','ขั้นที่อยู่ผิดตำแหน่ง'], rightO:['正確順序','The correct order','ลำดับที่ถูก'],
   redo:['↺ 重新排','↺ Reorder','↺ เรียงใหม่'], right:['順序完全正確！','The order is exactly right!','เรียงถูกทุกขั้น!'], firstNote:['分數以第一次排的為準','The score counts your first order','คะแนนนับจากการเรียงครั้งแรก'],
   twice:['Spiolto 一次是 2 噴：蓋上蓋子後，整套再做一次。','Spiolto is 2 puffs a dose: after closing the cap, do the whole routine once more.','Spiolto ครั้งละ 2 พัฟ: ปิดฝาแล้วทำทั้งชุดนี้ซ้ำอีกรอบ']};
+/* ---- order mode: a small picture for every step card (21 Nov 2026, owner: "choosing words alone, I cannot see it").
+   Each picture is composed from the same drawings the animation uses (Uncle Lee's face, the three devices), frozen in the
+   state that step produces, plus arrows. View box 640 x 270. Ids get a prefix: the big picture is display:none while the
+   cards are on screen, and a gradient looked up in a hidden SVG does not paint. ---- */
+function ordScene(dev,k){
+  const C={blue:'#3d8be0', red:'#e8452c', grn:'#18a070'};
+  const head=(x,y,a,c,s)=>`<path d="M0 0 L${-(s||16)} ${-(s||16)*.6} L${-(s||16)} ${(s||16)*.6} Z" fill="${c}" transform="translate(${x},${y}) rotate(${a})"/>`;
+  const arrow=(x1,y1,x2,y2,c,w)=>{ const a=Math.atan2(y2-y1,x2-x1), s=(w||9)*2.2; return `<path d="M${x1} ${y1} L${x2-Math.cos(a)*s*.7} ${y2-Math.sin(a)*s*.7}" stroke="${c}" stroke-width="${w||9}" stroke-linecap="round" fill="none"/>${head(x2,y2,a*180/Math.PI,c,s)}`; };
+  const curve=(x1,y1,cx,cy,x2,y2,c,w)=>{ const a=Math.atan2(y2-cy,x2-cx), s=(w||8)*2.2; return `<path d="M${x1} ${y1} Q${cx} ${cy} ${x2-Math.cos(a)*s*.6} ${y2-Math.sin(a)*s*.6}" stroke="${c}" stroke-width="${w||8}" stroke-linecap="round" fill="none"/>${head(x2,y2,a*180/Math.PI,c,s)}`; };
+  const txt=(x,y,t,sz,c)=>`<text x="${x}" y="${y}" text-anchor="middle" font-size="${sz}" font-weight="900" fill="${c||'#2a2140'}" stroke="#fff" stroke-width="${sz/7}" paint-order="stroke" font-family="sans-serif">${t}</text>`;
+  const sp=dev==='spacer', f=sp?.5:dev==='mdi'?.52:.78, M={x:sp?430:dev==='mdi'?370:345, y:sp?205:dev==='mdi'?205:160};   // face scale and where the mouth is: room above the canister for the press arrow
+  const face=cls=>`<g class="${cls||''}" transform="translate(${(M.x-516*f).toFixed(1)},${(M.y-296*f).toFixed(1)}) scale(${f})">${simFaceSVG()}</g>`;
+  /* the device: where its mouthpiece tip is, how big, upright or level (Respimat), cap on/off/open, spacer fitted or not */
+  const device=(x,y,sc,o)=>{ o=o||{}; let d=simDevSVG(dev==='spacer'&&o.solo?'mdi':dev);
+    if(dev==='resp'){ d=d.replace('class="sd-cap"',`class="sd-cap"${o.open?' transform="rotate(118 -46 37)"':''}`); return `<g transform="translate(${x},${y}) rotate(${o.level?0:-90}) scale(${sc*1.15})">${d}</g>`; }
+    d=d.replace('class="sd-cap"',`class="sd-cap"${o.cap?` transform="${o.cap}"`:''}`);
+    if(dev==='spacer'&&!o.solo) d=d.replace('class="sd-mdiw"',`class="sd-mdiw" transform="translate(${-326-(o.gap||0)},0)"`).replace('<g class="sd-chmist"></g>',o.mist?'<g class="sd-chmist">'+[[-250,-8,13],[-205,10,11],[-160,-12,12],[-120,6,10],[-90,-6,9],[-285,14,9]].map(([a,b,r])=>`<circle cx="${a}" cy="${b}" r="${r}" fill="#fff" stroke="#9fc3dc" stroke-width="2.5"/>`).join('')+'</g>':'<g class="sd-chmist"></g>');
+    return `<g transform="translate(${x},${y}) scale(${sc})">${d}</g>`; };
+  const OFF='translate(400,400)';                                   // cap out of the picture
+  const mdiSolo=o=>device(300,216,.68,Object.assign({solo:1},o));    // blue inhaler on its own, mouthpiece tip at (300,216)
+  const air=dir=>[-26,0,26].map((dy,i)=>{ const x1=M.x-(sp?0:8)-22, len=i===1?92:70; return dir<0?arrow(x1,M.y+dy*.9,x1-len,M.y+dy*1.5,'#8fc4ee',7):''; }).join('');
+  const atMouth=o=>device(M.x,M.y+(dev==='mdi'?8:0),f,Object.assign({level:1,open:1,cap:OFF},o));
+  const away=()=>dev==='resp'?device(95,52,.5,{open:1}):sp?device(290,244,.34,{cap:OFF}):device(120,240,.5,{cap:OFF});   // held clear of the mouth
+  const can={x:M.x-99*f, y:M.y-292*f}, btn={x:M.x-94*f*1.15, y:M.y-53*f*1.15}, spCan={x:M.x-(326+99)*f, y:M.y-292*f};
+  let g='';
+  if(k==='cap') g=mdiSolo({cap:'translate(150,-6) rotate(14)'})+curve(318,170,350,128,388,160,C.red,8);
+  else if(k==='recap') g=mdiSolo({cap:'translate(120,-4)'})+curve(420,150,380,112,336,158,C.grn,8)+txt(470,236,'✅',40);
+  else if(k==='shake') g=mdiSolo({})+arrow(410,150,410,62,C.red,9)+arrow(410,150,410,238,C.red,9)+[[222,60],[222,150],[376,60]].map(([x,y])=>`<path d="M${x} ${y} q${x<300?-16:16} 22 0 44" stroke="${C.red}" stroke-width="6" fill="none" stroke-linecap="round" opacity=".7"/>`).join('')+txt(488,160,'×4–5',44,C.red);
+  else if(k==='attach') g=device(520,150,.6,{cap:OFF,gap:70})+arrow(256,236,306,236,C.red,9);
+  else if(k==='turn') g=device(300,14,.68,{})+curve(244,212,300,262,358,214,C.red,8)+txt(450,226,'↻',58,C.red);
+  else if(k==='open') g=device(300,44,.7,{open:1})+curve(330,36,372,28,384,68,C.red,8);
+  else if(k==='close') g=device(300,44,.7,{})+curve(396,82,392,30,350,34,C.grn,8)+txt(470,236,'✅',40);
+  else if(k==='out') g=face('face-open')+away()+air(-1);
+  else if(k==='mouth') g=face('face-seal')+atMouth();
+  else if(k==='in') g=face('face-seal')+atMouth({mist:sp})+(sp?arrow(M.x-150,M.y-50,M.x-34,M.y-28,C.blue,8)+arrow(M.x-150,M.y+50,M.x-34,M.y+28,C.blue,8):dev==='mdi'?arrow(M.x-180,M.y+52,M.x-30,M.y+38,C.blue,8)+txt(M.x-215,M.y+60,'💨',34):arrow(M.x-175,M.y+70,M.x-40,M.y+44,C.blue,9)+arrow(M.x-60,M.y+104,M.x-10,M.y+52,C.blue,8)+txt(M.x-215,M.y+88,'💨',38));
+  else if(k==='press') g=face('face-seal')+atMouth({mist:sp})+(()=>{ const p=dev==='resp'?btn:sp?spCan:{x:can.x,y:can.y+8}, top=Math.max(8,p.y-58); return arrow(p.x,top,p.x,p.y-5,C.red,10)+txt(p.x-44,Math.max(40,p.y-14),'👇',36)+(sp?'':[[-6,-16,7],[-18,8,6],[-28,-6,5]].map(([a,b,r])=>`<circle cx="${M.x+a-(dev==='resp'?0:4)}" cy="${M.y+b}" r="${r}" fill="#fff" stroke="#9fc3dc" stroke-width="2.5" opacity="0"/>`).join('')); })();
+  else if(k==='hold') g=face('')+away()+txt(M.x-115,sp?112:M.y+6,'10',88,C.blue)+txt(M.x-115,sp?158:M.y+54,'⏱',38);
+  const svg=`<svg class="io-th" viewBox="0 0 640 270" preserveAspectRatio="xMidYMid meet">${g}</svg>`;
+  return svg.replace(/id="(\w+)"/g,'id="th_$1"').replace(/url\(#(\w+)\)/g,'url(#th_$1)');
+}
 function inhSim(dev){
   if(!$('#isimCss2')){ const st=document.createElement('style'); st.id='isimCss2'; st.textContent=`
 #isim{position:absolute;left:34px;right:34px;top:94px;bottom:16px;z-index:24;display:flex;flex-direction:column;background:rgba(255,255,255,.98);border-radius:28px;padding:12px 16px;box-shadow:0 0 0 5px #fff,0 0 0 10px #8c9a3e,0 16px 40px rgba(0,0,0,.35);animation:enterC .4s cubic-bezier(.2,1.2,.4,1);-webkit-user-select:none;user-select:none}
@@ -292,22 +332,31 @@ function inhSim(dev){
 #isim.order #simSvg{pointer-events:none}
 #isim.order.picking .is-bench,#isim.order.picking .io-list{display:none}
 #isim.order:not(.picking) .io-pick{display:none}
-#isim .io-pick{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:16px;min-height:0;min-width:0}
-#isim .io-col{display:flex;flex-direction:column;min-height:0;border-radius:20px;padding:10px 14px 12px;background:#f1f4ea}
-#isim .io-col.seq{background:#eef3fb}
-#isim .io-col h4,#isim .io-list h4{margin:0 0 6px;font-size:22px;line-height:1.2;color:#4a4a12}
-#isim .io-rows{flex:1;display:grid;grid-template-rows:repeat(8,1fr);gap:7px;min-height:0}
+#isim .io-pick{flex:1;display:flex;flex-direction:column;gap:8px;min-height:0;min-width:0}
+#isim #ioPool{flex:1;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:1fr 1fr;gap:10px;min-height:0}
 #isim .io-card,#isim .io-slot,#isim .io-list .li{position:relative;display:flex;align-items:center;gap:10px;border-radius:14px;padding:0 14px;min-height:0;text-align:left;font-weight:900;font-size:25px;line-height:1.12;color:#2a2140}
 #isim .io-card{background:#fff;box-shadow:0 0 0 3px #c9d3b0,0 4px 0 #b3bd96}
 #isim .io-card i,#isim .io-list .li i{font-style:normal;font-size:28px;flex:0 0 auto}
-#isim .io-card span{flex:1}
-#isim .io-card.used{visibility:hidden}
-#isim .io-card.on{box-shadow:0 0 0 3px #7aa7f5,0 4px 0 #5b86d0;background:#fafcff}
-#isim .io-card em{font-style:normal;flex:0 0 auto;color:#9aa3b5;font-size:22px}
+#isim .io-th{display:block;min-height:0;min-width:0;border-radius:10px;background:linear-gradient(#f3f8fc,#e3edf5);pointer-events:none}
+#isim .io-tile{flex-direction:column;align-items:stretch;gap:3px;padding:6px 8px 6px;text-align:center}
+#isim .io-tile .io-th{flex:1;width:100%}
+#isim .io-tile span{flex:0 0 auto;display:flex;align-items:center;justify-content:center;min-height:58px;font-size:24px;line-height:1.15}
+#isim .io-tile.used{box-shadow:0 0 0 3px #7aa7f5,0 4px 0 #5b86d0;background:#f1f6ff}
+#isim .io-tile.used .io-th,#isim .io-tile.used span{opacity:.38}
+#isim .io-tile .n{position:absolute;left:50%;top:38%;transform:translate(-50%,-50%);width:74px;height:74px;font-size:44px;box-shadow:0 0 0 5px #fff,0 4px 10px rgba(0,0,0,.25)}
+#isim .io-bot{flex:0 0 auto;display:flex;align-items:center;gap:10px;border-radius:16px;padding:6px 10px;background:#eef3fb}
+#isim .io-bot h4{flex:0 0 auto;margin:0;width:92px;font-size:18px;line-height:1.2;color:#3a4a6a}
+#isim #ioSeq{flex:1;display:grid;grid-template-columns:repeat(8,1fr);gap:7px;height:104px;min-width:0}
+#isim #ioSeq .io-card,#isim #ioSeq .io-slot{flex-direction:column;align-items:stretch;justify-content:center;gap:1px;padding:4px 5px;text-align:center;overflow:hidden}
+#isim #ioSeq .io-card{box-shadow:0 0 0 3px #7aa7f5,0 3px 0 #5b86d0;background:#fafcff}
+#isim #ioSeq .io-th{flex:1;width:100%}
+#isim #ioSeq span{flex:0 0 auto;font-size:14.5px;line-height:1.1;max-height:32px;overflow:hidden}
+#isim #ioSeq .n{position:absolute;left:4px;top:4px;width:28px;height:28px;font-size:18px;z-index:1}
 #isim .io-slot{border:3px dashed #b9c6de;background:rgba(255,255,255,.5)}
 #isim .n{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:#3d7bff;color:#fff;font-size:21px;display:flex;align-items:center;justify-content:center}
-#isim .io-slot .n{background:#c3cde0}
-#isim .io-act{display:flex;gap:10px;margin-top:10px;justify-content:flex-end}
+#isim #ioSeq .io-slot .n{position:static;align-self:center;width:40px;height:40px;font-size:24px;background:#c3cde0}
+#isim .io-list h4{margin:0 0 6px;font-size:22px;line-height:1.2;color:#4a4a12}
+#isim .io-act{flex:0 0 auto;display:flex;gap:10px;justify-content:flex-end}
 #isim .io-act .gbtn{font-size:22px;padding:10px 16px}#isim .io-act .gbtn.dim{opacity:.5}
 #isim .io-list{width:380px;flex:0 0 auto;display:flex;flex-direction:column;gap:6px;min-height:0}
 #isim .io-list .li{flex:1;font-size:21px;background:#f4f7fb;box-shadow:inset 0 0 0 2px #dfe5ef}
@@ -552,16 +601,19 @@ function inhSim(dev){
       const pool=keys.slice(); do{ for(let a=pool.length-1;a>0;a--){ const b=Math.floor(Math.random()*(a+1)); [pool[a],pool[b]]=[pool[b],pool[a]]; } }while(VALID.some(v=>v.every((k,i)=>k===pool[i])));
       let seq=keys.map(()=>null), tr=0, first=null, firstE=null, lastE=[], hintN=0, hint0=0, skip=false, pendingIn=false, breathP=null, errsP=[];
       const body=host.querySelector('.is-body'); bench.appendChild(host.querySelector('.is-meter'));   // the lungs stay in view beside the face
-      body.insertAdjacentHTML('beforeend',`<div class="io-pick"><div class="io-col"><h4>🃏 ${esc(L(ORDX.pool))}</h4><div class="io-rows" id="ioPool"></div></div>
-        <div class="io-col seq"><h4>🔢 ${esc(L(ORDX.seq))}</h4><div class="io-rows" id="ioSeq"></div>
-          <div class="io-act"><button class="gbtn gray" id="ioClear">${esc(L(ORDX.clear))}</button>${ex?'':`<button class="gbtn gold" id="ioHint">${esc(L(ORDX.hint))}</button>`}<button class="gbtn green" id="ioGo">${esc(L(ORDX.go))}</button></div></div></div>
+      const thumb={}; keys.forEach(k=>{ thumb[k]=ordScene(dev,k); });
+      body.insertAdjacentHTML('beforeend',`<div class="io-pick"><div id="ioPool"></div>
+        <div class="io-bot"><h4>🔢 ${esc(L(ORDX.seq))}</h4><div id="ioSeq"></div></div>
+        <div class="io-act"><button class="gbtn gray" id="ioClear">${esc(L(ORDX.clear))}</button>${ex?'':`<button class="gbtn gold" id="ioHint">${esc(L(ORDX.hint))}</button>`}<button class="gbtn green" id="ioGo">${esc(L(ORDX.go))}</button></div></div>
         <div class="io-list" id="ioList"></div>`);
       const render=()=>{ tx(L(ex?ORDX.howEx:ORDX.how));
-        $('#ioPool').innerHTML=pool.map(k=>`<button class="io-card${seq.includes(k)?' used':''}" data-k="${k}">${cardH(k)}</button>`).join('');
-        $('#ioSeq').innerHTML=keys.map((_,i)=>seq[i]?`<button class="io-card on" data-i="${i}"><b class="n">${i+1}</b>${cardH(seq[i])}<em>✕</em></button>`:`<div class="io-slot"><b class="n">${i+1}</b></div>`).join('');
+        /* picture tiles: a placed tile stays where it is, dimmed, with its number; the strip below shows the order */
+        $('#ioPool').innerHTML=pool.map(k=>{ const at=seq.indexOf(k); return `<button class="io-card io-tile${at>=0?' used':''}" data-k="${k}">${thumb[k]}<span>${esc(L(CARDS[k]))}</span>${at>=0?`<b class="n">${at+1}</b>`:''}</button>`; }).join('');
+        $('#ioSeq').innerHTML=keys.map((_,i)=>seq[i]?`<button class="io-card on" data-i="${i}"><b class="n">${i+1}</b>${thumb[seq[i]]}<span>${esc(L(CARDS[seq[i]]))}</span></button>`:`<div class="io-slot"><b class="n">${i+1}</b></div>`).join('');
         $('#ioGo').classList.toggle('dim',seq.includes(null));
-        /* a card goes into the first empty place; taking a card back leaves its place empty for the next one */
-        $('#ioPool').querySelectorAll('.io-card').forEach(b=>b.onclick=()=>{ const i=seq.indexOf(null); if(i<0||seq.includes(b.dataset.k)) return; seq[i]=b.dataset.k; sfx.select(); render(); });
+        /* a card goes into the first empty place; taking a card back (tap it again, here or in the strip) leaves its place empty for the next one */
+        $('#ioPool').querySelectorAll('.io-card').forEach(b=>b.onclick=()=>{ const at=seq.indexOf(b.dataset.k); if(at>=0){ seq[at]=null; sfx.paper(); render(); return; }
+          const i=seq.indexOf(null); if(i<0) return; seq[i]=b.dataset.k; sfx.select(); render(); });
         $('#ioSeq').querySelectorAll('.io-card').forEach(b=>b.onclick=()=>{ seq[+b.dataset.i]=null; sfx.paper(); render(); }); };
       $('#ioClear').onclick=()=>{ seq=keys.map(()=>null); sfx.click(); render(); };
       if($('#ioHint')) $('#ioHint').onclick=()=>{ const gap=seq.indexOf(null), pre=gap<0?seq:seq.slice(0,gap), v=VALID.find(v=>pre.every((k,i)=>v[i]===k));

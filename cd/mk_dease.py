@@ -136,6 +136,10 @@ sub("""  await say('pilly','shock',['藥袋危機！一共 4 個任務：點選�
 sub("這是示範用的吸入器——你親手做一次正確的給他看！", "這是示範用的吸入器——把正確的步驟排出來，示範給他看！")
 sub("Here\\'s a demo inhaler — show him the right way with your own hands!", "Here\\'s a demo inhaler — put the steps in the right order and show him!")
 sub("นี่คือยาพ่นตัวอย่าง ลองสาธิตวิธีที่ถูกให้ลุงดูด้วยมือคุณเอง!", "นี่คือยาพ่นตัวอย่าง เรียงขั้นตอนที่ถูก แล้วสาธิตให้ลุงดู!")
+# ---------- 3c. mission 1/4, explanation (21 Nov 2026): Spiolto is anticholinergic too, and the text now says why it is not one of the two ----------
+sub("'Spiolto 裡的 tiotropium 也是抗膽鹼藥，總抗膽鹼負擔非常高。止癢", "'Spiolto 裡的 tiotropium 也是抗膽鹼藥，但它是吸入劑、主要作用在肺，COPD 也需要它，所以不是這題要停的藥；它還是算進總抗膽鹼負擔（要留意排尿），這更是先停掉上面兩個口服藥的理由。止癢")
+sub("'The tiotropium in Spiolto is anticholinergic too, so his total anticholinergic burden is very high. For the itch,", "'The tiotropium in Spiolto is anticholinergic too, but it is inhaled, acts mainly in the lungs and his COPD needs it, so it is not one to stop here; it still adds to his total anticholinergic burden (watch his urine flow), which is one more reason to stop the two oral drugs above. For the itch,")
+sub("'tiotropium ใน Spiolto ก็มีฤทธิ์ต้านโคลิเนอร์จิกเช่นกัน ภาระรวมจึงสูงมาก การแก้คัน", "'tiotropium ใน Spiolto ก็มีฤทธิ์ต้านโคลิเนอร์จิกเช่นกัน แต่เป็นยาพ่น ออกฤทธิ์ที่ปอดเป็นหลัก และจำเป็นต่อ COPD จึงไม่ใช่ยาที่ต้องหยุดในข้อนี้ มันยังนับรวมในภาระต้านโคลิเนอร์จิกทั้งหมด (เฝ้าดูอาการปัสสาวะลำบาก) ซึ่งยิ่งเป็นเหตุผลให้หยุดยากินสองตัวข้างบนก่อน การแก้คัน")
 # ---------- 4. settings ----------
 sub("  VISIT_MIN:60,   ", "  VISIT_MIN:70,   ")
 sub("  PATIENCE:10, PAT_MAX:14, TRUST_TALK:4", "  PATIENCE:13, PAT_MAX:17, TRUST_TALK:4")

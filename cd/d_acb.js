@@ -1,13 +1,17 @@
 /* ---- mission 2, hands-on: pick the medicines the Beers Criteria say to avoid (strongly anticholinergic) into one red basket.
    Simplified 12 Nov 2026: one basket, six cards (was three baskets, ten cards, every card graded). ---- */
 const ACB_RED=['benamine','peace'];
+/* 21 Nov 2026 (owner): the explanation says the tiotropium in Spiolto is anticholinergic too, yet putting Spiolto in the basket was marked wrong.
+   It is anticholinergic, but inhaled and needed for his COPD, and the question is about the two sedating oral antihistamines: so Spiolto in the basket
+   is neither required nor an error, and its card always carries the note. */
+const ACB_OKAY=['spiolto'];
 const ACB_IDS=['benamine','clarinase','peace','spiolto','mopride','amtrel'];
 const ACB_G={peace:'triprolidine + pseudoephedrine', spiolto:'tiotropium + olodaterol (inhaled)', clarinase:'loratadine + pseudoephedrine', amtrel:'amlodipine + benazepril'};
 const ACB_WHY={
   benamine:['第一代抗組織胺：嗜睡、強烈抗膽鹼','1st-gen antihistamine: sedating, strongly anticholinergic','ยาแก้แพ้รุ่นแรก: ง่วง ต้านโคลิเนอร์จิกแรง'],
   peace:['triprolidine 也是第一代抗組織胺','triprolidine is a 1st-gen antihistamine too','triprolidine ก็เป็นยาแก้แพ้รุ่นแรก'],
   clarinase:['loratadine 是不嗜睡的第二代（問題在偽麻黃鹼重複）','loratadine is a non-sedating 2nd-gen (its problem is the doubled pseudoephedrine)','loratadine เป็นรุ่นสอง ไม่ง่วง (ปัญหาของมันคือ pseudoephedrine ซ้ำ)'],
-  spiolto:['吸入劑，主要作用在肺','inhaled, works mainly in the lungs','ยาพ่น ออกฤทธิ์เฉพาะที่ปอดเป็นหลัก'],
+  spiolto:['tiotropium 也是抗膽鹼藥，要算進總負擔；但它是吸入劑、主要作用在肺，COPD 需要它：繼續用，留意排尿。這題不算錯，也不是要停的藥','tiotropium is anticholinergic too and counts toward his total burden; but it is inhaled, acts mainly in the lungs and his COPD needs it: keep it, watch his urine flow. Not counted as wrong here, and not one to stop','tiotropium ก็ต้านโคลิเนอร์จิกและนับรวมในภาระทั้งหมด แต่เป็นยาพ่น ออกฤทธิ์ที่ปอดเป็นหลัก และจำเป็นต่อ COPD: ใช้ต่อ เฝ้าดูอาการปัสสาวะลำบาก ข้อนี้ไม่นับผิด และไม่ใช่ยาที่ต้องหยุด'],
   mopride:['腸胃蠕動藥，沒有抗膽鹼作用','a gut-motility drug, not anticholinergic','ยากระตุ้นลำไส้ ไม่ต้านโคลิเนอร์จิก'],
   amtrel:['降血壓藥，沒有抗膽鹼作用','a blood-pressure drug, not anticholinergic','ยาลดความดัน ไม่ต้านโคลิเนอร์จิก']};
 const ACB_BINS=[['strong',['🔴 該避免（Beers）：強烈抗膽鹼','🔴 Avoid (Beers): strongly anticholinergic','🔴 ควรเลี่ยง (Beers): ต้านโคลิเนอร์จิกแรง'],3]];
@@ -22,6 +26,7 @@ function acbCss(){ if($('#acbCss')) return; const st=document.createElement('sty
 #medrev .acard .acls{display:block;font-style:normal;color:#8a4fb8;font-weight:700;font-size:14px;line-height:1.25;margin-top:3px}
 #medrev .acard .awhy{display:block;font-style:normal;color:#5a4a20;font-weight:700;font-size:14px;line-height:1.25;margin-top:4px}
 #medrev .acard.ok{box-shadow:0 0 0 4px #18b07f;background:#eafff6}#medrev .acard.bad{box-shadow:0 0 0 4px #ff3d5c;background:#ffecee}
+#medrev .acard.note{box-shadow:0 0 0 4px #5b9bd8;background:#eef6ff;max-width:520px}
 #medrev .acard.miss{box-shadow:0 0 0 4px #f0a000;background:#fff6dc}#medrev .acard.rest{opacity:.55}
 #medrev .acard.miss::after{position:absolute;top:-12px;left:-10px;width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;box-shadow:0 0 0 3px #fff,0 3px 8px rgba(0,0,0,.25);z-index:2;content:'!';background:#f0a000}
 #medrev .acard{position:relative}#medrev .acard::after{left:auto!important;right:-12px}`; document.head.appendChild(st); }
@@ -31,7 +36,7 @@ function acbSortUI(m, i, n){
     const ex=EXAM(), ids=ACB_IDS.slice(), byId=Object.fromEntries(DRUGS.map(d=>[d.id,d])), inRed=new Set();
     if(ex) for(let a=ids.length-1;a>0;a--){ const b=Math.floor(Math.random()*(a+1)); [ids[a],ids[b]]=[ids[b],ids[a]]; }
     const card=id=>{ const d=byId[id]; return `<button class="acard" data-d="${id}"><span>${esc(d.n.split(' ')[0])}<br><small>${esc(ACB_G[id]||d.g.split(/[ (]/)[0])}</small>${d.cls?`<i class="acls">${esc(L(d.cls))}</i>`:''}</span></button>`; };
-    host.innerHTML=`<div class="mr-main"><div class="mr-head"><span class="no">🚨 ${T('mission')} ${i+1}/${n}</span><span class="tx">${esc(L(['哪些藥是 Beers 準則建議長者避免、抗膽鹼作用很強的？點一下放進紅色籃子（再點一下拿出來）。','Which of these are strongly anticholinergic drugs the Beers Criteria say older adults should avoid? Tap to put them in the red basket (tap again to take out).','ยาตัวไหนต้านโคลิเนอร์จิกแรง ที่ Beers Criteria ให้ผู้สูงอายุเลี่ยง? แตะเพื่อใส่ตะกร้าแดง (แตะอีกครั้งเพื่อเอาออก)']))}</span><span id="mrTimer"></span></div>
+    host.innerHTML=`<div class="mr-main"><div class="mr-head"><span class="no">🚨 ${T('mission')} ${i+1}/${n}</span><span class="tx">${esc(L(['哪 2 種口服藥是 Beers 準則建議長者避免、會嗜睡又抗膽鹼作用很強的？點一下放進紅色籃子（再點一下拿出來）。','Which 2 oral medicines are the sedating, strongly anticholinergic drugs the Beers Criteria say older adults should avoid? Tap to put them in the red basket (tap again to take out).','ยากิน 2 ตัวไหนที่ทำให้ง่วงและต้านโคลิเนอร์จิกแรง ซึ่ง Beers Criteria ให้ผู้สูงอายุเลี่ยง? แตะเพื่อใส่ตะกร้าแดง (แตะอีกครั้งเพื่อเอาออก)']))}</span><span id="mrTimer"></span></div>
       <div class="acb-tray" id="acbTray">${ids.map(card).join('')}</div>
       <div class="acb-bins"><div class="acb-bin" data-bin="strong"><h4>${esc(L(ACB_BINS[0][1]))}</h4></div></div>
       <div class="mr-act"><span class="hint">${esc(L(['88 歲＋攝護腺肥大＋常頭暈','88 + BPH + dizzy spells','อายุ 88 + ต่อมลูกหมากโต + เวียนหัวบ่อย']))} · ${T('selected')}: <b id="mrCount">0</b></span><button class="gbtn" id="mrOk">${T('confirmDx')}</button></div></div>
@@ -50,10 +55,10 @@ function acbSortUI(m, i, n){
         if(over) put(c, over!==$('#acbTray')); };
       c.addEventListener('pointermove',mv); c.addEventListener('pointerup',up); c.addEventListener('pointercancel',up); }));
     const fin=()=>{ if(done) return; done=true; clearInterval(iv); D.choiceFinish=null; $('#mrTimer').innerHTML='';
-      const strong=ids.filter(id=>inRed.has(id)), ans=new Set(m.ans), hit=strong.filter(x=>ans.has(x)), extra=strong.filter(x=>!ans.has(x)), missed=m.ans.filter(x=>!inRed.has(x));
+      const strong=ids.filter(id=>inRed.has(id)), ans=new Set(m.ans), hit=strong.filter(x=>ans.has(x)), extra=strong.filter(x=>!ans.has(x)&&!ACB_OKAY.includes(x)), missed=m.ans.filter(x=>!inRed.has(x));
       const wrong=extra.concat(missed);
       host.querySelectorAll('.acard').forEach(c=>{ const id=c.dataset.d; if(ex){ c.style.opacity='.6'; return; }
-        const cls=extra.includes(id)?'bad':missed.includes(id)?'miss':inRed.has(id)?'ok':'rest'; c.classList.add(cls);
+        const cls=ACB_OKAY.includes(id)?'note':extra.includes(id)?'bad':missed.includes(id)?'miss':inRed.has(id)?'ok':'rest'; c.classList.add(cls);
         if(cls!=='rest'&&ACB_WHY[id]) c.querySelector('span').insertAdjacentHTML('beforeend',`<i class="awhy">💡 ${esc(L(ACB_WHY[id]))}</i>`); });
       const perfect=!extra.length&&!missed.length, partial=!perfect&&hit.length>0;
       S.calc.acb={ok:perfect, wrong:wrong.length}; res({sel:strong, hit, extra, missed, perfect, partial, bins:Object.fromEntries(strong.map(x=>[x,'strong'])), wrong}); };

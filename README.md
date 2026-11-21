@@ -585,3 +585,45 @@ still could not tell where to look. Now `inhSim()` runs in order mode (`INH.orde
   Respimat: "shake it 4–5 times" (`respShake`: a Respimat is not shaken) and "fast and hard". A decoy on the board
   pushes a real step out; the summary lists decoys used, steps left out and steps in the wrong place separately.
   Pool grid is 5 x 2 now.
+
+### Audit of Case D and Four Floors (21 Nov 2026, owner: "check every bug and system, strictly")
+What was run (scripts in the repo unless noted): the in-page static audit of Case D (every text key, language
+triple, picture, sound, medicine, problem and mission id); full plays of Case D as a careful student (zh desktop
+with a reload at six points, th phone, en phone in first-person view: all rank S, 19/19, 20 minutes left); three
+careless students (`BAD=1|2|3 CASE=d python3 test_case.py …`, new); `inhorder_test.py` (30 checks), `inhscore_test.py`,
+`inhwhen_test.py`; the order game's layout on 3 screens x 3 languages x 3 inhalers; Four Floors `floors_test.py` in
+th and zh (every branch, three sizes, each day from the title, no untranslated text), leaving and returning mid-day,
+all gestures by mouse and by touch, three days at normal speed by touch, sounds and pictures over http, and the title,
+credits and end-of-day screens on four screen shapes.
+
+Found and fixed:
+- **Visit time said 70, was 60.** `mk_cases.py` merges the Case D source with the engine and keeps the engine's side
+  where both changed a line, without a word. `VISIT_MIN:70` (17 Nov) was lost that way while the title page and Pilly
+  said 70 minutes. `cd/mk_dease_post.py` (new, last Case D step in `rebuild_cd.sh`) puts it back on the built page
+  and now **fails the build** if any line the Case D patch scripts added is missing from the built page.
+- **Chapter 4 after a reload** showed the four-bags overview again in the middle of the missions. It shows only
+  before the first mission now.
+- **Search ended by the clock** (super magnifier pressed until the visit time is gone): Ms Yeh said "we have the
+  evidence … let's hear Uncle Lee's side" with key items missing and the visit over. She now says time is up and how
+  many key items were found (`mk_dease_post.py`, step 3).
+- **Order game, summary card**: with a long summary (English, Respimat, decoys used) the card grew past the bench and
+  its buttons with it. The card now has a maximum height and scrolls inside; the buttons stay in view (sticky). The
+  order-mode summary is set a little tighter so the worst case found fits a phone without scrolling.
+- **Order game, skipped animation**: every mistake raised its warning banner and buzzer at the same instant, a pile
+  of banners over the summary. With "skip", no banners and no buzzers (the summary lists the mistakes); banners still
+  on screen are cleared when the summary opens.
+- **Four Floors on a phone held sideways**: the top of the title and of the end-of-day card was cut off, and Case D
+  (played sideways) opens Four Floors in a new tab. A "turn your phone upright" screen shows on a touch screen in
+  landscape under 520 px high (`build_floors.py` step 8, zh text in `floors_zh.json`); "keep playing sideways"
+  dismisses it. Tablets and desktop windows never see it.
+- Test harness: `vis()` used `offsetParent`, which is always null for `position:fixed`, so the bot never saw `#modal`
+  and never answered a confirmation. It uses `getClientRects()` now. `BAD=1`: few questions, super magnifier, two
+  wrong items per statement (ran out of time in chapter 3: rank D, bad ending). `BAD=2`: super magnifier until the
+  clock is at zero in chapter 2 (rank D). `BAD=3`: chapters 1-3 well, then wrong medicines, decoy inhaler cards,
+  wrong counter-arguments, a one-word summary (rank D, 19/19 shown, 0/4 missions). No script errors in any of them.
+
+Seen, left as it is (engine-wide or the owner's call): the clock and the results page can show a negative number of
+minutes after a time-out (-3); the language is not remembered across a reload; Four Floors says "three doctors,
+three bags, thirteen packets" and "three nights ago" where Case D has 20 medicines from four places and the fall on
+Thursday night. Not checkable from here: real phones, sound by ear, the instructor's server settings (including
+whether they override the 70 minutes) and the open/closed switch.

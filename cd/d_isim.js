@@ -385,14 +385,15 @@ function inhSim(dev){
 #isim .is-score ol{margin:4px 0 0;padding-left:30px;columns:2;column-gap:26px;font-size:17px;line-height:1.45;font-weight:700;color:#2a2140}#isim .is-score ol li.no{color:#d81b3c}
 #isim .io-list .gbtn{font-size:18px;padding:8px 10px;margin:4px 8px 6px}
 #isim.order .is-bench .is-meter{position:absolute;right:12px;top:12px;width:104px;height:170px;z-index:2;background:rgba(244,247,251,.9)}
-#isim .is-sum .card{width:min(760px,92%);background:#fff;border-radius:22px;padding:18px 24px;box-shadow:0 0 0 4px #8c9a3e,0 12px 30px rgba(0,0,0,.2)}
+#isim .is-sum .card{width:min(760px,92%);max-height:calc(100% - 18px);overflow-y:auto;overscroll-behavior:contain;background:#fff;border-radius:22px;padding:18px 24px;box-shadow:0 0 0 4px #8c9a3e,0 12px 30px rgba(0,0,0,.2)}
 #isim .is-sum h3{margin:0 0 10px;font-family:var(--tc);font-size:28px}
+#isim .is-sum.ord .card{padding:12px 22px;max-height:calc(100% - 8px)}#isim .is-sum.ord h3{margin:0 0 6px;font-size:25px}#isim .is-sum.ord .card>ul{margin:6px 0 0;padding-left:24px}#isim .is-sum.ord .card>ul li{font-size:16px;line-height:1.3;margin:2px 0}#isim .is-sum.ord .is-hn{margin:6px 0 0;font-size:16px}
 #isim .is-sum li{font-size:19px;line-height:1.45;margin:4px 0;font-weight:700}
 #isim .is-score{margin:0 0 8px;padding:8px 12px;border-radius:14px;background:#f3faf0;box-shadow:inset 0 0 0 2px #cfe8c4}
 #isim .is-score b{font-size:22px;color:#2b6b2b}#isim .is-score small{font-size:15px;color:#a8620e;font-weight:800;margin-left:6px}
 #isim .is-score ul{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;margin:6px 0 0;padding:0;list-style:none}
 #isim .is-score li{font-size:16px;margin:1px 0;font-weight:700}#isim .is-score li.no{color:#b3261e}
-#isim .is-sum .act{display:flex;gap:12px;justify-content:flex-end;margin-top:12px}
+#isim .is-sum .act{display:flex;gap:12px;justify-content:flex-end;margin:4px 0 0;padding:8px 0 0;position:sticky;bottom:0;background:linear-gradient(rgba(255,255,255,0),#fff 9px);box-shadow:0 18px 0 #fff}   /* a long summary scrolls inside the card; the buttons stay in view */
 #isim [data-p]{cursor:pointer}
 #isim .sd-cap{transition:opacity .3s}
 #isim .sd-mouth .m-open,#isim .sd-mouth .m-seal{display:none}
@@ -650,7 +651,7 @@ function inhSim(dev){
           sc:{ok:MAX-bad.length, max:MAX, hints:h, pts:Math.max(0,MAX-bad.length-h), bad}}; };
       const W=ms=>new Promise(r=>setTimeout(r,skip?0:ms));
       const tw=(get,set,to,ms)=>new Promise(r=>tween(get,set,to,skip?1:ms,r));
-      const E=k=>{ if(!SIM_ERR[k]) k='order'; if(!errsP.includes(k)) errsP.push(k); if(!ex) toast('⚠️ '+L(SIM_ERR[k])); sfx.error(); };
+      const E=k=>{ if(!SIM_ERR[k]) k='order'; if(!errsP.includes(k)) errsP.push(k); if(skip) return; if(!ex) toast('⚠️ '+L(SIM_ERR[k])); sfx.error(); };   /* skipped animation: no pile of warnings and no burst of buzzers; the summary lists them */
       const getP=dev==='spacer'?()=>s.sp:()=>s.pos, setP=dev==='spacer'?p=>{ s.sp=p; }:p=>{ s.pos=p; };
       const fromMouth=async()=>{ s.atMouth=false; await tw(getP,setP,dev==='spacer'?SP_HOME:HOME,420); draw(); };
       const prep=()=>{ if(s.exhaled&&!s.good){ s.exhaled=false; s.lungs=.55; draw(); } };   // a step that takes time after breathing out: the lungs fill again
@@ -708,7 +709,7 @@ function inhSim(dev){
         const end=()=>{ finished=true; timers.forEach(clearTimeout); typeof audioDuck==='function'&&audioDuck(0); host.classList.add('hidden'); host.innerHTML=''; res({ok, errs:lastE, firstErrs:firstE, tries:tr, hints:ex?0:hintN, score:first}); };
         if(ex){ sfx.select(); setTimeout(end,500); return; }
         if(ok) sfx.get(); else sfx.error();
-        const sum=document.createElement('div'); sum.className='is-sum';
+        const sum=document.createElement('div'); sum.className='is-sum ord'; $$('#toasts .toast').forEach(t=>t.remove());
         sum.innerHTML=`<div class="card"><h3>${ok?'🎉 '+esc(L(ORDX.right)):'🔧 '+esc(L(ORDX.wrong))}</h3><div class="is-score"><b>📋 ${esc(L(SIMX.scoreT))} ${first.pts}/${first.max}</b>${first.hints?`<small>💡 −${first.hints}</small>`:''}${tr>1?`<small>${esc(L(ORDX.firstNote))}</small>`:''}
           ${ok?'':`${[['decoy','🚫'],['gone','❌'],['mis','❌']].map(([q,ic])=>g[q].length?`<p class="io-mis">${ic} ${esc(L(ORDX[q]))}: <b>${g[q].map(k=>esc(L(CARDS[k]))).join(' · ')}</b></p>`:'').join('')}<p class="io-mis">✅ ${esc(L(ORDX.rightO))}:</p><ol>${g.near.map(k=>`<li class="${g.badK.includes(k)?'no':''}">${CARDS[k][3]} ${esc(L(CARDS[k]))}</li>`).join('')}</ol>`}</div>${ok?'':`<ul>${lastE.map(k=>`<li>${esc(L(SIM_ERR[k]))}</li>`).join('')}</ul>`}${dev==='resp'?`<p class="is-hn">🟢 ${esc(L(ORDX.twice))}</p>`:''}
           <div class="act">${ok||tr>=2?'':`<button class="gbtn gray" id="simAgain">${esc(L(ORDX.redo))}</button>`}<button class="gbtn green" id="simCont">${esc(L(SIMX.cont))}</button></div></div>`;

@@ -7,10 +7,10 @@ from playwright.sync_api import sync_playwright
 SP = os.path.dirname(os.path.abspath(__file__)); OUT = f'{SP}/t15'; os.makedirs(OUT, exist_ok=True)
 CASE = os.environ.get('CASE', 'c'); LANG = sys.argv[1] if len(sys.argv) > 1 else 'zh'; MODE = sys.argv[2] if len(sys.argv) > 2 else 'practice'
 MOB = os.environ.get('MOBILE') == '1'; VIEWM = os.environ.get('VIEW', 'tp')
-TAG = f'{CASE}_{LANG}_{MODE[0]}_{"m" if MOB else "d"}_{VIEWM}'
+TAG = f'{CASE}_{LANG}_{MODE[0]}_{"m" if MOB else "d"}_{VIEWM}' + ('_bad' + os.environ['BAD'].replace('1', '') if os.environ.get('BAD') in ('1', '2', '3') else '')
 URL = os.environ.get('GAME_URL', f'http://localhost:8100/case-{CASE}/?class=ph2026a')
 errors, logs, notes = [], [], {}
-def vis(pg, sel): return pg.evaluate(f"()=>{{const e=document.querySelector('{sel}'); return !!e && !e.classList.contains('hidden') && e.offsetParent!==null}}")
+def vis(pg, sel): return pg.evaluate(f"()=>{{const e=document.querySelector('{sel}'); return !!e && !e.classList.contains('hidden') && e.getClientRects().length>0}}")
 def shot(pg, n): pg.screenshot(path=f'{OUT}/{TAG}_{n}.png')
 TXT = {
  'name': {'zh': '小晴', 'en': 'Mint', 'th': 'มิ้นท์'},
@@ -41,6 +41,7 @@ def handle_cq(pg):
     else:
         key = 'post' if (st['pp'] and st['pre'] >= 6) else 'pre' if st['pp'] else 'cq'
         j = '0' if key in ('post', 'cq') or (key == 'pre' and st['pre'] < 2) else '1'
+        if BAD: j = '1' if j == '0' else '0'
         pg.click(f'#cqBody .cqo[data-j="{j}"]')
     pg.click('#cqGo'); time.sleep(0.75); pg.click('#cqGo'); time.sleep(0.3)   # Continue ignores taps for 0.6 s after Submit
 def center(pg, sel):
@@ -73,7 +74,7 @@ def handle_sim(pg):
     if not dev or dev in done: return False
     done.append(dev); time.sleep(0.6); shot(pg, f'sim_{dev}')
     if pg.locator('#ioPool').count():   # the inhaler game is an ordering task (17 Nov 2026): place a correct order, watch, continue
-        for k in pg.evaluate("(d)=>ORD_VALID[d][0]", dev): pg.click(f'#ioPool .io-card[data-k="{k}"]'); time.sleep(0.08)
+        for k in (pg.evaluate("()=>[...document.querySelectorAll('#ioPool .io-card')].map(c=>c.dataset.k).slice(0, document.querySelectorAll('#ioSeq .io-slot').length)") if BAD else pg.evaluate("(d)=>ORD_VALID[d][0]", dev)): pg.click(f'#ioPool .io-card[data-k="{k}"]'); time.sleep(0.08)
         shot(pg, f'sim_{dev}_order'); pg.click('#ioGo'); time.sleep(0.5)
         if dev != 'mdi' and pg.locator('#ioSkip').count(): pg.click('#ioSkip')
         t0 = time.time()
@@ -106,6 +107,9 @@ def handle_sim(pg):
     time.sleep(0.8); notes.setdefault('sim', {})[dev] = pg.evaluate("()=>{const l=(window.__PD__.S.log||[]).filter(e=>e.type==='inhSim'); return l.length?l[l.length-1]:null}")
     return True
 RES = os.environ.get('RESUME') == '1'
+BADT = os.environ.get('BAD') == '2'   # BAD=2: the same careless student also presses the super magnifier until the visit time is gone
+BADL = os.environ.get('BAD') == '3'   # BAD=3: chapters 1-3 played well, then everything wrong from the medicine review on (BAD=1 runs out of time in chapter 3)
+BAD = os.environ.get('BAD') in ('1', '2')   # a careless student: few questions, little searching, wrong evidence, wrong medicines, decoys, wrong counter-arguments (21 Nov 2026)
 SNAP = """()=>{const S=window.__PD__.S; return {ch:S.chapter, q:S.questions, asked:Object.keys(S.asked).length, visit:S.visit, trust:S.trust, pat:S.pat, opened:Object.keys(S.opened||{}).length, ev:S.evidence.length, charges:S.charges, found:Object.keys(S.found).length, hearts:S.hearts, mr:S.mr.ans.length, boss:S.boss.answers.length, calc:Object.keys(S.calc).sort().join(','), inh:JSON.stringify(S.seg&&S.seg.inhR||null)}}"""
 def reload_resume(pg, tag, until):
     """close the game mid-chapter (reload), press Continue on the title, and check that nothing was lost"""
@@ -212,11 +216,12 @@ def pump(pg, until=None, maxn=320, pick=0):
         if vis(pg, '#isim') and handle_sim(pg): continue
         if vis(pg, '#cgame') and handle_cg(pg): continue
         if vis(pg, '#epiBox'): time.sleep(1.0); shot(pg, 'epilogue'); pg.click('#epiOk'); time.sleep(0.3); continue
+        if vis(pg, '#medrev') and pg.locator('#bagGo').count(): notes['bags'] = pg.locator('#medrev .bag li').count(); pg.click('#bagGo'); time.sleep(0.5); continue   # Case D: the four bags at a glance
         if pg.evaluate("()=>!!document.querySelector('#intro')"): pg.click('#intro'); time.sleep(0.4); continue
         if vis(pg, '#getCard'): pg.click('#gOk'); time.sleep(0.3); continue
         if vis(pg, '#choices'):
             n = pg.evaluate("()=>document.querySelectorAll('#choices .cbtn').length")
-            if n: time.sleep(0.3); pg.click(f'#choices .cbtn[data-i="{min(pick, n - 1)}"]'); time.sleep(0.3); continue
+            if n: time.sleep(0.3); pg.click(f'#choices .cbtn[data-i="{n - 1 if BAD else min(pick, n - 1)}"]'); time.sleep(0.3); continue
         if pg.evaluate("()=>!!document.querySelector('#chapter')"): time.sleep(0.4); continue
         busy = pg.evaluate("()=>!!(window.__PD__.D.res||window.__PD__.D.typing)")
         if vis(pg, '#tbox') and busy: pg.click('#tbox'); time.sleep(0.2); continue
@@ -253,10 +258,13 @@ with sync_playwright() as p:
     notes['first'] = pg.evaluate("()=>window.__PD__.S.first")
     time.sleep(0.4); shot(pg, '02_board')
     TOP = pg.evaluate("()=>TOPICS1.map(t=>t.id)"); FOL = pg.evaluate("()=>FOLLOW1.map(f=>[f.id,f.parent])")
-    free(pg, TXT['empathy'][LANG])
+    if not BAD: free(pg, TXT['empathy'][LANG])
     asked = []
     TOP = [t for t in TOP if t != 'hope']; TOP.insert(min(3, len(TOP)), 'hope')   # what the patient hopes for: early, it opens up the talk
-    for t in TOP:
+    for t in (TOP[:3] if BAD else TOP):
+        if BAD:
+            if ask(pg, t): asked.append(t)
+            continue
         if t == 'checkup': free(pg, TXT['confid'][LANG])
         if ask(pg, t): asked.append(t)
         if len(asked) >= 4 and not notes.get('r1'): notes['r1'] = 1; reload_resume(pg, 'ch1', lambda: vis(pg, '#board'))
@@ -277,7 +285,7 @@ with sync_playwright() as p:
     plan.sort(key=lambda x: zorder.index(x['zone']))
     notes['hotspots'] = [(x['h'], x['zone'], x['item'], x['key']) for x in plan]
     cur = None
-    for x in plan:
+    for x in (plan[:2] + [q for q in plan[2:] if q['key']] if BAD else plan):
         if pg.evaluate("()=>window.__PD__.S.charges") <= 0 or not vis(pg, '#searchHud'): break
         if x['zone'] != cur:
             if cur and vis(pg, '#zoomBack'): pg.click('#zoomBack'); time.sleep(0.9)
@@ -291,6 +299,11 @@ with sync_playwright() as p:
             if vis(pg, '#getCard'): time.sleep(0.3); pg.click('#gOk'); time.sleep(0.6); break
         pump(pg, until=lambda: vis(pg, '#searchHud') and not vis(pg, '#tbox') and not vis(pg, '#getCard'), maxn=40)
         notes['spots'] = notes.get('spots', 0) + 1
+        if BAD and notes['spots'] == 2:   # practice mode: the search only ends with every key item found, so the careless student leans on the super magnifier
+            for _ in range(20 if BADT else 3):
+                if not vis(pg, '#sHint') or pg.evaluate("()=>window.__PD__.S.visit") <= 0: break
+                pg.click('#sHint'); time.sleep(0.5); notes['hintsSearch'] = notes.get('hintsSearch', 0) + 1
+            notes['st_after_hints'] = pg.evaluate("()=>({visit:window.__PD__.S.visit, timeout:!!window.__PD__.S.timeout, ch:window.__PD__.S.chapter, hud:!document.querySelector('#searchHud').classList.contains('hidden')})"); shot(pg, '05b_hints')
         if notes['spots'] == 3 and RES: reload_resume(pg, 'ch2', lambda: vis(pg, '#searchHud') and not vis(pg, '#tbox')); cur = None
     if cur and vis(pg, '#zoomBack'): pg.click('#zoomBack'); time.sleep(0.9)
     notes['evidence'] = pg.evaluate("()=>window.__PD__.S.evidence"); notes['missing_key'] = pg.evaluate("()=>KEY_ITEMS.filter(k=>!window.__PD__.S.evidence.includes(k))")
@@ -306,34 +319,45 @@ with sync_playwright() as p:
         idx = pg.evaluate("()=>{const m=document.querySelector('#tName').textContent.match(/〔(\\d)\\//); return m?m[1]:'1'}")
         item = TESTI[int(idx) - 1]['need']
         pg.click('#tPresent'); time.sleep(0.35)
-        if vis(pg, '#tray'): pg.click(f'[data-e="{item}"]')
+        if vis(pg, '#tray'):
+            wsel = f'#tray [data-e]:not(.used):not(.tried):not([data-e="{item}"])'; wr = notes.setdefault('wrong_by', {})
+            if BAD and wr.get(idx, 0) < 2 and pg.locator(wsel).count(): wr[idx] = wr.get(idx, 0) + 1; notes['wrong_ev'] = notes.get('wrong_ev', 0) + 1; pg.locator(wsel).first.click()   # two wrong items per statement, then the right one
+            elif not pg.locator(f'#tray [data-e="{item}"]').count(): notes['wrong_ev'] = notes.get('wrong_ev', 0) + 1; pg.locator('#tray [data-e]').first.click()
+            else: pg.click(f'[data-e="{item}"]')
         time.sleep(0.3)
         pump(pg, until=lambda: vis(pg, '#testiUI') or vis(pg, '#locks') or vis(pg, '#inputBox') or vis(pg, '#medrev') or vis(pg, '#inhal'))
         if vis(pg, '#testiUI') and not notes.get('r3') and pg.evaluate("()=>Object.keys(window.__PD__.S.seg&&window.__PD__.S.seg.t3&&window.__PD__.S.seg.t3.solved||{}).length") >= 2: notes['r3'] = 1; reload_resume(pg, 'ch3', lambda: vis(pg, '#testiUI'))
         if vis(pg, '#locks') or vis(pg, '#inputBox') or vis(pg, '#medrev') or vis(pg, '#inhal'): break
     notes['before_lock'] = pg.evaluate("()=>({hearts:window.__PD__.S.hearts, trust:window.__PD__.S.trust, found:Object.keys(window.__PD__.S.found).length})")
     for k in range(60):
-        if vis(pg, '#tray'): pg.click('[data-e="pillbox"]'); time.sleep(0.4); continue
+        if vis(pg, '#tray'):
+            wsel = '#tray [data-e]:not(.tried):not([data-e="pillbox"])'; notes['lock_wrong'] = notes.get('lock_wrong', 0) + (1 if BAD else 0)
+            (pg.locator(wsel).first.click() if (BAD and notes['lock_wrong'] <= 2 and pg.locator(wsel).count()) or not pg.locator('#tray [data-e="pillbox"]').count() else pg.click('[data-e="pillbox"]')); time.sleep(0.4); continue
         if vis(pg, '#inputBox'):
             if vis(pg, '#inChips'): pg.click('#inChips [data-c="1"]'); pg.click('#inChips [data-c="2"]')
-            else: pg.fill('#inText', TXT['lock'][LANG])
+            else: pg.fill('#inText', '...' if BAD else TXT['lock'][LANG])
             pg.click('#inSend'); time.sleep(0.4); continue
         if pg.evaluate("()=>window.__PD__.S.found.P8!=null||!!window.__PD__.S.refused"): break
-        if vis(pg, '#choices'): pg.click('#choices .cbtn[data-i="0"]'); time.sleep(0.4); continue
+        if vis(pg, '#choices'): pg.locator('#choices .cbtn').last.click() if BAD else pg.click('#choices .cbtn[data-i="0"]'); time.sleep(0.4); continue
         if vis(pg, '#tbox'): pg.click('#tbox'); time.sleep(0.25); continue
         time.sleep(0.3)
     notes['P8'] = pg.evaluate("()=>window.__PD__.S.found.P8!=null"); notes['refused'] = pg.evaluate("()=>window.__PD__.S.refused||null")
-    pump(pg, until=lambda: vis(pg, '#medrev'), pick=0)
+    STATE = "()=>{const S=window.__PD__.S; return {ch:S.chapter, visit:S.visit, timeout:!!S.timeout, hearts:S.hearts, trust:S.trust, pat:S.pat, found:Object.keys(S.found).length, mr:S.mr.ans.length, mrCut:S.fl.mrCut, refused:S.refused||null}}"
+    LATER = lambda: vis(pg, '#results') or vis(pg, '#finalBox') or pg.evaluate("()=>document.querySelectorAll('#bossCards .ccard').length") > 0
+    notes['st_before_mr'] = pg.evaluate(STATE)
+    if BADL: BAD = True
+    pump(pg, until=lambda: vis(pg, '#medrev') or LATER(), pick=0)
     NM = pg.evaluate("()=>window.__PD__.MISSIONS.length")
     for i in range(NM):
         if pg.locator('#bagGo').count() and vis(pg, '#medrev'):   # Case D: the four bags at a glance (17 Nov 2026)
             shot(pg, '11_bags'); notes['bags'] = pg.locator('#medrev .bag li').count(); pg.click('#bagGo'); time.sleep(0.5)
-        pump(pg, until=lambda: vis(pg, '#medrev') and pg.evaluate("()=>!!document.querySelector('#mrOk') && !document.querySelector('#medrev [data-d].ok, #medrev [data-d].miss, #medrev [data-d].bad') && ![...document.querySelectorAll('#medrev [data-d]')].some(c=>c.style.opacity)"), pick=0)
+        pump(pg, until=lambda: LATER() or vis(pg, '#medrev') and pg.evaluate("()=>!!document.querySelector('#mrOk') && !document.querySelector('#medrev [data-d].ok, #medrev [data-d].miss, #medrev [data-d].bad') && ![...document.querySelectorAll('#medrev [data-d]')].some(c=>c.style.opacity)"), pick=0)
+        if LATER() or not (vis(pg, '#medrev') and pg.locator('#mrOk').count()): notes['mr_stopped_at'] = i; notes['st_mr_stop'] = pg.evaluate(STATE); shot(pg, 'mr_stopped'); break   # the visit ran out: the rest of the med review is skipped
         if i == 3: reload_resume(pg, 'ch4', lambda: vis(pg, '#medrev') and pg.evaluate("()=>!!document.querySelector('#mrOk')"))
         ans = pg.evaluate(f"()=>window.__PD__.MISSIONS[{i}].ans")
         if pg.locator('#medrev .acb-bins').count():
             try:
-                for id_ in pg.evaluate("()=>ACB_RED"):   # red basket only (12 Nov 2026): a tap puts the card in
+                for id_ in (['clarinase', 'mopride'] if BAD else pg.evaluate("()=>ACB_RED")):   # red basket only (12 Nov 2026): a tap puts the card in
                     pg.click(f'#medrev .acard[data-d="{id_}"]', timeout=8000); time.sleep(0.12)
             except Exception as e:
                 shot(pg, 'acb_fail'); print('ACB FAIL', pg.evaluate("()=>({hidden:document.querySelector('#medrev').className, tray:[...document.querySelectorAll('#acbTray .acard')].map(c=>c.dataset.d), bins:[...document.querySelectorAll('.acb-bin')].map(b=>b.dataset.bin+':'+[...b.querySelectorAll('.acard')].map(c=>c.dataset.d).join(',')), head:(document.querySelector('#medrev .mr-head .tx')||{}).textContent, timer:(document.querySelector('#mrTimer')||{}).textContent})")); raise
@@ -342,13 +366,13 @@ with sync_playwright() as p:
             for a_ in ans: pg.click(f'#medrev .dm-board [data-d="{a_}"]'); time.sleep(0.1)
             notes['daymr'] = True
         else:
-            for a_ in ans: pg.click(f'#medrev .dcard[data-d="{a_}"]'); time.sleep(0.1)
+            for a_ in (pg.evaluate("(ans)=>[...document.querySelectorAll('#medrev .dcard')].map(c=>c.dataset.d).filter(d=>!ans.includes(d)).slice(0,2)", ans) if BAD else ans): pg.click(f'#medrev .dcard[data-d="{a_}"]'); time.sleep(0.1)
         if i == 0: shot(pg, '12_mission')
         pg.click('#mrOk'); time.sleep(0.6)
         if pg.locator('#mrNext').count():   # the result panel stays until Continue (mk_clarity.py)
             if i == 0: shot(pg, '12_mission_result')
             time.sleep(0.8); pg.click('#mrNext'); time.sleep(0.4)
-    notes['mr'] = pg.evaluate("()=>window.__PD__.S.mr.perfect"); notes['missions'] = NM
+    notes['mr'] = pg.evaluate("()=>window.__PD__.S.mr.perfect"); notes['missions'] = NM; notes['st_after_mr'] = pg.evaluate(STATE)
     if os.environ.get('D2'):   # D2 preview: teach-back (inhaler demo, memo, corrections) in place of the boss
         seen = set(); MISS = int(os.environ.get('D2_MISS', '0'))   # D2_MISS=1: let one slip pass and leave one wrong line uncircled
         for turn in range(60):
@@ -375,16 +399,17 @@ with sync_playwright() as p:
                 pg.click(f'#tback .ccard[data-j="{j}"]'); time.sleep(0.9)
             else: time.sleep(0.3)
         notes['tb'] = pg.evaluate("()=>{const B=window.__PD__.S.boss; return {demo:B.demo&&{found:B.demo.found, fa:B.demo.fa, slips:B.demo.slips}, note:B.note, answers:B.answers.map(a=>a.p+':'+a.q), alive:B.alive}}")
-    for turn in range(0 if os.environ.get('D2') else 10):
+    for turn in range(0 if os.environ.get('D2') else (25 if BAD else 10)):
         if not pump(pg, until=lambda: pg.evaluate("()=>document.querySelectorAll('#bossCards .ccard').length") > 0 or vis(pg, '#finalBox'), maxn=160): break
         if vis(pg, '#finalBox'): break
         if turn == 2 and not notes.get('r5'): notes['r5'] = 1; reload_resume(pg, 'ch5', lambda: pg.evaluate("()=>document.querySelectorAll('#bossCards .ccard').length") > 0)
         mi = pg.evaluate("()=>MYTHS.filter(m=>m.p!=='P8'||window.__PD__.S.found.P8)[window.__PD__.S.boss.answers.length].p")
         j = pg.evaluate("(p)=>{const m=MYTHS.find(x=>x.p===p); const want=L(m.c.find(c=>c[0]===2)[1]); const cs=[...document.querySelectorAll('#bossCards .ccard')]; return Math.max(0,cs.findIndex(c=>c.textContent.includes(want.slice(0,40))))}", mi)
         if turn == 0: time.sleep(0.5); shot(pg, '13_boss')
+        if BAD: j = pg.evaluate("(j)=>{const n=document.querySelectorAll('#bossCards .ccard').length; return (j+1)%n}", j)
         pg.click(f'#bossCards .ccard[data-j="{j}"]'); time.sleep(0.9)
     pump(pg, until=lambda: vis(pg, '#finalBox'))
-    FINAL = pg.evaluate("()=>SUM_ORDER.map(i=>L(RUBRIC_SUM[i].ex)).join('\\n')")
+    FINAL = 'ok' if BAD else pg.evaluate("()=>SUM_ORDER.map(i=>L(RUBRIC_SUM[i].ex)).join('\\n')")
     pg.fill('#fText', FINAL); time.sleep(0.3); shot(pg, '13c_final'); pg.click('#fSend'); time.sleep(0.5)
     if vis(pg, '#fWarn'): pg.click('#fAnyway'); time.sleep(0.5)
     notes['finalCov'] = pg.evaluate("(t)=>sumCoverage(t)", FINAL)
@@ -411,4 +436,4 @@ with sync_playwright() as p:
     b.close()
 notes['errors'] = errors; notes['logs'] = [l for l in logs if 'ERR_FAILED' not in l and 'Failed to load resource' not in l][:8]
 open(f'{OUT}/{TAG}_notes.json', 'w', encoding='utf-8').write(json.dumps(notes, ensure_ascii=False, indent=1))
-print(TAG, json.dumps({k: notes.get(k) for k in ('resume', 'result', 'fb', 'fbSaved', 'hist', 'cg', 'acb', 'daymr', 'ui', 'missing_key', 'P8', 'refused', 'mr', 'missions', 'finalCov', 'sync', 'errors', 'logs', 'sim')}, ensure_ascii=False))
+print(TAG, json.dumps({k: notes.get(k) for k in ('st_before_mr', 'mr_stopped_at', 'st_mr_stop', 'st_after_mr', 'wrong_ev', 'resume', 'result', 'fb', 'fbSaved', 'hist', 'cg', 'acb', 'daymr', 'ui', 'missing_key', 'P8', 'refused', 'mr', 'missions', 'finalCov', 'sync', 'errors', 'logs', 'sim')}, ensure_ascii=False))

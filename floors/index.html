@@ -161,6 +161,16 @@ html,body{-webkit-touch-callout:none;margin:0;height:100%;background:#1c1512;col
 .cal .gr b.new{animation:calw .7s ease both;color:#b3261e}
 .cal p{margin:8px 0 0;font-size:12px;text-align:center;opacity:.7}
 @keyframes calw{from{opacity:0;transform:rotate(-4deg) scale(1.6)}to{opacity:1;transform:rotate(-4deg) scale(1)}}
+
+#rot{display:none;position:fixed;inset:0;z-index:99999;background:#17110d;color:#fff8ea;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:16px;font-family:'Sarabun',sans-serif}
+#rot .ph{width:44px;height:74px;border:3px solid #fff8ea;border-radius:9px;position:relative;animation:rotph 2.4s ease-in-out infinite}
+#rot .ph:after{content:'';position:absolute;left:50%;bottom:5px;width:12px;height:3px;margin-left:-6px;border-radius:2px;background:#fff8ea}
+#rot b{font:600 20px/1.3 'Noto Serif Thai',serif}
+#rot span{font-size:14px;opacity:.75}
+#rot button{appearance:none;background:none;border:1px solid rgba(255,248,234,.4);border-radius:999px;color:#fff8ea;font:500 13px/1 'Sarabun',sans-serif;padding:8px 16px;margin-top:4px;cursor:pointer}
+@keyframes rotph{0%,25%{transform:rotate(-90deg)}60%,100%{transform:rotate(0)}}
+@media (prefers-reduced-motion:reduce){#rot .ph{animation:none}}
+@media (orientation:landscape) and (max-height:520px) and (pointer:coarse){html:not(.rot-ok) #rot{display:flex}}
 #langB{appearance:none;border:1px solid rgba(255,248,234,.45);border-radius:999px;background:none;color:#fff8ea;font:600 14px/1 'Sarabun','Noto Serif TC',sans-serif;margin-top:14px;padding:9px 18px;cursor:pointer}
 html.zh body,html.zh button,html.zh #txt,html.zh #title *,html.zh #cred *,html.zh #pause *,html.zh #acts *,html.zh #clock,html.zh #more,html.zh #diary .next,html.zh #ffw{font-family:'Noto Serif TC','Songti TC','PMingLiU','Noto Serif CJK TC',serif !important}
 html.zh #diary .pg,html.zh #diary .pg *,html.zh .cal,html.zh .cal *{font-family:'LXGW WenKai TC','Noto Serif TC','Kaiti TC','DFKai-SB',serif !important}
@@ -168,6 +178,7 @@ html.zh #langB{font-family:'Sarabun',sans-serif !important}
 </style>
 </head>
 <body>
+<div id="rot" role="dialog" aria-live="polite"><div class="ph"></div><b>หมุนโทรศัพท์เป็นแนวตั้ง</b><span>เกมนี้ออกแบบให้เล่นแนวตั้ง</span><button type="button" onclick="document.documentElement.classList.add('rot-ok')">เล่นแนวนอนต่อไป</button></div>
 <div id="app">
   <div id="view">
     <div id="cam"><div id="zoom"><img id="imA" alt=""><img id="imB" alt=""></div></div>
@@ -204,6 +215,9 @@ html.zh #langB{font-family:'Sarabun',sans-serif !important}
 /* ---- language layer: Thai is the source text; in zh mode every Thai text node is swapped on the fly ---- */
 const I18=(()=>{ const D={
 "map": {
+    "หมุนโทรศัพท์เป็นแนวตั้ง": "請把手機轉成直向",
+    "เกมนี้ออกแบบให้เล่นแนวตั้ง": "這個遊戲是為直向畫面設計的",
+    "เล่นแนวนอนต่อไป": "繼續用橫向玩",
 "พัก": "歇一下",
 "ปิดอยู่ · แตะเพื่อเปิด": "關閉中 · 點一下開啟",
 "เปิดอยู่ · แตะเพื่อปิด": "開啟中 · 點一下關閉",

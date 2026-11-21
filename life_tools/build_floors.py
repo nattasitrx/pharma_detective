@@ -53,6 +53,21 @@ css="""
 """
 i=s.find('</style>'); s=s[:i]+css+s[i:]
 s=s.replace(" 'night' 'letter'\""," 'night'\"")
+# 8. the game is laid out upright; a phone held sideways (students arrive that way from Case D) is asked to turn
+css="""
+#rot{display:none;position:fixed;inset:0;z-index:99999;background:#17110d;color:#fff8ea;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:16px;font-family:'Sarabun',sans-serif}
+#rot .ph{width:44px;height:74px;border:3px solid #fff8ea;border-radius:9px;position:relative;animation:rotph 2.4s ease-in-out infinite}
+#rot .ph:after{content:'';position:absolute;left:50%;bottom:5px;width:12px;height:3px;margin-left:-6px;border-radius:2px;background:#fff8ea}
+#rot b{font:600 20px/1.3 'Noto Serif Thai',serif}
+#rot span{font-size:14px;opacity:.75}
+#rot button{appearance:none;background:none;border:1px solid rgba(255,248,234,.4);border-radius:999px;color:#fff8ea;font:500 13px/1 'Sarabun',sans-serif;padding:8px 16px;margin-top:4px;cursor:pointer}
+@keyframes rotph{0%,25%{transform:rotate(-90deg)}60%,100%{transform:rotate(0)}}
+@media (prefers-reduced-motion:reduce){#rot .ph{animation:none}}
+@media (orientation:landscape) and (max-height:520px) and (pointer:coarse){html:not(.rot-ok) #rot{display:flex}}
+"""
+i=s.find('</style>'); s=s[:i]+css+s[i:]
+assert s.count('<body>')==1
+s=s.replace('<body>','<body>\n<div id="rot" role="dialog" aria-live="polite"><div class="ph"></div><b>หมุนโทรศัพท์เป็นแนวตั้ง</b><span>เกมนี้ออกแบบให้เล่นแนวตั้ง</span><button type="button" onclick="document.documentElement.classList.add(\'rot-ok\')">เล่นแนวนอนต่อไป</button></div>',1)
 # ---- language layer (Thai / Traditional Chinese)
 zh=open('/home/claude/src/life_tools/floors_zh.json',encoding='utf-8').read().replace('</','<\\/')
 i18=open('/home/claude/src/life_tools/i18n.js',encoding='utf-8').read().replace('__ZH__',zh)

@@ -129,7 +129,7 @@ sub('.dcard .badge{position:absolute;right:5px;bottom:3px;font-size:16px}',
 .fcard.row .top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0}.fcard.row em{position:static;transform:none;font-size:17px;padding:3px 12px;box-shadow:0 2px 0 #c98500}
 .fcard.row b{font-size:25px}.fcard.row q{font-size:17.5px;margin-top:3px}.fcard.row small{font-size:15.5px;margin-top:2px;color:#e9dcff;font-weight:700}""")
 sub("""  await say('pilly','shock',['藥袋危機！一共 4 個任務：點選有問題的藥（可以複選），再按「確認診斷」！','Med-bag crisis! 4 missions: tap the problem drugs (several may apply), then press "Confirm"!','วิกฤตซองยา! มี 4 ภารกิจ: แตะเลือกยาที่มีปัญหา (เลือกได้หลายตัว) แล้วกด "ยืนยัน"!']);""",
-    """  hideAll(); hideText(); await bagOverview(); show('me','L','neutral'); show('yeh','R','smug');   /* mk_dease */
+    """  if(!S.mr.ans.length){ hideAll(); hideText(); await bagOverview(); show('me','L','neutral'); show('yeh','R','smug'); }   /* mk_dease; not again when the game is resumed after a mission */
   await say('pilly','shock',['藥袋危機！一共 4 個任務，一次只看一個問題、只擺出相關的 6 種藥：點選有問題的藥（可以複選），再按「確認診斷」！','Med-bag crisis! 4 missions, one question at a time with only the 6 related medicines on the table: tap the problem drugs (several may apply), then press "Confirm"!','วิกฤตซองยา! มี 4 ภารกิจ ดูทีละเรื่อง วางเฉพาะยาที่เกี่ยวข้อง 6 ตัว: แตะเลือกยาที่มีปัญหา (เลือกได้หลายตัว) แล้วกด "ยืนยัน"!']);""")
 
 # ---------- 3b. the inhaler game is an ordering task now (d_isim.js, INH_ORDER): Ms Yeh's cue says so ----------

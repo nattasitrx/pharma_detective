@@ -1047,7 +1047,7 @@ const CONFIG = {
   STORAGE_KEY:'phd_lee_sessions_v1', MEDIA_KEY:'phd_lee_media_v1',
   SERVER_URL:'https://pharma-detective-api.nattasitrx.workers.dev',   // results & settings server (Cloudflare Worker + D1); '' = off
   GAME_URL:'https://nattasitrx.github.io/pharma_detective/case-d/', // public link of this case (the site root lets students choose a case)
-  VISIT_MIN:60,                     // in-game visit time (minutes) — spent by actions, not real time
+  VISIT_MIN:70,   /* mk_dease_post */                  // in-game visit time (minutes) — spent by actions, not real time
   COST_ASK:2, COST_SEARCH:1, COST_WRONG:3, COST_HINT:5,
   SEARCH_CHARGES:16, HEARTS:5, QTE_SEC:12, BOSS_SEC:25, TRUST_START:3,
   PATIENCE:13, PAT_MAX:17, TRUST_TALK:4  // patience = how many information questions Uncle Lee tolerates · trust needed before he shares his secret
@@ -3166,7 +3166,7 @@ async function prologue(){
   await say('me','shock',['九、九十三次？！那不就差不多每週兩次？！','N-ninety-three?! That\'s almost twice a week?!','เก้า…เก้าสิบสามครั้ง?! เกือบสัปดาห์ละสองครั้งเลยนะ?!']);
   await say('yeh','smug',['藥越拿越多，他卻還是頭暈、沒力氣、一直咳痰。我們要找出他「全部」的健康與用藥問題，一個都不能漏。','More and more medicine — yet he is still dizzy, weak and coughing up phlegm. We must uncover ALL of his health and medication problems. Don\'t miss a single one.','ยาได้มาเยอะขึ้นเรื่อยๆ แต่ลุงยังเวียนหัว ไม่มีแรง ไอมีเสมหะตลอด เราต้องหาปัญหาสุขภาพและการใช้ยา "ทั้งหมด" ของลุง ห้ามพลาดแม้แต่ข้อเดียว']);
   await say('yeh','neutral',['記住三件事：建立信任、仔細觀察、用證據說話。','Remember three things: build trust, observe carefully, and let the evidence speak.','จำไว้ 3 ข้อ: สร้างความไว้ใจ สังเกตให้ละเอียด และพูดด้วยหลักฐาน']);
-  await say('pilly','neutral',['拜訪時間只有 70 分鐘喔！每問一題、每搜一個地方都會用掉時間⏰','You only have 70 minutes of visit time! Every question and every search spends time ⏰','มีเวลาเยี่ยมแค่ 70 นาทีนะ! ทุกคำถามและทุกการค้นจะใช้เวลา ⏰']);
+  await say('pilly','neutral',['拜訪時間只有 70 分鐘喔！每問一題、每搜一個地方都會用掉時間⏰','You only have 70 minutes of visit time! Every question and every search spends time ⏰','มีเวลาเยี่ยมแค่ 70 นาทีนะ! ทุกคำถามและทุกการค้นจะใช้เวลา ⏰'].map(t=>t.replace('70',CONFIG.VISIT_MIN)));
   hide('yeh'); emo('me','neutral');
   await say('sys','neutral',['——星期五下午兩點半，高雄橋頭，精忠新村。才四月底，氣溫已經 33 度，蟬叫得震耳欲聾。','— Friday, 2:30 PM. Jingzhong New Village, Qiaotou, Kaohsiung. It\'s only late April, but it\'s already 33 °C and the cicadas are deafening.','— วันศุกร์ บ่ายสองโมงครึ่ง หมู่บ้านจิงจงซินชุน เขตเฉียวโถว เกาสง เพิ่งปลายเดือนเมษายนแต่อุณหภูมิก็ 33 องศาแล้ว เสียงจักจั่นดังลั่น']);
   await say('sys','neutral',['老舊的公寓沒有電梯。你們一階一階爬上四樓，汗水順著背往下流。','The old block has no lift. You climb to the fourth floor step by step, sweat trickling down your back.','อาคารเก่าไม่มีลิฟต์ พวกคุณไต่บันไดขึ้นชั้นสี่ทีละขั้น เหงื่อไหลลงกลางหลัง']);
@@ -3558,7 +3558,9 @@ async function chapter2(){
   D.searchStop=null;
   clearInterval(gl); camReset(); st.classList.remove('searching','overview'); $('#searchHud').classList.add('hidden'); const sl=curBg()&&curBg().querySelector('#sparkLayer'); if(sl) sl.innerHTML='';
   const bonus=Object.keys(ITEMS).filter(k=>!ITEMS[k].req&&hasEv(k)).length;
-  show('yeh','L','smug'); await say('yeh','smug',[`證據齊了。額外線索 ${bonus}/4。接下來……讓李伯伯自己說說看吧。`,`We have the evidence. Bonus clues: ${bonus}/4. Now… let's hear Uncle Lee's side.`,`หลักฐานครบแล้ว เบาะแสเพิ่ม ${bonus}/4 ต่อไป… ให้ลุงหลี่เล่าเองดีกว่า`]);
+  const keyN=KEY_ITEMS.filter(hasEv).length;
+  if(keyN<KEY_ITEMS.length){ show('yeh','L','sad'); await say('yeh','sad',[`時間到了。關鍵證據只找到 ${keyN}/${KEY_ITEMS.length}，今天只能先到這裡。`,`Time is up. We found only ${keyN} of the ${KEY_ITEMS.length} key items. We have to stop here for today.`,`หมดเวลาแล้ว เจอหลักฐานสำคัญแค่ ${keyN}/${KEY_ITEMS.length} ชิ้น วันนี้ต้องพอแค่นี้ก่อน`]); }
+  else { show('yeh','L','smug'); await say('yeh','smug',[`證據齊了。額外線索 ${bonus}/4。接下來……讓李伯伯自己說說看吧。`,`We have the evidence. Bonus clues: ${bonus}/4. Now… let's hear Uncle Lee's side.`,`หลักฐานครบแล้ว เบาะแสเพิ่ม ${bonus}/4 ต่อไป… ให้ลุงหลี่เล่าเองดีกว่า`]); }
   chapterDone(2);
 }
 /* =====================================================================
@@ -4293,14 +4295,15 @@ function inhSim(dev){
 #isim .is-score ol{margin:4px 0 0;padding-left:30px;columns:2;column-gap:26px;font-size:17px;line-height:1.45;font-weight:700;color:#2a2140}#isim .is-score ol li.no{color:#d81b3c}
 #isim .io-list .gbtn{font-size:18px;padding:8px 10px;margin:4px 8px 6px}
 #isim.order .is-bench .is-meter{position:absolute;right:12px;top:12px;width:104px;height:170px;z-index:2;background:rgba(244,247,251,.9)}
-#isim .is-sum .card{width:min(760px,92%);background:#fff;border-radius:22px;padding:18px 24px;box-shadow:0 0 0 4px #8c9a3e,0 12px 30px rgba(0,0,0,.2)}
+#isim .is-sum .card{width:min(760px,92%);max-height:calc(100% - 18px);overflow-y:auto;overscroll-behavior:contain;background:#fff;border-radius:22px;padding:18px 24px;box-shadow:0 0 0 4px #8c9a3e,0 12px 30px rgba(0,0,0,.2)}
 #isim .is-sum h3{margin:0 0 10px;font-family:var(--tc);font-size:28px}
+#isim .is-sum.ord .card{padding:12px 22px;max-height:calc(100% - 8px)}#isim .is-sum.ord h3{margin:0 0 6px;font-size:25px}#isim .is-sum.ord .card>ul{margin:6px 0 0;padding-left:24px}#isim .is-sum.ord .card>ul li{font-size:16px;line-height:1.3;margin:2px 0}#isim .is-sum.ord .is-hn{margin:6px 0 0;font-size:16px}
 #isim .is-sum li{font-size:19px;line-height:1.45;margin:4px 0;font-weight:700}
 #isim .is-score{margin:0 0 8px;padding:8px 12px;border-radius:14px;background:#f3faf0;box-shadow:inset 0 0 0 2px #cfe8c4}
 #isim .is-score b{font-size:22px;color:#2b6b2b}#isim .is-score small{font-size:15px;color:#a8620e;font-weight:800;margin-left:6px}
 #isim .is-score ul{display:grid;grid-template-columns:1fr 1fr;gap:0 16px;margin:6px 0 0;padding:0;list-style:none}
 #isim .is-score li{font-size:16px;margin:1px 0;font-weight:700}#isim .is-score li.no{color:#b3261e}
-#isim .is-sum .act{display:flex;gap:12px;justify-content:flex-end;margin-top:12px}
+#isim .is-sum .act{display:flex;gap:12px;justify-content:flex-end;margin:4px 0 0;padding:8px 0 0;position:sticky;bottom:0;background:linear-gradient(rgba(255,255,255,0),#fff 9px);box-shadow:0 18px 0 #fff}   /* a long summary scrolls inside the card; the buttons stay in view */
 #isim [data-p]{cursor:pointer}
 #isim .sd-cap{transition:opacity .3s}
 #isim .sd-mouth .m-open,#isim .sd-mouth .m-seal{display:none}
@@ -4558,7 +4561,7 @@ function inhSim(dev){
           sc:{ok:MAX-bad.length, max:MAX, hints:h, pts:Math.max(0,MAX-bad.length-h), bad}}; };
       const W=ms=>new Promise(r=>setTimeout(r,skip?0:ms));
       const tw=(get,set,to,ms)=>new Promise(r=>tween(get,set,to,skip?1:ms,r));
-      const E=k=>{ if(!SIM_ERR[k]) k='order'; if(!errsP.includes(k)) errsP.push(k); if(!ex) toast('⚠️ '+L(SIM_ERR[k])); sfx.error(); };
+      const E=k=>{ if(!SIM_ERR[k]) k='order'; if(!errsP.includes(k)) errsP.push(k); if(skip) return; if(!ex) toast('⚠️ '+L(SIM_ERR[k])); sfx.error(); };   /* skipped animation: no pile of warnings and no burst of buzzers; the summary lists them */
       const getP=dev==='spacer'?()=>s.sp:()=>s.pos, setP=dev==='spacer'?p=>{ s.sp=p; }:p=>{ s.pos=p; };
       const fromMouth=async()=>{ s.atMouth=false; await tw(getP,setP,dev==='spacer'?SP_HOME:HOME,420); draw(); };
       const prep=()=>{ if(s.exhaled&&!s.good){ s.exhaled=false; s.lungs=.55; draw(); } };   // a step that takes time after breathing out: the lungs fill again
@@ -4616,7 +4619,7 @@ function inhSim(dev){
         const end=()=>{ finished=true; timers.forEach(clearTimeout); typeof audioDuck==='function'&&audioDuck(0); host.classList.add('hidden'); host.innerHTML=''; res({ok, errs:lastE, firstErrs:firstE, tries:tr, hints:ex?0:hintN, score:first}); };
         if(ex){ sfx.select(); setTimeout(end,500); return; }
         if(ok) sfx.get(); else sfx.error();
-        const sum=document.createElement('div'); sum.className='is-sum';
+        const sum=document.createElement('div'); sum.className='is-sum ord'; $$('#toasts .toast').forEach(t=>t.remove());
         sum.innerHTML=`<div class="card"><h3>${ok?'🎉 '+esc(L(ORDX.right)):'🔧 '+esc(L(ORDX.wrong))}</h3><div class="is-score"><b>📋 ${esc(L(SIMX.scoreT))} ${first.pts}/${first.max}</b>${first.hints?`<small>💡 −${first.hints}</small>`:''}${tr>1?`<small>${esc(L(ORDX.firstNote))}</small>`:''}
           ${ok?'':`${[['decoy','🚫'],['gone','❌'],['mis','❌']].map(([q,ic])=>g[q].length?`<p class="io-mis">${ic} ${esc(L(ORDX[q]))}: <b>${g[q].map(k=>esc(L(CARDS[k]))).join(' · ')}</b></p>`:'').join('')}<p class="io-mis">✅ ${esc(L(ORDX.rightO))}:</p><ol>${g.near.map(k=>`<li class="${g.badK.includes(k)?'no':''}">${CARDS[k][3]} ${esc(L(CARDS[k]))}</li>`).join('')}</ol>`}</div>${ok?'':`<ul>${lastE.map(k=>`<li>${esc(L(SIM_ERR[k]))}</li>`).join('')}</ul>`}${dev==='resp'?`<p class="is-hn">🟢 ${esc(L(ORDX.twice))}</p>`:''}
           <div class="act">${ok||tr>=2?'':`<button class="gbtn gray" id="simAgain">${esc(L(ORDX.redo))}</button>`}<button class="gbtn green" id="simCont">${esc(L(SIMX.cont))}</button></div></div>`;
@@ -4766,7 +4769,7 @@ async function chapter4(){
   reveal('P13');
   if(S.fl.kidney&&!EXAM()) await say('yeh','happy',['你在訪談時就問了腎臟的事——很有遠見！','You asked about his kidneys back in the interview — great foresight!','คุณถามเรื่องไตตั้งแต่ตอนสัมภาษณ์ — มองการณ์ไกลมาก!']);
   await say('yeh','angry',['可是看看這 20 種藥……四個地方開的，沒有一位醫師把它們放在一起看過，也沒有人依他的年紀和腎功能檢視過！','But look at these 20 medicines… from four different places — no doctor has ever looked at them together, and nobody has checked them against his age and kidneys!','แต่ดูยา 20 ตัวนี้สิ… จาก 4 ที่ ไม่เคยมีหมอคนไหนดูรวมกัน และไม่มีใครทบทวนตามอายุและการทำงานของไตของลุงเลย!']);
-  hideAll(); hideText(); await bagOverview(); show('me','L','neutral'); show('yeh','R','smug');   /* mk_dease */
+  if(!S.mr.ans.length){ hideAll(); hideText(); await bagOverview(); show('me','L','neutral'); show('yeh','R','smug'); }   /* mk_dease; not again when the game is resumed after a mission */
   await say('pilly','shock',['藥袋危機！一共 4 個任務，一次只看一個問題、只擺出相關的 6 種藥：點選有問題的藥（可以複選），再按「確認診斷」！','Med-bag crisis! 4 missions, one question at a time with only the 6 related medicines on the table: tap the problem drugs (several may apply), then press "Confirm"!','วิกฤตซองยา! มี 4 ภารกิจ ดูทีละเรื่อง วางเฉพาะยาที่เกี่ยวข้อง 6 ตัว: แตะเลือกยาที่มีปัญหา (เลือกได้หลายตัว) แล้วกด "ยืนยัน"!']);
   /* mk_dlite: two problems the student already caught in Cases A and C are named, not asked again */
   show('yeh','R','smug'); await say('yeh','smug',['有兩個問題你在前面的案例已經抓過了，這裡直接記下來：Peace 加 Clarinase 是兩份偽麻黃鹼（攝護腺肥大更尿不出來）；glipizide 這類磺醯尿素，老人家很容易低血糖。','Two problems you already caught in earlier cases, so we just note them: Peace plus Clarinase is a double dose of pseudoephedrine (even harder to pee with his BPH), and glipizide, a sulfonylurea, easily causes hypos in older people.','มีสองเรื่องที่คุณเคยจับได้แล้วในเคสก่อน จดไว้เลย: Peace กับ Clarinase มี pseudoephedrine ซ้ำสองต่อ (ต่อมลูกหมากโตยิ่งปัสสาวะไม่ออก) และ glipizide กลุ่ม sulfonylurea ทำให้ผู้สูงอายุน้ำตาลต่ำได้ง่าย']);
@@ -7329,7 +7332,7 @@ function renderDebrief(b){
    ===================================================================== */
 function applyI18n(){
   document.documentElement.lang=S.lang==='zh'?'zh-Hant':S.lang;
-  $$('[data-i18n]').forEach(e=>e.textContent=T(e.dataset.i18n)); $$('[data-i18n-html]').forEach(e=>e.innerHTML=T(e.dataset.i18nHtml).replace(/<b>60(?=\s*(分鐘|minutes|นาที))/,'<b>'+CONFIG.VISIT_MIN));
+  $$('[data-i18n]').forEach(e=>e.textContent=T(e.dataset.i18n)); $$('[data-i18n-html]').forEach(e=>e.innerHTML=T(e.dataset.i18nHtml).replace(/<b>70(?=\s*(分鐘|minutes|นาที))/,'<b>'+CONFIG.VISIT_MIN));
   $$('.lbtn').forEach(b=>b.classList.toggle('on',b.dataset.lang===S.lang));
   if(S.sessionId) hud(); if(D.cur) renderLine(false); if(!$('#board').classList.contains('hidden')) renderBoard();
   if(!$('#searchHud').classList.contains('hidden')) updSearchHud();
